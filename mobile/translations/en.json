@@ -1,0 +1,18 @@
+{
+  "tabs": {
+    "home": "Home",
+    "homeTitle": "Home Screen",
+    "profile": "Profile",
+    "profileTitle": "User Profile",
+    "journal": "Journal",
+    "journalTitle": "Journal",
+    "settings": "Settings",
+    "settingsTitle": "Settings & Privacy"
+  },
+  "screens": {
+    "homeTitle": "This is Home Screen 🏠",
+    "profileTitle": "Your User Profile 👤",
+    "journalTitle": "You medical journal x",
+    "settingsTitle": "App Settings ⚙️"
+  }
+}
