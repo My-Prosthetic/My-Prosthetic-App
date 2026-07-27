@@ -7,8 +7,9 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"lint": "eslint . --ext js,jsx",
-		"format": "prettier --write ."
+		"lint": "eslint src --ext js,jsx",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
 	},
 	"dependencies": {
 		"bootstrap": "^5.3.8",
