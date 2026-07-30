@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "home": "Główna",
+    "homeTitle": "Strona Główna",
+    "profile": "Profil",
+    "profileTitle": "Profil użytkownika",
+    "journal": "Dziennik",
+    "journalTitle": "Dziennik zdarzeń",
+    "settings": "Ustawienia",
+    "settingsTitle": "Ustawienia i prywatność"
+  },
+  "screens": {
+    "homeTitle": "To jest Ekran Główny 🏠",
+    "profileTitle": "Twój Profil Użytkownika 👤",
+    "journalTitle": "Twój dziennik medyczny x",
+    "settingsTitle": "Ustawienia Aplikacji ⚙️"
+  },
+  "home": {
+    "greeting": "Cześć"
+  }
+}
