@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme, ThemeColors } from '../../context/ThemeContext';
+import { useTheme, ThemeColors } from '../../../context/ThemeContext';
+import { useRouter } from 'expo-router';
 
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { db, expoDb } from '../../db/client';
-import { users } from '../../db/schema';
-import migrations from '../../drizzle/migrations'
+import { db, expoDb } from '../../../db/client';
+import { users } from '../../../db/schema';
+import migrations from '../../../drizzle/migrations'
 
 
 //TODO tłumaczenia
@@ -24,6 +25,8 @@ export default function HomeScreen() {
   const { colors, themeType, setTheme } = useTheme();
 
   const styles = getStyles(colors, themeType);
+
+  const router = useRouter();
 
   // Funkcja odczytująca użytkowników z bazy danych
   const fetchUsers = async () => {
@@ -113,7 +116,7 @@ export default function HomeScreen() {
           <View style={styles.prostheticCard}>
             {/* Logo protezy */}
             <Image
-              source={require('../../assets/mp_logo_accent.png')}
+              source={require('../../../assets/mp_logo_accent.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -172,7 +175,7 @@ export default function HomeScreen() {
       {/* ----------------- SEKCJA: UTILITY BUTTONS (NA DOLE) ----------------- */}
       <View style={styles.utilitiesContainer}>
         {/* Przycisk: Dofinansowania */}
-        <TouchableOpacity style={styles.utilityButton}>
+        <TouchableOpacity onPress={() => router.push('../funding/accumulated_funds')} style={styles.utilityButton}>
           <View style={styles.utilityLeftContent}>
             <View style={styles.utilityIconBg}>
               <Ionicons name="cash-outline" size={24} color={colors.primary} />

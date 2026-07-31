@@ -7,13 +7,21 @@
     "journal": "Dziennik",
     "journalTitle": "Dziennik zdarzeń",
     "settings": "Ustawienia",
-    "settingsTitle": "Ustawienia i prywatność"
+    "settingsTitle": "Ustawienia i prywatność",
+    "funding": "Fundusze",
+    "fundingTitle": "Dofinansowania i fundusze",
+    "programmes": "Programy",
+    "programmesTitle": "Programy Dofinansowań",
+    "accumulated": "Środki",
+    "accumulatedTitle": "Zgromadzone Środki"
   },
   "screens": {
     "homeTitle": "To jest Ekran Główny 🏠",
     "profileTitle": "Twój Profil Użytkownika 👤",
     "journalTitle": "Twój dziennik medyczny x",
-    "settingsTitle": "Ustawienia Aplikacji ⚙️"
+    "settingsTitle": "Ustawienia Aplikacji ⚙️",
+    "programmesTitle": "Programy Dofinansowań 📋",
+    "accumulatedTitle": "Zgromadzone Środki 💰"
   },
   "home": {
     "greeting": "Cześć"

@@ -7,12 +7,20 @@
     "journal": "Journal",
     "journalTitle": "Journal",
     "settings": "Settings",
-    "settingsTitle": "Settings & Privacy"
+    "settingsTitle": "Settings & Privacy",
+    "funding": "Funding",
+    "fundingTitle": "Funding & Assistance",
+    "programmes": "Programmes",
+    "programmesTitle": "Funding Programmes",
+    "accumulated": "Accumulated",
+    "accumulatedTitle": "Accumulated Funds"
   },
   "screens": {
     "homeTitle": "This is Home Screen 🏠",
     "profileTitle": "Your User Profile 👤",
     "journalTitle": "You medical journal x",
-    "settingsTitle": "App Settings ⚙️"
+    "settingsTitle": "App Settings ⚙️",
+    "programmesTitle": "Funding Programmes 📋",
+    "accumulatedTitle": "Accumulated Funds 💰"
   }
 }
