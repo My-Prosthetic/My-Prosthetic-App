@@ -10,8 +10,6 @@ import { db, expoDb } from '../../../db/client';
 import { users } from '../../../db/schema';
 import migrations from '../../../drizzle/migrations'
 
-
-//TODO tłumaczenia
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
 //TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
 //TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
@@ -54,7 +52,7 @@ export default function HomeScreen() {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text>Błąd migracji bazy danych: {error.message}</Text>
+        <Text>{t('home.dbMigrationErr')}{error.message}</Text>
       </View>
     );
   }
@@ -63,7 +61,7 @@ export default function HomeScreen() {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" />
-        <Text>Inicjalizacja bazy danych...</Text>
+        <Text>{t('home.dbInit')}</Text>
       </View>
     );
   }
@@ -104,7 +102,7 @@ export default function HomeScreen() {
 
       {/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
       <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>MOJE PROTEZY</Text>
+        <Text style={styles.sectionTitle}>{t('home.myProsthetics')}</Text>
         
         <View style={styles.carouselRow}>
           {/* Lewa strzałka karuzeli */}
@@ -120,7 +118,7 @@ export default function HomeScreen() {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.prostheticCardText}>Proteza codzienna</Text>
+            <Text style={styles.prostheticCardText}>OBJ: Proteza codzienna</Text>
           </View>
 
           {/* Prawa strzałka karuzeli */}
@@ -134,18 +132,18 @@ export default function HomeScreen() {
       <View style={styles.actionButtonsRow}>
         {/* Przycisk: Dodaj Pomiar */}
         <TouchableOpacity style={styles.actionButtonLeft}>
-          <Text style={styles.actionButtonText}>DODAJ POMIAR</Text>
+          <Text style={styles.actionButtonText}>{t('home.addMeasure')}</Text>
         </TouchableOpacity>
 
         {/* Przycisk: Dodaj Incydent */}
         <TouchableOpacity style={styles.actionButtonRight}>
-          <Text style={styles.actionButtonText}>DODAJ INCYDENT</Text>
+          <Text style={styles.actionButtonText}>{t('home.addIncident')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* ----------------- SEKCJA: OSTATNIA AKTYWNOŚĆ ----------------- */}
       <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginBottom: 8 }]}>
-        OSTATNIA AKTYWNOŚĆ
+        {t('home.lastActivity')}
       </Text>
       <View style={[styles.sectionContainer, { marginBottom: 0, paddingVertical: 10 }]}>
         <View style={styles.activityCard}>
@@ -180,7 +178,7 @@ export default function HomeScreen() {
             <View style={styles.utilityIconBg}>
               <Ionicons name="cash-outline" size={24} color={colors.primary} />
             </View>
-            <Text style={styles.utilityText}>DOFINANSOWANIA</Text>
+            <Text style={styles.utilityText}>{t('home.funding')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.primary} />
         </TouchableOpacity>
@@ -191,7 +189,7 @@ export default function HomeScreen() {
             <View style={styles.utilityIconBg}>
               <Ionicons name="document-text-outline" size={24} color={colors.primary} />
             </View>
-            <Text style={styles.utilityText}>MOJE PLIKI I ZDJĘCIA</Text>
+            <Text style={styles.utilityText}>{t('myFiles')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.primary} />
         </TouchableOpacity>

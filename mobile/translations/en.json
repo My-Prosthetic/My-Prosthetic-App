@@ -22,5 +22,16 @@
     "settingsTitle": "App Settings ⚙️",
     "programmesTitle": "Funding Programmes 📋",
     "accumulatedTitle": "Accumulated Funds 💰"
+  },
+  "home": {
+    "greeting": "Hello",
+    "dbMigrationErr": "Database migration error: ",
+    "dbInit": "Database initialization...",
+    "myProsthetics": "MY PROSTHETICS",
+    "addIncident": "ADD INCIDENT",
+    "lastActivity": "LAST ACTIVITY",
+    "funding": "FUNDING",
+    "myFiles": "MY FILES AND PHOTOS",
+    "addMeasure": "ADD MEASURE"
   }
 }

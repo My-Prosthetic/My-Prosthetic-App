@@ -24,6 +24,14 @@
     "accumulatedTitle": "Zgromadzone Środki 💰"
   },
   "home": {
-    "greeting": "Cześć"
+    "greeting": "Cześć",
+    "dbMigrationErr": "Błąd migracji bazy danych: ",
+    "dbInit": "Inicjalizacja bazy danych...",
+    "myProsthetics": "MOJE PROTEZY",
+    "addIncident": "DODAJ INCYDENT",
+    "lastActivity": "OSTATNIA AKTYWNOŚĆ",
+    "funding": "DOFINANSOWANIA",
+    "myFiles": "MOJE PLIKI I ZDJĘCIA",
+    "addMeasure": "DODAJ POMIAR"
   }
 }
