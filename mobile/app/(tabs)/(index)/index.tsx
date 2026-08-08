@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { db, expoDb } from '../../../db/client';
-import { users } from '../../../db/schema';
+import { users } from '../../../db/schema/users';
 import migrations from '../../../drizzle/migrations'
 
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
@@ -189,7 +189,7 @@ export default function HomeScreen() {
             <View style={styles.utilityIconBg}>
               <Ionicons name="document-text-outline" size={24} color={colors.primary} />
             </View>
-            <Text style={styles.utilityText}>{t('myFiles')}</Text>
+            <Text style={styles.utilityText}>{t('home.myFiles')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.primary} />
         </TouchableOpacity>
