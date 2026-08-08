@@ -9,6 +9,15 @@ module.exports = function (api) {
           extensions: ['.sql'],
         },
       ],
+      [
+        'module-resolver',
+        {
+          root: ['./'],
+          alias: {
+            '@': './',
+          },
+        },
+      ],
     ],
   };
 };

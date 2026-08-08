@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 //TODO dopisać tu jeszcze cienie
+//TODO? stworzyć komponenty ThemedView i ThemedText, które będą same obsługiwały pobranie funkcji useTheme?
+
 
 export interface ThemeColors {
   background: string;
