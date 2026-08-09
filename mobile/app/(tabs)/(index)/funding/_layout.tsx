@@ -1,75 +1,149 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { Slot, useRouter, usePathname } from 'expo-router';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import {
+  Slot,
+  useRouter,
+  usePathname,
+} from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../../../context/ThemeContext';
 
-//TODO nie korzystam tu z tabs, tylko trochę "sztucznie" zmieniam ścieżki. Czy nie sprawia to, że tracę cache co zdziałałem na tej ścieżce przeskakują między ekranami?
+import { useTheme } from '../../../../context/ThemeContext';
 
 export default function FundingTabsLayout() {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, themeType } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Sprawdzamy, która zakładka jest aktualnie aktywna na podstawie ścieżki
-  const isAccumulated = pathname.includes('accumulated_funds');
+  const isAccumulated =
+    pathname.includes('accumulated_funds');
+
+  const isProgrammeDetails =
+    !pathname.includes('programmes') &&
+    !pathname.includes('accumulated_funds');
+
+  const onPrimary =
+    themeType === 'high-contrast'
+      ? '#000000'
+      : '#FFFFFF';
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background || '#E5F0FF' }]}>
-      {/* 1. GÓRNY NAGŁÓWEK */}
-      <View style={styles.topHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
+    <View
+      style={[
+        styles.safeArea,
+        { backgroundColor: colors.background },
+      ]}
+    >
+      <View
+        style={[
+          styles.topHeader,
+          { backgroundColor: colors.primary },
+        ]}
+      >
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel={t('funding.back')}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={28}
+            color={onPrimary}
+          />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>DOFINANSOWANIA</Text>
+
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: onPrimary },
+          ]}
+        >
+          {isProgrammeDetails
+            ? t('funding.detailsHeader')
+            : t('funding.header')}
+        </Text>
       </View>
 
-      {/* 2. PIGUŁKOWY PRZEŁĄCZNIK (TOGGLE) */}
-      <View style={styles.toggleWrapper}>
-        <View style={styles.toggleContainer}>
-          {/* Przycisk: Dostępne programy */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.replace('/funding/programmes')} // Dopasuj ścieżkę jeśli jest inna
+      {!isProgrammeDetails && (
+        <View style={styles.toggleWrapper}>
+          <View
             style={[
-              styles.toggleButton,
-              !isAccumulated && styles.toggleButtonActive,
+              styles.toggleContainer,
+              { borderColor: colors.primary },
             ]}
           >
-            <Text
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                router.replace('/funding/programmes')
+              }
               style={[
-                styles.toggleText,
-                !isAccumulated ? styles.toggleTextActive : styles.toggleTextInactive,
+                styles.toggleButton,
+                !isAccumulated && {
+                  backgroundColor: colors.primary,
+                },
               ]}
+              accessibilityRole="tab"
+              accessibilityState={{
+                selected: !isAccumulated,
+              }}
             >
-              {t('tabs.programmes', 'Dostępne programy')}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.toggleText,
+                  {
+                    color: !isAccumulated
+                      ? onPrimary
+                      : colors.primary,
+                  },
+                ]}
+              >
+                {t('funding.availableProgrammes')}
+              </Text>
+            </TouchableOpacity>
 
-          {/* Przycisk: Moje uzyskane */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.replace('/funding/accumulated_funds')} // Dopasuj ścieżkę jeśli jest inna
-            style={[
-              styles.toggleButton,
-              isAccumulated && styles.toggleButtonActive,
-            ]}
-          >
-            <Text
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                router.replace(
+                  '/funding/accumulated_funds'
+                )
+              }
               style={[
-                styles.toggleText,
-                isAccumulated ? styles.toggleTextActive : styles.toggleTextInactive,
+                styles.toggleButton,
+                isAccumulated && {
+                  backgroundColor: colors.primary,
+                },
               ]}
+              accessibilityRole="tab"
+              accessibilityState={{
+                selected: isAccumulated,
+              }}
             >
-              {t('tabs.accumulated', 'Moje uzyskane')}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.toggleText,
+                  {
+                    color: isAccumulated
+                      ? onPrimary
+                      : colors.primary,
+                  },
+                ]}
+              >
+                {t('funding.accumulatedFunds')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
 
-      {/* 3. ZAWARTOŚĆ EKRANU (TUTAJ RENDERUJĄ SIĘ EKRANY PROGRAMMES / ACCUMULATED_FUNDS) */}
       <View style={styles.contentContainer}>
         <Slot />
       </View>
@@ -81,63 +155,65 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+
   topHeader: {
-    backgroundColor: '#002B9A', // Granatowe tło
-    height: 100,
+    minHeight: 100,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    paddingHorizontal: 16,
+    paddingHorizontal: 56,
     position: 'relative',
     paddingTop: 20,
+    paddingBottom: 12,
   },
+
   backButton: {
     position: 'absolute',
     left: 16,
-    padding: 4,
+    padding: 8,
     paddingTop: 24,
   },
+
   headerTitle: {
-    color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
+    textAlign: 'center',
+    flexShrink: 1,
   },
+
   toggleWrapper: {
     paddingHorizontal: 16,
     marginTop: 16,
     marginBottom: 8,
   },
+
   toggleContainer: {
     flexDirection: 'row',
-    backgroundColor: 'transparent',
     borderRadius: 25,
     borderWidth: 1.5,
-    borderColor: '#4285F4',
     padding: 3,
   },
+
   toggleButton: {
     flex: 1,
-    paddingVertical: 10,
+    minHeight: 40,
+    paddingHorizontal: 6,
+    paddingVertical: 8,
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  toggleButtonActive: {
-    backgroundColor: '#002B9A',
-  },
+
   toggleText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
+    textAlign: 'center',
+    flexShrink: 1,
   },
-  toggleTextActive: {
-    color: '#FFFFFF',
-  },
-  toggleTextInactive: {
-    color: '#3B82F6',
-  },
+
   contentContainer: {
     flex: 1,
   },
