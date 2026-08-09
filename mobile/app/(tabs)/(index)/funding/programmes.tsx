@@ -13,6 +13,21 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../../context/ThemeContext';
 import fundingConfig from '../../../../config/fundingConfig.json';
 
+const prototypeColors = {
+  screenBackground: '#D6EEFC',
+  cardBackground: '#EAF6FE',
+
+  primaryText: '#052D8F',
+  secondaryText: '#1967C8',
+
+  badgeBackground: '#B6D3F6',
+  badgeText: '#052D8F',
+
+  buttonBackground: '#052D8F',
+  buttonText: '#FAF9EE',
+  buttonBorder: '#F0EDCC',
+};
+
 export default function ProgrammesScreen() {
   const { t } = useTranslation();
   const { colors, themeType } = useTheme();
@@ -20,14 +35,50 @@ export default function ProgrammesScreen() {
 
   const programmes = fundingConfig.programmes;
 
-  // Klucze pochodzą z JSON-a, dlatego tłumaczymy je dynamicznie.
   const translate = (key: string) => t(key as any);
 
-  const onPrimary =
-    themeType === 'high-contrast' ? '#000000' : '#FFFFFF';
+  const isHighContrast = themeType === 'high-contrast';
+
+  const screenBackground = isHighContrast
+    ? colors.background
+    : prototypeColors.screenBackground;
+
+  const cardBackground = isHighContrast
+    ? colors.backgroundSecondary
+    : prototypeColors.cardBackground;
+
+  const primaryText = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.primaryText;
+
+  const secondaryText = isHighContrast
+    ? colors.textSecondary
+    : prototypeColors.secondaryText;
+
+  const badgeBackground = isHighContrast
+    ? colors.backgroundTertiary
+    : prototypeColors.badgeBackground;
+
+  const badgeText = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.badgeText;
+
+  const buttonBackground = isHighContrast
+    ? colors.primary
+    : prototypeColors.buttonBackground;
+
+  const buttonText = isHighContrast
+    ? '#000000'
+    : prototypeColors.buttonText;
+
+  const buttonBorder = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.buttonBorder;
 
   const sectionKeys = [
-    ...new Set(programmes.map((programme) => programme.sectionKey)),
+    ...new Set(
+      programmes.map((programme) => programme.sectionKey)
+    ),
   ];
 
   const renderProgrammeCard = (
@@ -42,32 +93,41 @@ export default function ProgrammesScreen() {
         style={[
           styles.card,
           {
-            backgroundColor: colors.backgroundSecondary,
-            borderColor: colors.primary,
+            backgroundColor: cardBackground,
+            borderColor: isHighContrast
+            ? colors.primary
+            : '#6981BC',
           },
         ]}
         onPress={() =>
           router.push({
             pathname: '/funding/[programmeId]',
-            params: { programmeId: programme.id },
+            params: {
+              programmeId: programme.id,
+            },
           })
         }
         accessibilityRole="button"
-        accessibilityLabel={t('funding.showProgrammeDetails', {
-          programme: programmeTitle,
-        })}
+        accessibilityLabel={t(
+          'funding.showProgrammeDetails',
+          {
+            programme: programmeTitle,
+          }
+        )}
       >
         <View style={styles.cardContent}>
           <View
             style={[
               styles.badge,
-              { backgroundColor: colors.backgroundTertiary },
+              {
+                backgroundColor: badgeBackground,
+              },
             ]}
           >
             <Text
               style={[
                 styles.badgeText,
-                { color: colors.textPrimary },
+                { color: badgeText },
               ]}
             >
               {translate(programme.badgeKey)}
@@ -77,8 +137,11 @@ export default function ProgrammesScreen() {
           <Text
             style={[
               styles.cardTitle,
-              { color: colors.textPrimary },
+              { color: primaryText },
             ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
           >
             {programmeTitle}
           </Text>
@@ -86,8 +149,11 @@ export default function ProgrammesScreen() {
           <Text
             style={[
               styles.cardDescription,
-              { color: colors.textSecondary },
+              { color: secondaryText },
             ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
           >
             {translate(programme.shortDescriptionKey)}
           </Text>
@@ -95,8 +161,8 @@ export default function ProgrammesScreen() {
 
         <Ionicons
           name="chevron-forward"
-          size={20}
-          color={colors.primary}
+          size={22}
+          color={primaryText}
         />
       </TouchableOpacity>
     );
@@ -106,17 +172,22 @@ export default function ProgrammesScreen() {
     <ScrollView
       style={[
         styles.container,
-        { backgroundColor: colors.background },
+        {
+          backgroundColor: screenBackground,
+        },
       ]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
       {sectionKeys.map((sectionKey) => (
-        <View key={sectionKey} style={styles.section}>
+        <View
+          key={sectionKey}
+          style={styles.section}
+        >
           <Text
             style={[
               styles.sectionTitle,
-              { color: colors.textSecondary },
+              { color: secondaryText },
             ]}
           >
             {translate(sectionKey)}
@@ -124,7 +195,8 @@ export default function ProgrammesScreen() {
 
           {programmes
             .filter(
-              (programme) => programme.sectionKey === sectionKey
+              (programme) =>
+                programme.sectionKey === sectionKey
             )
             .map(renderProgrammeCard)}
         </View>
@@ -133,7 +205,10 @@ export default function ProgrammesScreen() {
       <TouchableOpacity
         style={[
           styles.addButton,
-          { backgroundColor: colors.primary },
+          {
+            backgroundColor: buttonBackground,
+            borderColor: buttonBorder,
+          },
         ]}
         activeOpacity={0.85}
         onPress={() =>
@@ -145,13 +220,13 @@ export default function ProgrammesScreen() {
         <Ionicons
           name="add"
           size={26}
-          color={onPrimary}
+          color={buttonText}
         />
 
         <Text
           style={[
             styles.addButtonText,
-            { color: onPrimary },
+            { color: buttonText },
           ]}
         >
           {t('funding.addFunds')}
@@ -167,78 +242,91 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 32,
+    paddingHorizontal: 28,
+    paddingTop: 18,
+    paddingBottom: 40,
   },
 
   section: {
-    marginBottom: 22,
+    marginBottom: 28,
   },
 
   sectionTitle: {
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 12,
-    fontWeight: '700',
-    marginBottom: 10,
+    lineHeight: 12,
+    letterSpacing: 0.48,
+    textTransform: 'uppercase',
+    marginBottom: 14,
   },
 
   card: {
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    minHeight: 80,
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    minHeight: 104,
+    marginBottom: 14,
   },
 
   cardContent: {
     flex: 1,
-    paddingRight: 10,
+    paddingRight: 12,
   },
 
   badge: {
     alignSelf: 'flex-start',
-    borderRadius: 10,
-    paddingHorizontal: 9,
-    paddingVertical: 2,
-    marginBottom: 5,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    marginBottom: 8,
   },
 
   badgeText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontFamily: 'Afacad_400Regular',
+    fontSize: 14,
+    lineHeight: 14,
+    letterSpacing: 0.56,
+    textAlign: 'center',
   },
 
   cardTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 4,
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 16,
+    letterSpacing: 0.64,
+    textTransform: 'uppercase',
+    marginBottom: 8,
     flexShrink: 1,
   },
 
   cardDescription: {
-    fontSize: 11,
-    lineHeight: 16,
+    fontFamily: 'Afacad_400Regular',
+    fontSize: 14,
+    lineHeight: 18,
+    letterSpacing: 0.56,
     flexShrink: 1,
   },
 
   addButton: {
-    minHeight: 52,
-    borderRadius: 14,
+    height: 60,
+    borderRadius: 18,
+    borderWidth: 3,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginTop: 4,
-  },
+    paddingVertical: 8,
+    marginTop: 2,
+},
 
   addButtonText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '700',
+    lineHeight: 22,
     textAlign: 'center',
     flexShrink: 1,
   },

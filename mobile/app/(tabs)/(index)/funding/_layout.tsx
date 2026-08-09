@@ -12,14 +12,55 @@ import {
 } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { useFonts } from 'expo-font';
+
+import {
+  Afacad_400Regular,
+  Afacad_500Medium,
+  Afacad_600SemiBold,
+} from '@expo-google-fonts/afacad';
+
+import {
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 
 import { useTheme } from '../../../../context/ThemeContext';
 
+const prototypeColors = {
+  screenBackground: '#D6EEFC',
+
+  headerBackground: '#052D8F',
+  headerText: '#F0EDCC',
+
+  toggleBorder: '#1967C8',
+
+  toggleActiveBackground: '#052D8F',
+  toggleActiveText: '#FAF9EE',
+
+  toggleInactiveBackground: '#EAF6FE',
+  toggleInactiveText: '#1967C8',
+};
+
 export default function FundingTabsLayout() {
+  const [fontsLoaded] = useFonts({
+    Afacad_400Regular,
+    Afacad_500Medium,
+    Afacad_600SemiBold,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+
   const { t } = useTranslation();
   const { colors, themeType } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  const isHighContrast = themeType === 'high-contrast';
 
   const isAccumulated =
     pathname.includes('accumulated_funds');
@@ -28,22 +69,49 @@ export default function FundingTabsLayout() {
     !pathname.includes('programmes') &&
     !pathname.includes('accumulated_funds');
 
-  const onPrimary =
-    themeType === 'high-contrast'
-      ? '#000000'
-      : '#FFFFFF';
+  const screenBackground = isHighContrast
+    ? colors.background
+    : prototypeColors.screenBackground;
+
+  const headerBackground = isHighContrast
+    ? colors.primary
+    : prototypeColors.headerBackground;
+
+  const headerText = isHighContrast
+    ? '#000000'
+    : prototypeColors.headerText;
+
+  const toggleBorder = isHighContrast
+    ? colors.primary
+    : prototypeColors.toggleBorder;
+
+  const toggleInactiveBackground = isHighContrast
+    ? colors.backgroundSecondary
+    : prototypeColors.toggleInactiveBackground;
+
+  const activeToggleBackground = isHighContrast
+    ? colors.primary
+    : prototypeColors.toggleActiveBackground;
+
+  const activeToggleText = isHighContrast
+    ? '#000000'
+    : prototypeColors.toggleActiveText;
+
+  const inactiveToggleText = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.toggleInactiveText;
 
   return (
     <View
       style={[
         styles.safeArea,
-        { backgroundColor: colors.background },
+        { backgroundColor: screenBackground },
       ]}
     >
       <View
         style={[
           styles.topHeader,
-          { backgroundColor: colors.primary },
+          { backgroundColor: headerBackground },
         ]}
       >
         <TouchableOpacity
@@ -55,15 +123,18 @@ export default function FundingTabsLayout() {
           <Ionicons
             name="chevron-back"
             size={28}
-            color={onPrimary}
+            color={headerText}
           />
         </TouchableOpacity>
 
         <Text
           style={[
             styles.headerTitle,
-            { color: onPrimary },
+            { color: headerText },
           ]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
         >
           {isProgrammeDetails
             ? t('funding.detailsHeader')
@@ -76,7 +147,10 @@ export default function FundingTabsLayout() {
           <View
             style={[
               styles.toggleContainer,
-              { borderColor: colors.primary },
+              {
+                borderColor: toggleBorder,
+                backgroundColor: toggleInactiveBackground,
+              },
             ]}
           >
             <TouchableOpacity
@@ -87,7 +161,7 @@ export default function FundingTabsLayout() {
               style={[
                 styles.toggleButton,
                 !isAccumulated && {
-                  backgroundColor: colors.primary,
+                  backgroundColor: activeToggleBackground,
                 },
               ]}
               accessibilityRole="tab"
@@ -100,8 +174,8 @@ export default function FundingTabsLayout() {
                   styles.toggleText,
                   {
                     color: !isAccumulated
-                      ? onPrimary
-                      : colors.primary,
+                      ? activeToggleText
+                      : inactiveToggleText,
                   },
                 ]}
               >
@@ -119,7 +193,7 @@ export default function FundingTabsLayout() {
               style={[
                 styles.toggleButton,
                 isAccumulated && {
-                  backgroundColor: colors.primary,
+                  backgroundColor: activeToggleBackground,
                 },
               ]}
               accessibilityRole="tab"
@@ -132,8 +206,8 @@ export default function FundingTabsLayout() {
                   styles.toggleText,
                   {
                     color: isAccumulated
-                      ? onPrimary
-                      : colors.primary,
+                      ? activeToggleText
+                      : inactiveToggleText,
                   },
                 ]}
               >
@@ -163,29 +237,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    paddingHorizontal: 56,
-    position: 'relative',
+    paddingHorizontal: 52,
     paddingTop: 20,
     paddingBottom: 12,
+    position: 'relative',
   },
 
   backButton: {
     position: 'absolute',
     left: 16,
-    padding: 8,
-    paddingTop: 24,
-  },
+    top: 20,
+    bottom: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    zIndex: 2,
+},
 
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Afacad_500Medium',
+    fontSize: 30,
+    lineHeight: 32,
     letterSpacing: 1.2,
     textAlign: 'center',
+    width: '100%',
     flexShrink: 1,
   },
 
   toggleWrapper: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 29,
     marginTop: 16,
     marginBottom: 8,
   },
@@ -193,26 +273,28 @@ const styles = StyleSheet.create({
   toggleContainer: {
     flexDirection: 'row',
     borderRadius: 25,
-    borderWidth: 1.5,
+    borderWidth: 2,
     padding: 3,
-  },
+    minHeight: 44,
+},
 
-  toggleButton: {
-    flex: 1,
-    minHeight: 40,
-    paddingHorizontal: 6,
-    paddingVertical: 8,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+toggleButton: {
+  flex: 1,
+  minHeight: 38,
+  paddingHorizontal: 6,
+  paddingVertical: 7,
+  borderRadius: 22,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
 
-  toggleText: {
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center',
-    flexShrink: 1,
-  },
+toggleText: {
+  fontFamily: 'Inter_700Bold',
+  fontSize: 13,
+  lineHeight: 17,
+  textAlign: 'center',
+  flexShrink: 1,
+},
 
   contentContainer: {
     flex: 1,

@@ -34,6 +34,7 @@ type Foundation = {
 
 type ProgrammeDetails = {
   type: 'steps' | 'eligibility' | 'foundations';
+
   titleKey: string;
   subtitleKey: string;
 
@@ -63,6 +64,23 @@ type Programme = {
   details: ProgrammeDetails;
 };
 
+const prototypeColors = {
+  screenBackground: '#D6EEFC',
+
+  boxBackground: '#EAF6FE',
+  boxBorder: '#6981BC',
+
+  primaryText: '#052D8F',
+  secondaryText: '#1967C8',
+  subtitleText: '#6981BC',
+
+  buttonBackground: '#052D8F',
+  buttonText: '#FAF9EE',
+  buttonBorder: '#F0EDCC',
+
+  stepCircleBackground: '#EAF6FE',
+};
+
 export default function ProgrammeDetailsScreen() {
   const { t } = useTranslation();
   const { colors, themeType } = useTheme();
@@ -71,7 +89,8 @@ export default function ProgrammeDetailsScreen() {
     programmeId: string;
   }>();
 
-  const programmes = fundingConfig.programmes as Programme[];
+  const programmes =
+    fundingConfig.programmes as Programme[];
 
   const programme = programmes.find(
     (item) => item.id === programmeId
@@ -80,21 +99,75 @@ export default function ProgrammeDetailsScreen() {
   const translate = (key?: string) =>
     key ? t(key as any) : '';
 
-  const onPrimary =
-    themeType === 'high-contrast' ? '#000000' : '#FFFFFF';
+  const isHighContrast =
+    themeType === 'high-contrast';
+
+  const screenBackground = isHighContrast
+    ? colors.background
+    : prototypeColors.screenBackground;
+
+  const boxBackground = isHighContrast
+    ? colors.backgroundSecondary
+    : prototypeColors.boxBackground;
+
+  const boxBorder = isHighContrast
+    ? colors.primary
+    : prototypeColors.boxBorder;
+
+  const primaryText = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.primaryText;
+
+  const secondaryText = isHighContrast
+    ? colors.textSecondary
+    : prototypeColors.secondaryText;
+
+  const subtitleText = isHighContrast
+    ? colors.textSecondary
+    : prototypeColors.subtitleText;
+
+  const buttonBackground = isHighContrast
+    ? colors.primary
+    : prototypeColors.buttonBackground;
+
+  const buttonText = isHighContrast
+    ? '#000000'
+    : prototypeColors.buttonText;
+
+  const buttonBorder = isHighContrast
+    ? colors.textPrimary
+    : prototypeColors.buttonBorder;
+
+  const openExternalUrl = async (
+    url?: string
+  ) => {
+    if (!url) {
+      return;
+    }
+
+    const supported =
+      await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    }
+  };
 
   if (!programme) {
     return (
       <View
         style={[
-          styles.errorContainer,
-          { backgroundColor: colors.background },
+          styles.notFoundContainer,
+          {
+            backgroundColor:
+              screenBackground,
+          },
         ]}
       >
         <Text
           style={[
-            styles.errorText,
-            { color: colors.textPrimary },
+            styles.notFoundText,
+            { color: primaryText },
           ]}
         >
           {t('funding.notFound')}
@@ -103,22 +176,13 @@ export default function ProgrammeDetailsScreen() {
     );
   }
 
-  const { details } = programme;
-
-  const openExternalUrl = async (url?: string) => {
-    if (!url) {
-      return;
-    }
-
-    const supported = await Linking.canOpenURL(url);
-
-    if (supported) {
-      await Linking.openURL(url);
-    }
-  };
+  const details = programme.details;
 
   const renderSummaryRows = () => {
-    if (!details.summaryRows?.length) {
+    if (
+      !details.summaryRows ||
+      details.summaryRows.length === 0
+    ) {
       return null;
     }
 
@@ -126,83 +190,133 @@ export default function ProgrammeDetailsScreen() {
       <View
         style={[
           styles.summaryBox,
-          { borderColor: colors.primary },
+          {
+            backgroundColor: boxBackground,
+            borderColor: boxBorder,
+          },
         ]}
       >
-        {details.summaryRows.map((row, index) => (
-          <View
-            key={`${row.labelKey}-${index}`}
-            style={[
-              styles.summaryRow,
-              index !== details.summaryRows!.length - 1 && {
-                borderBottomWidth: 1,
-                borderBottomColor: colors.primary,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.summaryLabel,
-                { color: colors.textSecondary },
-              ]}
+        {details.summaryRows.map(
+          (row, index) => (
+            <View
+              key={`${row.labelKey}-${index}`}
             >
-              {translate(row.labelKey)}:
-            </Text>
+              <View
+                style={
+                  styles.summaryRow
+                }
+              >
+                <Text
+                  style={[
+                    styles.summaryLabel,
+                    {
+                      color:
+                        primaryText,
+                    },
+                  ]}
+                >
+                  {translate(
+                    row.labelKey
+                  )}
+                </Text>
 
-            <Text
-              style={[
-                styles.summaryValue,
-                { color: colors.textPrimary },
-              ]}
-            >
-              {translate(row.valueKey)}
-            </Text>
-          </View>
-        ))}
+                <Text
+                  style={[
+                    styles.summaryValue,
+                    {
+                      color:
+                        primaryText,
+                    },
+                  ]}
+                >
+                  {translate(
+                    row.valueKey
+                  )}
+                </Text>
+              </View>
+
+              {index <
+                details.summaryRows!
+                  .length -
+                  1 && (
+                <View
+                  style={[
+                    styles.summaryDivider,
+                    {
+                      backgroundColor: '#9BABD2',
+
+                    },
+                  ]}
+                />
+              )}
+            </View>
+          )
+        )}
       </View>
     );
   };
 
-  const renderNfzDetails = () => (
-    <>
-      {renderSummaryRows()}
+  const renderSteps = () => {
+  if (
+    details.type !== 'steps' ||
+    !details.steps
+  ) {
+    return null;
+  }
 
+  return (
+    <>
       <Text
         style={[
           styles.sectionTitle,
-          { color: colors.textSecondary },
+          { color: secondaryText },
         ]}
       >
         {translate(details.sectionTitleKey)}
       </Text>
 
       <View style={styles.stepsContainer}>
-        {details.steps?.map((step) => (
-          <View key={step.number} style={styles.stepRow}>
-            <View
-              style={[
-                styles.stepNumber,
-                {
-                  backgroundColor: colors.backgroundTertiary,
-                  borderColor: colors.primary,
-                },
-              ]}
-            >
-              <Text
+        {details.steps.map((step, index) => (
+          <View
+            key={step.number}
+            style={styles.stepRow}
+          >
+            <View style={styles.stepIndicator}>
+              <View
                 style={[
-                  styles.stepNumberText,
-                  { color: colors.textPrimary },
+                  styles.stepNumber,
+                  {
+                    backgroundColor: isHighContrast
+                      ? colors.backgroundSecondary
+                      : prototypeColors.stepCircleBackground,
+                  },
                 ]}
               >
-                {step.number}
-              </Text>
+                <Text
+                  style={[
+                    styles.stepNumberText,
+                    { color: primaryText },
+                  ]}
+                >
+                  {step.number}
+                </Text>
+              </View>
+
+              {index < details.steps!.length - 1 && (
+                <View style={styles.stepDots}>
+                  <View style={styles.stepDot} />
+                  <View style={styles.stepDot} />
+                  <View style={styles.stepDot} />
+                  <View style={styles.stepDot} />
+                </View>
+              )}
             </View>
 
             <View style={styles.stepContent}>
               <Text
                 style={[
                   styles.stepTitle,
-                  { color: colors.textPrimary },
+                  { color: primaryText },
                 ]}
               >
                 {translate(step.titleKey)}
@@ -211,7 +325,7 @@ export default function ProgrammeDetailsScreen() {
               <Text
                 style={[
                   styles.stepDescription,
-                  { color: colors.textSecondary },
+                  { color: secondaryText },
                 ]}
               >
                 {translate(step.descriptionKey)}
@@ -221,197 +335,290 @@ export default function ProgrammeDetailsScreen() {
         ))}
       </View>
 
-      {details.externalUrl && (
-        <TouchableOpacity
-          style={[
-            styles.mainButton,
-            { backgroundColor: colors.primary },
-          ]}
-          activeOpacity={0.85}
-          onPress={() =>
-            openExternalUrl(details.externalUrl)
-          }
-          accessibilityRole="link"
-          accessibilityLabel={translate(
-            details.externalButtonLabelKey
-          )}
-        >
-          <Text
+      {details.externalUrl &&
+        details.externalButtonLabelKey && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() =>
+              openExternalUrl(details.externalUrl)
+            }
             style={[
-              styles.mainButtonText,
-              { color: onPrimary },
+              styles.mainButton,
+              {
+                backgroundColor: buttonBackground,
+                borderColor: buttonBorder,
+              },
             ]}
+            accessibilityRole="link"
+            accessibilityLabel={translate(
+              details.externalButtonLabelKey
+            )}
           >
-            {translate(details.externalButtonLabelKey)}
-          </Text>
-        </TouchableOpacity>
-      )}
-    </>
-  );
-
-  const renderPfronDetails = () => (
-    <>
-      {renderSummaryRows()}
-
-      <Text
-        style={[
-          styles.sectionTitle,
-          { color: colors.textSecondary },
-        ]}
-      >
-        {translate(details.sectionTitleKey)}
-      </Text>
-
-      <View
-        style={[
-          styles.infoBox,
-          { borderColor: colors.primary },
-        ]}
-      >
-        {details.eligibilityKeys?.map((key) => (
-          <Text
-            key={key}
-            style={[
-              styles.bulletText,
-              { color: colors.textPrimary },
-            ]}
-          >
-            • {translate(key)}
-          </Text>
-        ))}
-      </View>
-
-      <Text
-        style={[
-          styles.sectionTitle,
-          { color: colors.textSecondary },
-        ]}
-      >
-        {translate(details.actionSectionTitleKey)}
-      </Text>
-
-      {details.externalUrl && (
-        <TouchableOpacity
-          style={[
-            styles.actionCard,
-            { backgroundColor: colors.primary },
-          ]}
-          activeOpacity={0.85}
-          onPress={() =>
-            openExternalUrl(details.externalUrl)
-          }
-          accessibilityRole="link"
-          accessibilityLabel={translate(
-            details.externalButtonLabelKey
-          )}
-        >
-          <View style={styles.actionCardText}>
             <Text
               style={[
-                styles.actionTitle,
-                { color: onPrimary },
+                styles.mainButtonText,
+                { color: buttonText },
               ]}
             >
-              {translate(details.externalButtonLabelKey)}
+              {translate(
+                details.externalButtonLabelKey
+              )}
             </Text>
-
-            {details.externalButtonDescriptionKey && (
-              <Text
-                style={[
-                  styles.actionDescription,
-                  { color: onPrimary },
-                ]}
-              >
-                {translate(
-                  details.externalButtonDescriptionKey
-                )}
-              </Text>
-            )}
-          </View>
-
-          <Ionicons
-            name="chevron-forward"
-            size={22}
-            color={onPrimary}
-          />
-        </TouchableOpacity>
-      )}
+          </TouchableOpacity>
+        )}
     </>
   );
+};
 
-  const renderFoundationsDetails = () => (
-    <>
-      <Text
-        style={[
-          styles.sectionTitle,
-          { color: colors.textSecondary },
-        ]}
-      >
-        {translate(details.sectionTitleKey)}
-      </Text>
+  const renderEligibility = () => {
+    if (
+      details.type !== 'eligibility'
+    ) {
+      return null;
+    }
 
-      <View>
-        {details.foundations?.map((foundation) => {
-          const foundationName = translate(
-            foundation.nameKey
-          );
+    return (
+      <>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: secondaryText },
+          ]}
+        >
+          {translate(
+            details.sectionTitleKey
+          )}
+        </Text>
 
-          return (
-            <TouchableOpacity
-              key={foundation.id}
-              style={[
-                styles.foundationItem,
-                { borderBottomColor: colors.primary },
-              ]}
-              activeOpacity={0.75}
-              onPress={() =>
-                openExternalUrl(foundation.externalUrl)
-              }
-              accessibilityRole="link"
-              accessibilityLabel={t(
-                'funding.openFoundation',
-                {
-                  foundation: foundationName,
+        <View
+          style={[
+            styles.eligibilityBox,
+            {
+              backgroundColor:
+                boxBackground,
+              borderColor: boxBorder,
+            },
+          ]}
+        >
+          {details.eligibilityKeys?.map(
+            (key) => (
+              <View
+                key={key}
+                style={
+                  styles.eligibilityRow
                 }
+              >
+                <Text
+                  style={[
+                    styles.bullet,
+                    {
+                      color:
+                        primaryText,
+                    },
+                  ]}
+                >
+                  •
+                </Text>
+
+                <Text
+                  style={[
+                    styles.eligibilityText,
+                    {
+                      color:
+                        primaryText,
+                    },
+                  ]}
+                >
+                  {translate(key)}
+                </Text>
+              </View>
+            )
+          )}
+        </View>
+
+        {details.actionSectionTitleKey && (
+          <Text
+            style={[
+              styles.actionSectionTitle,
+              { color: secondaryText },
+            ]}
+          >
+            {translate(
+              details.actionSectionTitleKey
+            )}
+          </Text>
+        )}
+
+        {details.externalUrl &&
+          details.externalButtonLabelKey && (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() =>
+                openExternalUrl(
+                  details.externalUrl
+                )
+              }
+              style={[
+                styles.actionButton,
+                {
+                  backgroundColor:
+                    buttonBackground,
+                  borderColor:
+                    buttonBorder,
+                },
+              ]}
+              accessibilityRole="link"
+              accessibilityLabel={translate(
+                details.externalButtonLabelKey
               )}
             >
-              <Text
-                style={[
-                  styles.foundationName,
-                  { color: colors.textPrimary },
-                ]}
+              <View
+                style={
+                  styles.actionButtonContent
+                }
               >
-                {foundationName}
-              </Text>
+                <Text
+  style={[
+    styles.actionButtonTitle,
+    { color: buttonText },
+  ]}
+  numberOfLines={1}>
+  {translate(details.externalButtonLabelKey)}
+</Text>
 
-              <Text
-                style={[
-                  styles.foundationDescription,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                {translate(foundation.descriptionKey)}
-              </Text>
+                {details.externalButtonDescriptionKey && (
+                  <Text
+                    style={[
+                      styles.actionButtonDescription,
+                      {
+                        color:
+                          buttonText,
+                      },
+                    ]}
+                  >
+                    {translate(
+                      details.externalButtonDescriptionKey
+                    )}
+                  </Text>
+                )}
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={buttonText}
+              />
             </TouchableOpacity>
-          );
-        })}
-      </View>
-    </>
-  );
+          )}
+      </>
+    );
+  };
+
+  const renderFoundations = () => {
+    if (
+      details.type !== 'foundations'
+    ) {
+      return null;
+    }
+
+    return (
+      <>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: secondaryText },
+          ]}
+        >
+          {translate(
+            details.sectionTitleKey
+          )}
+        </Text>
+
+        <View>
+          {details.foundations?.map(
+            (foundation) => {
+              const foundationName =
+                translate(
+                  foundation.nameKey
+                );
+
+              return (
+                <TouchableOpacity
+                  key={foundation.id}
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    openExternalUrl(
+                      foundation.externalUrl
+                    )
+                  }
+                  style={[
+                    styles.foundationItem,
+                    {
+                      borderBottomColor:
+                        '#9BABD2',
+                    },
+                  ]}
+                  accessibilityRole="link"
+                  accessibilityLabel={t(
+                    'funding.openFoundation',
+                    {
+                      foundation:
+                        foundationName,
+                    }
+                  )}
+                >
+                  <Text
+                    style={[
+                      styles.foundationName,
+                      {
+                        color:
+                          primaryText,
+                      },
+                    ]}
+                  >
+                    {foundationName}
+                  </Text>
+
+                  <Text
+                    style={[
+                      styles.foundationDescription,
+                      {
+                        color:
+                          secondaryText,
+                      },
+                    ]}
+                  >
+                    {translate(
+                      foundation.descriptionKey
+                    )}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
+          )}
+        </View>
+      </>
+    );
+  };
 
   return (
     <ScrollView
       style={[
         styles.container,
-        { backgroundColor: colors.background },
+        {
+          backgroundColor:
+            screenBackground,
+        },
       ]}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={
+        styles.content
+      }
       showsVerticalScrollIndicator={false}
     >
       <Text
         style={[
           styles.programmeTitle,
-          { color: colors.textPrimary },
+          { color: primaryText },
         ]}
       >
         {translate(details.titleKey)}
@@ -420,22 +627,19 @@ export default function ProgrammeDetailsScreen() {
       <Text
         style={[
           styles.programmeSubtitle,
-          { color: colors.textSecondary },
+          { color: subtitleText },
         ]}
       >
         {translate(details.subtitleKey)}
       </Text>
 
-      <View style={styles.detailsContent}>
-        {details.type === 'steps' &&
-          renderNfzDetails()}
+      {renderSummaryRows()}
 
-        {details.type === 'eligibility' &&
-          renderPfronDetails()}
+      {renderSteps()}
 
-        {details.type === 'foundations' &&
-          renderFoundationsDetails()}
-      </View>
+      {renderEligibility()}
+
+      {renderFoundations()}
     </ScrollView>
   );
 }
@@ -446,191 +650,270 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
+    paddingHorizontal: 24,
+    paddingTop: 22,
     paddingBottom: 40,
   },
 
   programmeTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    flexShrink: 1,
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 18,
+    lineHeight: 20,
+    letterSpacing: 0.72,
+    textTransform: 'uppercase',
+    marginBottom: 4,
   },
 
   programmeSubtitle: {
-    fontSize: 12,
-    marginTop: 3,
-    lineHeight: 17,
-    flexShrink: 1,
-  },
-
-  detailsContent: {
-    marginTop: 22,
+    fontFamily: 'Afacad_600SemiBold',
+    fontSize: 17,
+    lineHeight: 20,
+    letterSpacing: 0.68,
+    marginBottom: 24,
   },
 
   summaryBox: {
     borderWidth: 1,
-    borderRadius: 15,
+    borderRadius: 16,
     paddingHorizontal: 14,
-    marginBottom: 22,
-    overflow: 'hidden',
+    marginBottom: 28,
   },
 
   summaryRow: {
-    minHeight: 42,
+    minHeight: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
-    paddingVertical: 8,
   },
 
   summaryLabel: {
-    fontSize: 12,
-    flex: 1,
+    fontFamily: 'Afacad_400Regular',
+    fontSize: 16,
+    lineHeight: 20,
     flexShrink: 1,
   },
 
   summaryValue: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontFamily: 'Afacad_600SemiBold',
+    fontSize: 17,
+    lineHeight: 20,
+    letterSpacing: 0.68,
     textAlign: 'right',
-    flex: 1,
     flexShrink: 1,
+    maxWidth: '58%',
+  },
+
+  summaryDivider: {
+    height: 1,
   },
 
   sectionTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    marginBottom: 10,
-    marginTop: 4,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    lineHeight: 14,
+    textTransform: 'uppercase',
+    marginBottom: 14,
   },
 
   stepsContainer: {
-    gap: 16,
-    marginBottom: 24,
+    gap: 0,
+    marginBottom: 26,
   },
 
-  stepRow: {
+stepRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
 
-  stepNumber: {
-    width: 28,
-    minHeight: 28,
-    borderRadius: 14,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
+stepIndicator: {
+  width: 30,
+  alignItems: 'center',
+  marginRight: 12,
+  flexShrink: 0,
+},
 
-  stepNumberText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
+stepNumber: {
+  width: 30,
+  height: 30,
+  borderRadius: 15,
 
-  stepContent: {
-    flex: 1,
-  },
+  borderWidth: 0,
 
-  stepTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    flexShrink: 1,
-  },
+  alignItems: 'center',
+  justifyContent: 'center',
+},
 
-  stepDescription: {
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 2,
-    flexShrink: 1,
-  },
+stepNumberText: {
+  fontFamily: 'Afacad_600SemiBold',
+  fontSize: 16,
+  lineHeight: 18,
+},
 
-  infoBox: {
-    borderWidth: 1,
-    borderRadius: 15,
-    padding: 14,
-    marginBottom: 22,
-  },
+stepDots: {
+  alignItems: 'center',
+  justifyContent: 'space-evenly',
+  height: 38,
+  paddingVertical: 5,
+},
 
-  bulletText: {
-    fontSize: 12,
-    lineHeight: 22,
-    flexShrink: 1,
-  },
+stepDot: {
+  width: 3,
+  height: 3,
+  borderRadius: 1.5,
+  backgroundColor: '#E0E0E0',
+},
+
+stepContent: {
+  flex: 1,
+  paddingTop: 2,
+  paddingBottom: 14,
+},
+
+stepTitle: {
+  fontFamily: 'Afacad_600SemiBold',
+  fontSize: 17,
+  lineHeight: 20,
+  letterSpacing: 0.68,
+  marginBottom: 3,
+  flexShrink: 1,
+},
+
+stepDescription: {
+  fontFamily: 'Afacad_400Regular',
+  fontSize: 14,
+  lineHeight: 18,
+  letterSpacing: 0.56,
+  flexShrink: 1,
+},
 
   mainButton: {
-    minHeight: 52,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginTop: 8,
-  },
+  height: 60,
+  borderRadius: 18,
+  borderWidth: 3,
+
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  paddingHorizontal: 16,
+  paddingVertical: 8,
+
+  marginTop: 2,
+},
 
   mainButtonText: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 19,
+    letterSpacing: 0.64,
+    textTransform: 'uppercase',
     textAlign: 'center',
     flexShrink: 1,
   },
 
-  actionCard: {
-    borderRadius: 13,
-    minHeight: 64,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  eligibilityBox: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 10,
+    marginBottom: 28,
+    justifyContent: 'center',
+
+  },
+
+  eligibilityRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginBottom: 8,
   },
 
-  actionCardText: {
+  bullet: {
+    fontFamily: 'Afacad_600SemiBold',
+    fontSize: 17,
+    lineHeight: 20,
+    marginRight: 4,
+  },
+
+  eligibilityText: {
+    fontFamily: 'Afacad_400Regular',
+    fontSize: 16,
+    lineHeight: 20,
     flex: 1,
-    paddingRight: 8,
   },
 
-  actionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    flexShrink: 1,
+  actionSectionTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    lineHeight: 14,
+    textTransform: 'uppercase',
+    marginBottom: 14,
   },
 
-  actionDescription: {
-    fontSize: 10,
-    marginTop: 3,
-    flexShrink: 1,
-  },
+  actionButton: {
+  height: 60,
+  borderRadius: 18,
+  borderWidth: 3,
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+},
+
+actionButtonContent: {
+  flex: 1,
+  paddingRight: 6,
+  paddingLeft: 6,
+},
+
+actionButtonTitle: {
+  fontFamily: 'Afacad_600SemiBold',
+  fontSize: 15,
+  lineHeight: 20,
+  letterSpacing: 0.68,
+  marginBottom: 2,
+  flexShrink: 1,
+},
+
+actionButtonDescription: {
+  fontFamily: 'Afacad_400Regular',
+  fontSize: 13,
+  lineHeight: 17,
+  letterSpacing: 0.56,
+  flexShrink: 1,
+},
 
   foundationItem: {
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
   },
 
   foundationName: {
-    fontSize: 14,
-    fontWeight: '600',
-    flexShrink: 1,
+    fontFamily: 'Afacad_600SemiBold',
+    fontSize: 17,
+    lineHeight: 20,
+    letterSpacing: 0.68,
+    marginBottom: 3,
   },
 
   foundationDescription: {
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 3,
-    flexShrink: 1,
+    fontFamily: 'Afacad_400Regular',
+    fontSize: 14,
+    lineHeight: 18,
+    letterSpacing: 0.56,
   },
 
-  errorContainer: {
+  notFoundContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    justifyContent: 'center',
+    padding: 24,
   },
 
-  errorText: {
-    fontSize: 16,
+  notFoundText: {
+    fontFamily: 'Afacad_600SemiBold',
+    fontSize: 17,
+    lineHeight: 21,
     textAlign: 'center',
   },
 });
