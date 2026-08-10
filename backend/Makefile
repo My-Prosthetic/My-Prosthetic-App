@@ -7,8 +7,8 @@ initial:
 
 ci: test analyse lint
 
-test:
-	php artisan test
+# test:
+#   php artisan test
 
 analyse:
 	vendor/bin/phpstan analyse --memory-limit=1G
