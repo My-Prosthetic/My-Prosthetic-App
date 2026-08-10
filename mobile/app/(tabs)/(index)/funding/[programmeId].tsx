@@ -851,7 +851,7 @@ stepDescription: {
   },
 
   actionButton: {
-  height: 72,
+  minHeight: 72,
   borderRadius: 18,
   borderWidth: 3,
   flexDirection: 'row',
