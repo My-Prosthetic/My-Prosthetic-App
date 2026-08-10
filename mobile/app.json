@@ -1,34 +1,30 @@
 {
-  "expo": {
-    "name": "MyProsthetics_local",
-    "slug": "MyProsthetics_local",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/mp_logo_accent.png",
-    "userInterfaceStyle": "light",
-    "scheme": "your-app-scheme",
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "experiments": {
-      "typedRoutes": true
-    },
-    "plugins": [
-      "expo-router",
-      "expo-status-bar",
-      "expo-sqlite"
-    ]
-  }
+	"expo": {
+		"name": "MyProsthetics_local",
+		"slug": "MyProsthetics_local",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/mp_logo_accent.png",
+		"userInterfaceStyle": "light",
+		"scheme": "your-app-scheme",
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./assets/android-icon-foreground.png",
+				"backgroundImage": "./assets/android-icon-background.png",
+				"monochromeImage": "./assets/android-icon-monochrome.png"
+			},
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"experiments": {
+			"typedRoutes": true
+		},
+		"plugins": ["expo-router", "expo-status-bar", "expo-sqlite"]
+	}
 }
