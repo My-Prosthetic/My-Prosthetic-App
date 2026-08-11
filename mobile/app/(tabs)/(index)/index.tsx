@@ -189,7 +189,7 @@ export default function HomeScreen() {
             <View style={styles.utilityIconBg}>
               <Ionicons name="document-text-outline" size={24} color={colors.primary} />
             </View>
-            <Text style={styles.utilityText}>{t('myFiles')}</Text>
+            <Text style={styles.utilityText}>{t('home.myFiles')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.primary} />
         </TouchableOpacity>

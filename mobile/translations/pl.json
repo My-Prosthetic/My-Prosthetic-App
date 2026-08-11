@@ -33,5 +33,82 @@
     "funding": "DOFINANSOWANIA",
     "myFiles": "MOJE PLIKI I ZDJĘCIA",
     "addMeasure": "DODAJ POMIAR"
+  },
+ "funding": {
+  "header": "DOFINANSOWANIA",
+  "detailsHeader": "SZCZEGÓŁY PROGRAMU",
+  "availableProgrammes": "Dostępne programy",
+  "accumulatedFunds": "Moje uzyskane",
+  "addFunds": "DODAJ UZYSKANE ŚRODKI",
+  "notFound": "Nie znaleziono programu.",
+  "back": "Wróć",
+  "showProgrammeDetails": "Pokaż szczegóły programu {{programme}}",
+  "openFoundation": "Otwórz stronę {{foundation}}",
+
+  "sections": {
+    "national": "PROGRAMY NARODOWE",
+    "foundations": "FUNDACJE WSPIERAJĄCE"
+  },
+
+  "nfz": {
+    "badge": "NFZ",
+    "title": "ZLECENIE NA WYRÓB MEDYCZNY",
+    "shortDescription": "Podstawowe dofinansowanie (cykl 3 lata).",
+    "detailsTitle": "ZLECENIE NFZ",
+    "subtitle": "Podstawowe dofinansowanie krajowe",
+    "limitLabel": "Limit czasowy",
+    "limitValue": "Zależny od kodu wyrobu",
+    "contributionLabel": "Wkład własny",
+    "contributionValue": "Zależny od kodu",
+    "howToGet": "JAK UZYSKAĆ?",
+    "step1Title": "Wizyta u lekarza specjalisty",
+    "step1Description": "Ortopeda, chirurg lub lekarz rehabilitacji.",
+    "step2Title": "Wystawienie zlecenia eZWM",
+    "step2Description": "Lekarz wprowadza wniosek do systemu NFZ.",
+    "step3Title": "Realizacja u protetyka",
+    "step3Description": "Przekazanie kodu zlecenia i PINu.",
+    "button": "PRZEJDŹ DO STRONY NFZ"
+  },
+
+  "pfron": {
+    "badge": "PFRON",
+    "title": "PROGRAM \"AKTYWNY SAMORZĄD\"",
+    "shortDescription": "Dopłata do zaawansowanych protez (K3/K4).",
+    "detailsTitle": "AKTYWNY SAMORZĄD",
+    "subtitle": "Środki PFRON (Moduł C)",
+    "recruitmentLabel": "Terminy naboru",
+    "recruitmentValue": "Sprawdź w swoim PCPR",
+    "eligibilityTitle": "KTO MOŻE SKORZYSTAĆ?",
+    "eligibility1": "Osoby ze stopniem niepełnosprawności",
+    "eligibility2": "Osoby aktywne zawodowo (lub uczące się)",
+    "eligibility3": "Pacjenci z profilem ruchowym K3 lub K4",
+    "sowTitle": "SYSTEM OBSŁUGI WSPARCIA (SOW)",
+    "button": "Złóż wniosek i sprawdź terminy",
+    "buttonDescription": "Zaloguj się do państwowego systemu PFRON"
+  },
+
+  "collections": {
+    "badge": "ZBIÓRKI",
+    "title": "ZBIÓRKI I WKŁAD WŁASNY",
+    "shortDescription": "Lista zaufanych fundacji wspierających.",
+    "detailsTitle": "FUNDACJE I ZBIÓRKI",
+    "subtitle": "Środki z 1,5% podatku i zbiórek publicznych",
+    "sectionTitle": "POPULARNE FUNDACJE"
+  },
+
+  "foundations": {
+    "avalon": {
+      "name": "Fundacja Avalon",
+      "description": "Zakładanie subkont dla osób z niepełnosprawnością."
+    },
+    "mocPomocy": {
+      "name": "Fundacja Moc Pomocy",
+      "description": "Wsparcie w powrocie do aktywności."
+    },
+    "siepomaga": {
+      "name": "Siepomaga.pl",
+      "description": "Platforma szybkich zbiórek celowych."
+    }
   }
+ }
 }
