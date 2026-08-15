@@ -8,8 +8,8 @@ export default function AccumulatedFundsScreen() {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.text, { color: colors.textPrimary }]}>
+    <View style={[styles.container, { backgroundColor: colors.tertiary_base_2 }]}>
+      <Text style={[styles.text, { color: colors.primary_base }]}>
         {t('screens.accumulatedTitle')}
       </Text>
     </View>

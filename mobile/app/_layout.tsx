@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
-import '../translations/i18n';
+import '@/translations/i18n';
 
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export default function RootLayout() {
   return (

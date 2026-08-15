@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../../../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function ProgrammesScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.text, { color: colors.textPrimary }]}>
+    <View style={[styles.container, { backgroundColor: colors.tertiary_base_2 }]}>
+      <Text style={[styles.text, { color: colors.primary_base }]}>
         {t('screens.programmesTitle')}
       </Text>
     </View>

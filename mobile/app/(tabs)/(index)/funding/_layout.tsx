@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-na
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../../../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 //TODO nie korzystam tu z tabs, tylko trochę "sztucznie" zmieniam ścieżki. Czy nie sprawia to, że tracę cache co zdziałałem na tej ścieżce przeskakują między ekranami?
 
@@ -17,7 +17,7 @@ export default function FundingTabsLayout() {
   const isAccumulated = pathname.includes('accumulated_funds');
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background || '#E5F0FF' }]}>
+    <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2 || '#E5F0FF' }]}>
       {/* 1. GÓRNY NAGŁÓWEK */}
       <View style={styles.topHeader}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>

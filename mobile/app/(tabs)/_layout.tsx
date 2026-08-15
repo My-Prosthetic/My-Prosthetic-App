@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 //TODO czy te tabs sa ok? Czy chcemy isc w native tabs
 
@@ -13,12 +13,12 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.accentPrimary,
-        tabBarInactiveTintColor: colors.secondary,
+        tabBarActiveTintColor: colors.accent_base,
+        tabBarInactiveTintColor: colors.secondary_base_0c,
         tabBarStyle: {
-          backgroundColor: colors.primary,
+          backgroundColor: colors.primary_base,
           borderTopWidth: 1,
-          borderTopColor: colors.tertiary,
+          borderTopColor: colors.tertiary_base_1,
         },
       }}
     >
