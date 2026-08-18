@@ -13,14 +13,14 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/mp_logo_accent.png",
+        "backgroundImage": "./assets/mp_logo_accent.png",
+        "monochromeImage": "./assets/mp_logo_accent.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/mp_logo_accent.png"
     },
     "experiments": {
       "typedRoutes": true
