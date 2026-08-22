@@ -14,7 +14,8 @@ export type ThemedViewSize = 'none' | 'wide' | 'narrow' | 'background' | 'tag';
 
 export interface ThemedViewProps extends Omit<PressableProps, 'style'> {
   colorName?: keyof ThemeColors;
-  size?: ThemedViewSize;
+  borderColor?: keyof ThemeColors;
+  variant?: ThemedViewSize;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
@@ -22,7 +23,8 @@ export interface ThemedViewProps extends Omit<PressableProps, 'style'> {
 
 export const ThemedView = ({
   colorName = 'primary_base',
-  size = 'none',
+  borderColor,
+  variant: size = 'none',
   onPress,
   style,
   children,
@@ -32,10 +34,14 @@ export const ThemedView = ({
 
   const getElementStyle = (pressed = false ): StyleProp<ViewStyle> => [
     styles.base,
+    borderColor && {
+    borderWidth: 3,
+    borderColor: colors[borderColor],
+    },
     sizes[size],
     { backgroundColor: colors[colorName] },
     pressed && styles.pressed,
-    style,
+    style, 
   ];
 
   if (onPress) {
@@ -81,12 +87,13 @@ tag: {
   narrow: {
     paddingVertical: 10,
     paddingHorizontal: 14,
-    minHeight: 44,
-    width: '70%',
+    height: 60,
+    width: '60%',
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
+    justifyContent: 'center',
   },
   wide: {
     paddingVertical: 14,
@@ -95,11 +102,12 @@ tag: {
     borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
   },
   background: {
     flex: 1,
-    padding: 16,
     paddingHorizontal: 32,
+    paddingVertical: 0,
+    margin: 0
   },
 });

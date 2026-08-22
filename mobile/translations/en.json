@@ -32,6 +32,52 @@
     "lastActivity": "LAST ACTIVITY",
     "funding": "FUNDING",
     "myFiles": "MY FILES AND PHOTOS",
-    "addMeasure": "ADD MEASURE"
+    "addMeasure": "ADD MEASURE",
+    "prostheticDaily": "OBJ: Daily prosthesis",
+    "lastStumpMeasurement": "Last stump measurement:",
+    "lastIncident": "Last incident:",
+    "todayAt": "Today, 08:30",
+    "daysAgo": "5 days ago",
+    "showFullHistory": "Show full history",
+    "switchToHighContrast": "Switch to high contrast 🌙",
+    "switchToLightTheme": "Switch to light theme ☀️"
+  },
+  "common": {
+    "cancel": "CANCEL",
+    "error": "Error",
+    "save": "SAVE"
+  },
+  "funds": {
+    "title": "FUNDING",
+    "availableProgrammes": "Available programmes",
+    "myFunds": "My funds",
+    "addFundsTitle": "ADD FUNDS",
+    "addGoalTitle": "ADD GOAL",
+    "addNewGoal": "ADD NEW GOAL",
+    "addGoal": "+ Add goal",
+    "addDeposit": "Add funds received",
+    "prostheticBudget": "PROSTHETIC BUDGET",
+    "collected": "Collected:",
+    "datePlaceholder": "DATE - DATE",
+    "savedSources": "SAVED SOURCES",
+    "deposit": "Deposit",
+    "fundingSource": "FUNDING SOURCE",
+    "grantedAmount": "GRANTED AMOUNT",
+    "decisionDate": "DECISION DATE",
+    "additionalNote": "ADDITIONAL NOTE (OPTIONAL)",
+    "addToWallet": "ADD TO WALLET",
+    "selectFundingSource": "Select funding source",
+    "select": "SELECT",
+    "notePlaceholder": "Enter a short description, e.g. decision number...",
+    "chooseFundingSourceError": "Choose a funding source",
+    "invalidAmountError": "Enter a valid amount greater than zero",
+    "saveDepositError": "The deposit could not be saved.",
+    "sources": {
+      "family": "Family",
+      "fundraiser": "Online fundraiser",
+      "grant": "Grant",
+      "savings": "Savings",
+      "other": "Other source"
+    }
   }
 }

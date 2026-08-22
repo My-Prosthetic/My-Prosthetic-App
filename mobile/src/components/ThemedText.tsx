@@ -1,9 +1,15 @@
 import { Text, TextProps, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ParseKeys, TOptions } from 'i18next';
-import { useTheme, ThemeColors } from '@/context/ThemeContext'
+import { useTheme, ThemeColors } from '@/context/ThemeContext';
 
-type Variant = 'title' | 'tab1Category' | 'main1Button' | 'subTitle1' | 'subTitle2';
+type Variant = 
+  | 'title' 
+  | 'tab1Category' 
+  | 'main1Button' 
+  | 'subTitle1' 
+  | 'subTitle2'
+  | 'body1Regular';
 
 interface ThemedTextProps extends TextProps {
   tx?: ParseKeys;
@@ -26,7 +32,6 @@ export const ThemedText = ({
   const { t } = useTranslation();
 
   const content = tx ? t(tx, txOptions) : children;
-
 
   return (
     <Text
@@ -59,7 +64,7 @@ const typography = StyleSheet.create({
   },
   main1Button: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 22,
     letterSpacing: 0.72,
     textTransform: 'uppercase',
@@ -77,5 +82,11 @@ const typography = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     letterSpacing: 0.56,
+  },
+  body1Regular: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    lineHeight: 14,
+    letterSpacing: 0,
   },
 });

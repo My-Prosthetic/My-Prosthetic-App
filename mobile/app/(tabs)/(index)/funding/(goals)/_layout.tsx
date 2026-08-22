@@ -1,75 +1,29 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, } from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/context/ThemeContext';
+import { ThemedView } from '@/src/components/ThemedView';
+import { ThemedText } from '@/src/components/ThemedText';
 
 //TODO nie korzystam tu z tabs, tylko trochę "sztucznie" zmieniam ścieżki. Czy nie sprawia to, że tracę cache co zdziałałem na tej ścieżce przeskakują między ekranami?
+//TODO kolory
 
 export default function FundingTabsLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
-  const pathname = usePathname();
-
-  // Sprawdzamy, która zakładka jest aktualnie aktywna na podstawie ścieżki
-  const isAccumulated = pathname.includes('accumulated_funds');
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2 || '#E5F0FF' }]}>
-      {/* 1. GÓRNY NAGŁÓWEK */}
       <View style={styles.topHeader}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
+          <Ionicons name="chevron-back" size={28} color={colors.accent_base} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>DOFINANSOWANIA</Text>
+        <ThemedText variant='title' colorName='accent_base' tx="funds.addGoalTitle" />
       </View>
 
-      {/* 2. PIGUŁKOWY PRZEŁĄCZNIK (TOGGLE) */}
-      <View style={styles.toggleWrapper}>
-        <View style={styles.toggleContainer}>
-          {/* Przycisk: Dostępne programy */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.replace('/funding/programmes')} // Dopasuj ścieżkę jeśli jest inna
-            style={[
-              styles.toggleButton,
-              !isAccumulated && styles.toggleButtonActive,
-            ]}
-          >
-            <Text
-              style={[
-                styles.toggleText,
-                !isAccumulated ? styles.toggleTextActive : styles.toggleTextInactive,
-              ]}
-            >
-              {t('tabs.programmes', 'Dostępne programy')}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Przycisk: Moje uzyskane */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.replace('/funding/accumulated_funds')} // Dopasuj ścieżkę jeśli jest inna
-            style={[
-              styles.toggleButton,
-              isAccumulated && styles.toggleButtonActive,
-            ]}
-          >
-            <Text
-              style={[
-                styles.toggleText,
-                isAccumulated ? styles.toggleTextActive : styles.toggleTextInactive,
-              ]}
-            >
-              {t('tabs.accumulated', 'Moje uzyskane')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* 3. ZAWARTOŚĆ EKRANU (TUTAJ RENDERUJĄ SIĘ EKRANY PROGRAMMES / ACCUMULATED_FUNDS) */}
       <View style={styles.contentContainer}>
         <Slot />
       </View>

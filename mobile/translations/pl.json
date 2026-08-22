@@ -32,6 +32,52 @@
     "lastActivity": "OSTATNIA AKTYWNOŚĆ",
     "funding": "DOFINANSOWANIA",
     "myFiles": "MOJE PLIKI I ZDJĘCIA",
-    "addMeasure": "DODAJ POMIAR"
+    "addMeasure": "DODAJ POMIAR",
+    "prostheticDaily": "CEL: Proteza codzienna",
+    "lastStumpMeasurement": "Ostatni pomiar kikuta:",
+    "lastIncident": "Ostatni incydent:",
+    "todayAt": "Dzisiaj, 08:30",
+    "daysAgo": "5 dni temu",
+    "showFullHistory": "Pokaż całą historię",
+    "switchToHighContrast": "Zmień na wysoki kontrast 🌙",
+    "switchToLightTheme": "Zmień na jasny motyw ☀️"
+  },
+  "common": {
+    "cancel": "ANULUJ",
+    "error": "Błąd",
+    "save": "ZAPISZ"
+  },
+  "funds": {
+    "title": "DOFINANSOWANIA",
+    "availableProgrammes": "Dostępne programy",
+    "myFunds": "Moje uzyskane",
+    "addFundsTitle": "DODAJ ŚRODKI",
+    "addGoalTitle": "DODAJ CEL",
+    "addNewGoal": "DODAJ NOWY CEL",
+    "addGoal": "+ Dodaj cel",
+    "addDeposit": "Dodaj uzyskane środki",
+    "prostheticBudget": "BUDŻET NA PROTEZĘ",
+    "collected": "Zebrano:",
+    "datePlaceholder": "DATA - DATA",
+    "savedSources": "ZAPISANE ŹRÓDŁA",
+    "deposit": "Wpłata",
+    "fundingSource": "ŹRÓDŁO FINANSOWANIA",
+    "grantedAmount": "KWOTA PRZYZNANIA",
+    "decisionDate": "DATA PRZYZNANIA DECYZJI",
+    "additionalNote": "DODATKOWA NOTATKA (OPCJONALNIE)",
+    "addToWallet": "DODAJ DO PORTFELA",
+    "selectFundingSource": "Wybierz źródło dofinansowania",
+    "select": "WYBIERZ",
+    "notePlaceholder": "Wpisz krótki opis, np. nr decyzji...",
+    "chooseFundingSourceError": "Wybierz źródło dofinansowania",
+    "invalidAmountError": "Podaj poprawną kwotę większą od zera",
+    "saveDepositError": "Nie udało się zapisać wpłaty w bazie danych.",
+    "sources": {
+      "family": "Rodzina",
+      "fundraiser": "Zbiórka internetowa",
+      "grant": "Dofinansowanie",
+      "savings": "Oszczędności",
+      "other": "Inne źródło"
+    }
   }
 }

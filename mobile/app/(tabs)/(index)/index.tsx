@@ -118,7 +118,7 @@ export default function HomeScreen() {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.prostheticCardText}>OBJ: Proteza codzienna</Text>
+            <Text style={styles.prostheticCardText}>{t('home.prostheticDaily')}</Text>
           </View>
 
           {/* Prawa strzałka karuzeli */}
@@ -150,16 +150,16 @@ export default function HomeScreen() {
           {/* Element osi czasu 1: Pomiar kikuta */}
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
-              <Text style={styles.activityLabel}>Ostatni pomiar kikuta:</Text>
-              <Text style={styles.activityValue}>Dzisiaj, 08:30</Text>
+              <Text style={styles.activityLabel}>{t('home.lastStumpMeasurement')}</Text>
+              <Text style={styles.activityValue}>{t('home.todayAt')}</Text>
             </View>
           </View>
 
           {/* Element osi czasu 2: Ostatni incydent */}
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
-              <Text style={styles.activityLabel}>Ostatni incydent:</Text>
-              <Text style={styles.activityValue}>5 dni temu</Text>
+              <Text style={styles.activityLabel}>{t('home.lastIncident')}</Text>
+              <Text style={styles.activityValue}>{t('home.daysAgo')}</Text>
             </View>
           </View>
         </View>
@@ -167,13 +167,13 @@ export default function HomeScreen() {
       
       {/* Link: Pokaż całą historię */}
       <TouchableOpacity style={styles.historyLink}>
-        <Text style={styles.historyLinkText}>Pokaż całą historię</Text>
+        <Text style={styles.historyLinkText}>{t('home.showFullHistory')}</Text>
       </TouchableOpacity>
 
       {/* ----------------- SEKCJA: UTILITY BUTTONS (NA DOLE) ----------------- */}
       <View style={styles.utilitiesContainer}>
         {/* Przycisk: Dofinansowania */}
-        <TouchableOpacity onPress={() => router.push('../funding/accumulated_funds')} style={styles.utilityButton}>
+        <TouchableOpacity onPress={() => router.push('./funding/accumulated_funds')} style={styles.utilityButton}>
           <View style={styles.utilityLeftContent}>
             <View style={styles.utilityIconBg}>
               <Ionicons name="cash-outline" size={24} color={colors.primary_base} />
@@ -201,7 +201,7 @@ export default function HomeScreen() {
         onPress={() => setTheme(themeType === 'light' ? 'high-contrast' : 'light')}
       >
         <Text style={styles.themeToggleDevButtonText}>
-          {themeType === 'light' ? 'Zmień na wysoki kontrast 🌙' : 'Zmień na jasny motyw ☀️'}
+          {themeType === 'light' ? t('home.switchToHighContrast') : t('home.switchToLightTheme')}
         </Text>
       </TouchableOpacity>
     </ScrollView>

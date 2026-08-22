@@ -7,7 +7,7 @@ export const deposits = sqliteTable('deposits', {
     goalId: integer('goal_id').notNull()
         .references(() => goals.id, { onDelete: 'cascade' }),
     source: text('source').notNull(),
-    amout: integer('amout').notNull(),
+    amount: integer('amout').notNull(),
     assignedAt: text('assigned_at').notNull(),
     note: text('note'),
 });

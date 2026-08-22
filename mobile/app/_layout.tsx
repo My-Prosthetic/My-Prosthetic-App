@@ -2,15 +2,23 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SQLite from 'expo-sqlite';
 
 import '@/translations/i18n';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { logFullDatabase } from '@/db/debug';
 
 //TODO usunąć pliki z fontami, których ostatecznie nie używamy
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
+  useEffect(() => {
+    // Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
+    logFullDatabase();
+  }, []);
+
   const [loaded, error] = useFonts({
     'Afacad-Regular': require('@/assets/fonts/Afacad/Afacad-Regular.ttf'),
     'Afacad-Medium': require('@/assets/fonts/Afacad/Afacad-Medium.ttf'),

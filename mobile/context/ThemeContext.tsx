@@ -1,14 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-//TODO stworzyć komponent ThemedView
-
-
 export interface ThemeColors {
 primary_base: string;
-primary_base1: string;
-primary_base2: string;
-primary_base3: string;
-primary_base4: string;
+primary_base_1: string;
+primary_base_2: string;
+primary_base_3: string;
+primary_base_4: string;
 secondary_base_0c: string;
 secondary_base: string;
 secondary_base_3: string;
@@ -23,10 +20,10 @@ warning: string;
 
 export const lightTheme: ThemeColors = {
   primary_base: "#052D8F",
-  primary_base1: "#3757A5",
-  primary_base2: "#6981BC",
-  primary_base3: "#9BABD2",
-  primary_base4: "#CDD5E9",
+  primary_base_1: "#3757A5",
+  primary_base_2: "#6981BC",
+  primary_base_3: "#9BABD2",
+  primary_base_4: "#CDD5E9",
   secondary_base_0c: "#1967C8",
   secondary_base: "#4990E8",
   secondary_base_3: "#B6D3F6",
@@ -41,10 +38,10 @@ export const lightTheme: ThemeColors = {
 
 export const highContrastTheme: ThemeColors = {
   primary_base: "#001A5E",
-  primary_base1: "#0B3C9E",
-  primary_base2: "#4A70D0",
-  primary_base3: "#8AA3E4",
-  primary_base4: "#E6EDF8",
+  primary_base_1: "#0B3C9E",
+  primary_base_2: "#4A70D0",
+  primary_base_3: "#8AA3E4",
+  primary_base_4: "#E6EDF8",
   secondary_base_0c: "#0047AB",
   secondary_base: "#0C68E9",
   secondary_base_3: "#CCE4FF",
