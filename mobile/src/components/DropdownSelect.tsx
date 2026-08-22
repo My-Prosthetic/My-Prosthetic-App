@@ -29,7 +29,9 @@ export function DropdownSelect<T>({
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const [isOpen, setIsOpen] = React.useState(false);
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOption = value === undefined
+    ? undefined
+    : options.find((option) => getOptionKey(option.value) === getOptionKey(value));
 
   return (
     <View style={styles.wrapper}>

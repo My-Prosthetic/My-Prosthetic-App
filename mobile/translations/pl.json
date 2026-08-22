@@ -45,13 +45,15 @@
   "common": {
     "cancel": "ANULUJ",
     "error": "Błąd",
-    "save": "ZAPISZ"
+    "save": "ZAPISZ",
+    "delete": "Usuń"
   },
   "funds": {
     "title": "DOFINANSOWANIA",
     "availableProgrammes": "Dostępne programy",
     "myFunds": "Moje uzyskane",
     "addFundsTitle": "DODAJ ŚRODKI",
+    "editFundsTitle": "EDYTUJ ŚRODKI",
     "addGoalTitle": "DODAJ CEL",
     "addNewGoal": "DODAJ NOWY CEL",
     "addGoal": "+ Dodaj cel",
@@ -72,6 +74,13 @@
     "chooseFundingSourceError": "Wybierz źródło dofinansowania",
     "invalidAmountError": "Podaj poprawną kwotę większą od zera",
     "saveDepositError": "Nie udało się zapisać wpłaty w bazie danych.",
+    "saveChanges": "ZAPISZ ZMIANY",
+    "depositNotFound": "Nie znaleziono wpłaty.",
+    "loadDepositError": "Nie udało się pobrać wpłaty.",
+    "updateDepositError": "Nie udało się zaktualizować wpłaty.",
+    "deleteDepositTitle": "Usuń wpłatę",
+    "deleteDepositMessage": "Czy na pewno chcesz usunąć tę wpłatę?",
+    "deleteDepositError": "Nie udało się usunąć wpłaty.",
     "sources": {
       "family": "Rodzina",
       "fundraiser": "Zbiórka internetowa",

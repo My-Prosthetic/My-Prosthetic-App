@@ -16,6 +16,7 @@ accent_base: string;
 accent_base_1: string;
 accent_base_2: string;
 warning: string;
+false: string;
 }
 
 export const lightTheme: ThemeColors = {
@@ -34,6 +35,7 @@ export const lightTheme: ThemeColors = {
   accent_base_1: "#F5F3DD",
   accent_base_2: "#FAF9EE",
   warning: "#ED9D1D",
+  false: "#B51932",
 };
 
 export const highContrastTheme: ThemeColors = {
@@ -52,6 +54,7 @@ export const highContrastTheme: ThemeColors = {
   accent_base_1: "#FFF9C4",
   accent_base_2: "#FFFFFF",
   warning: "#FF8C00",
+  false: "#B51932",
 };
 
 type ThemeType = 'light' | 'high-contrast';

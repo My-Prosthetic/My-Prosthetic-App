@@ -87,7 +87,7 @@ export default function NewDepositScreen() {
             options={fundingSources}
             value={fundingSource}
             onChange={setFundingSource}
-            getOptionKey={(source) => source.id}
+            getOptionKey={(source) => source?.id ?? ''}
           />
         </View>
 

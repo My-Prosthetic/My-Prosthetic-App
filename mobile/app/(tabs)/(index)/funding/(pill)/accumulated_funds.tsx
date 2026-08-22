@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, ActivityIndicator, View, ScrollView } from 'react-native';
+import { StyleSheet, ActivityIndicator, View, ScrollView, Pressable } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
 import { eq } from 'drizzle-orm';
 
@@ -143,14 +143,18 @@ export default function AccumulatedFundsScreen() {
       >
         <View>
           {depositsList.map((deposit) => (
-            <View key={deposit.id} style={styles.depositItem}>
+            <Pressable
+              key={deposit.id}
+              style={styles.depositItem}
+              onPress={() => router.push(`../edit_deposit?depositId=${deposit.id}`)}
+            >
               <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
                 {deposit.source || 'Wpłata'}
               </ThemedText>
               <ThemedText variant="body1Regular" colorName="primary_base">
                 {((deposit).amount || 0).toLocaleString('pl-PL')} zł
               </ThemedText>
-            </View>
+            </Pressable>
           ))}
         </View>
       </ScrollView>

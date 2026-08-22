@@ -45,13 +45,15 @@
   "common": {
     "cancel": "CANCEL",
     "error": "Error",
-    "save": "SAVE"
+    "save": "SAVE",
+    "delete": "DELETE"
   },
   "funds": {
     "title": "FUNDING",
     "availableProgrammes": "Available programmes",
     "myFunds": "My funds",
     "addFundsTitle": "ADD FUNDS",
+    "editFundsTitle": "EDIT FUNDS",
     "addGoalTitle": "ADD GOAL",
     "addNewGoal": "ADD NEW GOAL",
     "addGoal": "+ Add goal",
@@ -72,6 +74,13 @@
     "chooseFundingSourceError": "Choose a funding source",
     "invalidAmountError": "Enter a valid amount greater than zero",
     "saveDepositError": "The deposit could not be saved.",
+    "saveChanges": "SAVE CHANGES",
+    "depositNotFound": "Deposit not found.",
+    "loadDepositError": "The deposit could not be loaded.",
+    "updateDepositError": "The deposit could not be updated.",
+    "deleteDepositTitle": "Delete deposit",
+    "deleteDepositMessage": "Are you sure you want to delete this deposit?",
+    "deleteDepositError": "The deposit could not be deleted.",
     "sources": {
       "family": "Family",
       "fundraiser": "Online fundraiser",

@@ -14,6 +14,7 @@ export default function FundingTabsLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2 || '#E5F0FF' }]}>
@@ -21,7 +22,11 @@ export default function FundingTabsLayout() {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color={colors.accent_base} />
         </TouchableOpacity>
-        <ThemedText variant='title' colorName='accent_base' tx="funds.addFundsTitle" />
+        <ThemedText
+          variant='title'
+          colorName='accent_base'
+          tx={pathname.includes('edit_deposit') ? 'funds.editFundsTitle' : 'funds.addFundsTitle'}
+        />
       </View>
 
       <View style={styles.contentContainer}>
