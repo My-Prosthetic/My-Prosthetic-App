@@ -299,21 +299,29 @@ class AuthenticationTest extends TestCase
 
     private function getCsrfCookie(): TestResponse
     {
-        return $this->withHeader('Origin', 'http://localhost:5173')
+        $response = $this->withHeader('Origin', 'http://localhost:5173')
             ->get('/sanctum/csrf-cookie')
             ->assertNoContent();
+
+        $response->assertCookie('XSRF-TOKEN');
+
+        return $response;
     }
 
     private function withFrontendCookies(TestResponse $csrfResponse, string $csrfToken): static
     {
-        return $this->withHeaders([
+        $test = $this->withHeaders([
             'Origin' => 'http://localhost:5173',
             'X-XSRF-TOKEN' => urldecode($csrfToken),
         ])
-            ->withCookie('XSRF-TOKEN', $csrfToken)
-            ->withCookie(
-                config('session.cookie'),
-                $csrfResponse->getCookie(config('session.cookie'))->getValue(),
-            );
+            ->withCookie('XSRF-TOKEN', $csrfToken);
+
+        $sessionCookie = $csrfResponse->getCookie(config('session.cookie'));
+
+        if ($sessionCookie !== null) {
+            $test->withCookie(config('session.cookie'), $sessionCookie->getValue());
+        }
+
+        return $test;
     }
 }
