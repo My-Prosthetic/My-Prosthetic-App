@@ -1,5 +1,5 @@
-import React, { ReactElement, useState } from 'react';
-import { View, Pressable, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import React, { ReactElement, useCallback, useMemo, useState } from 'react';
+import { View, Pressable, StyleSheet, StyleProp, ViewStyle, PanResponder } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -21,17 +21,38 @@ export function Carousel<T>({
   const [currentIndex, setCurrentIndex] = useState(0);
   const { colors } = useTheme();
   const totalLength = renderPlus ? items.length + 1 : items.length;
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < totalLength - 1;
+  const isPlusCard = renderPlus && currentIndex === items.length;
+  const changeIndex = useCallback((newIndex: number) => {
+    if (newIndex < 0 || newIndex >= totalLength) {
+      return;
+    }
+
+    setCurrentIndex(newIndex);
+    setExternalIndex?.(newIndex);
+  }, [setExternalIndex, totalLength]);
+  const panResponder = useMemo(
+    () => PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gestureState) =>
+        Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy),
+      onPanResponderRelease: (_, gestureState) => {
+        if (Math.abs(gestureState.dx) < 50) {
+          return;
+        }
+
+        changeIndex(currentIndex + (gestureState.dx < 0 ? 1 : -1));
+      },
+    }),
+    [changeIndex, currentIndex]
+  );
 
   if (totalLength === 0) {
     return null;
   }
 
-  const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex < totalLength - 1;
-  const isPlusCard = renderPlus && currentIndex === items.length;
-
   return (
-    <View style={styles.container}>
+    <View style={styles.container} {...panResponder.panHandlers}>
       {/* Lewa strzałka */}
       <View style={styles.arrowSlot}>
         <Pressable
@@ -40,10 +61,8 @@ export function Carousel<T>({
             { opacity: !hasPrev ? 0 : pressed ? 0.6 : 1 },
           ]}
           onPress={() => {
-            setCurrentIndex((prev) => prev - 1)
-            setExternalIndex ? setExternalIndex(currentIndex - 1) : null
-            }
-          }
+            changeIndex(currentIndex - 1);
+          }}
         >
           <Ionicons name="chevron-back" size={30} color={colors.primary_base} />
         </Pressable>
@@ -62,10 +81,8 @@ export function Carousel<T>({
             { opacity: !hasNext ? 0 : pressed ? 0.6 : 1 },
           ]}
           onPress={() => {
-            setCurrentIndex((prev) => prev + 1)
-            setExternalIndex ? setExternalIndex(currentIndex + 1) : null
-            }
-          }
+            changeIndex(currentIndex + 1);
+          }}
         >
           <Ionicons name="chevron-forward" size={30} color={colors.primary_base} />
         </Pressable>
