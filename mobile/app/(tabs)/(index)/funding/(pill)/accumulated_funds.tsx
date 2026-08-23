@@ -148,20 +148,29 @@ export default function AccumulatedFundsScreen() {
       showsVerticalScrollIndicator={true}
       >
         <View>
-          {depositsList.map((deposit) => (
-            <Pressable
-              key={deposit.id}
-              style={styles.depositItem}
-              onPress={() => router.push(`../edit_deposit?depositId=${deposit.id}`)}
-            >
-              <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
-                {deposit.source || 'Wpłata'}
-              </ThemedText>
-              <ThemedText variant="body1Regular" colorName="primary_base">
-                {((deposit).amount || 0).toLocaleString('pl-PL')} zł
-              </ThemedText>
-            </Pressable>
-          ))}
+          {depositsList.length === 0 ? (
+            <ThemedText
+              variant="body1Regular"
+              colorName="secondary_base_0c"
+              style={{ lineHeight: 20, paddingVertical: 3 }}
+              tx="funds.noDeposits"
+            />
+          ) : (
+            depositsList.map((deposit) => (
+              <Pressable
+                key={deposit.id}
+                style={styles.depositItem}
+                onPress={() => router.push(`../edit_deposit?depositId=${deposit.id}`)}
+              >
+                <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
+                  {deposit.source || 'Wpłata'}
+                </ThemedText>
+                <ThemedText variant="body1Regular" colorName="primary_base">
+                  {((deposit).amount || 0).toLocaleString('pl-PL')} zł
+                </ThemedText>
+              </Pressable>
+            ))
+          )}
         </View>
       </ScrollView>
 

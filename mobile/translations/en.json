@@ -63,6 +63,7 @@
     "collected": "Collected:",
     "datePlaceholder": "DATE - DATE",
     "savedSources": "SAVED SOURCES",
+    "noDeposits": "No deposits saved yet.",
     "deposit": "Deposit",
     "fundingSource": "FUNDING SOURCE",
     "grantedAmount": "GRANTED AMOUNT",

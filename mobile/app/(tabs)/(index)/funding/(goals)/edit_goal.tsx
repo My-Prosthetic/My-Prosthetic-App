@@ -53,6 +53,10 @@ export default function EditGoalScreen() {
   }, [id]);
 
   const handleUpdateGoal = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!name.trim()) {
       Alert.alert(t('common.error'), t('funds.emptyGoalNameError'));
       return;
@@ -81,6 +85,10 @@ export default function EditGoalScreen() {
   };
 
   const deleteGoal = () => {
+    if (isSubmitting) {
+      return;
+    }
+
     Alert.alert(
       t('funds.deleteGoalTitle'),
       t('funds.deleteGoalMessage'),
@@ -90,6 +98,10 @@ export default function EditGoalScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
+            if (isSubmitting) {
+              return;
+            }
+
             try {
               setIsSubmitting(true);
               await db.delete(goals).where(eq(goals.id, id));

@@ -71,6 +71,10 @@ export default function EditDepositScreen() {
   }, [id]);
 
   const handleUpdateDeposit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!fundingSource) {
       Alert.alert(t('common.error'), t('funds.chooseFundingSourceError'));
       return;
@@ -100,6 +104,10 @@ export default function EditDepositScreen() {
   };
 
   const deleteDeposit = () => {
+    if (isSubmitting) {
+      return;
+    }
+
     Alert.alert(
       t('funds.deleteDepositTitle'),
       t('funds.deleteDepositMessage'),
@@ -109,6 +117,10 @@ export default function EditDepositScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
+            if (isSubmitting) {
+              return;
+            }
+
             try {
               setIsSubmitting(true);
               await db.delete(deposits).where(eq(deposits.id, id));
@@ -173,9 +185,9 @@ export default function EditDepositScreen() {
       </View>
 
       <View style={styles.actions}>
-        <ThemedView variant="wide" colorName="primary_base" borderColor="accent_base" style={styles.primaryAction} onPress={isSubmitting ? undefined : handleUpdateDeposit}>
-          {isSubmitting ? <ActivityIndicator color={colors.accent_base_2} /> :
-            <ThemedText variant="main1Button" colorName="accent_base_2" tx="common.save" />
+        <ThemedView variant="narrow" colorName="primary_base" borderColor="accent_base" onPress={isSubmitting ? undefined : handleUpdateDeposit}>
+          {isSubmitting ? <ActivityIndicator color={colors.accent_base} /> :
+            <ThemedText variant="main1Button" colorName="accent_base" tx="common.save" />
           }
         </ThemedView>
         <ThemedText variant="main1Button" colorName="false" style={styles.cancelAction} onPress={deleteDeposit} tx="common.delete" />
@@ -196,6 +208,5 @@ const getStyles = (colors: ThemeColors) => StyleSheet.create({
   amountInput: { flex: 1, padding: 0, color: colors.primary_base, fontFamily: 'Inter-SemiBold', fontSize: 22 },
   noteInput: { minHeight: 80, textAlignVertical: 'top', width: '100%', color: colors.primary_base_1, fontFamily: 'Afacad-Medium', fontSize: 16 },
   actions: { gap: 16, marginBottom: 16, alignItems: 'center' },
-  primaryAction: { width: '100%', marginVertical: 0, borderWidth: 1.5, borderRadius: 24 },
   cancelAction: { padding: 8 },
 });

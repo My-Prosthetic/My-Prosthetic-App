@@ -19,6 +19,10 @@ export default function NewGoalScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSaveGoal = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!name.trim()) {
       Alert.alert(t('common.error'), t('funds.emptyGoalNameError'));
       return;

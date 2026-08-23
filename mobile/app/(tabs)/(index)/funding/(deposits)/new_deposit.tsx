@@ -42,6 +42,10 @@ export default function NewDepositScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleSaveDeposit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     // 1. Walidacja
     if (!fundingSource) {
       Alert.alert(t('common.error'), t('funds.chooseFundingSourceError'));
@@ -181,7 +185,7 @@ export default function NewDepositScreen() {
             <ActivityIndicator color={colors.accent_base_2} />
           ) : (
             <>
-              <ThemedText colorName="accent_base_2">+</ThemedText>
+              <ThemedText colorName="accent_base_2" style={{ paddingHorizontal: 10 }}>+</ThemedText>
               <ThemedText variant="main1Button" colorName="accent_base_2" tx="funds.addToWallet" />
             </>
           )}
