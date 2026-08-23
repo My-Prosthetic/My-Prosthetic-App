@@ -79,7 +79,13 @@ export default function AccumulatedFundsScreen() {
   );
 
   const renderGoal = (item: Goal) => (
-    <ThemedView key={item.id} variant="wide" colorName="tertiary_base_3" style={styles.carouselOutline}>
+    <ThemedView
+      key={item.id}
+      variant="wide"
+      colorName="tertiary_base_3"
+      style={styles.carouselOutline}
+      onPress={() => router.push(`../edit_goal?goalId=${item.id}`)}
+    >
       <ThemedText colorName="primary_base">{item.name}</ThemedText>
     </ThemedView>
   );
@@ -168,7 +174,8 @@ export default function AccumulatedFundsScreen() {
           style={{marginVertical: 16}}
         >
           <ThemedText 
-            colorName="accent_base_2" 
+            colorName="accent_base_2"
+            style={{ paddingHorizontal: 10 }}
           >
             +
           </ThemedText>

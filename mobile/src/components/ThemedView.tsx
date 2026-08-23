@@ -12,6 +12,8 @@ import { useTheme, ThemeColors } from '@/context/ThemeContext';
 
 export type ThemedViewSize = 'none' | 'wide' | 'narrow' | 'background' | 'tag';
 
+//TODO dodać amout-field
+
 export interface ThemedViewProps extends Omit<PressableProps, 'style'> {
   colorName?: keyof ThemeColors;
   borderColor?: keyof ThemeColors;
@@ -88,7 +90,7 @@ tag: {
     paddingVertical: 10,
     paddingHorizontal: 14,
     height: 60,
-    width: '60%',
+    width: '70%',
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -98,11 +100,12 @@ tag: {
   wide: {
     paddingVertical: 14,
     paddingHorizontal: 20,
-    minHeight: 52,
+    minHeight: 50,
     borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    width: '100%',
   },
   background: {
     flex: 1,
