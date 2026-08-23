@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<int, string|Rule|Password>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
