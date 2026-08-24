@@ -7,7 +7,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use stdClass;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -31,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return response()->json([
                 'message' => 'Unauthenticated.',
-                'errors' => new stdClass(),
+                'errors' => new \stdClass(),
             ], Response::HTTP_UNAUTHORIZED);
         });
     })->create();

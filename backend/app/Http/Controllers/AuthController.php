@@ -101,6 +101,7 @@ class AuthController extends Controller
 
     public function mobileLogout(Request $request): Response
     {
+        /** @var PersonalAccessToken|null $token */
         $token = $this->authenticatedUser($request)->currentAccessToken();
 
         if ($token instanceof PersonalAccessToken) {
