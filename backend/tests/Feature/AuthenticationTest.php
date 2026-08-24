@@ -152,7 +152,7 @@ class AuthenticationTest extends TestCase
             ->assertUnauthorized()
             ->assertExactJson([
                 'message' => 'Unauthenticated.',
-                'errors' => new stdClass(),
+                'errors' => new stdClass,
             ]);
     }
 

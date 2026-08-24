@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return response()->json([
                 'message' => 'Unauthenticated.',
-                'errors' => new \stdClass(),
+                'errors' => new stdClass,
             ], Response::HTTP_UNAUTHORIZED);
         });
     })->create();
