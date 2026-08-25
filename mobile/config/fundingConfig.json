@@ -1,0 +1,108 @@
+{
+  "lastUpdated": "2026-08-07",
+  "programmes": [
+    {
+      "id": "nfz",
+      "sectionKey": "funding.sections.national",
+      "badgeKey": "funding.nfz.badge",
+      "titleKey": "funding.nfz.title",
+      "shortDescriptionKey": "funding.nfz.shortDescription",
+      "details": {
+        "type": "steps",
+        "titleKey": "funding.nfz.detailsTitle",
+        "subtitleKey": "funding.nfz.subtitle",
+        "summaryRows": [
+          {
+            "labelKey": "funding.nfz.limitLabel",
+            "valueKey": "funding.nfz.limitValue"
+          },
+          {
+            "labelKey": "funding.nfz.contributionLabel",
+            "valueKey": "funding.nfz.contributionValue"
+          }
+        ],
+        "sectionTitleKey": "funding.nfz.howToGet",
+        "steps": [
+          {
+            "number": 1,
+            "titleKey": "funding.nfz.step1Title",
+            "descriptionKey": "funding.nfz.step1Description"
+          },
+          {
+            "number": 2,
+            "titleKey": "funding.nfz.step2Title",
+            "descriptionKey": "funding.nfz.step2Description"
+          },
+          {
+            "number": 3,
+            "titleKey": "funding.nfz.step3Title",
+            "descriptionKey": "funding.nfz.step3Description"
+          }
+        ],
+        "externalButtonLabelKey": "funding.nfz.button",
+        "externalUrl": "https://www.nfz.gov.pl/dla-pacjenta/ubezpieczenia-w-nfz/zaopatrzenie-w-wyroby-medyczne/"
+      }
+    },
+    {
+      "id": "active-local-government",
+      "sectionKey": "funding.sections.national",
+      "badgeKey": "funding.pfron.badge",
+      "titleKey": "funding.pfron.title",
+      "shortDescriptionKey": "funding.pfron.shortDescription",
+      "details": {
+        "type": "eligibility",
+        "titleKey": "funding.pfron.detailsTitle",
+        "subtitleKey": "funding.pfron.subtitle",
+        "summaryRows": [
+          {
+            "labelKey": "funding.pfron.recruitmentLabel",
+            "valueKey": "funding.pfron.recruitmentValue"
+          }
+        ],
+        "sectionTitleKey": "funding.pfron.eligibilityTitle",
+        "eligibilityKeys": [
+          "funding.pfron.eligibility1",
+          "funding.pfron.eligibility2",
+          "funding.pfron.eligibility3"
+        ],
+        "actionSectionTitleKey": "funding.pfron.sowTitle",
+        "externalButtonLabelKey": "funding.pfron.button",
+        "externalButtonDescriptionKey": "funding.pfron.buttonDescription",
+        "externalUrl": "https://sow.pfron.gov.pl/"
+      }
+    },
+    {
+      "id": "collections",
+      "sectionKey": "funding.sections.foundations",
+      "badgeKey": "funding.collections.badge",
+      "titleKey": "funding.collections.title",
+      "shortDescriptionKey": "funding.collections.shortDescription",
+      "details": {
+        "type": "foundations",
+        "titleKey": "funding.collections.detailsTitle",
+        "subtitleKey": "funding.collections.subtitle",
+        "sectionTitleKey": "funding.collections.sectionTitle",
+        "foundations": [
+          {
+            "id": "avalon",
+            "nameKey": "funding.foundations.avalon.name",
+            "descriptionKey": "funding.foundations.avalon.description",
+            "externalUrl": "https://www.fundacjaavalon.pl/programy/subkonto/"
+          },
+          {
+            "id": "moc-pomocy",
+            "nameKey": "funding.foundations.mocPomocy.name",
+            "descriptionKey": "funding.foundations.mocPomocy.description",
+            "externalUrl": "https://fundacjamocpomocy.pl/"
+          },
+          {
+            "id": "siepomaga",
+            "nameKey": "funding.foundations.siepomaga.name",
+            "descriptionKey": "funding.foundations.siepomaga.description",
+            "externalUrl": "https://www.siepomaga.pl/"
+          }
+        ]
+      }
+    }
+  ]
+}
