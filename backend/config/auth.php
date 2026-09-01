@@ -20,6 +20,8 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    'login_rate_limit' => (int) env('AUTH_LOGIN_RATE_LIMIT', 5),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
