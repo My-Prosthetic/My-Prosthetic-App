@@ -44,7 +44,7 @@ export default function AccumulatedFundsScreen() {
   const fetchDeposits = async (goalId: number) => {
     try {
       setDepositsList([]);
-      const data = await db.select().from(deposits).where(eq(deposits.goalId, goalId));
+      const data = await db.select().from(deposits).where(eq(deposits.goalId, goalId)).orderBy(deposits.assignedAt);
       setDepositsList(data);
     } catch (error) {
       console.error('Błąd podczas pobierania wpłat:', error);
