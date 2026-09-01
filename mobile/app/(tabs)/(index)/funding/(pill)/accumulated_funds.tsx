@@ -72,8 +72,16 @@ export default function AccumulatedFundsScreen() {
   );
 
   const renderPlus = () => (
-    <ThemedView variant="wide" colorName="tertiary_base_3" style={styles.carouselOutline}>
-      <ThemedText onPress={() => router.push('../new_goal')} colorName="primary_base" tx="funds.addGoal" />
+    <ThemedView
+      variant="wide"
+      colorName="tertiary_base_3"
+      style={styles.carouselOutline}
+      onPress={() => router.push('/funding/new_goal')}
+    >
+      <ThemedText
+        colorName="primary_base"
+        tx="funds.addGoal"
+      />
     </ThemedView>
   );
 
@@ -83,7 +91,12 @@ export default function AccumulatedFundsScreen() {
       variant="wide"
       colorName="tertiary_base_3"
       style={styles.carouselOutline}
-      onPress={() => router.push(`../edit_goal?goalId=${item.id}`)}
+      onPress={() =>
+        router.push({
+          pathname: '/funding/edit_goal',
+          params: { goalId: String(item.id) },
+        })
+      }
     >
       <ThemedText colorName="primary_base">{item.name}</ThemedText>
     </ThemedView>
@@ -159,7 +172,12 @@ export default function AccumulatedFundsScreen() {
               <Pressable
                 key={deposit.id}
                 style={styles.depositItem}
-                onPress={() => router.push(`../edit_deposit?depositId=${deposit.id}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: '/funding/edit_deposit',
+                    params: { depositId: String(deposit.id) },
+                  })
+                }
               >
                 <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
                   {deposit.source || 'Wpłata'}
@@ -178,7 +196,12 @@ export default function AccumulatedFundsScreen() {
           variant="wide" 
           colorName="primary_base" 
           borderColor="accent_base" 
-          onPress={() => router.push(`../new_deposit?goalId=${currentGoal.id}`)}
+          onPress={() =>
+            router.push({
+              pathname: '/funding/new_deposit',
+              params: { goalId: String(currentGoal.id) },
+            })
+          }
           style={{marginVertical: 16}}
         >
           <ThemedText 
