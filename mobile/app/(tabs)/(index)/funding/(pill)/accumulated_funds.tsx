@@ -12,8 +12,6 @@ import { db } from '@/db/client';
 import { goals } from '@/db/schema/funding/goals';
 import { deposits } from '@/db/schema/funding/deposits';
 
-import { seedFundingData } from '@/tymon/mockDeposits';
-
 type Goal = typeof goals.$inferSelect;
 type Deposit = typeof deposits.$inferSelect;
 
@@ -45,6 +43,7 @@ export default function AccumulatedFundsScreen() {
 
   const fetchDeposits = async (goalId: number) => {
     try {
+      setDepositsList([]);
       const data = await db.select().from(deposits).where(eq(deposits.goalId, goalId));
       setDepositsList(data);
     } catch (error) {
