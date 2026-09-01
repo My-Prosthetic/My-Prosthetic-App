@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { StyleSheet, ActivityIndicator, View, ScrollView, Pressable } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
 import { eq } from 'drizzle-orm';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
@@ -28,6 +29,7 @@ export default function AccumulatedFundsScreen() {
   );
 
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const styles = getStyles(colors);
 
   const fetchGoals = async () => {
@@ -180,7 +182,7 @@ export default function AccumulatedFundsScreen() {
                 }
               >
                 <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
-                  {deposit.source || 'Wpłata'}
+                  {deposit.source || t('funds.deposit')}
                 </ThemedText>
                 <ThemedText variant="body1Regular" colorName="primary_base">
                   {((deposit).amount || 0).toLocaleString('pl-PL')} zł
