@@ -13,21 +13,18 @@ import { formatDate } from '@/src/utils/dateFormatter';
 import { db } from '@/db/client';
 import { deposits } from '@/db/schema/funding/deposits';
 
-type FundingSource = {
-  id: string;
-  name: string;
-};
+type FundingSource = 'family' | 'fundraiser' | 'grant' | 'savings' | 'other';
 
 export default function NewDepositScreen() {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const { t } = useTranslation();
   const fundingSources: DropdownOption<FundingSource>[] = [
-    { value: { id: 'family', name: t('funds.sources.family') }, label: t('funds.sources.family') },
-    { value: { id: 'fundraiser', name: t('funds.sources.fundraiser') }, label: t('funds.sources.fundraiser') },
-    { value: { id: 'grant', name: t('funds.sources.grant') }, label: t('funds.sources.grant') },
-    { value: { id: 'savings', name: t('funds.sources.savings') }, label: t('funds.sources.savings') },
-    { value: { id: 'other', name: t('funds.sources.other') }, label: t('funds.sources.other') },
+    { value: 'family', label: t('funds.sources.family') },
+    { value: 'fundraiser', label: t('funds.sources.fundraiser') },
+    { value: 'grant', label: t('funds.sources.grant') },
+    { value: 'savings', label: t('funds.sources.savings') },
+    { value: 'other', label: t('funds.sources.other') },
   ];
   
   const params = useLocalSearchParams<{ goalId?: string }>();
@@ -63,7 +60,7 @@ export default function NewDepositScreen() {
 
       await db.insert(deposits).values({
         goalId: goalId,
-        source: fundingSource.name,
+        source: fundingSource,
         amount: Math.round(parsedAmount),
         assignedAt: selectedDate.toISOString(),
         note: note.trim() || null,
@@ -91,7 +88,6 @@ export default function NewDepositScreen() {
             options={fundingSources}
             value={fundingSource}
             onChange={setFundingSource}
-            getOptionKey={(source) => source?.id ?? ''}
           />
         </View>
 

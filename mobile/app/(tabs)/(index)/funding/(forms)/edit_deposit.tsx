@@ -14,10 +14,8 @@ import { useTheme, ThemeColors } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { deposits } from '@/db/schema/funding/deposits';
 
-type FundingSource = { id: string; name: string };
+type FundingSource = 'family' | 'fundraiser' | 'grant' | 'savings' | 'other';
 type Deposit = typeof deposits.$inferSelect;
-
-const sourceIds = ['family', 'fundraiser', 'grant', 'savings', 'other'] as const;
 
 export default function EditDepositScreen() {
   const { colors } = useTheme();
@@ -34,10 +32,13 @@ export default function EditDepositScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fundingSources: DropdownOption<FundingSource>[] = sourceIds.map((sourceId) => {
-    const name = t(`funds.sources.${sourceId}` as const);
-    return { value: { id: sourceId, name }, label: name };
-  });
+  const fundingSources: DropdownOption<FundingSource>[] = [
+    { value: 'family', label: t('funds.sources.family') },
+    { value: 'fundraiser', label: t('funds.sources.fundraiser') },
+    { value: 'grant', label: t('funds.sources.grant') },
+    { value: 'savings', label: t('funds.sources.savings') },
+    { value: 'other', label: t('funds.sources.other') },
+  ];
 
   useEffect(() => {
     const fetchDeposit = async () => {
@@ -55,8 +56,8 @@ export default function EditDepositScreen() {
         setNote(savedDeposit.note ?? '');
         setSelectedDate(new Date(savedDeposit.assignedAt));
         setFundingSource(
-          fundingSources.find((source) => source.value.name === savedDeposit.source)?.value
-          ?? { id: 'other', name: savedDeposit.source },
+          fundingSources.find((source) => source.value === savedDeposit.source)?.value
+          ?? 'other',
         );
       } catch (error) {
         console.error('Błąd podczas pobierania wpłaty:', error);
@@ -89,7 +90,7 @@ export default function EditDepositScreen() {
     try {
       setIsSubmitting(true);
       await db.update(deposits).set({
-        source: fundingSource.name,
+        source: fundingSource,
         amount: Math.round(parsedAmount),
         assignedAt: selectedDate.toISOString(),
         note: note.trim() || null,
@@ -156,7 +157,6 @@ export default function EditDepositScreen() {
             options={fundingSources}
             value={fundingSource}
             onChange={setFundingSource}
-            getOptionKey={(source) => source?.id ?? ''}
           />
         </View>
 

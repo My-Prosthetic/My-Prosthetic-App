@@ -16,6 +16,15 @@ import { deposits } from '@/db/schema/funding/deposits';
 type Goal = typeof goals.$inferSelect;
 type Deposit = typeof deposits.$inferSelect;
 
+const sourceIds = ['family', 'fundraiser', 'grant', 'savings', 'other'] as const;
+const sourceTranslationKeys = {
+  family: 'funds.sources.family',
+  fundraiser: 'funds.sources.fundraiser',
+  grant: 'funds.sources.grant',
+  savings: 'funds.sources.savings',
+  other: 'funds.sources.other',
+} as const;
+
 export default function AccumulatedFundsScreen() {
   const [goalsList, setGoalsList] = useState<Goal[]>([]);
   const [depositsList, setDepositsList] = useState<Deposit[]>([]);
@@ -31,6 +40,11 @@ export default function AccumulatedFundsScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const styles = getStyles(colors);
+
+  const getSourceLabel = (source: string) =>
+    sourceIds.includes(source as (typeof sourceIds)[number])
+      ? t(sourceTranslationKeys[source as (typeof sourceIds)[number]])
+      : source;
 
   const fetchGoals = async () => {
     try {
@@ -182,7 +196,7 @@ export default function AccumulatedFundsScreen() {
                 }
               >
                 <ThemedText variant="subTitle1" colorName="primary_base" style={{paddingVertical: 10}}>
-                  {deposit.source || t('funds.deposit')}
+                  {deposit.source ? getSourceLabel(deposit.source) : t('funds.deposit')}
                 </ThemedText>
                 <ThemedText variant="body1Regular" colorName="primary_base">
                   {((deposit).amount || 0).toLocaleString('pl-PL')} zł
