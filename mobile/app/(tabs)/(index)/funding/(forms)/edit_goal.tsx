@@ -38,7 +38,7 @@ export default function EditGoalScreen() {
 
         setGoal(savedGoal);
         setName(savedGoal.name);
-        setAmount(String(savedGoal.amount));
+        setAmount(String(savedGoal.amount % 100 !== 0 ? (savedGoal.amount/100).toFixed(2) : savedGoal.amount/100));
         setNote(savedGoal.note ?? '');
       } catch (error) {
         console.error('Błąd podczas pobierania celu:', error);
@@ -67,12 +67,13 @@ export default function EditGoalScreen() {
       Alert.alert(t('common.error'), t('funds.invalidGoalAmountError'));
       return;
     }
+    const centAmount = parsedAmount*100;
 
     try {
       setIsSubmitting(true);
       await db.update(goals).set({
         name: name.trim(),
-        amount: Math.round(parsedAmount),
+        amount: Math.round(centAmount),
         note: note.trim() || null,
       }).where(eq(goals.id, id));
       router.back();

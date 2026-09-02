@@ -33,12 +33,13 @@ export default function NewGoalScreen() {
       Alert.alert(t('common.error'), t('funds.invalidGoalAmountError'));
       return;
     }
+    const centAmount = parsedAmount * 100;
 
     try {
       setIsSubmitting(true);
       await db.insert(goals).values({
         name: name.trim(),
-        amount: Math.round(parsedAmount),
+        amount: Math.round(centAmount),
         note: note.trim() || null,
       });
       router.back();

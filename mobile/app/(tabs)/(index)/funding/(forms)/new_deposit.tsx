@@ -54,6 +54,7 @@ export default function NewDepositScreen() {
       Alert.alert(t('common.error'), t('funds.invalidAmountError'));
       return;
     }
+    const centAmount = parsedAmount*100;
 
     try {
       setIsSubmitting(true);
@@ -61,7 +62,7 @@ export default function NewDepositScreen() {
       await db.insert(deposits).values({
         goalId: goalId,
         source: fundingSource,
-        amount: Math.round(parsedAmount),
+        amount: Math.round(centAmount),
         assignedAt: selectedDate.toISOString(),
         note: note.trim() || null,
       });

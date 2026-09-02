@@ -52,7 +52,7 @@ export default function EditDepositScreen() {
         }
 
         setDeposit(savedDeposit);
-        setAmount(String(savedDeposit.amount));
+        setAmount(String(savedDeposit.amount % 100 !== 0 ? (savedDeposit.amount/100).toFixed(2) : savedDeposit.amount/100));
         setNote(savedDeposit.note ?? '');
         setSelectedDate(new Date(savedDeposit.assignedAt));
         setFundingSource(
@@ -86,12 +86,13 @@ export default function EditDepositScreen() {
       Alert.alert(t('common.error'), t('funds.invalidAmountError'));
       return;
     }
+    const centAmount = parsedAmount*100;
 
     try {
       setIsSubmitting(true);
       await db.update(deposits).set({
         source: fundingSource,
-        amount: Math.round(parsedAmount),
+        amount: Math.round(centAmount),
         assignedAt: selectedDate.toISOString(),
         note: note.trim() || null,
       }).where(eq(deposits.id, id));

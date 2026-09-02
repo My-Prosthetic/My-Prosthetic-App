@@ -3,6 +3,7 @@ import { StyleSheet, ActivityIndicator, View, ScrollView, Pressable } from 'reac
 import { useFocusEffect, router } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '@/src/utils/currencyFormatter';
 
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
@@ -31,9 +32,11 @@ export default function AccumulatedFundsScreen() {
   const [loading, setLoading] = useState(true);
   const [currentGoalIndex, setCurrentGoalIndex] = useState(0);
   
+const currency = 'PLN';
+
   const currentGoal: Goal | undefined = goalsList[currentGoalIndex];
   const accumulatedDeposit = depositsList.reduce(
-    (total, item: Deposit) => total + (item.amount || 0),
+    (total, item: Deposit) => total + (item.amount/100 || 0),
     0
   );
 
@@ -68,7 +71,7 @@ export default function AccumulatedFundsScreen() {
   };
 
   const progressPercentage = currentGoal?.amount 
-    ? Math.min((accumulatedDeposit / currentGoal.amount) * 100, 100) 
+    ? Math.min((accumulatedDeposit / (currentGoal.amount/100)) * 100, 100) 
     : 0;
 
   useFocusEffect(
@@ -152,7 +155,7 @@ export default function AccumulatedFundsScreen() {
             <View>
               <ThemedText variant="body1Regular" colorName="secondary_base_0c" tx="funds.collected" />
               <ThemedText variant="main1Button" style={{fontSize: 24, paddingTop: 6}} colorName="primary_base">
-                {accumulatedDeposit.toLocaleString('pl-PL')} zł
+                {formatCurrency(accumulatedDeposit, currency)}
               </ThemedText>
             </View>
             <ThemedView variant='tag' colorName='primary_base_4' style={{marginVertical: 0}}>
@@ -199,7 +202,7 @@ export default function AccumulatedFundsScreen() {
                   {deposit.source ? getSourceLabel(deposit.source) : t('funds.deposit')}
                 </ThemedText>
                 <ThemedText variant="body1Regular" colorName="primary_base">
-                  {((deposit).amount || 0).toLocaleString('pl-PL')} zł
+                  {formatCurrency(((deposit).amount/100 || 0), currency)}
                 </ThemedText>
               </Pressable>
             ))
