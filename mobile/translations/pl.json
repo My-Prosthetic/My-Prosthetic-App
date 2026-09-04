@@ -179,6 +179,22 @@
       "name": "Siepomaga.pl",
       "description": "Platforma szybkich zbiórek celowych."
     }
+  },
+  "profile": {
+    "title": "PROFIL MEDYCZNY",
+    "activity": "POZIOM AKTYWNOŚCI (K-LEVELS)",
+    "diseases": "SCHORZENIA I ALERGIE",
+    "medications": "STALE PRZYJMOWANE LEKI",
+    "addMedication": "Dodaj nowy lek",
+    "history": "HISTORIA POMIARÓW",
+    "addMeasurement": "Dodaj nowy pomiar",
+    "recommendations": "ZALECENIA OD PROTETYKA",
+    "notes": "NOTATKI TECHNICZNE",
+    "newFile": "DODAJ PLIK",
+    "fileDescription": "tutaj możesz dodać zdjęcia, dokumentację i inne pliki dotyczące historii medycznej",
+    "historyEntries": "24 wpisy",
+    "recommendationsEntries": "1 nowy wpis",
+    "notesEntries": "Brak nowych wpisów"
   }
  }
 }
