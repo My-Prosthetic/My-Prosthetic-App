@@ -179,7 +179,8 @@
       "name": "Siepomaga.pl",
       "description": "Platforma szybkich zbiórek celowych."
     }
-  },
+  }
+ },
   "profile": {
     "title": "PROFIL MEDYCZNY",
     "activity": "POZIOM AKTYWNOŚCI (K-LEVELS)",
@@ -196,5 +197,4 @@
     "recommendationsEntries": "1 nowy wpis",
     "notesEntries": "Brak nowych wpisów"
   }
- }
 }

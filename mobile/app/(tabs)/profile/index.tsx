@@ -1,71 +1,25 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 
-import { useTheme } from '../../../context/ThemeContext';
-import { ThemedView } from '../../../components/ThemedView';
-
-const prototypeColors = {
-  screenBackground: '#D6EEFC',
-  cardBackground: '#EAF6FE',
-  primaryText: '#052D8F',
-  secondaryText: '#1967C8',
-  headerBackground: '#052D8F',
-  headerText: '#F0EDCC',
-  historyCardBackground: '#F5F3DD',
-};
+import { ThemedText } from '@/src/components/ThemedText';
+import { ThemedView } from '@/src/components/ThemedView';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function ProfileScreen() {
-  const { t } = useTranslation();
-  const { colors, themeType } = useTheme();
+  const { colors } = useTheme();
   const router = useRouter();
-
-  const isHighContrast = themeType === 'high-contrast';
-
-  const screenBackground = isHighContrast
-    ? colors.background
-    : prototypeColors.screenBackground;
-
-  const cardBackground = isHighContrast
-    ? colors.backgroundSecondary
-    : prototypeColors.cardBackground;
-
-  const primaryText = isHighContrast
-    ? colors.textPrimary
-    : prototypeColors.primaryText;
-
-  const secondaryText = isHighContrast
-    ? colors.textSecondary
-    : prototypeColors.secondaryText;
-
-  const headerBackground = isHighContrast
-    ? colors.background
-    : prototypeColors.headerBackground;
-
-  const headerText = isHighContrast
-    ? colors.textPrimary
-    : prototypeColors.headerText;
-
-  const tagStyle = {
-    backgroundColor: cardBackground,
-    borderColor: colors.primary,
-  };
 
   return (
     <ThemedView
-      style={[
-        styles.container,
-        { backgroundColor: screenBackground },
-      ]}
+      colorName="tertiary_base_2"
+      style={styles.container}
     >
       <ScrollView
         style={styles.scrollView}
@@ -73,13 +27,12 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View
-          style={[
-            styles.topHeader,
-            { backgroundColor: headerBackground },
-          ]}
+        <ThemedView
+          colorName="primary_base"
+          style={styles.topHeader}
         >
-          <TouchableOpacity
+          <ThemedView
+            colorName="primary_base"
             style={styles.backButton}
             onPress={() => router.back()}
             accessibilityRole="button"
@@ -87,41 +40,34 @@ export default function ProfileScreen() {
             <Ionicons
               name="chevron-back"
               size={26}
-              color={headerText}
+              color={colors.accent_base}
             />
-          </TouchableOpacity>
+          </ThemedView>
 
-          <Text
-            style={[
-              styles.headerTitle,
-              { color: headerText },
-            ]}
+          <ThemedText
+            tx="profile.title"
+            variant="title"
+            colorName="accent_base"
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.8}
-          >
-            {t('profile.title')}
-          </Text>
-        </View>
+          />
+        </ThemedView>
 
         {/* K-Levels */}
         <View style={[styles.section, styles.firstSection]}>
-          <Text
+          <ThemedText
+            tx="profile.activity"
+            variant="tab1Category"
+            colorName="secondary_base_0c"
             accessibilityRole="header"
-            style={[
-              styles.sectionTitle,
-              { color: secondaryText },
-            ]}
-          >
-            {t('profile.activity')}
-          </Text>
+            style={styles.sectionTitle}
+          />
 
           <ThemedView
-            size="wide"
-            style={[
-              styles.activityDropdown,
-              { backgroundColor: cardBackground },
-            ]}
+            variant="wide"
+            colorName="tertiary_base_3"
+            style={styles.activityDropdown}
             onPress={() => {
               // TODO: rozwijanie listy K-Levels
             }}
@@ -132,71 +78,67 @@ export default function ProfileScreen() {
             <Ionicons
               name="chevron-down"
               size={30}
-              color={primaryText}
+              color={colors.primary_base}
             />
           </ThemedView>
         </View>
 
         {/* Schorzenia i alergie */}
         <View style={styles.section}>
-          <Text
+          <ThemedText
+            tx="profile.diseases"
+            variant="tab1Category"
+            colorName="secondary_base_0c"
             accessibilityRole="header"
-            style={[
-              styles.sectionTitle,
-              { color: secondaryText },
-            ]}
-          >
-            {t('profile.diseases')}
-          </Text>
+            style={styles.sectionTitle}
+          />
 
           <ThemedView
-            size="wide"
-            style={{ backgroundColor: screenBackground }}
+            variant="wide"
+            colorName="tertiary_base_2"
           >
-          {/* TODO: import danych z bazy */}
+            {/* TODO: import danych z bazy */}
           </ThemedView>
         </View>
 
         {/* Stale przyjmowane leki */}
         <View style={styles.section}>
-          <Text
+          <ThemedText
+            tx="profile.medications"
+            variant="tab1Category"
+            colorName="secondary_base_0c"
             accessibilityRole="header"
-            style={[
-              styles.sectionTitle,
-              { color: secondaryText },
-            ]}
-          >
-            {t('profile.medications')}
-          </Text>
+            style={styles.sectionTitle}
+          />
 
           <ThemedView
-            size="wide"
-            style={{ backgroundColor: screenBackground }}
+            variant="wide"
+            colorName="tertiary_base_2"
           >
             {/* TODO: import danych z bazy */}
           </ThemedView>
 
           <ThemedView
-            size="tag"
-            style={[styles.actionTag, tagStyle]}
+            variant="tag"
+            colorName="tertiary_base_3"
+            borderColor="primary_base"
+            style={styles.actionTag}
             onPress={() => {
               // TODO: dodawanie leku
             }}
             accessibilityRole="button"
           >
-            <Text
-              style={[
-                styles.tagText,
-                { color: primaryText },
-              ]}
-            >
-              {t('profile.addMedication')}
-            </Text>
+            <ThemedText
+              tx="profile.addMedication"
+              variant="subTitle2"
+              colorName="primary_base"
+              style={styles.tagText}
+            />
 
             <Ionicons
               name="add-outline"
               size={20}
-              color={colors.primary}
+              color={colors.primary_base}
             />
           </ThemedView>
         </View>
@@ -204,108 +146,92 @@ export default function ProfileScreen() {
         {/* Akcje profilu */}
         <View style={styles.utilitiesContainer}>
           <ProfileMenuCard
-            label={t('profile.history')}
-            // TODO: zamienić na dane z bazy
-            subtitle={t('profile.historyEntries')}
-            backgroundColor={prototypeColors.historyCardBackground}
-            textColor={primaryText}
-            iconColor={colors.primary}
+            label="profile.history"
+            subtitle="profile.historyEntries"
+            colorName="accent_base_1"
+            hasNewEntries={false}
             onPress={() => {
-              router.push('/profile/measurements')
+              router.push('/profile/measurements');
             }}
           />
 
           <ThemedView
-            size="tag"
-            style={[
-              styles.actionTag,
-              tagStyle,
-              { backgroundColor: prototypeColors.historyCardBackground },
-            ]}
+            variant="tag"
+            colorName="accent_base_1"
+            borderColor="primary_base"
+            style={styles.actionTag}
             onPress={() => {
               // TODO: dodawanie pomiaru
             }}
             accessibilityRole="button"
           >
-            <Text
-              style={[
-                styles.tagText,
-                { color: primaryText },
-              ]}
-            >
-              {t('profile.addMeasurement')}
-            </Text>
+            <ThemedText
+              tx="profile.addMeasurement"
+              variant="subTitle2"
+              colorName="primary_base"
+              style={styles.tagText}
+            />
 
             <Ionicons
               name="add-outline"
               size={20}
-              color={colors.primary}
+              color={colors.primary_base}
             />
           </ThemedView>
 
           <ProfileMenuCard
-            label={t('profile.recommendations')}
-            subtitle={t('profile.recommendationsEntries')}
-            backgroundColor={cardBackground}
-            textColor={primaryText}
-            iconColor={colors.primary}
+            label="profile.recommendations"
+            subtitle="profile.recommendationsEntries"
+            colorName="tertiary_base_3"
             hasNewEntries
             onPress={() => {
-              router.push('/profile/recommendations')
+              router.push('/profile/recommendations');
             }}
           />
 
           <ProfileMenuCard
-            label={t('profile.notes')}
-            subtitle={t('profile.notesEntries')}
-            backgroundColor={cardBackground}
-            textColor={primaryText}
-            iconColor={colors.primary}
+            label="profile.notes"
+            subtitle="profile.notesEntries"
+            colorName="tertiary_base_3"
             onPress={() => {
-              router.push('/profile/technical-notes')
+              router.push('/profile/technical-notes');
             }}
           />
 
           {/* Dodaj plik */}
           <View style={styles.addFileSection}>
-            <TouchableOpacity
+            <ThemedView
+              colorName="tertiary_base_2"
               style={styles.addFileRow}
               onPress={() => {
                 // TODO: dodawanie pliku
               }}
               accessibilityRole="button"
             >
-              <View
-                style={[
-                  styles.addFileIcon,
-                  { backgroundColor: colors.primary },
-                ]}
+              <ThemedView
+                colorName="primary_base"
+                style={styles.addFileIcon}
               >
                 <Ionicons
                   name="add-outline"
                   size={24}
-                  color="#FFFFFF"
+                  color={colors.accent_base_2}
                 />
-              </View>
+              </ThemedView>
 
-              <Text
-                style={[
-                  styles.addFileTitle,
-                  { color: primaryText },
-                ]}
-              >
-                {t('profile.newFile')}
-              </Text>
-            </TouchableOpacity>
+              <ThemedText
+                tx="profile.newFile"
+                variant="main1Button"
+                colorName="primary_base"
+              />
+            </ThemedView>
 
-            <Text
-              style={[
-                styles.addFileDescription,
-                { color: secondaryText },
-              ]}
-            >
-              {t('profile.fileDescription')}
-            </Text>
+            <ThemedText
+              tx="profile.fileDescription"
+              variant="subTitle1"
+              colorName="secondary_base_0c"
+              style={styles.addFileDescription}
+            />
           </View>
         </View>
       </ScrollView>
@@ -314,11 +240,20 @@ export default function ProfileScreen() {
 }
 
 interface ProfileMenuCardProps {
-  label: string;
-  subtitle?: string;
-  backgroundColor: string;
-  textColor: string;
-  iconColor: string;
+  label:
+    | 'profile.history'
+    | 'profile.recommendations'
+    | 'profile.notes';
+
+  subtitle:
+    | 'profile.historyEntries'
+    | 'profile.recommendationsEntries'
+    | 'profile.notesEntries';
+
+  colorName:
+    | 'accent_base_1'
+    | 'tertiary_base_3';
+
   hasNewEntries?: boolean;
   onPress: () => void;
 }
@@ -326,50 +261,49 @@ interface ProfileMenuCardProps {
 function ProfileMenuCard({
   label,
   subtitle,
-  backgroundColor,
-  textColor,
-  iconColor,
-  hasNewEntries,
+  colorName,
+  hasNewEntries = false,
   onPress,
 }: ProfileMenuCardProps) {
+  const { colors } = useTheme();
+
   return (
-  <ThemedView
-    size="wide"
-    style={[
-      styles.utilityCard,
-      { backgroundColor },
-    ]}
-    onPress={onPress}
-    accessibilityRole="button"
-  >
-    <View style={styles.utilityTextContainer}>
-      <Text
-        style={[
-          styles.utilityText,
-          { color: textColor },
-        ]}
-      >
-        {label}
-      </Text>
+    <ThemedView
+      variant="wide"
+      colorName={colorName}
+      style={styles.utilityCard}
+      onPress={onPress}
+      accessibilityRole="button"
+    >
+      <View style={styles.utilityTextContainer}>
+        <ThemedText
+          tx={label}
+          variant="subTitle1"
+          colorName="primary_base"
+          style={styles.utilityText}
+        />
 
-      <View style={styles.subtitleRow}>
-        {hasNewEntries && <View style={styles.newEntryDot} />}
+        <View style={styles.subtitleRow}>
+          {hasNewEntries && (
+            <View style={styles.newEntryDot} />
+          )}
 
-        {subtitle && (
-          <Text style={styles.utilitySubtitle}>
-            {subtitle}
-          </Text>
-        )}
+          <ThemedText
+            tx={subtitle}
+            variant="subTitle2"
+            colorName="primary_base"
+            style={styles.utilitySubtitle}
+          />
+        </View>
       </View>
-    </View>
 
-    <Ionicons
-      name="chevron-forward"
-      size={30}
-      color={iconColor}
-    />
-  </ThemedView>
-);
+      <Ionicons
+        name="chevron-forward"
+        size={30}
+        color={colors.primary_base}
+      />
+    </ThemedView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -409,15 +343,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
 
-  headerTitle: {
-    fontFamily: 'Afacad_500Medium',
-    fontSize: 30,
-    lineHeight: 30,
-    letterSpacing: 1.2,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-
   section: {
     width: '100%',
     paddingHorizontal: 28,
@@ -429,17 +354,10 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 12,
-    lineHeight: 14,
-    textTransform: 'uppercase',
     marginBottom: 14,
   },
 
   activityDropdown: {
-    width: '100%',
-    minHeight: 60,
-    borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -460,23 +378,43 @@ const styles = StyleSheet.create({
   },
 
   utilityCard: {
-  width: '100%',
-  marginBottom: 12,
-  justifyContent: 'space-between',
+    marginBottom: 12,
+    justifyContent: 'space-between',
 
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
-  shadowOpacity: 0.15,
-  shadowRadius: 5,
-  elevation: 4,
-},
+
+  utilityTextContainer: {
+    flex: 1,
+  },
 
   utilityText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 16,
+    textAlign: 'left',
+  },
+
+  utilitySubtitle: {
+    marginTop: 4,
+  },
+
+  subtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  newEntryDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#22C55E',
+    marginRight: 6,
+    marginTop: 4,
   },
 
   actionTag: {
@@ -486,8 +424,6 @@ const styles = StyleSheet.create({
   },
 
   tagText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
     marginRight: 6,
   },
 
@@ -513,43 +449,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
 
-  addFileTitle: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 15,
-    lineHeight: 19,
-    textTransform: 'uppercase',
-  },
-
   addFileDescription: {
     width: 190,
-    fontFamily: 'Inter_400Regular',
-    fontSize: 11,
-    lineHeight: 16,
     textAlign: 'center',
   },
-
-  utilityTextContainer: {
-    flex: 1,
-  },
-
-  utilitySubtitle: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    marginTop: 4,
-  },
-
-  subtitleRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-},
-
-  newEntryDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#22C55E',
-    marginRight: 6,
-    marginTop: 6,
-  },
-
 });
