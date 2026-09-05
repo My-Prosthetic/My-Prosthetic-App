@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import * as SQLite from 'expo-sqlite';
 
 import '@/translations/i18n';
 import { ThemeProvider } from '@/context/ThemeContext';

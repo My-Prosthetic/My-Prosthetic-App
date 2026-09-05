@@ -28,7 +28,7 @@ export default function FundingFormsLayout() {
   const titleTx = getTitleTx();
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2 || '#E5F0FF' }]}>
+    <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2}]}>
       <View style={styles.topHeader}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color={colors.accent_base} />
