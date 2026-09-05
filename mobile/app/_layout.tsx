@@ -9,13 +9,20 @@ import { logFullDatabase } from '@/db/debug';
 
 //TODO usunąć pliki z fontami, których ostatecznie nie używamy
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch( (error) => {
+    console.warn('SplashScreen error:', error);
+  }
+);
 
 export default function RootLayout() {
 
   useEffect(() => {
     // Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
-    logFullDatabase();
+    try {
+      logFullDatabase();
+    } catch (error) {
+      console.error('Failed to log database contents:', error);
+    }
   }, []);
 
   const [loaded, error] = useFonts({
@@ -30,11 +37,13 @@ export default function RootLayout() {
     'Inter-Bold': require('@/assets/fonts/Inter/Inter_18pt-Bold.ttf'),
   });
 
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
+useEffect(() => {
+  if (loaded || error) {
+    SplashScreen.hideAsync().catch((error) => {
+      console.error('Failed to hide splash screen:', error);
+    });
+  }
+}, [loaded, error]);
 
   if (!loaded && !error) {
     return null;
