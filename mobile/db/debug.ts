@@ -1,6 +1,11 @@
 import { expoDb } from './client';
 
 export function logFullDatabase() {
+
+  if (!__DEV__) {
+    return;
+  }
+
   console.log('\n==================== STAN BAZY DANYCH ====================');
   
   const tables = expoDb.getAllSync<{ name: string }>(

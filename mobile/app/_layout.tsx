@@ -17,11 +17,13 @@ SplashScreen.preventAutoHideAsync().catch( (error) => {
 export default function RootLayout() {
 
   useEffect(() => {
-    // Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
-    try {
-      logFullDatabase();
-    } catch (error) {
-      console.error('Failed to log database contents:', error);
+    if (__DEV__) {
+      // Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
+      try {
+        logFullDatabase();
+      } catch (error) {
+        console.error('Failed to log database contents:', error);
+      }
     }
   }, []);
 
