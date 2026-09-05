@@ -1,45 +1,38 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Slot, usePathname, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeColors, useTheme } from '@/context/ThemeContext';
 import { ThemedText } from '@/src/components/ThemedText';
+import { useTranslation } from 'react-i18next';
 
 export default function FundingFormsLayout() {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const router = useRouter();
-  const pathname = usePathname();
-  const isDeposit = pathname.includes('deposit');
-  const isEdit = pathname.includes('edit');
-  const getTitleTx = () => {
-    switch (true) {
-      case isDeposit && isEdit:
-        return 'funds.editFundsTitle';
-      case isDeposit && !isEdit:
-        return 'funds.addFundsTitle';
-      case !isDeposit && isEdit:
-        return 'funds.editGoalTitle';
-      default:
-        return 'funds.addGoalTitle';
-    }
-  };
+  const { t } = useTranslation();
 
-  const titleTx = getTitleTx();
-
-  return (
-    <View style={[styles.safeArea, { backgroundColor: colors.tertiary_base_2}]}>
-      <View style={styles.topHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color={colors.accent_base} />
-        </TouchableOpacity>
-        <ThemedText variant="title" colorName="accent_base" tx={titleTx} />
-      </View>
-
-      <View style={styles.contentContainer}>
-        <Slot />
-      </View>
-    </View>
+return (
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: colors.tertiary_base_2 },
+        header: ({ options }) => (
+          <View style={[ styles.topHeader , { backgroundColor: colors.primary_base} ]}>
+            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+              <Ionicons name="chevron-back" size={28} color={colors.accent_base} />
+            </TouchableOpacity>
+            <ThemedText variant="title" colorName="accent_base">
+              {options.title}
+            </ThemedText>
+          </View>
+        ),
+      }}
+    >
+      <Stack.Screen name="new_goal" options={{ title: t('funds.addGoalTitle') }} />
+      <Stack.Screen name="edit_goal" options={{ title: t('funds.editGoalTitle') }} />
+      <Stack.Screen name="new_deposit" options={{ title: t('funds.addFundsTitle') }} />
+      <Stack.Screen name="edit_deposit" options={{ title: t('funds.editFundsTitle') }} />
+    </Stack>
   );
 }
 
