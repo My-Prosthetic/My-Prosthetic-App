@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const [userList, setUserList] = useState<{ id: number; name: string }[]>([]);
   const [userName, setUserName] = useState<string>('(init value)');
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors, themeType, setTheme } = useTheme();
 
   const styles = getStyles(colors, themeType);
@@ -204,6 +204,20 @@ export default function HomeScreen() {
           {themeType === 'light' ? t('home.switchToHighContrast') : t('home.switchToLightTheme')}
         </Text>
       </TouchableOpacity>
+
+      {/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
+      <TouchableOpacity 
+        style={styles.themeToggleDevButton}
+        onPress={() => {
+          const nextLang = i18n.language.startsWith('pl') ? 'en' : 'pl';
+          i18n.changeLanguage(nextLang);
+        }}
+      >
+        <Text style={styles.themeToggleDevButtonText}>
+          {i18n.language.startsWith('pl') ? 'Zmień język: English (EN)' : 'Change language: Polski (PL)'}
+        </Text>
+      </TouchableOpacity>
+      
     </ScrollView>
   );
 }
