@@ -46,7 +46,8 @@
     "cancel": "ANULUJ",
     "error": "Błąd",
     "save": "ZAPISZ",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "today": "Dzisiaj"
   },
   "funds": {
     "title": "DOFINANSOWANIA",

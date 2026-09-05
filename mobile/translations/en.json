@@ -46,7 +46,8 @@
     "cancel": "CANCEL",
     "error": "Error",
     "save": "SAVE",
-    "delete": "DELETE"
+    "delete": "DELETE",
+    "today": "Today"
   },
   "funds": {
     "title": "FUNDING",

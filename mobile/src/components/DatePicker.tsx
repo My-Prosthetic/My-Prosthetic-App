@@ -13,6 +13,7 @@ import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
 import { useTheme } from '@/context/ThemeContext';
 import { formatDate } from '@/src/utils/dateFormatter';
+import { useTranslation } from 'react-i18next';
 
 const ITEM_HEIGHT = 44;
 const VISIBLE_ITEMS = 5;
@@ -39,6 +40,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const flatListRef = useRef<FlatList<DateOption>>(null);
 
   // Lista generowana raz, z użyciem utila formatDate
@@ -59,7 +61,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
     }
 
     return options;
-  }, []);
+  }, [t]);
 
   const [selectedId, setSelectedId] = useState<string>(
     () => (initialDate ? initialDate.toDateString() : dateOptions[DAYS_RANGE].id)
