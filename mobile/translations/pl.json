@@ -36,8 +36,8 @@
     "prostheticDaily": "CEL: Proteza codzienna",
     "lastStumpMeasurement": "Ostatni pomiar kikuta:",
     "lastIncident": "Ostatni incydent:",
-    "todayAt": "Dzisiaj, 08:30",
-    "daysAgo": "5 dni temu",
+    "todayAt": "Dzisiaj, {{time}}",
+    "daysAgo": "{{count}} dni temu",
     "showFullHistory": "Pokaż całą historię",
     "switchToHighContrast": "Zmień na wysoki kontrast 🌙",
     "switchToLightTheme": "Zmień na jasny motyw ☀️"

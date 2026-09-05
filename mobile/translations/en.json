@@ -36,8 +36,8 @@
     "prostheticDaily": "OBJ: Daily prosthesis",
     "lastStumpMeasurement": "Last stump measurement:",
     "lastIncident": "Last incident:",
-    "todayAt": "Today, 08:30",
-    "daysAgo": "5 days ago",
+    "todayAt": "Today, {{time}}",
+    "daysAgo": "{{count}} days ago",
     "showFullHistory": "Show full history",
     "switchToHighContrast": "Switch to high contrast 🌙",
     "switchToLightTheme": "Switch to light theme ☀️"

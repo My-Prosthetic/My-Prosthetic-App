@@ -151,7 +151,7 @@ export default function HomeScreen() {
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
               <Text style={styles.activityLabel}>{t('home.lastStumpMeasurement')}</Text>
-              <Text style={styles.activityValue}>{t('home.todayAt')}</Text>
+              <Text style={styles.activityValue}>{t('home.todayAt', { time: "8:30" })}</Text>
             </View>
           </View>
 
@@ -159,7 +159,7 @@ export default function HomeScreen() {
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
               <Text style={styles.activityLabel}>{t('home.lastIncident')}</Text>
-              <Text style={styles.activityValue}>{t('home.daysAgo')}</Text>
+              <Text style={styles.activityValue}>{t('home.daysAgo', { count: "5" })}</Text>
             </View>
           </View>
         </View>
