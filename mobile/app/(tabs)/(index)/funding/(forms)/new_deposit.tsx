@@ -28,7 +28,9 @@ export default function NewDepositScreen() {
   ];
   
   const params = useLocalSearchParams<{ goalId?: string }>();
-  const goalId = Number(params.goalId);
+  const goalId = Number.isSafeInteger(Number(params.goalId)) && Number(params.goalId) > 0
+    ? Number(params.goalId)
+    : null;
 
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
@@ -40,6 +42,11 @@ export default function NewDepositScreen() {
 
   const handleSaveDeposit = async () => {
     if (isSubmitting) {
+      return;
+    }
+
+    if (goalId === null) {
+      Alert.alert(t('common.error'), t('funds.goalNotFound'));
       return;
     }
 

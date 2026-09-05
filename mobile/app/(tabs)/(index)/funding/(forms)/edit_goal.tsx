@@ -17,7 +17,9 @@ export default function EditGoalScreen() {
   const styles = getStyles(colors);
   const { t } = useTranslation();
   const { goalId } = useLocalSearchParams<{ goalId?: string }>();
-  const id = Number(goalId);
+  const id = Number.isSafeInteger(Number(goalId)) && Number(goalId) > 0
+    ? Number(goalId)
+    : null;
   const [goal, setGoal] = useState<Goal>();
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -27,6 +29,13 @@ export default function EditGoalScreen() {
 
   useEffect(() => {
     const fetchGoal = async () => {
+      if (id === null) {
+        Alert.alert(t('common.error'), t('funds.goalNotFound'));
+        setIsLoading(false);
+        router.back();
+        return;
+      }
+
       try {
         const result = await db.select().from(goals).where(eq(goals.id, id));
         const savedGoal = result[0];
@@ -50,10 +59,15 @@ export default function EditGoalScreen() {
     };
 
     fetchGoal();
-  }, [id]);
+  }, [id, t]);
 
   const handleUpdateGoal = async () => {
     if (isSubmitting) {
+      return;
+    }
+
+    if (id === null) {
+      Alert.alert(t('common.error'), t('funds.goalNotFound'));
       return;
     }
 
@@ -99,7 +113,7 @@ export default function EditGoalScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
-            if (isSubmitting) {
+            if (isSubmitting || id === null) {
               return;
             }
 

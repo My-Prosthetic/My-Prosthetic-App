@@ -22,7 +22,9 @@ export default function EditDepositScreen() {
   const styles = getStyles(colors);
   const { t } = useTranslation();
   const { depositId } = useLocalSearchParams<{ depositId?: string }>();
-  const id = Number(depositId);
+  const id = Number.isSafeInteger(Number(depositId)) && Number(depositId) > 0
+    ? Number(depositId)
+    : null;
   const [deposit, setDeposit] = useState<Deposit>();
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
@@ -42,6 +44,13 @@ export default function EditDepositScreen() {
 
   useEffect(() => {
     const fetchDeposit = async () => {
+      if (id === null) {
+        Alert.alert(t('common.error'), t('funds.depositNotFound'));
+        setIsLoading(false);
+        router.back();
+        return;
+      }
+
       try {
         const result = await db.select().from(deposits).where(eq(deposits.id, id));
         const savedDeposit = result[0];
@@ -69,10 +78,15 @@ export default function EditDepositScreen() {
     };
 
     fetchDeposit();
-  }, [id]);
+  }, [id, t]);
 
   const handleUpdateDeposit = async () => {
     if (isSubmitting) {
+      return;
+    }
+
+    if (id === null) {
+      Alert.alert(t('common.error'), t('funds.depositNotFound'));
       return;
     }
 
@@ -119,7 +133,7 @@ export default function EditDepositScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
-            if (isSubmitting) {
+            if (isSubmitting || id === null) {
               return;
             }
 
