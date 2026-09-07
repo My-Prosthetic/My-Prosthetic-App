@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme, ThemeColors } from '../../../context/ThemeContext';
+import { useTheme, ThemeColors } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router';
 
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { db, expoDb } from '../../../db/client';
-import { users } from '../../../db/schema';
-import migrations from '../../../drizzle/migrations'
+import { db, expoDb } from '@/db/client';
+import { users } from '@/db/schema/users';
+import migrations from '@/drizzle/migrations'
 
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
 //TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const [userList, setUserList] = useState<{ id: number; name: string }[]>([]);
   const [userName, setUserName] = useState<string>('(init value)');
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors, themeType, setTheme } = useTheme();
 
   const styles = getStyles(colors, themeType);
@@ -96,7 +96,7 @@ export default function HomeScreen() {
           <Text style={styles.headerName}>{userName}!</Text>
         </View>
         <TouchableOpacity style={styles.handIconContainer} onPress={handleAddUser}>
-          <Ionicons name="hand-left" size={48} color={colors.primary} />
+          <Ionicons name="hand-left" size={48} color={colors.primary_base} />
         </TouchableOpacity>
       </View>
 
@@ -107,7 +107,7 @@ export default function HomeScreen() {
         <View style={styles.carouselRow}>
           {/* Lewa strzałka karuzeli */}
           <TouchableOpacity style={styles.carouselArrow}>
-            <Ionicons name="chevron-back" size={32} color={colors.primary} />
+            <Ionicons name="chevron-back" size={32} color={colors.primary_base} />
           </TouchableOpacity>
 
           {/* Główna karta protezy */}
@@ -118,12 +118,12 @@ export default function HomeScreen() {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.prostheticCardText}>OBJ: Proteza codzienna</Text>
+            <Text style={styles.prostheticCardText}>{t('home.prostheticDaily')}</Text>
           </View>
 
           {/* Prawa strzałka karuzeli */}
           <TouchableOpacity style={styles.carouselArrow}>
-            <Ionicons name="chevron-forward" size={32} color={colors.primary} />
+            <Ionicons name="chevron-forward" size={32} color={colors.primary_base} />
           </TouchableOpacity>
         </View>
       </View>
@@ -142,7 +142,7 @@ export default function HomeScreen() {
       </View>
 
       {/* ----------------- SEKCJA: OSTATNIA AKTYWNOŚĆ ----------------- */}
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginBottom: 8 }]}>
+      <Text style={[styles.sectionTitle, { color: colors.secondary_base_0c, marginBottom: 8 }]}>
         {t('home.lastActivity')}
       </Text>
       <View style={[styles.sectionContainer, { marginBottom: 0, paddingVertical: 10 }]}>
@@ -150,16 +150,16 @@ export default function HomeScreen() {
           {/* Element osi czasu 1: Pomiar kikuta */}
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
-              <Text style={styles.activityLabel}>Ostatni pomiar kikuta:</Text>
-              <Text style={styles.activityValue}>Dzisiaj, 08:30</Text>
+              <Text style={styles.activityLabel}>{t('home.lastStumpMeasurement')}</Text>
+              <Text style={styles.activityValue}>{t('home.todayAt', { time: "8:30" })}</Text>
             </View>
           </View>
 
           {/* Element osi czasu 2: Ostatni incydent */}
           <View style={styles.activityRow}>
             <View style={styles.activityContent}>
-              <Text style={styles.activityLabel}>Ostatni incydent:</Text>
-              <Text style={styles.activityValue}>5 dni temu</Text>
+              <Text style={styles.activityLabel}>{t('home.lastIncident')}</Text>
+              <Text style={styles.activityValue}>{t('home.daysAgo', { count: "5" })}</Text>
             </View>
           </View>
         </View>
@@ -167,31 +167,31 @@ export default function HomeScreen() {
       
       {/* Link: Pokaż całą historię */}
       <TouchableOpacity style={styles.historyLink}>
-        <Text style={styles.historyLinkText}>Pokaż całą historię</Text>
+        <Text style={styles.historyLinkText}>{t('home.showFullHistory')}</Text>
       </TouchableOpacity>
 
       {/* ----------------- SEKCJA: UTILITY BUTTONS (NA DOLE) ----------------- */}
       <View style={styles.utilitiesContainer}>
         {/* Przycisk: Dofinansowania */}
-        <TouchableOpacity onPress={() => router.push('../funding/accumulated_funds')} style={styles.utilityButton}>
+        <TouchableOpacity onPress={() => router.push('./funding/accumulated_funds')} style={styles.utilityButton}>
           <View style={styles.utilityLeftContent}>
             <View style={styles.utilityIconBg}>
-              <Ionicons name="cash-outline" size={24} color={colors.primary} />
+              <Ionicons name="cash-outline" size={24} color={colors.primary_base} />
             </View>
             <Text style={styles.utilityText}>{t('home.funding')}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color={colors.primary} />
+          <Ionicons name="chevron-forward" size={24} color={colors.primary_base} />
         </TouchableOpacity>
 
         {/* Przycisk: Moje pliki i zdjęcia */}
         <TouchableOpacity style={styles.utilityButton}>
           <View style={styles.utilityLeftContent}>
             <View style={styles.utilityIconBg}>
-              <Ionicons name="document-text-outline" size={24} color={colors.primary} />
+              <Ionicons name="document-text-outline" size={24} color={colors.primary_base} />
             </View>
             <Text style={styles.utilityText}>{t('home.myFiles')}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color={colors.primary} />
+          <Ionicons name="chevron-forward" size={24} color={colors.primary_base} />
         </TouchableOpacity>
       </View>
 
@@ -201,9 +201,23 @@ export default function HomeScreen() {
         onPress={() => setTheme(themeType === 'light' ? 'high-contrast' : 'light')}
       >
         <Text style={styles.themeToggleDevButtonText}>
-          {themeType === 'light' ? 'Zmień na wysoki kontrast 🌙' : 'Zmień na jasny motyw ☀️'}
+          {themeType === 'light' ? t('home.switchToHighContrast') : t('home.switchToLightTheme')}
         </Text>
       </TouchableOpacity>
+
+      {/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
+      <TouchableOpacity 
+        style={styles.themeToggleDevButton}
+        onPress={() => {
+          const nextLang = i18n.language.startsWith('pl') ? 'en' : 'pl';
+          i18n.changeLanguage(nextLang);
+        }}
+      >
+        <Text style={styles.themeToggleDevButtonText}>
+          {i18n.language.startsWith('pl') ? 'Zmień język: English (EN)' : 'Change language: Polski (PL)'}
+        </Text>
+      </TouchableOpacity>
+      
     </ScrollView>
   );
 }
@@ -214,7 +228,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
   return StyleSheet.create({
     scrollView: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: colors.tertiary_base_2,
     },
     container: {
       paddingHorizontal: 24,
@@ -230,20 +244,20 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     headerGreeting: {
       fontSize: 28,
       fontWeight: '300',
-      color: colors.primary,
+      color: colors.primary_base,
       letterSpacing: 1.5,
     },
     headerName: {
       fontSize: 28,
       fontWeight: 'bold',
-      color: colors.primary,
+      color: colors.primary_base,
       letterSpacing: 1.5,
     },
     handIconContainer: {
       transform: [{ rotate: '-45deg' }],
     },
     sectionContainer: {
-      backgroundColor: colors.backgroundSecondary,
+      backgroundColor: colors.tertiary_base_2,
       borderRadius: 40,
       marginBottom: 24,
       alignItems: 'center',
@@ -266,7 +280,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     sectionTitle: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: colors.textPrimary,
+      color: colors.primary_base,
       letterSpacing: 2,
       marginBottom: 16,
       textAlign: 'center',
@@ -283,7 +297,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     prostheticCard: {
       width: 200, // Zmniejszono nieco kartę, aby wszystko się mieściło
       height: 200,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primary_base,
       borderRadius: 40,
       justifyContent: 'center',
       alignItems: 'center',
@@ -293,7 +307,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
       shadowRadius: 10,
       elevation: 6,
       borderWidth: isHighContrast ? 2 : 0,
-      borderColor: colors.textPrimary,
+      borderColor: colors.primary_base,
     },
     logoImage: {
       width: 120,
@@ -303,7 +317,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     prostheticCardText: {
       fontSize: 14,
       fontWeight: '600',
-      color: colors.accentPrimary,
+      color: colors.accent_base,
       textAlign: 'center',
     },
     actionButtonsRow: {
@@ -315,12 +329,12 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     actionButtonLeft: {
       flex: 0.47,
       height: 70,
-      backgroundColor: colors.backgroundSecondary,
+      backgroundColor: colors.tertiary_base_2,
       borderRadius: 18,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: isHighContrast ? 2 : 0,
-      borderColor: colors.textPrimary,
+      borderColor: colors.primary_base,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -336,12 +350,12 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     actionButtonRight: {
       flex: 0.47,
       height: 70,
-      backgroundColor: colors.accentPrimary,
+      backgroundColor: colors.accent_base,
       borderRadius: 18,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 2,
-      borderColor: colors.primary,
+      borderColor: colors.primary_base,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -357,16 +371,16 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     actionButtonText: {
       fontSize: 14,
       fontWeight: 'bold',
-      color: colors.primary,
+      color: colors.primary_base,
       textAlign: 'center',
     },
     activityCard: {
       width: '100%',
-      backgroundColor: colors.backgroundSecondary,
+      backgroundColor: colors.tertiary_base_2,
       borderRadius: 20,
       paddingHorizontal: 10,
       borderWidth: isHighContrast ? 2 : 0,
-      borderColor: colors.textPrimary,
+      borderColor: colors.primary_base,
     },
     activityRow: {
       flexDirection: 'row',
@@ -380,12 +394,12 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     },
     activityLabel: {
       fontSize: 14,
-      color: colors.primary,
+      color: colors.primary_base,
     },
     activityValue: {
       fontSize: 14,
       fontWeight: 'bold',
-      color: colors.primary,
+      color: colors.primary_base,
     },
     historyLink: {
       marginTop: 10,
@@ -394,7 +408,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     historyLinkText: {
       padding: 10,
       fontSize: 13,
-      color: colors.textSecondary,
+      color: colors.secondary_base_0c,
       textDecorationLine: 'underline',
     },
     utilitiesContainer: {
@@ -405,13 +419,13 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      backgroundColor: colors.backgroundSecondary,
+      backgroundColor: colors.tertiary_base_2,
       paddingVertical: 14,
       paddingHorizontal: 16,
       borderRadius: 20,
       marginBottom: 12,
       borderWidth: isHighContrast ? 2 : 0,
-      borderColor: colors.textPrimary,
+      borderColor: colors.primary_base,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -432,7 +446,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
       width: 40,
       height: 40,
       borderRadius: 12,
-      backgroundColor: colors.backgroundTertiary,
+      backgroundColor: colors.tertiary_base_2,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 14,
@@ -440,7 +454,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     utilityText: {
       fontSize: 15,
       fontWeight: 'bold',
-      color: colors.primary,
+      color: colors.primary_base,
     },
     themeToggleDevButton: {
       paddingVertical: 8,
@@ -449,7 +463,7 @@ const getStyles = (colors: ThemeColors, themeType: 'light' | 'high-contrast') =>
     },
     themeToggleDevButtonText: {
       fontSize: 12,
-      color: colors.primary,
+      color: colors.primary_base,
       textDecorationLine: 'underline',
     },
   });

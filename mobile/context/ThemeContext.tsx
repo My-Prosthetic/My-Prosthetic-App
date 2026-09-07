@@ -1,47 +1,60 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-//TODO dopisać tu jeszcze cienie
-
 export interface ThemeColors {
-  background: string;
-  backgroundSecondary: string;
-  backgroundTertiary: string;
-  textPrimary: string;
-  textSecondary: string;
-  primary: string;
-  secondary: string;
-  tertiary: string;
-  accentPrimary: string;
-  accentSecondary: string;
-  shadow: string;
+primary_base: string;
+primary_base_1: string;
+primary_base_2: string;
+primary_base_3: string;
+primary_base_4: string;
+secondary_base_0c: string;
+secondary_base: string;
+secondary_base_3: string;
+tertiary_base_1: string;
+tertiary_base_2: string;
+tertiary_base_3: string;
+accent_base: string;
+accent_base_1: string;
+accent_base_2: string;
+warning: string;
+false: string;
 }
 
 export const lightTheme: ThemeColors = {
-  background: '#C1E5FB',
-  backgroundSecondary: '#D6EEFC',
-  backgroundTertiary: '#EAF6FE',
-  textPrimary: '#052D8F',
-  textSecondary: '#4990E8',
-  primary: '#052D8F',
-  secondary: '#4990E8',
-  tertiary: '#3757A5',
-  accentPrimary: '#F5F3DD',
-  accentSecondary: '#F0EDCC',
-  shadow: '0 0 10px 1px gray',
+  primary_base: "#052D8F",
+  primary_base_1: "#3757A5",
+  primary_base_2: "#6981BC",
+  primary_base_3: "#9BABD2",
+  primary_base_4: "#CDD5E9",
+  secondary_base_0c: "#1967C8",
+  secondary_base: "#4990E8",
+  secondary_base_3: "#B6D3F6",
+  tertiary_base_1: "#C1E5FB",
+  tertiary_base_2: "#D6EEFC",
+  tertiary_base_3: "#EAF6FE",
+  accent_base: "#F0EDCC",
+  accent_base_1: "#F5F3DD",
+  accent_base_2: "#FAF9EE",
+  warning: "#ED9D1D",
+  false: "#B51932",
 };
 
 export const highContrastTheme: ThemeColors = {
-  background: '#000000',
-  backgroundSecondary: '#121212',
-  backgroundTertiary: '#1C1C1E',
-  textPrimary: '#FFFFFF',
-  textSecondary: '#FFFF00',
-  primary: '#FFFF00',
-  secondary: '#0000FF',
-  tertiary: '#FFFFFF',
-  accentPrimary: '#FF0000',
-  accentSecondary: '#FF0000',
-  shadow: '0 0 10px 1px gray',
+  primary_base: "#001A5E",
+  primary_base_1: "#0B3C9E",
+  primary_base_2: "#4A70D0",
+  primary_base_3: "#8AA3E4",
+  primary_base_4: "#E6EDF8",
+  secondary_base_0c: "#0047AB",
+  secondary_base: "#0C68E9",
+  secondary_base_3: "#CCE4FF",
+  tertiary_base_1: "#A3D9FF",
+  tertiary_base_2: "#E0F2FE",
+  tertiary_base_3: "#FFFFFF",
+  accent_base: "#FFF59D",
+  accent_base_1: "#FFF9C4",
+  accent_base_2: "#FFFFFF",
+  warning: "#FF8C00",
+  false: "#B51932",
 };
 
 type ThemeType = 'light' | 'high-contrast';

@@ -1,5 +1,7 @@
 import { openDatabaseSync } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 
-export const expoDb = openDatabaseSync('users.db'); 
+export const expoDb = openDatabaseSync('myProsthetics.db');
+expoDb.execSync('PRAGMA foreign_keys = ON;');
+
 export const db = drizzle(expoDb);
