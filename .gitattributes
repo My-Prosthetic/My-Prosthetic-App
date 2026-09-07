@@ -1,0 +1,12 @@
+# Wymuś LF dla wszystkich plików tekstowych, niezależnie od systemu operacyjnego
+* text=auto eol=lf
+
+# Pliki binarne — bez konwersji
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
