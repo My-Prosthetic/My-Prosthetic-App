@@ -181,5 +181,21 @@
       "description": "A platform for quick purpose-specific fundraising."
     }
   }
+},
+"profile": {
+  "title": "PROFIL MEDYCZNY",
+  "activity": "ACTIVITY LEVEL (K-LEVELS)",
+  "diseases": "DISEASES AND ALLERGIES",
+  "medications": "CURRENTLY TAKEN MEDICATIONS",
+  "addMedication": "Add new medication",
+  "history": "MEASUREMENT HISTORY",
+  "addMeasurement": "Add new measurement",
+  "recommendations": "RECOMMENDATIONS FROM THE PROSTHETIST",
+  "notes": "TECHNICAL NOTES",
+  "newFile": "ADD FILE",
+  "fileDescription": "here you can add photos, documentation and other files related to the medical history",
+  "historyEntries": "24 entries",
+  "recommendationsEntries": "1 new entry",
+  "notesEntries": "No new entries"
 }
 }
