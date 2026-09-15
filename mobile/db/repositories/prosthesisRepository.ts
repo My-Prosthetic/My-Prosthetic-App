@@ -1,8 +1,8 @@
 import * as Crypto from "expo-crypto"
-import { and, eq, isNull } from "drizzle-orm"
+import { and, eq, isNull, desc } from "drizzle-orm"
 
 import { db } from "../client"
-import { prostheses } from "../schema"
+import { prostheses, components } from "../schema"
 
 export type Prosthesis = typeof prostheses.$inferSelect
 
@@ -46,7 +46,11 @@ export async function getProsthesisById(id: string) {
 }
 
 export async function getAllProstheses() {
-	return db.select().from(prostheses).where(isNull(prostheses.deletedAt))
+	return db
+		.select()
+		.from(prostheses)
+		.where(isNull(prostheses.deletedAt))
+		.orderBy(desc(prostheses.createdAt))
 }
 
 export async function updateProsthesis(id: string, input: UpdateProsthesisInput) {
@@ -66,19 +70,30 @@ export async function updateProsthesis(id: string, input: UpdateProsthesisInput)
 export async function deleteProsthesis(id: string) {
 	const now = new Date().toISOString()
 
-	const [prosthesis] = await db
-		.update(prostheses)
-		.set({
-			deletedAt: now,
-			updatedAt: now,
-			isDirty: true,
-		})
-		.where(eq(prostheses.id, id))
-		.returning()
+	return db.transaction(async (tx) => {
+		const [prosthesis] = await tx
+			.update(prostheses)
+			.set({
+				deletedAt: now,
+				updatedAt: now,
+				isDirty: true,
+			})
+			.where(and(eq(prostheses.id, id), isNull(prostheses.deletedAt)))
+			.returning()
 
-	return prosthesis ?? null
-}
+		if (!prosthesis) {
+			return null
+		}
 
-export async function deleteProsthesisPermanently(id: string) {
-	await db.delete(prostheses).where(eq(prostheses.id, id))
+		await tx
+			.update(components)
+			.set({
+				deletedAt: now,
+				updatedAt: now,
+				isDirty: true,
+			})
+			.where(and(eq(components.prosthesisId, id), isNull(components.deletedAt)))
+
+		return prosthesis
+	})
 }

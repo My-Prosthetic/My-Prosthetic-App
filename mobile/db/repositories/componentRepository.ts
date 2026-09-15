@@ -2,7 +2,7 @@ import * as Crypto from "expo-crypto"
 import { and, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
-import { components } from "../schema"
+import { components, prostheses } from "../schema"
 
 export type Component = typeof components.$inferSelect
 
@@ -23,7 +23,16 @@ export type UpdateComponentInput = Partial<Omit<CreateComponentInput, "prosthesi
 export async function createComponent(input: CreateComponentInput) {
 	const now = new Date().toISOString()
 
+	const [prosthesis] = await db
+		.select({ id: prostheses.id })
+		.from(prostheses)
+		.where(and(eq(prostheses.id, input.prosthesisId), isNull(prostheses.deletedAt)))
+
+	if (!prosthesis) {
+		throw new Error("Active prosthesis not found")
+	}
 	const [component] = await db
+
 		.insert(components)
 		.values({
 			id: Crypto.randomUUID(),
@@ -81,12 +90,8 @@ export async function deleteComponent(id: string) {
 			updatedAt: now,
 			isDirty: true,
 		})
-		.where(eq(components.id, id))
+		.where(and(eq(components.id, id), isNull(components.deletedAt)))
 		.returning()
 
 	return component ?? null
-}
-
-export async function deleteComponentPermanently(id: string) {
-	await db.delete(components).where(eq(components.id, id))
 }
