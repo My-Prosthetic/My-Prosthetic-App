@@ -1,21 +1,21 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import * as i18next from "i18next"
+import { initReactI18next } from "react-i18next"
 
-import pl from './pl.json';
-import en from './en.json';
+import pl from "./pl.json"
+import en from "./en.json"
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      pl: { translation: pl },
-      en: { translation: en },
-    },
-    lng: 'pl', 
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false 
-    }
-  });
+const i18n = i18next.createInstance()
 
-export default i18n;
+i18n.use(initReactI18next).init({
+	resources: {
+		pl: { translation: pl },
+		en: { translation: en },
+	},
+	lng: "pl",
+	fallbackLng: "en",
+	interpolation: {
+		escapeValue: false,
+	},
+})
+
+export default i18n

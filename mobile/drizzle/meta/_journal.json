@@ -1,34 +1,34 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1785063417185,
-      "tag": "0000_violet_newton_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1786288953252,
-      "tag": "0001_long_lord_hawal",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1788379495128,
-      "tag": "0002_amusing_silvermane",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1788379495129,
-      "tag": "0003_normalize_deposit_sources",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1785063417185,
+			"tag": "0000_violet_newton_destine",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1789130723542,
+			"tag": "0001_dusty_may_parker",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1789479036617,
+			"tag": "0002_swift_grey_gargoyle",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "6",
+			"when": 1789646155918,
+			"tag": "0003_tidy_pepper_potts",
+			"breakpoints": true
+		}
+	]
 }

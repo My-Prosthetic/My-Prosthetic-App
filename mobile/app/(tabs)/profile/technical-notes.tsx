@@ -1,8 +1,5 @@
-import { View, Text } from 'react-native';
+import { View } from "react-native"
 
 export default function TechnicalNotes() {
-  return (
-    <View>
-    </View>
-  );
+	return <View></View>
 }
