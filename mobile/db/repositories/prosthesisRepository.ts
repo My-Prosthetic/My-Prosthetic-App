@@ -2,7 +2,8 @@ import * as Crypto from "expo-crypto"
 import { and, eq, isNull, desc } from "drizzle-orm"
 
 import { db } from "../client"
-import { prostheses, components } from "../schema"
+import { prostheses } from "@/db/schema/prostheses/prostheses"
+import { components } from "@/db/schema/prostheses/components"
 
 export type Prosthesis = typeof prostheses.$inferSelect
 

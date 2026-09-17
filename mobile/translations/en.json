@@ -7,12 +7,195 @@
 		"journal": "Journal",
 		"journalTitle": "Journal",
 		"settings": "Settings",
-		"settingsTitle": "Settings & Privacy"
+		"settingsTitle": "Settings & Privacy",
+		"funding": "Funding",
+		"fundingTitle": "Funding & Assistance",
+		"programmes": "Programmes",
+		"programmesTitle": "Funding Programmes",
+		"accumulated": "Accumulated",
+		"accumulatedTitle": "Accumulated Funds"
 	},
 	"screens": {
 		"homeTitle": "This is Home Screen 🏠",
 		"profileTitle": "Your User Profile 👤",
 		"journalTitle": "You medical journal x",
-		"settingsTitle": "App Settings ⚙️"
+		"settingsTitle": "App Settings ⚙️",
+		"programmesTitle": "Funding Programmes 📋",
+		"accumulatedTitle": "Accumulated Funds 💰"
+	},
+	"home": {
+		"greeting": "Hello",
+		"dbMigrationErr": "Database migration error: ",
+		"dbInit": "Database initialization...",
+		"myProsthetics": "MY PROSTHETICS",
+		"addIncident": "ADD INCIDENT",
+		"lastActivity": "LAST ACTIVITY",
+		"funding": "FUNDING",
+		"myFiles": "MY FILES AND PHOTOS",
+		"addMeasure": "ADD MEASURE",
+		"prostheticDaily": "OBJ: Daily prosthesis",
+		"lastStumpMeasurement": "Last stump measurement:",
+		"lastIncident": "Last incident:",
+		"todayAt": "Today, {{time}}",
+		"daysAgo": "{{count}} days ago",
+		"showFullHistory": "Show full history",
+		"switchToHighContrast": "Switch to high contrast 🌙",
+		"switchToLightTheme": "Switch to light theme ☀️"
+	},
+	"common": {
+		"cancel": "CANCEL",
+		"error": "Error",
+		"save": "SAVE",
+		"delete": "DELETE",
+		"today": "Today"
+	},
+	"funds": {
+		"title": "FUNDING",
+		"availableProgrammes": "Available programmes",
+		"myFunds": "My funds",
+		"addFundsTitle": "ADD FUNDS",
+		"editFundsTitle": "EDIT FUNDS",
+		"addGoalTitle": "ADD GOAL",
+		"editGoalTitle": "EDIT GOAL",
+		"addNewGoal": "ADD NEW GOAL",
+		"addGoal": "+ Add goal",
+		"addDeposit": "Add funds received",
+		"prostheticBudget": "PROSTHETIC BUDGET",
+		"collected": "Collected:",
+		"datePlaceholder": "DATE - DATE",
+		"savedSources": "SAVED SOURCES",
+		"noDeposits": "No deposits saved yet.",
+		"deposit": "Deposit",
+		"fundingSource": "FUNDING SOURCE",
+		"grantedAmount": "GRANTED AMOUNT",
+		"decisionDate": "DECISION DATE",
+		"additionalNote": "ADDITIONAL NOTE (OPTIONAL)",
+		"addToWallet": "ADD TO WALLET",
+		"selectFundingSource": "Select funding source",
+		"select": "SELECT",
+		"notePlaceholder": "Enter a short description, e.g. decision number...",
+		"chooseFundingSourceError": "Choose a funding source",
+		"invalidAmountError": "Enter a valid amount greater than zero",
+		"saveDepositError": "The deposit could not be saved.",
+		"saveChanges": "SAVE CHANGES",
+		"depositNotFound": "Deposit not found.",
+		"loadDepositError": "The deposit could not be loaded.",
+		"updateDepositError": "The deposit could not be updated.",
+		"deleteDepositTitle": "Delete deposit",
+		"deleteDepositMessage": "Are you sure you want to delete this deposit?",
+		"deleteDepositError": "The deposit could not be deleted.",
+		"goalName": "GOAL NAME",
+		"goalNamePlaceholder": "Enter goal name",
+		"goalAmount": "GOAL AMOUNT",
+		"addGoalAction": "ADD GOAL",
+		"emptyGoalNameError": "Enter a goal name",
+		"invalidGoalAmountError": "Enter a valid amount greater than zero",
+		"saveGoalError": "The goal could not be saved.",
+		"goalNotFound": "Goal not found.",
+		"loadGoalError": "The goal could not be loaded.",
+		"updateGoalError": "The goal could not be updated.",
+		"deleteGoalTitle": "Delete goal",
+		"deleteGoalMessage": "Are you sure you want to delete this goal? Related deposits will also be deleted.",
+		"deleteGoalError": "The goal could not be deleted.",
+		"sources": {
+			"family": "Family",
+			"fundraiser": "Online fundraiser",
+			"grant": "Grant",
+			"savings": "Savings",
+			"other": "Other source"
+		}
+	},
+	"funding": {
+		"header": "FUNDING",
+		"detailsHeader": "PROGRAMME DETAILS",
+		"availableProgrammes": "Available programmes",
+		"accumulatedFunds": "My funds",
+		"addFunds": "ADD RECEIVED FUNDS",
+		"notFound": "Programme not found.",
+		"back": "Go back",
+		"showProgrammeDetails": "Show details of {{programme}}",
+		"openFoundation": "Open {{foundation}} website",
+
+		"sections": {
+			"national": "NATIONAL PROGRAMMES",
+			"foundations": "SUPPORTING FOUNDATIONS"
+		},
+
+		"nfz": {
+			"badge": "NFZ",
+			"title": "MEDICAL DEVICE ORDER",
+			"shortDescription": "Basic funding (3-year cycle).",
+			"detailsTitle": "NFZ ORDER",
+			"subtitle": "Basic national funding",
+			"limitLabel": "Time limit",
+			"limitValue": "Depends on the medical device code",
+			"contributionLabel": "Own contribution",
+			"contributionValue": "Depends on the code",
+			"howToGet": "HOW TO APPLY?",
+			"step1Title": "Visit a specialist",
+			"step1Description": "Orthopaedist, surgeon or rehabilitation physician.",
+			"step2Title": "Issuing an eZWM order",
+			"step2Description": "The doctor submits the order to the NFZ system.",
+			"step3Title": "Order fulfilment at a prosthetic provider",
+			"step3Description": "Provide the order code and PIN.",
+			"button": "GO TO THE NFZ WEBSITE"
+		},
+
+		"pfron": {
+			"badge": "PFRON",
+			"title": "\"ACTIVE LOCAL GOVERNMENT\" PROGRAMME",
+			"shortDescription": "Funding for advanced prostheses (K3/K4).",
+			"detailsTitle": "ACTIVE LOCAL GOVERNMENT",
+			"subtitle": "PFRON funds (Module C)",
+			"recruitmentLabel": "Application dates",
+			"recruitmentValue": "Check with your local PCPR",
+			"eligibilityTitle": "WHO CAN APPLY?",
+			"eligibility1": "People with a recognised degree of disability",
+			"eligibility2": "People who are professionally active (or studying)",
+			"eligibility3": "Patients with K3 or K4 mobility profile",
+			"sowTitle": "SUPPORT SERVICE SYSTEM (SOW)",
+			"button": "APPLY AND CHECK DATES",
+			"buttonDescription": "Log in to the PFRON government system"
+		},
+
+		"collections": {
+			"badge": "FUNDRAISING",
+			"title": "FUNDRAISING AND OWN CONTRIBUTION",
+			"shortDescription": "A list of trusted supporting foundations.",
+			"detailsTitle": "FOUNDATIONS AND FUNDRAISING",
+			"subtitle": "Funds from 1.5% tax donations and public fundraising",
+			"sectionTitle": "POPULAR FOUNDATIONS"
+		},
+
+		"foundations": {
+			"avalon": {
+				"name": "Avalon Foundation",
+				"description": "Provides subaccounts for people with disabilities."
+			},
+			"mocPomocy": {
+				"name": "Moc Pomocy Foundation",
+				"description": "Support in returning to an active life."
+			},
+			"siepomaga": {
+				"name": "Siepomaga.pl",
+				"description": "A platform for quick purpose-specific fundraising."
+			}
+		}
+	},
+	"profile": {
+		"title": "PROFIL MEDYCZNY",
+		"activity": "ACTIVITY LEVEL (K-LEVELS)",
+		"diseases": "DISEASES AND ALLERGIES",
+		"medications": "CURRENTLY TAKEN MEDICATIONS",
+		"addMedication": "Add new medication",
+		"history": "MEASUREMENT HISTORY",
+		"addMeasurement": "Add new measurement",
+		"recommendations": "RECOMMENDATIONS FROM THE PROSTHETIST",
+		"notes": "TECHNICAL NOTES",
+		"newFile": "ADD FILE",
+		"fileDescription": "here you can add photos, documentation and other files related to the medical history",
+		"historyEntries": "24 entries",
+		"recommendationsEntries": "1 new entry",
+		"notesEntries": "No new entries"
 	}
 }
