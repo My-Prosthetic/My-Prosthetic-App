@@ -15,6 +15,7 @@ import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
+
 import { db } from "@/db/client"
 import { users } from "@/db/schema/users"
 import migrations from "@/drizzle/migrations"
@@ -26,7 +27,7 @@ import migrations from "@/drizzle/migrations"
 export default function HomeScreen() {
 	const { success, error } = useMigrations(db, migrations)
 	const [userName, setUserName] = useState<string>("(init value)")
-
+	const [showAddProsthesisCard, setShowAddProsthesisCard] = useState(false)
 	const router = useRouter()
 
 	const { t, i18n } = useTranslation()
@@ -109,24 +110,56 @@ export default function HomeScreen() {
 
 				<View style={styles.carouselRow}>
 					{/* Lewa strzałka karuzeli */}
-					<TouchableOpacity style={styles.carouselArrow}>
-						<Ionicons name="chevron-back" size={32} color={colors.primary_base} />
+					<TouchableOpacity
+						style={styles.carouselArrow}
+						onPress={() => setShowAddProsthesisCard(false)}
+						disabled={!showAddProsthesisCard}
+						accessibilityRole="button"
+					>
+						<Ionicons
+							name="chevron-back"
+							size={32}
+							color={showAddProsthesisCard ? colors.primary_base : colors.primary_base_3}
+						/>
 					</TouchableOpacity>
 
 					{/* Główna karta protezy */}
-					<View style={styles.prostheticCard}>
-						{/* Logo protezy */}
-						<Image
-							source={require("../../../assets/mp_logo_accent.png")}
-							style={styles.logoImage}
-							resizeMode="contain"
-						/>
-						<Text style={styles.prostheticCardText}>{t("home.prostheticDaily")}</Text>
-					</View>
+					{showAddProsthesisCard ? (
+						<TouchableOpacity
+							style={styles.prostheticCard}
+							onPress={() => router.push("/prosthesis/new")}
+							accessibilityRole="button"
+						>
+							<View style={styles.addProsthesisCircle}>
+								<Ionicons name="add" size={54} color={colors.primary_base} />
+							</View>
+
+							<Text style={styles.prostheticCardText}>{t("home.addProsthesis")}</Text>
+						</TouchableOpacity>
+					) : (
+						<View style={styles.prostheticCard}>
+							{/* Logo protezy */}
+							<Image
+								source={require("../../../assets/mp_logo_accent.png")}
+								style={styles.logoImage}
+								resizeMode="contain"
+							/>
+							<Text style={styles.prostheticCardText}>{t("home.prostheticDaily")}</Text>
+						</View>
+					)}
 
 					{/* Prawa strzałka karuzeli */}
-					<TouchableOpacity style={styles.carouselArrow}>
-						<Ionicons name="chevron-forward" size={32} color={colors.primary_base} />
+					<TouchableOpacity
+						style={styles.carouselArrow}
+						onPress={() => setShowAddProsthesisCard(true)}
+						disabled={showAddProsthesisCard}
+						accessibilityRole="button"
+					>
+						<Ionicons
+							name="chevron-forward"
+							size={32}
+							color={showAddProsthesisCard ? colors.primary_base_3 : colors.primary_base}
+						/>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -148,6 +181,7 @@ export default function HomeScreen() {
 			<Text style={[styles.sectionTitle, { color: colors.secondary_base_0c, marginBottom: 8 }]}>
 				{t("home.lastActivity")}
 			</Text>
+
 			<View style={[styles.sectionContainer, { marginBottom: 0, paddingVertical: 10 }]}>
 				<View style={styles.activityCard}>
 					{/* Element osi czasu 1: Pomiar kikuta */}
@@ -320,6 +354,15 @@ const getStyles = (colors: ThemeColors, themeType: "light" | "high-contrast") =>
 			width: 120,
 			height: 120,
 			marginBottom: 10,
+		},
+		addProsthesisCircle: {
+			width: 82,
+			height: 82,
+			borderRadius: 41,
+			backgroundColor: colors.accent_base,
+			justifyContent: "center",
+			alignItems: "center",
+			marginBottom: 24,
 		},
 		prostheticCardText: {
 			fontSize: 14,
