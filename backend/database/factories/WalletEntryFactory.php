@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\FundingSource;
 use App\Models\User;
 use App\Models\WalletEntry;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -27,13 +28,7 @@ class WalletEntryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'source' => fake()->randomElement([
-                'family',
-                'fundraiser',
-                'grant',
-                'savings',
-                'other',
-            ]),
+            'source' => fake()->randomElement(FundingSource::values()),
             'amount' => fake()->numberBetween(1, 10_000_000),
             'assigned_at' => fake()->dateTimeBetween('-1 year', 'now'),
             'note' => fake()->optional()->sentence(),
