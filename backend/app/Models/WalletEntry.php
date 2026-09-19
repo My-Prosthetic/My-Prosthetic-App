@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FundingSource;
 use Database\Factories\WalletEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -31,6 +32,7 @@ class WalletEntry extends Model
      * Get the model's attribute casts.
      *
      * @return array{
+     *     source: 'App\\Enums\\FundingSource',
      *     amount: 'integer',
      *     assigned_at: 'datetime',
      * }
@@ -38,6 +40,7 @@ class WalletEntry extends Model
     protected function casts(): array
     {
         return [
+            'source' => FundingSource::class,
             'amount' => 'integer',
             'assigned_at' => 'datetime',
         ];

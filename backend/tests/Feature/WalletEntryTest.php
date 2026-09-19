@@ -155,7 +155,8 @@ class WalletEntryTest extends TestCase
     {
         $entry = WalletEntry::factory()->create();
 
-        $this->assertContains($entry->source, FundingSource::values());
+        $this->assertInstanceOf(FundingSource::class, $entry->source);
+        $this->assertContains($entry->source->value, FundingSource::values());
         $this->assertGreaterThan(0, $entry->amount);
         $this->assertNotNull($entry->patient);
     }
