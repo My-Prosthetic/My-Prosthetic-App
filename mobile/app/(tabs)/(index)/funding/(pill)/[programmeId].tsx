@@ -144,7 +144,6 @@ export default function ProgrammeDetailsScreen() {
 				>
 					{translate(details.sectionTitleKey)}
 				</ThemedText>
-				{console.log(details.sectionTitleKey)}
 				<View style={styles.stepsContainer}>
 					{details.steps.map((step, index) => (
 						<View key={step.number} style={styles.stepRow}>
@@ -246,7 +245,6 @@ export default function ProgrammeDetailsScreen() {
 						onPress={() => openExternalUrl(details.externalUrl)}
 						variant="wide"
 						colorName="primary_base"
-						borderColor="accent_base"
 						style={styles.actionButton}
 					>
 						<View style={styles.actionButtonContent}>
@@ -270,7 +268,7 @@ export default function ProgrammeDetailsScreen() {
 							)}
 						</View>
 
-						<Ionicons name="chevron-forward" size={20} color="#FAF9EE" />
+						<Ionicons name="chevron-forward" size={20} color={colors.accent_base_2} />
 					</ThemedView>
 				)}
 			</>
@@ -462,11 +460,10 @@ const styles = StyleSheet.create({
 	actionButton: {
 		minHeight: 72,
 		borderRadius: 18,
-		borderWidth: 3,
 		flexDirection: "row",
 		alignItems: "center",
 		paddingHorizontal: 12,
-		paddingVertical: 8,
+		paddingVertical: 16,
 	},
 	actionButtonContent: {
 		flex: 1,
