@@ -1,8 +1,12 @@
 import React from "react"
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from "react-native"
+import { View, StyleSheet, ScrollView, Linking } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
+import { useTheme } from "@/context/ThemeContext"
+
+import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedText } from "@/src/components/ThemedText"
 
 import fundingConfig from "@/config/fundingConfig.json"
 
@@ -56,53 +60,19 @@ type Programme = {
 	details: ProgrammeDetails
 }
 
-const prototypeColors = {
-	screenBackground: "#D6EEFC",
-
-	boxBackground: "#EAF6FE",
-	boxBorder: "#6981BC",
-
-	primaryText: "#052D8F",
-	secondaryText: "#1967C8",
-	subtitleText: "#6981BC",
-
-	buttonBackground: "#052D8F",
-	buttonText: "#FAF9EE",
-	buttonBorder: "#F0EDCC",
-
-	stepCircleBackground: "#EAF6FE",
-}
-
 export default function ProgrammeDetailsScreen() {
 	const { t } = useTranslation()
-
-	const { programmeId } = useLocalSearchParams<{
-		programmeId: string
-	}>()
-
+	const { colors } = useTheme()
+	const { programmeId } = useLocalSearchParams<{ programmeId: string }>()
 	const programmes = fundingConfig.programmes as Programme[]
-
 	const programme = programmes.find((item) => item.id === programmeId)
 
 	const translate = (key?: string) => (key ? t(key as any) : "")
 
-	const screenBackground = prototypeColors.screenBackground
-	const boxBackground = prototypeColors.boxBackground
-	const boxBorder = prototypeColors.boxBorder
-	const primaryText = prototypeColors.primaryText
-	const secondaryText = prototypeColors.secondaryText
-	const subtitleText = prototypeColors.subtitleText
-	const buttonBackground = prototypeColors.buttonBackground
-	const buttonText = prototypeColors.buttonText
-	const buttonBorder = prototypeColors.buttonBorder
-
 	const openExternalUrl = async (url?: string) => {
-		if (!url) {
-			return
-		}
+		if (!url) return
 
 		const supported = await Linking.canOpenURL(url)
-
 		if (supported) {
 			await Linking.openURL(url)
 		}
@@ -110,16 +80,9 @@ export default function ProgrammeDetailsScreen() {
 
 	if (!programme) {
 		return (
-			<View
-				style={[
-					styles.notFoundContainer,
-					{
-						backgroundColor: screenBackground,
-					},
-				]}
-			>
-				<Text style={[styles.notFoundText, { color: primaryText }]}>{t("funding.notFound")}</Text>
-			</View>
+			<ThemedView variant="wide" colorName="secondary_base" style={styles.notFoundContainer}>
+				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="primary_base" />
+			</ThemedView>
 		)
 	}
 
@@ -131,54 +94,37 @@ export default function ProgrammeDetailsScreen() {
 		}
 
 		return (
-			<View
-				style={[
-					styles.summaryBox,
-					{
-						backgroundColor: boxBackground,
-						borderColor: boxBorder,
-					},
-				]}
+			<ThemedView
+				colorName="tertiary_base_3"
+				borderColor="primary_base_2"
+				style={styles.summaryBox}
 			>
 				{details.summaryRows.map((row, index) => (
 					<View key={`${row.labelKey}-${index}`}>
 						<View style={styles.summaryRow}>
-							<Text
-								style={[
-									styles.summaryLabel,
-									{
-										color: primaryText,
-									},
-								]}
-							>
+							<ThemedText variant="basic1" colorName="primary_base">
 								{translate(row.labelKey)}
-							</Text>
+							</ThemedText>
 
-							<Text
-								style={[
-									styles.summaryValue,
-									{
-										color: primaryText,
-									},
-								]}
+							<ThemedText
+								variant="subTitle1"
+								colorName="primary_base"
+								style={{
+									textAlign: "right",
+									flexShrink: 1,
+									maxWidth: "58%",
+								}}
 							>
 								{translate(row.valueKey)}
-							</Text>
+							</ThemedText>
 						</View>
 
 						{index < details.summaryRows!.length - 1 && (
-							<View
-								style={[
-									styles.summaryDivider,
-									{
-										backgroundColor: "#9BABD2",
-									},
-								]}
-							/>
+							<ThemedView variant="divider" colorName="primary_base_3" />
 						)}
 					</View>
 				))}
-			</View>
+			</ThemedView>
 		)
 	}
 
@@ -189,23 +135,24 @@ export default function ProgrammeDetailsScreen() {
 
 		return (
 			<>
-				<Text style={[styles.sectionTitle, { color: secondaryText }]}>
+				<ThemedText
+					variant="tab1Category"
+					colorName="secondary_base_0c"
+					style={{
+						marginBottom: 20,
+					}}
+				>
 					{translate(details.sectionTitleKey)}
-				</Text>
-
+				</ThemedText>
+				{console.log(details.sectionTitleKey)}
 				<View style={styles.stepsContainer}>
 					{details.steps.map((step, index) => (
 						<View key={step.number} style={styles.stepRow}>
 							<View style={styles.stepIndicator}>
-								<View
-									style={[
-										styles.stepNumber,
-										{
-											backgroundColor: prototypeColors.stepCircleBackground,
-										},
-									]}
-								>
-									<Text style={[styles.stepNumberText, { color: primaryText }]}>{step.number}</Text>
+								<View style={[styles.stepNumber, { backgroundColor: colors.tertiary_base_3 }]}>
+									<ThemedText variant="subTitle1" colorName="primary_base">
+										{step.number}
+									</ThemedText>
 								</View>
 
 								{index < details.steps!.length - 1 && (
@@ -219,36 +166,33 @@ export default function ProgrammeDetailsScreen() {
 							</View>
 
 							<View style={styles.stepContent}>
-								<Text style={[styles.stepTitle, { color: primaryText }]}>
+								<ThemedText variant="subTitle1" colorName="primary_base" style={styles.stepTitle}>
 									{translate(step.titleKey)}
-								</Text>
-
-								<Text style={[styles.stepDescription, { color: secondaryText }]}>
+								</ThemedText>
+								<ThemedText
+									variant="subTitle2"
+									colorName="secondary_base_0c"
+									style={styles.stepDescription}
+								>
 									{translate(step.descriptionKey)}
-								</Text>
+								</ThemedText>
 							</View>
 						</View>
 					))}
 				</View>
 
 				{details.externalUrl && details.externalButtonLabelKey && (
-					<TouchableOpacity
-						activeOpacity={0.85}
+					<ThemedView
 						onPress={() => openExternalUrl(details.externalUrl)}
-						style={[
-							styles.mainButton,
-							{
-								backgroundColor: buttonBackground,
-								borderColor: buttonBorder,
-							},
-						]}
-						accessibilityRole="link"
-						accessibilityLabel={translate(details.externalButtonLabelKey)}
+						variant="wide"
+						colorName="primary_base"
+						borderColor="accent_base"
+						style={styles.mainButton}
 					>
-						<Text style={[styles.mainButtonText, { color: buttonText }]}>
+						<ThemedText variant="main1Button" colorName="accent_base_2">
 							{translate(details.externalButtonLabelKey)}
-						</Text>
-					</TouchableOpacity>
+						</ThemedText>
+					</ThemedView>
 				)}
 			</>
 		)
@@ -261,87 +205,73 @@ export default function ProgrammeDetailsScreen() {
 
 		return (
 			<>
-				<Text style={[styles.sectionTitle, { color: secondaryText }]}>
+				<ThemedText
+					variant="tab1Category"
+					colorName="secondary_base_0c"
+					style={{ marginBottom: 16 }}
+				>
 					{translate(details.sectionTitleKey)}
-				</Text>
+				</ThemedText>
 
-				<View
-					style={[
-						styles.eligibilityBox,
-						{
-							backgroundColor: boxBackground,
-							borderColor: boxBorder,
-						},
-					]}
+				<ThemedView
+					colorName="tertiary_base_3"
+					borderColor="primary_base_2"
+					style={styles.eligibilityBox}
 				>
 					{details.eligibilityKeys?.map((key) => (
 						<View key={key} style={styles.eligibilityRow}>
-							<Text
-								style={[
-									styles.bullet,
-									{
-										color: primaryText,
-									},
-								]}
-							>
+							<ThemedText variant="subTitle1" colorName="primary_base" style={styles.bullet}>
 								•
-							</Text>
+							</ThemedText>
 
-							<Text
-								style={[
-									styles.eligibilityText,
-									{
-										color: primaryText,
-									},
-								]}
-							>
+							<ThemedText variant="basic1" colorName="primary_base" style={styles.eligibilityText}>
 								{translate(key)}
-							</Text>
+							</ThemedText>
 						</View>
 					))}
-				</View>
+				</ThemedView>
 
 				{details.actionSectionTitleKey && (
-					<Text style={[styles.actionSectionTitle, { color: secondaryText }]}>
+					<ThemedText
+						variant="tab1Category"
+						colorName="secondary_base_0c"
+						style={styles.actionSectionTitle}
+					>
 						{translate(details.actionSectionTitleKey)}
-					</Text>
+					</ThemedText>
 				)}
 
 				{details.externalUrl && details.externalButtonLabelKey && (
-					<TouchableOpacity
-						activeOpacity={0.85}
+					<ThemedView
 						onPress={() => openExternalUrl(details.externalUrl)}
-						style={[
-							styles.actionButton,
-							{
-								backgroundColor: buttonBackground,
-								borderColor: buttonBorder,
-							},
-						]}
-						accessibilityRole="link"
-						accessibilityLabel={translate(details.externalButtonLabelKey)}
+						variant="wide"
+						colorName="primary_base"
+						borderColor="accent_base"
+						style={styles.actionButton}
 					>
 						<View style={styles.actionButtonContent}>
-							<Text style={[styles.actionButtonTitle, { color: buttonText }]} numberOfLines={1}>
+							<ThemedText
+								variant="subTitle1"
+								colorName="accent_base_2"
+								style={styles.actionButtonTitle}
+								numberOfLines={1}
+							>
 								{translate(details.externalButtonLabelKey)}
-							</Text>
+							</ThemedText>
 
 							{details.externalButtonDescriptionKey && (
-								<Text
-									style={[
-										styles.actionButtonDescription,
-										{
-											color: buttonText,
-										},
-									]}
+								<ThemedText
+									variant="subTitle2"
+									colorName="accent_base_2"
+									style={styles.actionButtonDescription}
 								>
 									{translate(details.externalButtonDescriptionKey)}
-								</Text>
+								</ThemedText>
 							)}
 						</View>
 
-						<Ionicons name="chevron-forward" size={20} color={buttonText} />
-					</TouchableOpacity>
+						<Ionicons name="chevron-forward" size={20} color="#FAF9EE" />
+					</ThemedView>
 				)}
 			</>
 		)
@@ -354,52 +284,47 @@ export default function ProgrammeDetailsScreen() {
 
 		return (
 			<>
-				<Text style={[styles.sectionTitle, { color: secondaryText }]}>
+				<ThemedText
+					variant="tab1Category"
+					colorName="secondary_base_0c"
+					style={{
+						marginVertical: 10,
+					}}
+				>
 					{translate(details.sectionTitleKey)}
-				</Text>
+				</ThemedText>
 
 				<View>
 					{details.foundations?.map((foundation) => {
 						const foundationName = translate(foundation.nameKey)
 
 						return (
-							<TouchableOpacity
+							<ThemedView
 								key={foundation.id}
-								activeOpacity={0.7}
 								onPress={() => openExternalUrl(foundation.externalUrl)}
-								style={[
-									styles.foundationItem,
-									{
-										borderBottomColor: "#9BABD2",
-									},
-								]}
-								accessibilityRole="link"
-								accessibilityLabel={t("funding.openFoundation", {
-									foundation: foundationName,
-								})}
+								colorName="tertiary_base_2"
+								style={{
+									flexDirection: "column",
+									alignItems: "flex-start",
+								}}
 							>
-								<Text
-									style={[
-										styles.foundationName,
-										{
-											color: primaryText,
-										},
-									]}
-								>
+								<ThemedText variant="subTitle1" colorName="primary_base">
 									{foundationName}
-								</Text>
+								</ThemedText>
 
-								<Text
-									style={[
-										styles.foundationDescription,
-										{
-											color: secondaryText,
-										},
-									]}
+								<ThemedText
+									variant="body1Regular"
+									colorName="secondary_base_0c"
+									style={{ marginTop: 10 }}
 								>
 									{translate(foundation.descriptionKey)}
-								</Text>
-							</TouchableOpacity>
+								</ThemedText>
+								<ThemedView
+									variant="divider"
+									colorName="primary_base_3"
+									style={{ marginVertical: 16 }}
+								/>
+							</ThemedView>
 						)
 					})}
 				</View>
@@ -408,70 +333,46 @@ export default function ProgrammeDetailsScreen() {
 	}
 
 	return (
-		<ScrollView
-			style={[
-				styles.container,
-				{
-					backgroundColor: screenBackground,
-				},
-			]}
-			contentContainerStyle={styles.content}
-			showsVerticalScrollIndicator={false}
-		>
-			<Text style={[styles.programmeTitle, { color: primaryText }]}>
-				{translate(details.titleKey)}
-			</Text>
+		<ThemedView colorName="tertiary_base_2" variant="background">
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<ThemedText
+					variant="main1Button"
+					colorName="primary_base"
+					style={{
+						alignSelf: "flex-start",
+						marginTop: 20,
+					}}
+				>
+					{translate(details.titleKey)}
+				</ThemedText>
 
-			<Text style={[styles.programmeSubtitle, { color: subtitleText }]}>
-				{translate(details.subtitleKey)}
-			</Text>
+				<ThemedText
+					variant="subTitle1"
+					colorName="primary_base_2"
+					style={{
+						marginTop: 5,
+						marginBottom: 20,
+					}}
+				>
+					{translate(details.subtitleKey)}
+				</ThemedText>
 
-			{renderSummaryRows()}
-
-			{renderSteps()}
-
-			{renderEligibility()}
-
-			{renderFoundations()}
-		</ScrollView>
+				{renderSummaryRows()}
+				{renderSteps()}
+				{renderEligibility()}
+				{renderFoundations()}
+			</ScrollView>
+		</ThemedView>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-
-	content: {
-		paddingHorizontal: 24,
-		paddingTop: 22,
-		paddingBottom: 40,
-	},
-
-	programmeTitle: {
-		fontFamily: "Inter_600SemiBold",
-		fontSize: 18,
-		lineHeight: 20,
-		letterSpacing: 0.72,
-		textTransform: "uppercase",
-		marginBottom: 4,
-	},
-
-	programmeSubtitle: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
-		letterSpacing: 0.68,
-		marginBottom: 24,
-	},
-
 	summaryBox: {
 		borderWidth: 1,
 		borderRadius: 16,
 		paddingHorizontal: 14,
 		marginBottom: 28,
 	},
-
 	summaryRow: {
 		minHeight: 50,
 		flexDirection: "row",
@@ -479,131 +380,62 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		gap: 12,
 	},
-
-	summaryLabel: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 16,
-		lineHeight: 20,
-		flexShrink: 1,
-	},
-
-	summaryValue: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
-		letterSpacing: 0.68,
-		textAlign: "right",
-		flexShrink: 1,
-		maxWidth: "58%",
-	},
-
-	summaryDivider: {
-		height: 1,
-	},
-
-	sectionTitle: {
-		fontFamily: "Inter_700Bold",
-		fontSize: 12,
-		lineHeight: 14,
-		textTransform: "uppercase",
-		marginBottom: 14,
-	},
-
 	stepsContainer: {
 		gap: 0,
 		marginBottom: 26,
 	},
-
 	stepRow: {
 		flexDirection: "row",
 		alignItems: "flex-start",
 	},
-
 	stepIndicator: {
 		width: 30,
 		alignItems: "center",
 		marginRight: 12,
 		flexShrink: 0,
 	},
-
 	stepNumber: {
 		width: 30,
 		height: 30,
 		borderRadius: 15,
-
 		borderWidth: 0,
-
 		alignItems: "center",
 		justifyContent: "center",
 	},
-
-	stepNumberText: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 16,
-		lineHeight: 18,
-	},
-
 	stepDots: {
 		alignItems: "center",
 		justifyContent: "space-evenly",
 		height: 38,
 		paddingVertical: 5,
 	},
-
 	stepDot: {
 		width: 3,
 		height: 3,
 		borderRadius: 1.5,
 		backgroundColor: "#E0E0E0",
 	},
-
 	stepContent: {
 		flex: 1,
 		paddingTop: 2,
 		paddingBottom: 14,
 	},
-
 	stepTitle: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
-		letterSpacing: 0.68,
 		marginBottom: 3,
 		flexShrink: 1,
 	},
-
 	stepDescription: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 14,
-		lineHeight: 18,
-		letterSpacing: 0.56,
 		flexShrink: 1,
 	},
-
 	mainButton: {
 		height: 60,
 		borderRadius: 18,
 		borderWidth: 3,
-
 		alignItems: "center",
 		justifyContent: "center",
-
 		paddingHorizontal: 16,
 		paddingVertical: 8,
-
 		marginTop: 2,
 	},
-
-	mainButtonText: {
-		fontFamily: "Inter_600SemiBold",
-		fontSize: 16,
-		lineHeight: 19,
-		letterSpacing: 0.64,
-		textTransform: "uppercase",
-		textAlign: "center",
-		flexShrink: 1,
-	},
-
 	eligibilityBox: {
 		borderWidth: 1,
 		borderRadius: 16,
@@ -613,35 +445,20 @@ const styles = StyleSheet.create({
 		marginBottom: 28,
 		justifyContent: "center",
 	},
-
 	eligibilityRow: {
 		flexDirection: "row",
 		alignItems: "flex-start",
 		marginBottom: 8,
 	},
-
 	bullet: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
 		marginRight: 4,
 	},
-
 	eligibilityText: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 16,
-		lineHeight: 20,
 		flex: 1,
 	},
-
 	actionSectionTitle: {
-		fontFamily: "Inter_700Bold",
-		fontSize: 12,
-		lineHeight: 14,
-		textTransform: "uppercase",
 		marginBottom: 14,
 	},
-
 	actionButton: {
 		minHeight: 72,
 		borderRadius: 18,
@@ -651,61 +468,22 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12,
 		paddingVertical: 8,
 	},
-
 	actionButtonContent: {
 		flex: 1,
 		paddingRight: 6,
 		paddingLeft: 6,
 	},
-
 	actionButtonTitle: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 15,
-		lineHeight: 20,
-		letterSpacing: 0.68,
 		marginBottom: 2,
 		flexShrink: 1,
 	},
-
 	actionButtonDescription: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 13,
-		lineHeight: 17,
-		letterSpacing: 0.56,
 		flexShrink: 1,
 	},
-
-	foundationItem: {
-		paddingVertical: 14,
-		borderBottomWidth: 1,
-	},
-
-	foundationName: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
-		letterSpacing: 0.68,
-		marginBottom: 3,
-	},
-
-	foundationDescription: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 14,
-		lineHeight: 18,
-		letterSpacing: 0.56,
-	},
-
 	notFoundContainer: {
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
 		padding: 24,
-	},
-
-	notFoundText: {
-		fontFamily: "Afacad_600SemiBold",
-		fontSize: 17,
-		lineHeight: 21,
-		textAlign: "center",
 	},
 })

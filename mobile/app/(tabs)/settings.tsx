@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet } from "react-native"
+import { StyleSheet } from "react-native"
+import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedText } from "@/src/components/ThemedText"
 
-export default function SettingsScreen() {
+export default function JournalScreen() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.text}>Ustawienia Aplikacji ⚙️</Text>
-		</View>
+		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
+			<ThemedText tx="screens.settingsTitle" />
+		</ThemedView>
 	)
 }
 
@@ -13,7 +15,5 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#F2F2F7",
 	},
-	text: { fontSize: 20, fontWeight: "bold" },
 })

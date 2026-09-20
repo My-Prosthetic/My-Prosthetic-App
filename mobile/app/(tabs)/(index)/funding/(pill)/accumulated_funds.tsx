@@ -128,7 +128,7 @@ export default function AccumulatedFundsScreen() {
 				variant="tab1Category"
 				colorName="secondary_base_0c"
 				tx="funds.prostheticBudget"
-				style={{ marginBottom: 6 }}
+				style={{ marginBottom: 10 }}
 			/>
 
 			{/*KARUZELA*/}
@@ -189,7 +189,7 @@ export default function AccumulatedFundsScreen() {
 					<ThemedText
 						variant="tab1Category"
 						colorName="secondary_base_0c"
-						style={{ marginBottom: 6 }}
+						style={{ marginBottom: 6, marginTop: 16 }}
 						tx="funds.savedSources"
 					/>
 					<ScrollView showsVerticalScrollIndicator={true}>
@@ -261,7 +261,7 @@ const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
 		container: {
 			flex: 1,
-			padding: 16,
+			paddingTop: 10,
 		},
 		carouselCard: {
 			width: "100%",
