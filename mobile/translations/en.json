@@ -211,6 +211,14 @@
 		"saving": "Saving...",
 		"copyCondition": "Copy: {{condition}}",
 		"showMoreConditions": "Show {{count}} more",
+		"copiedToClipboard": "Copied to clipboard",
+		"delete": "Delete",
+		"deleteConditionTitle": "Delete condition or allergy",
+		"deleteConditionMessage": "Are you sure you want to delete “{{condition}}”?",
+		"deleteMedicationTitle": "Delete medication",
+		"deleteMedicationMessage": "Are you sure you want to delete “{{medication}}”?",
+		"deleteCondition": "Delete: {{condition}}",
+		"deleteMedication": "Delete medication: {{medication}}",
 		"kLevels": {
 			"K0": {
 				"label": "K0 (NO ACTIVITY)",
@@ -232,6 +240,8 @@
 				"label": "K4 (VERY ACTIVE)",
 				"description": "High activity and increased loads"
 			}
-		}
+		},
+		"duplicateCondition": "This condition or allergy already exists",
+		"duplicateMedication": "This medication with the same usage already exists"
 	}
 }

@@ -13,10 +13,6 @@ export const conditions = sqliteTable(
 
 		name: text("name").notNull(),
 
-		type: text("type", {
-			enum: ["condition", "allergy"],
-		}).notNull(),
-
 		createdAt: text("created_at").notNull(),
 
 		updatedAt: text("updated_at").notNull(),
@@ -33,4 +29,3 @@ export const conditions = sqliteTable(
 )
 
 export type MedicalCondition = typeof conditions.$inferSelect
-export type MedicalConditionType = MedicalCondition["type"]

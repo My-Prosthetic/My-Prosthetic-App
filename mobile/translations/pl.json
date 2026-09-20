@@ -211,6 +211,14 @@
 		"saving": "Zapisywanie...",
 		"copyCondition": "Skopiuj: {{condition}}",
 		"showMoreConditions": "Pokaż {{count}} więcej",
+		"copiedToClipboard": "Skopiowano do schowka",
+		"delete": "Usuń",
+		"deleteConditionTitle": "Usuń schorzenie lub alergię",
+		"deleteConditionMessage": "Czy na pewno chcesz usunąć „{{condition}}”?",
+		"deleteMedicationTitle": "Usuń lek",
+		"deleteMedicationMessage": "Czy na pewno chcesz usunąć lek „{{medication}}”?",
+		"deleteCondition": "Usuń: {{condition}}",
+		"deleteMedication": "Usuń lek: {{medication}}",
 		"kLevels": {
 			"K0": {
 				"label": "K0 (BRAK AKTYWNOŚCI)",
@@ -232,6 +240,8 @@
 				"label": "K4 (BARDZO AKTYWNY)",
 				"description": "Wysoka aktywność i zwiększone obciążenia"
 			}
-		}
+		},
+		"duplicateCondition": "Takie schorzenie lub alergia już istnieje",
+		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje"
 	}
 }

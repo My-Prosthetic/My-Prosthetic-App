@@ -2,13 +2,12 @@ import * as Crypto from "expo-crypto"
 import { and, asc, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
-import { conditions, type MedicalConditionType } from "../schema/medical/conditions"
+import { conditions } from "../schema/medical/conditions"
 import { medicalProfiles, type MedicalKLevel } from "../schema/medical/medicalProfiles"
 import { medications } from "../schema/medical/medications"
 
 export type CreateMedicalConditionInput = {
 	name: string
-	type: MedicalConditionType
 }
 
 export type CreateMedicalMedicationInput = {
@@ -112,7 +111,6 @@ export async function addMedicalCondition(input: CreateMedicalConditionInput) {
 			id: Crypto.randomUUID(),
 			medicalProfileId: profile.id,
 			name: input.name,
-			type: input.type,
 			createdAt: now,
 			updatedAt: now,
 			isDirty: true,
