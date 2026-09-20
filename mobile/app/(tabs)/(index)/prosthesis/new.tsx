@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
 import { createProsthesis } from "@/db/repositories/prosthesisRepository"
+import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
@@ -17,6 +18,14 @@ import {
 
 type Side = "left" | "right"
 type Limb = "upper" | "lower"
+
+const formatReplacementDate = (date: Date) => {
+	const year = date.getFullYear()
+	const month = String(date.getMonth() + 1).padStart(2, "0")
+	const day = String(date.getDate()).padStart(2, "0")
+
+	return `${year}-${month}-${day}`
+}
 
 export default function NewProsthesisScreen() {
 	const router = useRouter()
@@ -29,7 +38,8 @@ export default function NewProsthesisScreen() {
 
 	const [amputationLevel, setAmputationLevel] = useState<AmputationLevel | null>(null)
 
-	const [replacementDate, setReplacementDate] = useState("")
+	const [replacementDate, setReplacementDate] = useState<Date | null>(null)
+	const [isReplacementDatePickerVisible, setIsReplacementDatePickerVisible] = useState(false)
 
 	const [notes, setNotes] = useState("")
 	const [notesHeight, setNotesHeight] = useState(44)
@@ -206,20 +216,30 @@ export default function NewProsthesisScreen() {
 						colorName="tertiary_base_3"
 						borderColor="secondary_base"
 						style={styles.inputContainer}
+						onPress={() => setIsReplacementDatePickerVisible(true)}
+						accessibilityRole="button"
 					>
-						<TextInput
-							value={replacementDate}
-							onChangeText={setReplacementDate}
-							placeholder={t("newProsthesis.replacementDatePlaceholder")}
-							placeholderTextColor={colors.primary_base}
-							style={[
-								styles.input,
-								{
-									color: colors.primary_base,
-								},
-							]}
-						/>
+						<View style={styles.dateInputContent}>
+							<ThemedText
+								variant="body1Regular"
+								colorName="primary_base"
+								style={styles.dateInputText}
+							>
+								{replacementDate
+									? formatReplacementDate(replacementDate)
+									: t("newProsthesis.replacementDatePlaceholder")}
+							</ThemedText>
+
+							<Ionicons name="calendar-outline" size={19} color={colors.primary_base} />
+						</View>
 					</ThemedView>
+
+					<DatePickerModal
+						visible={isReplacementDatePickerVisible}
+						onClose={() => setIsReplacementDatePickerVisible(false)}
+						onSave={setReplacementDate}
+						initialDate={replacementDate ?? undefined}
+					/>
 				</View>
 
 				{/* OPIS / NOTATKI */}
@@ -574,5 +594,18 @@ const styles = StyleSheet.create({
 
 	saveButtonDisabled: {
 		opacity: 0.65,
+	},
+	dateInputContent: {
+		width: "100%",
+		minHeight: 42,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+
+	dateInputText: {
+		flex: 1,
+		fontFamily: "Inter-Regular",
+		fontSize: 13,
 	},
 })

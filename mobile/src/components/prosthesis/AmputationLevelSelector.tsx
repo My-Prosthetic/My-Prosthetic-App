@@ -3,6 +3,7 @@ import { Image, StyleSheet, View } from "react-native"
 import type { ParseKeys } from "i18next"
 import { ThemedText } from "../ThemedText"
 import { ThemedView } from "../ThemedView"
+import { useTheme } from "@/context/ThemeContext"
 
 export type LimbType = "upper" | "lower"
 
@@ -137,6 +138,7 @@ interface Props {
 
 export function AmputationLevelSelector({ limb, value, onChange }: Props) {
 	const levels = limb === "lower" ? LOWER_LEVELS : UPPER_LEVELS
+	const { colors } = useTheme()
 
 	const limbImage =
 		limb === "lower"
@@ -156,7 +158,13 @@ export function AmputationLevelSelector({ limb, value, onChange }: Props) {
 					return (
 						<View key={level.value} style={styles.optionRow}>
 							<ThemedView
-								style={[styles.option, selected && styles.optionSelected]}
+								style={[
+									styles.option,
+									{
+										backgroundColor: selected ? colors.primary_base : colors.tertiary_base_3,
+										borderColor: selected ? colors.primary_base : colors.secondary_base,
+									},
+								]}
 								onPress={() => onChange(level.value)}
 								accessibilityRole="radio"
 								accessibilityState={{
@@ -166,7 +174,8 @@ export function AmputationLevelSelector({ limb, value, onChange }: Props) {
 								<ThemedText
 									tx={level.labelKey}
 									variant="body1Regular"
-									style={[styles.optionText, selected && styles.optionTextSelected]}
+									colorName={selected ? "tertiary_base_3" : "primary_base"}
+									style={styles.optionText}
 								/>
 							</ThemedView>
 						</View>
@@ -224,10 +233,7 @@ const styles = StyleSheet.create({
 		height: 14,
 		minHeight: 14,
 
-		backgroundColor: "#FFFFFF",
-
 		borderWidth: 0.43,
-		borderColor: "#CBD5E1",
 		borderRadius: 2,
 
 		paddingHorizontal: 2,
@@ -235,11 +241,6 @@ const styles = StyleSheet.create({
 
 		justifyContent: "center",
 		alignItems: "center",
-	},
-
-	optionSelected: {
-		backgroundColor: "#052D8F",
-		borderColor: "#052D8F",
 	},
 
 	optionText: {
@@ -253,11 +254,5 @@ const styles = StyleSheet.create({
 
 		textAlign: "center",
 		textAlignVertical: "center",
-
-		color: "#052D8F",
-	},
-
-	optionTextSelected: {
-		color: "#FFFFFF",
 	},
 })
