@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native"
 import { useTranslation } from "react-i18next"
 
@@ -38,14 +38,13 @@ export function MedicalProfileModal({
 	const [medicationUsage, setMedicationUsage] = useState("")
 	const [isSaving, setIsSaving] = useState(false)
 
-	useEffect(() => {
-		if (mode === null) {
-			setConditionName("")
-			setMedicationName("")
-			setMedicationUsage("")
-			setIsSaving(false)
-		}
-	}, [mode])
+	const handleClose = () => {
+		setConditionName("")
+		setMedicationName("")
+		setMedicationUsage("")
+		setIsSaving(false)
+		onClose()
+	}
 
 	const isDuplicate = useMemo(() => {
 		if (mode === "condition") {
@@ -110,7 +109,7 @@ export function MedicalProfileModal({
 				})
 			}
 
-			onClose()
+			handleClose()
 		} catch (error) {
 			console.error("Failed to save medical profile entry:", error)
 		} finally {
@@ -119,8 +118,8 @@ export function MedicalProfileModal({
 	}
 
 	return (
-		<Modal visible={mode !== null} transparent animationType="fade" onRequestClose={onClose}>
-			<Pressable style={styles.modalBackdrop} onPress={onClose}>
+		<Modal visible={mode !== null} transparent animationType="fade" onRequestClose={handleClose}>
+			<Pressable style={styles.modalBackdrop} onPress={handleClose}>
 				<View
 					pointerEvents="none"
 					style={[
@@ -212,7 +211,7 @@ export function MedicalProfileModal({
 
 					<View style={styles.modalActions}>
 						<Pressable
-							onPress={onClose}
+							onPress={handleClose}
 							style={[styles.modalButton, { borderColor: colors.primary_base }]}
 						>
 							<ThemedText tx="profile.cancel" variant="subTitle2" colorName="primary_base" />
