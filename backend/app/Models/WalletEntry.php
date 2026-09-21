@@ -20,6 +20,11 @@ class WalletEntry extends Model
 
     public $incrementing = false;
 
+    public function goal(): BelongsTo
+    {
+        return $this->belongsTo(Goal::class);
+    }
+
     /**
      * Get the patient who owns the wallet entry.
      */

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\FundingSource;
+use App\Models\Goal;
 use App\Models\User;
 use App\Models\WalletEntry;
 use Database\Seeders\DatabaseSeeder;
@@ -20,11 +21,12 @@ class WalletEntryTest extends TestCase
     public function test_patient_can_create_a_wallet_entry_through_the_mobile_api(): void
     {
         $patient = User::factory()->create();
+        $goal = Goal::factory()->create();
         $assignedAt = Carbon::parse('2026-09-01 12:00:00');
         $token = $patient->createToken('wallet-entry-test')->plainTextToken;
 
         $response = $this->withToken($token)->postJson('/api/wallet-entries', [
-            'goal_id' => '11111111-1111-4111-8111-111111111111',
+            'goal_id' => $goal->id,
             'source' => FundingSource::GRANT->value,
             'amount' => 125000,
             'date' => $assignedAt->toISOString(),
@@ -45,14 +47,14 @@ class WalletEntryTest extends TestCase
                     'updated_at',
                 ],
             ])
-            ->assertJsonPath('data.goal_id', '11111111-1111-4111-8111-111111111111')
+            ->assertJsonPath('data.goal_id', $goal->id)
             ->assertJsonPath('data.source', FundingSource::GRANT->value)
             ->assertJsonPath('data.amount', 125000)
             ->assertJsonPath('data.note', 'Decision for the new prosthesis.');
 
         $this->assertDatabaseHas('wallet_entries', [
             'user_id' => $patient->id,
-            'goal_id' => '11111111-1111-4111-8111-111111111111',
+            'goal_id' => $goal->id,
             'source' => FundingSource::GRANT->value,
             'amount' => 125000,
             'assigned_at' => $assignedAt->format('Y-m-d H:i:s'),
@@ -63,7 +65,7 @@ class WalletEntryTest extends TestCase
     public function test_patient_can_create_a_wallet_entry_for_a_goal_through_the_mobile_api(): void
     {
         $patient = User::factory()->create();
-        $goalId = '00000000-0000-0000-0000-000000000001';
+        $goalId = Goal::factory()->create()->id;
         $token = $patient->createToken('wallet-entry-goal-test')->plainTextToken;
 
         $this->withToken($token)
@@ -80,6 +82,22 @@ class WalletEntryTest extends TestCase
             'user_id' => $patient->id,
             'goal_id' => $goalId,
         ]);
+    }
+
+    public function test_wallet_entry_rejects_a_goal_that_does_not_exist(): void
+    {
+        $patient = User::factory()->create();
+        $token = $patient->createToken('wallet-entry-invalid-goal-test')->plainTextToken;
+
+        $this->withToken($token)
+            ->postJson('/api/wallet-entries', [
+                'goal_id' => '99999999-9999-4999-8999-999999999999',
+                'source' => FundingSource::GRANT->value,
+                'amount' => 125000,
+                'date' => '2026-09-01T12:00:00Z',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['goal_id']);
     }
 
     public function test_patient_can_list_only_their_wallet_entries_through_the_mobile_api(): void
@@ -121,6 +139,7 @@ class WalletEntryTest extends TestCase
     public function test_non_patient_users_cannot_access_wallet_entries(): void
     {
         $specialist = User::factory()->prosthetist()->create();
+        $goal = Goal::factory()->create();
         $token = $specialist->createToken('wallet-entry-specialist-test')->plainTextToken;
 
         $this->withToken($token)
@@ -129,7 +148,7 @@ class WalletEntryTest extends TestCase
 
         $this->withToken($token)
             ->postJson('/api/wallet-entries', [
-                'goal_id' => '11111111-1111-4111-8111-111111111111',
+                'goal_id' => $goal->id,
                 'source' => FundingSource::GRANT->value,
                 'amount' => 125000,
                 'date' => '2026-09-01T12:00:00Z',
@@ -140,11 +159,12 @@ class WalletEntryTest extends TestCase
     public function test_wallet_entry_can_be_created_for_a_patient_with_a_uuid(): void
     {
         $patient = User::factory()->create();
+        $goal = Goal::factory()->create();
         $assignedAt = Carbon::parse('2026-09-01 12:00:00');
 
         $entry = WalletEntry::create([
             'user_id' => $patient->id,
-            'goal_id' => '11111111-1111-4111-8111-111111111111',
+            'goal_id' => $goal->id,
             'source' => 'grant',
             'amount' => 125000,
             'assigned_at' => $assignedAt,
@@ -156,6 +176,7 @@ class WalletEntryTest extends TestCase
         $this->assertSame(125000, $entry->amount);
         $this->assertInstanceOf(Carbon::class, $entry->assigned_at);
         $this->assertSame($patient->getKey(), $entry->patient()->firstOrFail()->getKey());
+        $this->assertSame($goal->getKey(), $entry->goal()->firstOrFail()->getKey());
         $this->assertDatabaseHas('wallet_entries', [
             'id' => $entry->id,
             'user_id' => $patient->id,
@@ -166,9 +187,10 @@ class WalletEntryTest extends TestCase
     public function test_wallet_entry_ignores_attributes_outside_the_fillable_list(): void
     {
         $patient = User::factory()->create();
+        $goal = Goal::factory()->create();
         $entry = WalletEntry::create([
             'user_id' => $patient->id,
-            'goal_id' => '11111111-1111-4111-8111-111111111111',
+            'goal_id' => $goal->id,
             'source' => 'savings',
             'amount' => 5000,
             'assigned_at' => Carbon::now(),
@@ -216,6 +238,7 @@ class WalletEntryTest extends TestCase
         $this->assertIsArray($goalColumn);
         $this->assertFalse($goalColumn['nullable']);
         $this->assertTrue(Schema::hasIndex('wallet_entries', ['goal_id']));
+        $this->assertTrue(Schema::hasForeignKey('wallet_entries', ['goal_id']));
     }
 
     public function test_wallet_entry_seeder_creates_sample_data(): void

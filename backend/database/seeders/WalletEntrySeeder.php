@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\FundingSource;
+use App\Models\Goal;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -48,6 +49,10 @@ class WalletEntrySeeder extends Seeder
         ];
 
         foreach ($entries as $entry) {
+            Goal::query()->firstOrCreate([
+                'id' => $entry['goal_id'],
+            ]);
+
             $patient->walletEntries()->updateOrCreate(
                 [
                     'source' => $entry['source'],
