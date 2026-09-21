@@ -1,49 +1,43 @@
 {
-  "expo": {
-    "name": "MyProsthetics_local",
-    "slug": "MyProsthetics_local",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/mp_logo_accent.png",
-    "userInterfaceStyle": "light",
-    "scheme": "your-app-scheme",
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/mp_logo_accent.png",
-        "backgroundImage": "./assets/mp_logo_accent.png",
-        "monochromeImage": "./assets/mp_logo_accent.png"
-      },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.myprosthethicapp.MyProsthetics_local"
-    },
-    "web": {
-      "favicon": "./assets/mp_logo_accent.png"
-    },
-    "experiments": {
-      "typedRoutes": true
-    },
-    "plugins": [
-      "expo-router",
-      "expo-status-bar",
-      "expo-sqlite",
-      "expo-font",
-      "expo-splash-screen"
-    ],
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "e54e6169-31d2-4197-ae42-5e3a2e74106e"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/e54e6169-31d2-4197-ae42-5e3a2e74106e"
-    }
-  }
+	"expo": {
+		"name": "MyProsthetics_local",
+		"slug": "MyProsthetics_local",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/mp_logo_accent.png",
+		"userInterfaceStyle": "light",
+		"scheme": "your-app-scheme",
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./assets/mp_logo_accent.png",
+				"backgroundImage": "./assets/mp_logo_accent.png",
+				"monochromeImage": "./assets/mp_logo_accent.png"
+			},
+			"predictiveBackGestureEnabled": false,
+			"package": "com.myprosthethicapp.MyProsthetics_local"
+		},
+		"web": {
+			"favicon": "./assets/mp_logo_accent.png"
+		},
+		"experiments": {
+			"typedRoutes": true
+		},
+		"plugins": ["expo-router", "expo-status-bar", "expo-sqlite", "expo-font", "expo-splash-screen"],
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "e54e6169-31d2-4197-ae42-5e3a2e74106e"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/e54e6169-31d2-4197-ae42-5e3a2e74106e"
+		}
+	}
 }
