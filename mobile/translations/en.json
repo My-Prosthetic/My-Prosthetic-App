@@ -40,7 +40,8 @@
 		"daysAgo": "{{count}} days ago",
 		"showFullHistory": "Show full history",
 		"switchToHighContrast": "Switch to high contrast 🌙",
-		"switchToLightTheme": "Switch to light theme ☀️"
+		"switchToLightTheme": "Switch to light theme ☀️",
+		"addProsthesis": "Add prosthesis"
 	},
 	"common": {
 		"cancel": "CANCEL",
@@ -115,12 +116,10 @@
 		"back": "Go back",
 		"showProgrammeDetails": "Show details of {{programme}}",
 		"openFoundation": "Open {{foundation}} website",
-
 		"sections": {
 			"national": "NATIONAL PROGRAMMES",
 			"foundations": "SUPPORTING FOUNDATIONS"
 		},
-
 		"nfz": {
 			"badge": "NFZ",
 			"title": "MEDICAL DEVICE ORDER",
@@ -140,7 +139,6 @@
 			"step3Description": "Provide the order code and PIN.",
 			"button": "GO TO THE NFZ WEBSITE"
 		},
-
 		"pfron": {
 			"badge": "PFRON",
 			"title": "\"ACTIVE LOCAL GOVERNMENT\" PROGRAMME",
@@ -157,7 +155,6 @@
 			"button": "APPLY AND CHECK DATES",
 			"buttonDescription": "Log in to the PFRON government system"
 		},
-
 		"collections": {
 			"badge": "FUNDRAISING",
 			"title": "FUNDRAISING AND OWN CONTRIBUTION",
@@ -166,7 +163,6 @@
 			"subtitle": "Funds from 1.5% tax donations and public fundraising",
 			"sectionTitle": "POPULAR FOUNDATIONS"
 		},
-
 		"foundations": {
 			"avalon": {
 				"name": "Avalon Foundation",
@@ -243,5 +239,63 @@
 		},
 		"duplicateCondition": "This condition or allergy already exists",
 		"duplicateMedication": "This medication with the same usage already exists"
+	},
+	"newProsthesis": {
+		"title": "NEW PROSTHESIS",
+		"icon": "ICON",
+		"name": "PROSTHESIS NAME",
+		"namePlaceholder": "enter name",
+		"selectLimb": "SELECT LIMB",
+		"left": "left",
+		"right": "right",
+		"upper": "upper",
+		"lower": "lower",
+		"amputationLevel": "AMPUTATION LEVEL",
+		"replacementDate": "EXPECTED REPLACEMENT DATE",
+		"replacementDatePlaceholder": "0000-00-00",
+		"notes": "DESCRIPTION / NOTES",
+		"notesPlaceholder": "add notes",
+		"addFiles": "ADD FILES",
+		"filesDescription": "here you can add photos, documentation, 3D scans and other files related to the prosthesis",
+		"save": "SAVE PROSTHESIS",
+		"saveError": "The prosthesis could not be saved to the database.",
+		"back": "Go back",
+		"previousIcon": "Previous icon",
+		"nextIcon": "Next icon",
+		"amputationLevels": {
+			"lower": {
+				"hemipelvectomy": "Hemipelvectomy",
+				"hipDisarticulation": "Hip disarticulation",
+				"shortThigh": "Short transfemoral residual limb",
+				"mediumThigh": "Medium transfemoral residual limb",
+				"longThigh": "Long transfemoral residual limb",
+				"kneeDisarticulation": "Knee disarticulation",
+				"shortLowerLeg": "Short transtibial residual limb",
+				"mediumLowerLeg": "Medium transtibial residual limb",
+				"longLowerLeg": "Long transtibial residual limb",
+				"syme": "Syme amputation",
+				"partialFoot": "Partial foot amputation"
+			},
+			"upper": {
+				"forequarter": "Forequarter amputation",
+				"shoulderDisarticulation": "Shoulder disarticulation",
+				"shortUpperArm": "Short transhumeral residual limb",
+				"mediumUpperArm": "Medium transhumeral residual limb",
+				"longUpperArm": "Long transhumeral residual limb",
+				"elbowDisarticulation": "Elbow disarticulation",
+				"shortForearm": "Short transradial residual limb",
+				"mediumForearm": "Medium transradial residual limb",
+				"longForearm": "Long transradial residual limb",
+				"wristDisarticulation": "Wrist disarticulation",
+				"partialHand": "Partial hand amputation"
+			}
+		}
+	},
+	"prosthesisDetails": {
+		"title": "MY PROSTHESIS",
+		"side": "SIDE",
+		"limb": "LIMB",
+		"amputationLevel": "AMPUTATION LEVEL",
+		"notFound": "Prosthesis not found."
 	}
 }
