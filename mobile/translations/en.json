@@ -24,7 +24,7 @@
 		"accumulatedTitle": "Accumulated Funds 💰"
 	},
 	"home": {
-		"greeting": "Hello",
+		"greeting": "Hello,\n{{name}}",
 		"dbMigrationErr": "Database migration error: ",
 		"dbInit": "Database initialization...",
 		"myProsthetics": "MY PROSTHETICS",
@@ -145,7 +145,7 @@
 			"shortDescription": "Funding for advanced prostheses (K3/K4).",
 			"detailsTitle": "ACTIVE LOCAL GOVERNMENT",
 			"subtitle": "PFRON funds (Module C)",
-			"recruitmentLabel": "Application dates",
+			"recruitmentLabel": "Application dates:",
 			"recruitmentValue": "Check with your local PCPR",
 			"eligibilityTitle": "WHO CAN APPLY?",
 			"eligibility1": "People with a recognised degree of disability",

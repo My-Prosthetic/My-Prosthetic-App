@@ -24,7 +24,7 @@
 		"accumulatedTitle": "Zgromadzone Środki 💰"
 	},
 	"home": {
-		"greeting": "Cześć",
+		"greeting": "Cześć,\n{{name}}",
 		"dbMigrationErr": "Błąd migracji bazy danych: ",
 		"dbInit": "Inicjalizacja bazy danych...",
 		"myProsthetics": "MOJE PROTEZY",
@@ -145,7 +145,7 @@
 			"shortDescription": "Dopłata do zaawansowanych protez (K3/K4).",
 			"detailsTitle": "AKTYWNY SAMORZĄD",
 			"subtitle": "Środki PFRON (Moduł C)",
-			"recruitmentLabel": "Terminy naboru",
+			"recruitmentLabel": "Terminy naboru:",
 			"recruitmentValue": "Sprawdź w swoim PCPR",
 			"eligibilityTitle": "KTO MOŻE SKORZYSTAĆ?",
 			"eligibility1": "Osoby ze stopniem niepełnosprawności",
