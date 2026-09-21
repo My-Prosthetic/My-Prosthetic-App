@@ -179,20 +179,66 @@
 		}
 	},
 	"profile": {
-		"title": "PROFIL MEDYCZNY",
+		"title": "MEDICAL PROFILE",
 		"activity": "ACTIVITY LEVEL (K-LEVELS)",
-		"diseases": "DISEASES AND ALLERGIES",
+		"selectActivityLevel": "Select activity level",
+		"diseases": "CONDITIONS AND ALLERGIES",
 		"medications": "CURRENTLY TAKEN MEDICATIONS",
+		"addCondition": "Add",
 		"addMedication": "Add new medication",
 		"history": "MEASUREMENT HISTORY",
 		"addMeasurement": "Add new measurement",
 		"recommendations": "RECOMMENDATIONS FROM THE PROSTHETIST",
 		"notes": "TECHNICAL NOTES",
 		"newFile": "ADD FILE",
-		"fileDescription": "here you can add photos, documentation and other files related to the medical history",
+		"fileDescription": "here you can add photos, documentation and other files related to your medical history",
 		"historyEntries": "24 entries",
 		"recommendationsEntries": "1 new entry",
-		"notesEntries": "No new entries"
+		"notesEntries": "No new entries",
+		"addConditionTitle": "Add condition or allergy",
+		"addMedicationTitle": "Add medication",
+		"conditionNamePlaceholder": "Name",
+		"medicationNamePlaceholder": "Medication name",
+		"medicationUsagePlaceholder": "Usage",
+		"condition": "Condition",
+		"allergy": "Allergy",
+		"cancel": "Cancel",
+		"save": "Save",
+		"saving": "Saving...",
+		"copyCondition": "Copy: {{condition}}",
+		"showMoreConditions": "Show {{count}} more",
+		"copiedToClipboard": "Copied to clipboard",
+		"delete": "Delete",
+		"deleteConditionTitle": "Delete condition or allergy",
+		"deleteConditionMessage": "Are you sure you want to delete “{{condition}}”?",
+		"deleteMedicationTitle": "Delete medication",
+		"deleteMedicationMessage": "Are you sure you want to delete “{{medication}}”?",
+		"deleteCondition": "Delete: {{condition}}",
+		"deleteMedication": "Delete medication: {{medication}}",
+		"kLevels": {
+			"K0": {
+				"label": "K0 (NO ACTIVITY)",
+				"description": "No ability to move safely"
+			},
+			"K1": {
+				"label": "K1 (HOUSEHOLD ACTIVITY)",
+				"description": "Walking on level surfaces"
+			},
+			"K2": {
+				"label": "K2 (LIMITED ACTIVITY)",
+				"description": "Navigating minor environmental barriers"
+			},
+			"K3": {
+				"label": "K3 (ACTIVE)",
+				"description": "Navigating environmental barriers"
+			},
+			"K4": {
+				"label": "K4 (VERY ACTIVE)",
+				"description": "High activity and increased loads"
+			}
+		},
+		"duplicateCondition": "This condition or allergy already exists",
+		"duplicateMedication": "This medication with the same usage already exists"
 	},
 	"newProsthesis": {
 		"title": "NEW PROSTHESIS",
