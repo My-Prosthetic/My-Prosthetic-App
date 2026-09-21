@@ -2,24 +2,24 @@
  
 # Manual
 help:
-	@echo "Dostępne komendy:"
-	@echo "	make initial       - instaluje zależności (npm install)"
-	@echo "	make start         - uruchamia Expo z czyszczeniem cache"
-	@echo "	make ci            - uruchamia lint, format-check i typecheck (jak w pipeline CI)"
-	@echo "	make lint          - uruchamia ESLint (npm run lint)"
-	@echo "	make format        - formatuje kod Prettierem, nadpisuje pliki (npm run format)"
-	@echo "	make format-check  - sprawdza formatowanie bez nadpisywania (npm run format:check)"
-	@echo "	make typecheck     - sprawdza typy TypeScript (npx tsc --noEmit)"
+	@echo "Available commands:"
+	@echo "	make initial       - install dependencies (npm install)"
+	@echo "	make start         - launches Expo with cache cleaning"
+	@echo "	make ci            - launches linter, format-checks and type-checks (same as CI in pipeline)"
+	@echo "	make lint          - launches ESLint (npm run lint)"
+	@echo "	make format        - formats code with Prettier, overwrites files (npm run format)"
+	@echo "	make format-check  - checks formatting without overwriting (npm run format:check)"
+	@echo "	make typecheck     - TypeScript type-checking (npx tsc --noEmit)"
  
-# Instalacja zależności projektu — do użytku lokalnego/deweloperskiego.
+# Project's dependencies installation —  for local/developer usage.
 initial:
 	npm install --legacy-peer-deps
  
-# Uruchomienie Expo z wyczyszczonym cache
+# Launches Expo with cache cleaning
 start:
 	npx expo start --clear
- 
-# Reszta analogicznie 
+
+# Self-explanatory
 lint:
 	npm run lint
  
@@ -32,6 +32,6 @@ format-check:
 typecheck:
 	npx tsc --noEmit
  
-# Pełna weryfikacja, w tej samej kolejności co kroki w mobile-ci.yml
+# Full verification, same order as in mobile pipeline (mobile-ci.yml).
 ci: lint format-check typecheck
 	@echo "✅ CI checks passed"
