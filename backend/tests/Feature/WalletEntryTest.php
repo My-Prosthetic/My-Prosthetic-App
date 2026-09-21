@@ -9,6 +9,7 @@ use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\WalletEntrySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -23,6 +24,7 @@ class WalletEntryTest extends TestCase
         $token = $patient->createToken('wallet-entry-test')->plainTextToken;
 
         $response = $this->withToken($token)->postJson('/api/wallet-entries', [
+            'goal_id' => '11111111-1111-4111-8111-111111111111',
             'source' => FundingSource::GRANT->value,
             'amount' => 125000,
             'date' => $assignedAt->toISOString(),
@@ -34,6 +36,7 @@ class WalletEntryTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     'id',
+                    'goal_id',
                     'source',
                     'amount',
                     'date',
@@ -42,16 +45,40 @@ class WalletEntryTest extends TestCase
                     'updated_at',
                 ],
             ])
+            ->assertJsonPath('data.goal_id', '11111111-1111-4111-8111-111111111111')
             ->assertJsonPath('data.source', FundingSource::GRANT->value)
             ->assertJsonPath('data.amount', 125000)
             ->assertJsonPath('data.note', 'Decision for the new prosthesis.');
 
         $this->assertDatabaseHas('wallet_entries', [
             'user_id' => $patient->id,
+            'goal_id' => '11111111-1111-4111-8111-111111111111',
             'source' => FundingSource::GRANT->value,
             'amount' => 125000,
             'assigned_at' => $assignedAt->format('Y-m-d H:i:s'),
             'note' => 'Decision for the new prosthesis.',
+        ]);
+    }
+
+    public function test_patient_can_create_a_wallet_entry_for_a_goal_through_the_mobile_api(): void
+    {
+        $patient = User::factory()->create();
+        $goalId = '00000000-0000-0000-0000-000000000001';
+        $token = $patient->createToken('wallet-entry-goal-test')->plainTextToken;
+
+        $this->withToken($token)
+            ->postJson('/api/wallet-entries', [
+                'goal_id' => $goalId,
+                'source' => FundingSource::GRANT->value,
+                'amount' => 125000,
+                'date' => '2026-09-01T12:00:00Z',
+            ])
+            ->assertCreated()
+            ->assertJsonPath('data.goal_id', $goalId);
+
+        $this->assertDatabaseHas('wallet_entries', [
+            'user_id' => $patient->id,
+            'goal_id' => $goalId,
         ]);
     }
 
@@ -82,7 +109,7 @@ class WalletEntryTest extends TestCase
                 'date' => 'not-a-date',
             ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['source', 'amount', 'date']);
+            ->assertJsonValidationErrors(['goal_id', 'source', 'amount', 'date']);
     }
 
     public function test_wallet_entry_api_requires_authentication(): void
@@ -102,6 +129,7 @@ class WalletEntryTest extends TestCase
 
         $this->withToken($token)
             ->postJson('/api/wallet-entries', [
+                'goal_id' => '11111111-1111-4111-8111-111111111111',
                 'source' => FundingSource::GRANT->value,
                 'amount' => 125000,
                 'date' => '2026-09-01T12:00:00Z',
@@ -116,6 +144,7 @@ class WalletEntryTest extends TestCase
 
         $entry = WalletEntry::create([
             'user_id' => $patient->id,
+            'goal_id' => '11111111-1111-4111-8111-111111111111',
             'source' => 'grant',
             'amount' => 125000,
             'assigned_at' => $assignedAt,
@@ -139,6 +168,7 @@ class WalletEntryTest extends TestCase
         $patient = User::factory()->create();
         $entry = WalletEntry::create([
             'user_id' => $patient->id,
+            'goal_id' => '11111111-1111-4111-8111-111111111111',
             'source' => 'savings',
             'amount' => 5000,
             'assigned_at' => Carbon::now(),
@@ -171,6 +201,21 @@ class WalletEntryTest extends TestCase
         $patient->delete();
 
         $this->assertDatabaseCount('wallet_entries', 0);
+    }
+
+    public function test_wallet_entries_have_an_index_for_their_patient_id(): void
+    {
+        $this->assertTrue(Schema::hasIndex('wallet_entries', ['user_id']));
+    }
+
+    public function test_wallet_entries_require_and_index_their_goal_id(): void
+    {
+        $goalColumn = collect(Schema::getColumns('wallet_entries'))
+            ->firstWhere('name', 'goal_id');
+
+        $this->assertIsArray($goalColumn);
+        $this->assertFalse($goalColumn['nullable']);
+        $this->assertTrue(Schema::hasIndex('wallet_entries', ['goal_id']));
     }
 
     public function test_wallet_entry_seeder_creates_sample_data(): void

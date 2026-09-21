@@ -31,6 +31,7 @@ class WalletEntryController extends Controller
         $validated = $request->validated();
 
         $entry = $patient->walletEntries()->create([
+            'goal_id' => $validated['goal_id'],
             'source' => $validated['source'],
             'amount' => $validated['amount'],
             'assigned_at' => $validated['date'],

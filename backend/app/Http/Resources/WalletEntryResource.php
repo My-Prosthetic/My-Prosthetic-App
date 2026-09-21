@@ -18,6 +18,7 @@ class WalletEntryResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'goal_id' => $this->goal_id,
             'source' => $this->source->value,
             'amount' => $this->amount,
             'date' => $this->assigned_at->toISOString(),

@@ -19,6 +19,7 @@ class StoreWalletEntryRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'goal_id' => ['required', 'uuid'],
             'source' => ['required', 'string', Rule::enum(FundingSource::class)],
             'amount' => ['required', 'integer', 'min:1'],
             'date' => ['required', 'date'],

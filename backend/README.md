@@ -116,7 +116,7 @@ Authenticated patients can synchronize funding entries through the mobile API:
 | Endpoint | Method | Payload/result |
 | --- | --- | --- |
 | `/api/wallet-entries` | `GET` | Lists entries owned by the authenticated patient |
-| `/api/wallet-entries` | `POST` | Creates an entry from `source`, integer `amount`, ISO-8601 `date`, and optional `note` |
+| `/api/wallet-entries` | `POST` | Creates an entry from required UUID `goal_id`, `source`, integer `amount`, ISO-8601 `date`, and optional `note` |
 
 The `amount` is stored in the smallest currency unit used by the mobile app (for
 example, PLN grosze: `125000` represents `1250.00 PLN`). Supported sources are

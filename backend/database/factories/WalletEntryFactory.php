@@ -28,6 +28,7 @@ class WalletEntryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'goal_id' => fake()->uuid(),
             'source' => fake()->randomElement(FundingSource::values()),
             'amount' => fake()->numberBetween(1, 10_000_000),
             'assigned_at' => fake()->dateTimeBetween('-1 year', 'now'),
