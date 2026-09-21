@@ -40,7 +40,8 @@
 		"daysAgo": "{{count}} dni temu",
 		"showFullHistory": "Pokaż całą historię",
 		"switchToHighContrast": "Zmień na wysoki kontrast 🌙",
-		"switchToLightTheme": "Zmień na jasny motyw ☀️"
+		"switchToLightTheme": "Zmień na jasny motyw ☀️",
+		"addProsthesis": "Dodaj protezę"
 	},
 	"common": {
 		"cancel": "ANULUJ",
@@ -115,12 +116,10 @@
 		"back": "Wróć",
 		"showProgrammeDetails": "Pokaż szczegóły programu {{programme}}",
 		"openFoundation": "Otwórz stronę {{foundation}}",
-
 		"sections": {
 			"national": "PROGRAMY NARODOWE",
 			"foundations": "FUNDACJE WSPIERAJĄCE"
 		},
-
 		"nfz": {
 			"badge": "NFZ",
 			"title": "ZLECENIE NA WYRÓB MEDYCZNY",
@@ -140,7 +139,6 @@
 			"step3Description": "Przekazanie kodu zlecenia i PINu.",
 			"button": "PRZEJDŹ DO STRONY NFZ"
 		},
-
 		"pfron": {
 			"badge": "PFRON",
 			"title": "PROGRAM \"AKTYWNY SAMORZĄD\"",
@@ -157,7 +155,6 @@
 			"button": "Złóż wniosek i sprawdź terminy",
 			"buttonDescription": "Zaloguj się do państwowego systemu PFRON"
 		},
-
 		"collections": {
 			"badge": "ZBIÓRKI",
 			"title": "ZBIÓRKI I WKŁAD WŁASNY",
@@ -166,7 +163,6 @@
 			"subtitle": "Środki z 1,5% podatku i zbiórek publicznych",
 			"sectionTitle": "POPULARNE FUNDACJE"
 		},
-
 		"foundations": {
 			"avalon": {
 				"name": "Fundacja Avalon",
@@ -197,5 +193,63 @@
 		"historyEntries": "24 wpisy",
 		"recommendationsEntries": "1 nowy wpis",
 		"notesEntries": "Brak nowych wpisów"
+	},
+	"newProsthesis": {
+		"title": "NOWA PROTEZA",
+		"icon": "IKONA",
+		"name": "NAZWA PROTEZY",
+		"namePlaceholder": "wpisz nazwę",
+		"selectLimb": "WYBIERZ KOŃCZYNĘ",
+		"left": "lewa",
+		"right": "prawa",
+		"upper": "górna",
+		"lower": "dolna",
+		"amputationLevel": "POZIOM AMPUTACJI",
+		"replacementDate": "PRZEWIDYWANA DATA WYMIANY",
+		"replacementDatePlaceholder": "0000-00-00",
+		"notes": "OPIS / NOTATKI",
+		"notesPlaceholder": "miejsce na notatki",
+		"addFiles": "DODAJ PLIKI",
+		"filesDescription": "tutaj możesz dodać zdjęcia, dokumentację, skany 3D i inne pliki dotyczące protezy",
+		"save": "ZAPISZ PROTEZĘ",
+		"saveError": "Nie udało się zapisać protezy w bazie danych.",
+		"back": "Wróć",
+		"previousIcon": "Poprzednia ikona",
+		"nextIcon": "Następna ikona",
+		"amputationLevels": {
+			"lower": {
+				"hemipelvectomy": "Hemipelwektomia",
+				"hipDisarticulation": "Wyłuszczenie w stawie biodrowym",
+				"shortThigh": "Krótki kikut uda",
+				"mediumThigh": "Średni kikut uda",
+				"longThigh": "Długi kikut uda",
+				"kneeDisarticulation": "Wyłuszczenie w stawie kolanowym",
+				"shortLowerLeg": "Krótki kikut podudzia",
+				"mediumLowerLeg": "Średni kikut podudzia",
+				"longLowerLeg": "Długi kikut podudzia",
+				"syme": "Amputacja Syme'a",
+				"partialFoot": "Częściowa amputacja stopy"
+			},
+			"upper": {
+				"forequarter": "Amputacja obręczy barkowej",
+				"shoulderDisarticulation": "Wyłuszczenie w stawie barkowym",
+				"shortUpperArm": "Krótki kikut ramienia",
+				"mediumUpperArm": "Średni kikut ramienia",
+				"longUpperArm": "Długi kikut ramienia",
+				"elbowDisarticulation": "Wyłuszczenie w stawie łokciowym",
+				"shortForearm": "Krótki kikut przedramienia",
+				"mediumForearm": "Średni kikut przedramienia",
+				"longForearm": "Długi kikut przedramienia",
+				"wristDisarticulation": "Wyłuszczenie w stawie nadgarstkowym",
+				"partialHand": "Częściowa amputacja dłoni"
+			}
+		}
+	},
+	"prosthesisDetails": {
+		"title": "MOJA PROTEZA",
+		"side": "STRONA",
+		"limb": "KOŃCZYNA",
+		"amputationLevel": "POZIOM AMPUTACJI",
+		"notFound": "Nie znaleziono protezy."
 	}
 }
