@@ -19,6 +19,7 @@ import { MedicationsSection } from "@/src/components/profile/MedicationsSection"
 import type { AddMode, Condition, KLevelId, Medication } from "@/src/components/profile/types"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 
 export default function ProfileScreen() {
 	const { colors } = useTheme()
@@ -129,27 +130,7 @@ export default function ProfileScreen() {
 				onScrollBeginDrag={closeExpandableSections}
 			>
 				<Pressable onPress={closeExpandableSections}>
-					{/* Header */}
-					<ThemedView colorName="primary_base" style={styles.topHeader}>
-						<ThemedView
-							colorName="primary_base"
-							style={styles.backButton}
-							onPress={() => router.back()}
-							accessibilityRole="button"
-						>
-							<Ionicons name="chevron-back" size={26} color={colors.accent_base} />
-						</ThemedView>
-
-						<ThemedText
-							tx="profile.title"
-							variant="title"
-							colorName="accent_base"
-							numberOfLines={1}
-							adjustsFontSizeToFit
-							minimumFontScale={0.8}
-						/>
-					</ThemedView>
-
+					<ThemedHeader tx="profile.title" variant="prominent" />
 					{/* K-Levels */}
 					<View style={[styles.section, styles.firstSection]}>
 						<ThemedText
@@ -346,12 +327,7 @@ function ProfileMenuCard({
 			accessibilityRole="button"
 		>
 			<View style={styles.utilityTextContainer}>
-				<ThemedText
-					tx={label}
-					variant="subTitle1"
-					colorName="primary_base"
-					style={styles.utilityText}
-				/>
+				<ThemedText tx={label} variant="subTitle1" colorName="primary_base" />
 
 				<View style={styles.subtitleRow}>
 					{hasNewEntries && <View style={styles.newEntryDot} />}
@@ -430,9 +406,6 @@ const styles = StyleSheet.create({
 	},
 	utilityTextContainer: {
 		flex: 1,
-	},
-	utilityText: {
-		textAlign: "left",
 	},
 	utilitySubtitle: {
 		marginTop: 4,
