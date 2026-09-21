@@ -181,8 +181,10 @@
 	"profile": {
 		"title": "PROFIL MEDYCZNY",
 		"activity": "POZIOM AKTYWNOŚCI (K-LEVELS)",
+		"selectActivityLevel": "Wybierz poziom aktywności",
 		"diseases": "SCHORZENIA I ALERGIE",
 		"medications": "STALE PRZYJMOWANE LEKI",
+		"addCondition": "Dodaj",
 		"addMedication": "Dodaj nowy lek",
 		"history": "HISTORIA POMIARÓW",
 		"addMeasurement": "Dodaj nowy pomiar",
@@ -192,7 +194,51 @@
 		"fileDescription": "tutaj możesz dodać zdjęcia, dokumentację i inne pliki dotyczące historii medycznej",
 		"historyEntries": "24 wpisy",
 		"recommendationsEntries": "1 nowy wpis",
-		"notesEntries": "Brak nowych wpisów"
+		"notesEntries": "Brak nowych wpisów",
+		"addConditionTitle": "Dodaj schorzenie lub alergię",
+		"addMedicationTitle": "Dodaj lek",
+		"conditionNamePlaceholder": "Nazwa",
+		"medicationNamePlaceholder": "Nazwa leku",
+		"medicationUsagePlaceholder": "Zastosowanie",
+		"condition": "Schorzenie",
+		"allergy": "Alergia",
+		"cancel": "Anuluj",
+		"save": "Zapisz",
+		"saving": "Zapisywanie...",
+		"copyCondition": "Skopiuj: {{condition}}",
+		"showMoreConditions": "Pokaż {{count}} więcej",
+		"copiedToClipboard": "Skopiowano do schowka",
+		"delete": "Usuń",
+		"deleteConditionTitle": "Usuń schorzenie lub alergię",
+		"deleteConditionMessage": "Czy na pewno chcesz usunąć „{{condition}}”?",
+		"deleteMedicationTitle": "Usuń lek",
+		"deleteMedicationMessage": "Czy na pewno chcesz usunąć lek „{{medication}}”?",
+		"deleteCondition": "Usuń: {{condition}}",
+		"deleteMedication": "Usuń lek: {{medication}}",
+		"kLevels": {
+			"K0": {
+				"label": "K0 (BRAK AKTYWNOŚCI)",
+				"description": "Brak zdolności do bezpiecznego poruszania się"
+			},
+			"K1": {
+				"label": "K1 (AKTYWNOŚĆ DOMOWA)",
+				"description": "Poruszanie się po równych powierzchniach"
+			},
+			"K2": {
+				"label": "K2 (OGRANICZONA AKTYWNOŚĆ)",
+				"description": "Pokonywanie niewielkich barier środowiskowych"
+			},
+			"K3": {
+				"label": "K3 (AKTYWNY)",
+				"description": "Przekraczanie barier środowiskowych"
+			},
+			"K4": {
+				"label": "K4 (BARDZO AKTYWNY)",
+				"description": "Wysoka aktywność i zwiększone obciążenia"
+			}
+		},
+		"duplicateCondition": "Takie schorzenie lub alergia już istnieje",
+		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje"
 	},
 	"newProsthesis": {
 		"title": "NOWA PROTEZA",

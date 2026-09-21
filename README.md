@@ -6,27 +6,36 @@
  
 ### Running with Docker
  
+ 
 From the project root:
+ 
  
 ```bash
 docker compose up --build
 ```
  
+ 
 The application is available at:
+ 
  
 ```text
 http://localhost:5173
 ```
  
+ 
 To stop the development environment:
+ 
  
 ```bash
 docker compose down
 ```
  
+ 
 ### Local Quality Checks
  
+ 
 From the `frontend` directory:
+ 
  
 ```bash
 make ci
