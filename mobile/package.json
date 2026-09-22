@@ -19,10 +19,10 @@
 		"expo-sqlite": "~57.0.1",
 		"expo-status-bar": "~57.0.1",
 		"i18next": "^26.3.6",
-		"react": "19.2.8",
-		"react-dom": "19.2.8",
+		"react": "19.2.3",
+		"react-dom": "19.2.3",
 		"react-i18next": "^17.0.9",
-		"react-native": "0.86.2",
+		"react-native": "0.86.3",
 		"react-native-safe-area-context": "~5.7.0",
 		"react-native-screens": "~4.26.0",
 		"react-native-svg": "15.15.4"
