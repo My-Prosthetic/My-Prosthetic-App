@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - '**'
+      - '!dependabot/**'
     paths:
       - 'mobile/**'
 
