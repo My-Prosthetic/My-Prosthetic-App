@@ -1,0 +1,81 @@
+# Dependabot - automatic PRs with dependencies updates
+
+version: 2
+
+updates: 
+  # ----- FRONTEND (npm) -----
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "Frontend"]
+    commit-message:
+      prefix: "chore(deps-frontend)"
+    groups:
+      frontend-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ----- MOBILE (npm) -----
+  - package-ecosystem: "npm"
+    directory: "/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "Mobile"]
+    commit-message:
+      prefix: "chore(deps-mobile)"
+    groups:
+      mobile-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ----- BACKEND: PHP's packages (composer) -----
+  - package-ecosystem: "composer"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "Backend"]
+    commit-message:
+      prefix: "chore(deps-backend)"
+    groups:
+      backend-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ----- BACKEND: Laravel's JS packages (npm) -----
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "Backend"]
+    commit-message:
+      prefix: "chore(deps-backend-js)"
+    groups:
+      backend-js-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ---------- GITHUB ACTIONS ----------
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    labels: ["dependencies", "DevOps"]
+    commit-message:
+      prefix: "chore(deps-ci)"
+    
