@@ -12,7 +12,7 @@ updates:
       time: "06:00"
       timezone: "Europe/Warsaw"
     open-pull-requests-limit: 10
-    labels: ["dependencies", "Frontend"]
+    labels: ["dependency", "Frontend"]
     commit-message:
       prefix: "chore(deps-frontend)"
     groups:
@@ -28,7 +28,7 @@ updates:
       time: "06:00"
       timezone: "Europe/Warsaw"
     open-pull-requests-limit: 10
-    labels: ["dependencies", "Mobile"]
+    labels: ["dependency", "Mobile"]
     commit-message:
       prefix: "chore(deps-mobile)"
     groups:
@@ -44,7 +44,7 @@ updates:
       time: "06:00"
       timezone: "Europe/Warsaw"
     open-pull-requests-limit: 10
-    labels: ["dependencies", "Backend"]
+    labels: ["dependency", "Backend"]
     commit-message:
       prefix: "chore(deps-backend)"
     groups:
@@ -60,7 +60,7 @@ updates:
       time: "06:00"
       timezone: "Europe/Warsaw"
     open-pull-requests-limit: 5
-    labels: ["dependencies", "Backend"]
+    labels: ["dependency", "Backend"]
     commit-message:
       prefix: "chore(deps-backend-js)"
     groups:
@@ -75,7 +75,7 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Europe/Warsaw"
-    labels: ["dependencies", "DevOps"]
+    labels: ["dependency", "DevOps"]
     commit-message:
       prefix: "chore(deps-ci)"
     
