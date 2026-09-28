@@ -55,6 +55,7 @@ const typography = StyleSheet.create({
 		fontSize: 30,
 		lineHeight: 34,
 		letterSpacing: 1.2,
+		textTransform: "uppercase",
 		textAlign: "center",
 		textAlignVertical: "center",
 	},
@@ -69,7 +70,7 @@ const typography = StyleSheet.create({
 	},
 	main1Button: {
 		fontFamily: "Inter-SemiBold",
-		fontSize: 16,
+		fontSize: 18,
 		lineHeight: 22,
 		letterSpacing: 0.72,
 		textTransform: "uppercase",

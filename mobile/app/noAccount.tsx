@@ -1,0 +1,148 @@
+import React from "react"
+import { View, StyleSheet } from "react-native"
+import { useRouter } from "expo-router"
+import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedText } from "@/src/components/ThemedText"
+
+export default function SignUpScreen() {
+	const router = useRouter()
+
+	const onContinueWithoutAccountPress = () => {
+		//TODO
+	}
+
+	return (
+		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
+			<ThemedText variant="title" colorName="primary_base" style={{ textAlign: "left" }}>
+				{"CZY NA PEWNO\nCHCESZ KORZYSTAĆ\nBEZ KONTA?"}
+			</ThemedText>
+			<ThemedView
+				colorName="primary_base"
+				variant="wide"
+				style={{ flexDirection: "column", alignItems: "flex-start" }}
+			>
+				<ThemedText
+					tx="login.onlyLocal"
+					variant="subTitle1"
+					colorName="accent_base"
+					style={styles.cardText}
+				/>
+
+				<ThemedText
+					tx="login.itResultsIn"
+					variant="subTitle1"
+					colorName="accent_base"
+					style={styles.subHeading}
+				/>
+
+				<ThemedText
+					tx="login.noCopy"
+					variant="subTitle1"
+					colorName="accent_base"
+					style={styles.bulletItem}
+				/>
+
+				<ThemedText
+					tx="login.cosntraints"
+					variant="subTitle1"
+					colorName="accent_base"
+					style={styles.bulletItem}
+				></ThemedText>
+			</ThemedView>
+
+			<View style={styles.actionsContainer}>
+				{/* Wiersz: Zaloguj się */}
+				<View style={styles.rowAction}>
+					<ThemedText variant="tab1Category" colorName="secondary_base_0c">
+						MASZ JUŻ KONTO?
+					</ThemedText>
+					<ThemedView
+						variant="tag"
+						colorName="accent_base_2"
+						shadow
+						onPress={() => router.push("../login")}
+						style={styles.pillButton}
+					>
+						<ThemedText variant="tab1Category" colorName="primary_base">
+							ZALOGUJ SIĘ
+						</ThemedText>
+					</ThemedView>
+				</View>
+				{/* Wiersz: Stwórz konto */}
+				<View style={styles.rowAction}>
+					<ThemedText variant="tab1Category" colorName="secondary_base_0c">
+						NIE MASZ KONTA?
+					</ThemedText>
+					<ThemedView
+						variant="tag"
+						colorName="accent_base_2"
+						shadow
+						onPress={() => router.push("../signup")}
+						style={styles.pillButton}
+					>
+						<ThemedText variant="tab1Category" colorName="primary_base">
+							STWÓRZ KONTO
+						</ThemedText>
+					</ThemedView>
+				</View>
+				<View style={styles.actionsContainer}></View>
+				{/* Główny przycisk: Korzystaj bez konta */}
+				<ThemedView
+					variant="wide"
+					colorName="primary_base"
+					shadow
+					onPress={onContinueWithoutAccountPress}
+					style={styles.mainActionButton}
+				>
+					<ThemedText variant="main1Button" colorName="accent_base_1">
+						KORZYSTAJ BEZ KONTA
+					</ThemedText>
+				</ThemedView>
+			</View>
+		</ThemedView>
+	)
+}
+
+const styles = StyleSheet.create({
+	safeArea: {
+		flex: 1,
+	},
+	container: {
+		justifyContent: "space-between",
+		paddingVertical: 60,
+	},
+	headerContainer: {
+		marginTop: 20,
+		alignItems: "center",
+	},
+	cardText: {
+		marginBottom: 16,
+		lineHeight: 20,
+	},
+	subHeading: {
+		marginBottom: 16,
+	},
+	bulletItem: {
+		paddingLeft: 20,
+		marginBottom: 12,
+		lineHeight: 20,
+	},
+	actionsContainer: {
+		gap: 14,
+		marginBottom: 12,
+	},
+	rowAction: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		paddingHorizontal: 4,
+	},
+	pillButton: {
+		paddingHorizontal: 18,
+		paddingVertical: 10,
+	},
+	mainActionButton: {
+		marginTop: 8,
+		borderRadius: 20,
+	},
+})

@@ -48,7 +48,8 @@
 		"error": "Error",
 		"save": "SAVE",
 		"delete": "DELETE",
-		"today": "Today"
+		"today": "Today",
+		"mp": "My Prosthetics"
 	},
 	"funds": {
 		"title": "FUNDING",
@@ -297,5 +298,29 @@
 		"limb": "LIMB",
 		"amputationLevel": "AMPUTATION LEVEL",
 		"notFound": "Prosthesis not found."
+	},
+	"login": {
+		"logIn": "Log in",
+		"createAccount": "Sign up",
+		"useWithoutAccount": "Use without an account",
+		"areYouSure": "Are you sure you want to continue without an account?",
+		"onlyLocal": "By using the app without an account, your data is processed and stored exclusively in your device's local storage.",
+		"itResultsIn": "This results in:",
+		"noCopy": "No backup",
+		"cosntraints": "Limitations in sharing medical history with specialists.",
+		"alreadyHaveAccount": "Already have an account?",
+		"noAccount": "Don't have an account?",
+		"email": "Email",
+		"password": "Password",
+		"forgotPassword": "Forgot password?",
+		"reset": "Reset",
+		"continueGoogle": "Continue with Google",
+		"continueFacebook": "Continue with Facebook"
+	},
+	"signup": {
+		"firstName": "First name",
+		"lastName": "Last name",
+		"repeatPassword": "Confirm password",
+		"register": "Register"
 	}
 }
