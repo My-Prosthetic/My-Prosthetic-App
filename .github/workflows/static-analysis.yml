@@ -1,0 +1,120 @@
+# Static analysis - sends linter results to GitHub code scanning (SARIF)
+# Results appear as comments in PRs and in Security and quality -> Code scanning.
+# Existing CI workflows are unchanged; this workflow only reports.
+name: "Static analysis"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write # needed to upload SARIF results
+
+jobs:
+  # ---------- FRONTEND: ESLint ----------
+  eslint-frontend:
+    name: ESLint (frontend)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (SARIF)
+        continue-on-error: true # findings are reported, not used to fail this job
+        run: npx eslint src --format @microsoft/eslint-formatter-sarif --output-file eslint.sarif
+
+      - name: Upload results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: frontend/eslint.sarif
+          category: eslint-frontend
+
+  # ---------- MOBILE: ESLint ----------
+  eslint-mobile:
+    name: ESLint (mobile)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run ESLint (SARIF)
+        continue-on-error: true
+        run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint.sarif
+
+      - name: Upload results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: mobile/eslint.sarif
+          category: eslint-mobile
+
+  # ---------- BACKEND: PHPStan (Larastan) ----------
+  phpstan-backend:
+    name: PHPStan (backend)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3" # keep the same version as the backend CI
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run PHPStan (SARIF)
+        continue-on-error: true
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=sarif > phpstan.sarif
+
+      # PHPStan writes paths relative to backend/ (e.g. app/Models/User.php),
+      # GitHub needs them relative to the repo root (backend/app/Models/User.php).
+      - name: Fix file paths for GitHub
+        if: always()
+        run: |
+          jq '(.. | objects | select(has("artifactLocation")) | .artifactLocation) |= (
+                if (.uri | test("^(/|file:)")) then . else .uri = "backend/" + .uri end
+                | del(.uriBaseId)
+              )' phpstan.sarif > phpstan-fixed.sarif
+
+      - name: Upload results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: backend/phpstan-fixed.sarif
+          category: phpstan-backend
