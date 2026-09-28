@@ -320,7 +320,17 @@
 	"signup": {
 		"firstName": "First name",
 		"lastName": "Last name",
+		"emailPlaceholder": "name@email.com",
 		"repeatPassword": "Confirm password",
-		"register": "Register"
+		"register": "Register",
+		"passwordRequirements": "Password requirements",
+		"passwordRules": {
+			"minLength": "At least 8 characters",
+			"uppercase": "At least 1 uppercase letter",
+			"lowercase": "At least 1 lowercase letter",
+			"number": "At least 1 number",
+			"symbol": "At least 1 special character",
+			"match": "Passwords match"
+		}
 	}
 }

@@ -6,6 +6,26 @@ import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
+
+
+const getPasswordRequirements = (value: string, repeatedValue: string) => {
+	const hasMinLength = value.length >= 8
+	const hasUppercase = /[A-Z]/.test(value)
+	const hasLowercase = /[a-z]/.test(value)
+	const hasNumber = /\d/.test(value)
+	const hasSymbol = /[^A-Za-z0-9]/.test(value)
+	const passwordsMatch = value.length > 0 && value === repeatedValue
+
+	return [
+		{ id: "minLength", label: "signup.passwordRules.minLength", valid: hasMinLength },
+		{ id: "uppercase", label: "signup.passwordRules.uppercase", valid: hasUppercase },
+		{ id: "lowercase", label: "signup.passwordRules.lowercase", valid: hasLowercase },
+		{ id: "number", label: "signup.passwordRules.number", valid: hasNumber },
+		{ id: "symbol", label: "signup.passwordRules.symbol", valid: hasSymbol },
+		{ id: "match", label: "signup.passwordRules.match", valid: passwordsMatch },
+	]
+}
+
 export default function SignUpScreen() {
 	const router = useRouter()
 	const { t } = useTranslation()
@@ -17,10 +37,20 @@ export default function SignUpScreen() {
 	const [password, setPassword] = useState("")
 	const [repeatPassword, setRepeatPassword] = useState("")
 
-	const handleRegister = () => {}
+	const passwordRules = getPasswordRequirements(password, repeatPassword)
+  const sortedPasswordRules = [...passwordRules].sort((a, b) => Number(a.valid) - Number(b.valid))
+	const isPasswordValid = passwordRules.every((rule) => rule.valid)
+
+	const handleRegister = () => {
+		if (!isPasswordValid) {
+			return
+		} else {
+      //TODO
+    }
+	}
 	const handleGoogleLogin = () => {}
 	const handleFacebookLogin = () => {}
-	const handleSignIn = () => {
+	const handleLogin = () => {
 		router.push("../login")
 	}
 
@@ -39,7 +69,9 @@ export default function SignUpScreen() {
 					paddingHorizontal: 32,
 				}}
 			>
-				<ScrollView showsVerticalScrollIndicator={false}>
+				<ScrollView
+          showsVerticalScrollIndicator={false}
+        >
 					<View style={[styles.container, { paddingTop: 20 }]}>
 						{/* Sekcja pól formularza */}
 						<View style={styles.inputsSection}>
@@ -83,7 +115,7 @@ export default function SignUpScreen() {
 									<TextInput
 										value={lastName}
 										onChangeText={setLastName}
-										placeholder="Nazwisko"
+										placeholder={t("signup.lastName")}
 										placeholderTextColor={colors.primary_base_1}
 										autoCapitalize="words"
 										style={[styles.input, { color: colors.primary_base }]}
@@ -103,7 +135,7 @@ export default function SignUpScreen() {
 									<TextInput
 										value={email}
 										onChangeText={setEmail}
-										placeholder="adresmailowy@email.com"
+										placeholder={t("signup.emailPlaceholder")}
 										placeholderTextColor={colors.primary_base_1}
 										keyboardType="email-address"
 										autoCapitalize="none"
@@ -131,9 +163,38 @@ export default function SignUpScreen() {
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
+								<View style={styles.requirementsSection}>
+									<ThemedText
+										tx="signup.passwordRequirements"
+										variant="tab1Category"
+										colorName="secondary_base_0c"
+										style={styles.requirementsTitle}
+									/>
+									{sortedPasswordRules.map((rule) => (
+										<View key={rule.id} style={styles.requirementRow}>
+											<View
+												style={[
+													styles.requirementBullet,
+													{
+														backgroundColor: rule.valid ? colors.true : colors.primary_base_4,
+														borderColor: rule.valid ? colors.true : colors.primary_base_3,
+													},
+												]}
+											/>
+											<ThemedText
+												variant="body1Regular"
+												colorName={rule.valid ? "true" : "secondary_base_0c"}
+												style={styles.requirementText}
+                        tx={rule.label as any}
+											/>
+										</View>
+									))}
+								</View>
 							</View>
 
 							{/* Pole Powtórz Hasło */}
@@ -155,13 +216,10 @@ export default function SignUpScreen() {
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
 										style={[styles.input, { color: colors.primary_base, flex: 1 }]}
 									/>
-									{/* <Ionicons
-                    name="checkmark"
-                    size={22}
-                    color={colors.true}
-                  /> */}
 								</ThemedView>
 							</View>
 						</View>
@@ -207,14 +265,13 @@ export default function SignUpScreen() {
 									tx="login.alreadyHaveAccount"
 									variant="tab1Category"
 									colorName="secondary_base_0c"
-									style={{ paddingLeft: 12 }}
 								/>
 								<ThemedText
 									tx="login.logIn"
 									variant="tab1Category"
 									colorName="primary_base"
-									onPress={handleSignIn}
-									style={{ paddingLeft: 12 }}
+									onPress={handleLogin}
+									style={{ paddingLeft: 12, paddingVertical: 14 }}
 								/>
 							</View>
 						</View>
@@ -245,9 +302,31 @@ const styles = StyleSheet.create({
 	inputGroup: {
 		gap: 4,
 	},
+	requirementsSection: {
+		marginTop: 4,
+		paddingLeft: 4,
+		gap: 6,
+	},
+	requirementsTitle: {
+		marginBottom: 2,
+	},
+	requirementRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 8,
+	},
+	requirementBullet: {
+		width: 8,
+		height: 8,
+		borderRadius: 999,
+		borderWidth: 1,
+	},
+	requirementText: {
+		flexShrink: 1,
+	},
 	themedInputWrapper: {
 		borderWidth: 1,
-		minHeight: 40,
+		minHeight: 44,
 		paddingVertical: 0,
 		paddingHorizontal: 0,
 		justifyContent: "center",

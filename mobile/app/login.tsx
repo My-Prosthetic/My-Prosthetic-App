@@ -5,9 +5,11 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
+import { useTranslation } from "react-i18next"
 
 export default function LoginScreen() {
 	const router = useRouter()
+	const { t } = useTranslation();
 
 	const { colors } = useTheme()
 
@@ -38,69 +40,72 @@ export default function LoginScreen() {
 			>
 				<View style={styles.container}>
 					{/* Sekcja pól formularza */}
-					<View style={styles.inputsSection}>
-						{/* Pole Email */}
-						<View style={styles.inputGroup}>
-							<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
-							<ThemedView
-								variant="wide"
-								colorName="tertiary_base_3"
-								borderColor="secondary_base_0c"
-								style={{
-									borderWidth: 1,
-									minHeight: 40,
-									paddingVertical: 0,
-									paddingHorizontal: 0,
-									justifyContent: "flex-start",
-								}}
-							>
-								<TextInput
-									value={email}
-									onChangeText={setEmail}
-									placeholder="adresmailowy@email.com"
-									placeholderTextColor={colors.primary_base_1}
-									keyboardType="email-address"
-									autoCapitalize="none"
+					<View style={{flex: 1, justifyContent: "flex-start"}}>
+						<View style={styles.inputsSection}>
+							{/* Pole Email */}
+							<View style={styles.inputGroup}>
+								<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
+								<ThemedView
+									variant="wide"
+									colorName="tertiary_base_3"
+									borderColor="secondary_base_0c"
 									style={{
-										width: "100%",
-										fontSize: 17,
-										paddingLeft: 16,
-										fontFamily: "Afacad-SemiBold",
+										borderWidth: 1,
+										minHeight: 44,
+										paddingVertical: 0,
+										paddingHorizontal: 0,
+										justifyContent: "flex-start",
 									}}
-								/>
-							</ThemedView>
-						</View>
+								>
+									<TextInput
+										value={email}
+										onChangeText={setEmail}
+										placeholder={t("signup.emailPlaceholder")}
+										placeholderTextColor={colors.primary_base_1}
+										keyboardType="email-address"
+										autoCapitalize="none"
+										style={{
+											width: "100%",
+											fontSize: 17,
+											paddingLeft: 16,
+											fontFamily: "Afacad-SemiBold",
+										}}
+									/>
+								</ThemedView>
+							</View>
 
-						{/* Pole Hasło */}
-						<View style={styles.inputGroup}>
-							<ThemedText
-								tx="login.password"
-								variant="tab1Category"
-								colorName="secondary_base_0c"
-							/>
-							<ThemedView
-								variant="wide"
-								colorName="tertiary_base_3"
-								borderColor="secondary_base_0c"
-								style={{
-									borderWidth: 1,
-									minHeight: 40,
-									paddingVertical: 0,
-									paddingHorizontal: 0,
-									justifyContent: "flex-start",
-								}}
-							>
-								<TextInput
-									value={password}
-									onChangeText={setPassword}
-									placeholder="••••••••"
-									placeholderTextColor={colors.primary_base_1}
-									secureTextEntry
-									style={{ paddingLeft: 16, width: "100%" }}
+							{/* Pole Hasło */}
+							<View style={styles.inputGroup}>
+								<ThemedText
+									tx="login.password"
+									variant="tab1Category"
+									colorName="secondary_base_0c"
 								/>
-							</ThemedView>
+								<ThemedView
+									variant="wide"
+									colorName="tertiary_base_3"
+									borderColor="secondary_base_0c"
+									style={{
+										borderWidth: 1,
+										minHeight: 44,
+										paddingVertical: 0,
+										paddingHorizontal: 0,
+										justifyContent: "flex-start",
+									}}
+								>
+									<TextInput
+										value={password}
+										onChangeText={setPassword}
+										placeholder="••••••••"
+										placeholderTextColor={colors.primary_base_1}
+										secureTextEntry
+										autoCapitalize="none"
+										autoCorrect={false}
+										style={{ paddingLeft: 16, width: "100%" }}
+									/>
+								</ThemedView>
+							</View>
 						</View>
-
 						{/* Link Reset Hasła */}
 						<View style={styles.inlineRow}>
 							<ThemedText
@@ -115,11 +120,10 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleResetPassword}
-								style={{ paddingLeft: 12 }}
+								style={{ paddingLeft: 12, paddingVertical: 14 }}
 							/>
 						</View>
 					</View>
-
 					{/* Sekcja Przycisków Akcji */}
 					<View style={styles.actionsSection}>
 						{/* Przycisk ZALOGUJ */}
@@ -168,7 +172,7 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleSignUp}
-								style={{ paddingLeft: 12 }}
+								style={{ paddingLeft: 12, paddingVertical: 14 }}
 							/>
 						</View>
 					</View>
@@ -206,7 +210,6 @@ const styles = StyleSheet.create({
 	centerRow: {
 		justifyContent: "center",
 		paddingLeft: 0,
-		marginTop: 6,
 	},
 	actionsSection: {
 		gap: 12,

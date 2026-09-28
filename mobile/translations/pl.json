@@ -320,7 +320,17 @@
 	"signup": {
 		"firstName": "Imię",
 		"lastName": "Nazwisko",
+		"emailPlaceholder": "adres@email.com",
 		"repeatPassword": "Powtórz hasło",
-		"register": "Zarejestruj"
+		"register": "Zarejestruj",
+		"passwordRequirements": "Wymagania hasła",
+		"passwordRules": {
+			"minLength": "Min. 8 znaków",
+			"uppercase": "Co najmniej 1 wielka litera",
+			"lowercase": "Co najmniej 1 mała litera",
+			"number": "Co najmniej 1 cyfra",
+			"symbol": "Co najmniej 1 znak specjalny",
+			"match": "Hasła są takie same"
+		}
 	}
 }
