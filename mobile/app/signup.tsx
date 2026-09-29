@@ -7,7 +7,6 @@ import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 
-
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 8
 	const hasUppercase = /[A-Z]/.test(value)
@@ -38,15 +37,15 @@ export default function SignUpScreen() {
 	const [repeatPassword, setRepeatPassword] = useState("")
 
 	const passwordRules = getPasswordRequirements(password, repeatPassword)
-  const sortedPasswordRules = [...passwordRules].sort((a, b) => Number(a.valid) - Number(b.valid))
+	const sortedPasswordRules = [...passwordRules].sort((a, b) => Number(a.valid) - Number(b.valid))
 	const isPasswordValid = passwordRules.every((rule) => rule.valid)
 
 	const handleRegister = () => {
 		if (!isPasswordValid) {
 			return
 		} else {
-      //TODO
-    }
+			//TODO
+		}
 	}
 	const handleGoogleLogin = () => {}
 	const handleFacebookLogin = () => {}
@@ -69,9 +68,7 @@ export default function SignUpScreen() {
 					paddingHorizontal: 32,
 				}}
 			>
-				<ScrollView
-          showsVerticalScrollIndicator={false}
-        >
+				<ScrollView showsVerticalScrollIndicator={false}>
 					<View style={[styles.container, { paddingTop: 20 }]}>
 						{/* Sekcja pól formularza */}
 						<View style={styles.inputsSection}>
@@ -163,8 +160,8 @@ export default function SignUpScreen() {
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
-                    autoCapitalize="none"
-                    autoCorrect={false}
+										autoCapitalize="none"
+										autoCorrect={false}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
@@ -190,7 +187,7 @@ export default function SignUpScreen() {
 												variant="body1Regular"
 												colorName={rule.valid ? "true" : "secondary_base_0c"}
 												style={styles.requirementText}
-                        tx={rule.label as any}
+												tx={rule.label as any}
 											/>
 										</View>
 									))}
@@ -216,8 +213,8 @@ export default function SignUpScreen() {
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
-                    autoCapitalize="none"
-                    autoCorrect={false}
+										autoCapitalize="none"
+										autoCorrect={false}
 										style={[styles.input, { color: colors.primary_base, flex: 1 }]}
 									/>
 								</ThemedView>

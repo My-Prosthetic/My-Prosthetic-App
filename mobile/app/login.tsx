@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next"
 
 export default function LoginScreen() {
 	const router = useRouter()
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const { colors } = useTheme()
 
@@ -40,7 +40,7 @@ export default function LoginScreen() {
 			>
 				<View style={styles.container}>
 					{/* Sekcja pól formularza */}
-					<View style={{flex: 1, justifyContent: "flex-start"}}>
+					<View style={{ flex: 1, justifyContent: "flex-start" }}>
 						<View style={styles.inputsSection}>
 							{/* Pole Email */}
 							<View style={styles.inputGroup}>

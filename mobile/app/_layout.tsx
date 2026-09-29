@@ -5,18 +5,46 @@ import * as SplashScreen from "expo-splash-screen"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
+import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
-
-//TODO usunąć pliki z fontami, których ostatecznie nie używamy
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
 	console.warn("SplashScreen error:", error)
 })
 
+function RootNavigationLayout({
+	fontsLoaded,
+	fontsError,
+}: {
+	fontsLoaded: boolean
+	fontsError: Error | null
+}) {
+	const { status } = useAuth()
+
+	const isReady = (fontsLoaded || !!fontsError) && status !== "INITIALIZING"
+
+	useEffect(() => {
+		if (isReady) {
+			SplashScreen.hideAsync().catch((error) => {
+				console.error("Failed to hide splash screen:", error)
+			})
+		}
+	}, [isReady])
+
+	if (!isReady) {
+		return null
+	}
+
+	return (
+		<Stack screenOptions={{ headerShown: false }}>
+			<Stack.Screen name="index" />
+		</Stack>
+	)
+}
+
 export default function RootLayout() {
 	useEffect(() => {
 		if (__DEV__) {
-			// Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
 			try {
 				logFullDatabase()
 			} catch (error) {
@@ -34,23 +62,11 @@ export default function RootLayout() {
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
 	})
 
-	useEffect(() => {
-		if (loaded || error) {
-			SplashScreen.hideAsync().catch((error) => {
-				console.error("Failed to hide splash screen:", error)
-			})
-		}
-	}, [loaded, error])
-
-	if (!loaded && !error) {
-		return null
-	}
-
 	return (
 		<ThemeProvider>
-			<Stack screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="index" />
-			</Stack>
+			<AuthProvider>
+				<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+			</AuthProvider>
 		</ThemeProvider>
 	)
 }

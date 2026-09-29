@@ -3,12 +3,15 @@ import { View, StyleSheet } from "react-native"
 import { useRouter } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
+import { useAuth } from "@/context/AuthContext"
 
 export default function SignUpScreen() {
 	const router = useRouter()
+	const { loginAsGuest } = useAuth()
 
 	const onContinueWithoutAccountPress = () => {
-		//TODO
+		loginAsGuest()
+		router.push("/(tabs)/(home)/home")
 	}
 
 	return (

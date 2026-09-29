@@ -1,14 +1,14 @@
-import { useRouter } from "expo-router"
+import { useRouter, Redirect } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 
 import Logo from "@/assets/MP_text_logo.svg"
+import { useAuth } from "@/context/AuthContext"
 
 export default function InitialScreen() {
 	const router = useRouter()
-
-	let showLoginPage = true
+	const { status } = useAuth()
 
 	const topSectionRender = () => {
 		return (
@@ -70,7 +70,7 @@ export default function InitialScreen() {
 		)
 	}
 
-	if (showLoginPage) {
+	if (status === "UNAUTHENTICATED") {
 		return (
 			<WaveFormLayout
 				topSectionRender={topSectionRender}
@@ -78,7 +78,7 @@ export default function InitialScreen() {
 				variant="index"
 			/>
 		)
-	} else {
-		router.push("/(tabs)/(home)/home")
+	} else if (status === "GUEST") {
+		return <Redirect href="/(tabs)/(home)/home" />
 	}
 }
