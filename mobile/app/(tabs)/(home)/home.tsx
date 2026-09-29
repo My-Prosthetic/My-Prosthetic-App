@@ -21,6 +21,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { db } from "@/db/client"
 import { users } from "@/db/schema/users"
 import migrations from "@/drizzle/migrations"
+import { useAuth } from "@/context/AuthContext"
 
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
 //TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
@@ -34,6 +35,7 @@ export default function HomeScreen() {
 
 	const { t, i18n } = useTranslation()
 	const { colors, themeType, setTheme } = useTheme()
+	const { status } = useAuth()
 
 	const styles = getStyles(colors)
 
@@ -92,7 +94,7 @@ export default function HomeScreen() {
 	return (
 		<ScrollView
 			style={styles.scrollView}
-			contentContainerStyle={styles.container}
+			contentContainerStyle={[styles.container, { paddingTop: status === "GUEST" ? 0 : 50 }]}
 			showsVerticalScrollIndicator={false}
 		>
 			{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
@@ -290,7 +292,6 @@ const getStyles = (colors: ThemeColors) => {
 		},
 		container: {
 			paddingHorizontal: 24,
-			paddingTop: 50,
 			paddingBottom: 40,
 		},
 		headerRow: {
@@ -357,6 +358,7 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "stretch",
 			marginBottom: 28,
 			width: "100%",
+			gap: 20,
 		},
 		actionButtonCard: {
 			width: "45%",

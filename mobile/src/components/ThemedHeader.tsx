@@ -9,7 +9,9 @@ import {
 import { Ionicons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { ParseKeys } from "i18next"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
+import { useAuth } from "@/context/AuthContext"
 import { ThemedText } from "./ThemedText"
 
 export type HeaderVariant = "prominent" | "transparent"
@@ -24,6 +26,8 @@ interface ThemedHeaderProps {
 export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: ThemedHeaderProps) => {
 	const router = useRouter()
 	const { colors } = useTheme()
+	const { status } = useAuth()
+	const insets = useSafeAreaInsets()
 	const { width } = useWindowDimensions()
 
 	const handleBack = () => {
@@ -44,7 +48,12 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 		<View
 			style={[
 				variant === "prominent" ? styles.prominentHeader : styles.transparentHeader,
-				{ backgroundColor, width, alignSelf: "center" },
+				{
+					backgroundColor,
+					width,
+					alignSelf: "center",
+					paddingTop: status !== "GUEST" ? insets.top : 20,
+				},
 				style,
 			]}
 		>
@@ -74,7 +83,6 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 
 const styles = StyleSheet.create({
 	prominentHeader: {
-		minHeight: 100,
 		borderBottomLeftRadius: 24,
 		borderBottomRightRadius: 24,
 		flexDirection: "column",
