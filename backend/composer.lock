@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63b5da9f03f62bb5c1fca1c677e093bf",
+    "content-hash": "1e119a51e5de991bc5b74ba0cb131b94",
     "packages": [
         {
             "name": "brick/math",
@@ -6398,6 +6398,48 @@
                 "source": "https://github.com/iamcal/SQLParser/tree/v0.7"
             },
             "time": "2026-01-28T22:20:33+00:00"
+        },
+        {
+            "name": "jbelien/phpstan-sarif-formatter",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jbelien/phpstan-sarif-formatter.git",
+                "reference": "6a21162f610238f86647065b7c99c9c7af380a96"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jbelien/phpstan-sarif-formatter/zipball/6a21162f610238f86647065b7c99c9c7af380a96",
+                "reference": "6a21162f610238f86647065b7c99c9c7af380a96",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^3.0 || ^4.0",
+                "php": "^8.1",
+                "phpstan/phpstan": "^1.9 || ^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPStanSarifErrorFormatter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "SARIF formatter for PHPStan",
+            "support": {
+                "issues": "https://github.com/jbelien/phpstan-sarif-formatter/issues",
+                "source": "https://github.com/jbelien/phpstan-sarif-formatter/tree/1.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/jbelien",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-07T08:32:44+00:00"
         },
         {
             "name": "larastan/larastan",
