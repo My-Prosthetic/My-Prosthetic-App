@@ -24,7 +24,7 @@
 		"accumulatedTitle": "Accumulated Funds 💰"
 	},
 	"home": {
-		"greeting": "Hello",
+		"greeting": "Hello,\n{{name}}",
 		"dbMigrationErr": "Database migration error: ",
 		"dbInit": "Database initialization...",
 		"myProsthetics": "MY PROSTHETICS",
@@ -40,7 +40,8 @@
 		"daysAgo": "{{count}} days ago",
 		"showFullHistory": "Show full history",
 		"switchToHighContrast": "Switch to high contrast 🌙",
-		"switchToLightTheme": "Switch to light theme ☀️"
+		"switchToLightTheme": "Switch to light theme ☀️",
+		"addProsthesis": "Add prosthesis"
 	},
 	"common": {
 		"cancel": "CANCEL",
@@ -115,12 +116,10 @@
 		"back": "Go back",
 		"showProgrammeDetails": "Show details of {{programme}}",
 		"openFoundation": "Open {{foundation}} website",
-
 		"sections": {
 			"national": "NATIONAL PROGRAMMES",
 			"foundations": "SUPPORTING FOUNDATIONS"
 		},
-
 		"nfz": {
 			"badge": "NFZ",
 			"title": "MEDICAL DEVICE ORDER",
@@ -140,14 +139,13 @@
 			"step3Description": "Provide the order code and PIN.",
 			"button": "GO TO THE NFZ WEBSITE"
 		},
-
 		"pfron": {
 			"badge": "PFRON",
 			"title": "\"ACTIVE LOCAL GOVERNMENT\" PROGRAMME",
 			"shortDescription": "Funding for advanced prostheses (K3/K4).",
 			"detailsTitle": "ACTIVE LOCAL GOVERNMENT",
 			"subtitle": "PFRON funds (Module C)",
-			"recruitmentLabel": "Application dates",
+			"recruitmentLabel": "Application dates:",
 			"recruitmentValue": "Check with your local PCPR",
 			"eligibilityTitle": "WHO CAN APPLY?",
 			"eligibility1": "People with a recognised degree of disability",
@@ -157,7 +155,6 @@
 			"button": "APPLY AND CHECK DATES",
 			"buttonDescription": "Log in to the PFRON government system"
 		},
-
 		"collections": {
 			"badge": "FUNDRAISING",
 			"title": "FUNDRAISING AND OWN CONTRIBUTION",
@@ -166,7 +163,6 @@
 			"subtitle": "Funds from 1.5% tax donations and public fundraising",
 			"sectionTitle": "POPULAR FOUNDATIONS"
 		},
-
 		"foundations": {
 			"avalon": {
 				"name": "Avalon Foundation",
@@ -183,19 +179,123 @@
 		}
 	},
 	"profile": {
-		"title": "PROFIL MEDYCZNY",
+		"title": "MEDICAL PROFILE",
 		"activity": "ACTIVITY LEVEL (K-LEVELS)",
-		"diseases": "DISEASES AND ALLERGIES",
+		"selectActivityLevel": "Select activity level",
+		"diseases": "CONDITIONS AND ALLERGIES",
 		"medications": "CURRENTLY TAKEN MEDICATIONS",
+		"addCondition": "Add",
 		"addMedication": "Add new medication",
 		"history": "MEASUREMENT HISTORY",
 		"addMeasurement": "Add new measurement",
 		"recommendations": "RECOMMENDATIONS FROM THE PROSTHETIST",
 		"notes": "TECHNICAL NOTES",
 		"newFile": "ADD FILE",
-		"fileDescription": "here you can add photos, documentation and other files related to the medical history",
+		"fileDescription": "here you can add photos, documentation and other files related to your medical history",
 		"historyEntries": "24 entries",
 		"recommendationsEntries": "1 new entry",
-		"notesEntries": "No new entries"
+		"notesEntries": "No new entries",
+		"addConditionTitle": "Add condition or allergy",
+		"addMedicationTitle": "Add medication",
+		"conditionNamePlaceholder": "Name",
+		"medicationNamePlaceholder": "Medication name",
+		"medicationUsagePlaceholder": "Usage",
+		"condition": "Condition",
+		"allergy": "Allergy",
+		"cancel": "Cancel",
+		"save": "Save",
+		"saving": "Saving...",
+		"copyCondition": "Copy: {{condition}}",
+		"showMoreConditions": "Show {{count}} more",
+		"copiedToClipboard": "Copied to clipboard",
+		"delete": "Delete",
+		"deleteConditionTitle": "Delete condition or allergy",
+		"deleteConditionMessage": "Are you sure you want to delete “{{condition}}”?",
+		"deleteMedicationTitle": "Delete medication",
+		"deleteMedicationMessage": "Are you sure you want to delete “{{medication}}”?",
+		"deleteCondition": "Delete: {{condition}}",
+		"deleteMedication": "Delete medication: {{medication}}",
+		"kLevels": {
+			"K0": {
+				"label": "K0 (NO ACTIVITY)",
+				"description": "No ability to move safely"
+			},
+			"K1": {
+				"label": "K1 (HOUSEHOLD ACTIVITY)",
+				"description": "Walking on level surfaces"
+			},
+			"K2": {
+				"label": "K2 (LIMITED ACTIVITY)",
+				"description": "Navigating minor environmental barriers"
+			},
+			"K3": {
+				"label": "K3 (ACTIVE)",
+				"description": "Navigating environmental barriers"
+			},
+			"K4": {
+				"label": "K4 (VERY ACTIVE)",
+				"description": "High activity and increased loads"
+			}
+		},
+		"duplicateCondition": "This condition or allergy already exists",
+		"duplicateMedication": "This medication with the same usage already exists"
+	},
+	"newProsthesis": {
+		"title": "NEW PROSTHESIS",
+		"icon": "ICON",
+		"name": "PROSTHESIS NAME",
+		"namePlaceholder": "enter name",
+		"selectLimb": "SELECT LIMB",
+		"left": "left",
+		"right": "right",
+		"upper": "upper",
+		"lower": "lower",
+		"amputationLevel": "AMPUTATION LEVEL",
+		"replacementDate": "EXPECTED REPLACEMENT DATE",
+		"replacementDatePlaceholder": "0000-00-00",
+		"notes": "DESCRIPTION / NOTES",
+		"notesPlaceholder": "add notes",
+		"addFiles": "ADD FILES",
+		"filesDescription": "here you can add photos, documentation, 3D scans and other files related to the prosthesis",
+		"save": "SAVE PROSTHESIS",
+		"saveError": "The prosthesis could not be saved to the database.",
+		"back": "Go back",
+		"previousIcon": "Previous icon",
+		"nextIcon": "Next icon",
+		"amputationLevels": {
+			"lower": {
+				"hemipelvectomy": "Hemipelvectomy",
+				"hipDisarticulation": "Hip disarticulation",
+				"shortThigh": "Short transfemoral residual limb",
+				"mediumThigh": "Medium transfemoral residual limb",
+				"longThigh": "Long transfemoral residual limb",
+				"kneeDisarticulation": "Knee disarticulation",
+				"shortLowerLeg": "Short transtibial residual limb",
+				"mediumLowerLeg": "Medium transtibial residual limb",
+				"longLowerLeg": "Long transtibial residual limb",
+				"syme": "Syme amputation",
+				"partialFoot": "Partial foot amputation"
+			},
+			"upper": {
+				"forequarter": "Forequarter amputation",
+				"shoulderDisarticulation": "Shoulder disarticulation",
+				"shortUpperArm": "Short transhumeral residual limb",
+				"mediumUpperArm": "Medium transhumeral residual limb",
+				"longUpperArm": "Long transhumeral residual limb",
+				"elbowDisarticulation": "Elbow disarticulation",
+				"shortForearm": "Short transradial residual limb",
+				"mediumForearm": "Medium transradial residual limb",
+				"longForearm": "Long transradial residual limb",
+				"wristDisarticulation": "Wrist disarticulation",
+				"partialHand": "Partial hand amputation"
+			}
+		}
+	},
+	"prosthesisDetails": {
+		"title": "MY PROSTHESIS",
+		"side": "SIDE",
+		"limb": "LIMB",
+		"amputationLevel": "AMPUTATION LEVEL",
+		"notFound": "Prosthesis not found."
 	}
 }

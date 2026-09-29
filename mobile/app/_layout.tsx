@@ -29,12 +29,9 @@ export default function RootLayout() {
 		"Afacad-Regular": require("@/assets/fonts/Afacad/Afacad-Regular.ttf"),
 		"Afacad-Medium": require("@/assets/fonts/Afacad/Afacad-Medium.ttf"),
 		"Afacad-SemiBold": require("@/assets/fonts/Afacad/Afacad-SemiBold.ttf"),
-		"Afacad-Bold": require("@/assets/fonts/Afacad/Afacad-Bold.ttf"),
 
 		"Inter-Regular": require("@/assets/fonts/Inter/Inter_18pt-Regular.ttf"),
-		"Inter-Medium": require("@/assets/fonts/Inter/Inter_18pt-Medium.ttf"),
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
-		"Inter-Bold": require("@/assets/fonts/Inter/Inter_18pt-Bold.ttf"),
 	})
 
 	useEffect(() => {

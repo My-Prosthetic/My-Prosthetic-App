@@ -1,28 +1,16 @@
-import React from "react"
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
+import { View, StyleSheet, ScrollView } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
+import { useTheme } from "@/context/ThemeContext"
 
-import fundingConfig from "../../../../../config/fundingConfig.json"
+import { ThemedText } from "@/src/components/ThemedText"
+import { ThemedView } from "@/src/components/ThemedView"
 
-const prototypeColors = {
-	screenBackground: "#D6EEFC",
-	cardBackground: "#EAF6FE",
-
-	primaryText: "#052D8F",
-	secondaryText: "#1967C8",
-
-	badgeBackground: "#B6D3F6",
-	badgeText: "#052D8F",
-
-	buttonBackground: "#052D8F",
-	buttonText: "#FAF9EE",
-	buttonBorder: "#F0EDCC",
-	cardBorder: "#6981BC",
-}
+import fundingConfig from "@/config/fundingConfig.json"
 
 export default function ProgrammesScreen() {
+	const { colors } = useTheme()
 	const { t } = useTranslation()
 	const router = useRouter()
 
@@ -30,30 +18,19 @@ export default function ProgrammesScreen() {
 
 	const translate = (key: string) => t(key as any)
 
-	const screenBackground = prototypeColors.screenBackground
-	const cardBackground = prototypeColors.cardBackground
-	const primaryText = prototypeColors.primaryText
-	const secondaryText = prototypeColors.secondaryText
-	const badgeBackground = prototypeColors.badgeBackground
-	const badgeText = prototypeColors.badgeText
-	const buttonBackground = prototypeColors.buttonBackground
-	const buttonText = prototypeColors.buttonText
-	const buttonBorder = prototypeColors.buttonBorder
-
 	const sectionKeys = [...new Set(programmes.map((programme) => programme.sectionKey))]
 
 	const renderProgrammeCard = (programme: (typeof programmes)[number]) => {
 		const programmeTitle = translate(programme.titleKey)
 
 		return (
-			<TouchableOpacity
+			<ThemedView
 				key={programme.id}
-				activeOpacity={0.8}
 				style={[
 					styles.card,
 					{
-						backgroundColor: cardBackground,
-						borderColor: prototypeColors.cardBorder,
+						backgroundColor: colors.tertiary_base_3,
+						borderColor: colors.primary_base_2,
 					},
 				]}
 				onPress={() =>
@@ -70,40 +47,40 @@ export default function ProgrammesScreen() {
 				})}
 			>
 				<View style={styles.cardContent}>
-					<View
-						style={[
-							styles.badge,
-							{
-								backgroundColor: badgeBackground,
-							},
-						]}
+					<ThemedView
+						variant="tag"
+						colorName="secondary_base_3"
+						style={{
+							paddingHorizontal: 12,
+							paddingVertical: 3,
+						}}
 					>
-						<Text style={[styles.badgeText, { color: badgeText }]}>
+						<ThemedText colorName="primary_base" variant="subTitle2">
 							{translate(programme.badgeKey)}
-						</Text>
-					</View>
+						</ThemedText>
+					</ThemedView>
 
-					<Text
-						style={[styles.cardTitle, { color: primaryText }]}
+					<ThemedText
+						variant="main1Button"
+						colorName="primary_base"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 						minimumFontScale={0.75}
 					>
 						{programmeTitle}
-					</Text>
+					</ThemedText>
 
-					<Text
-						style={[styles.cardDescription, { color: secondaryText }]}
+					<ThemedText
+						variant="subTitle2"
+						colorName="secondary_base_0c"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 						minimumFontScale={0.75}
 					>
 						{translate(programme.shortDescriptionKey)}
-					</Text>
+					</ThemedText>
 				</View>
-
-				<Ionicons name="chevron-forward" size={22} color={primaryText} />
-			</TouchableOpacity>
+			</ThemedView>
 		)
 	}
 
@@ -112,7 +89,7 @@ export default function ProgrammesScreen() {
 			style={[
 				styles.container,
 				{
-					backgroundColor: screenBackground,
+					backgroundColor: colors.tertiary_base_2,
 				},
 			]}
 			contentContainerStyle={styles.content}
@@ -120,9 +97,13 @@ export default function ProgrammesScreen() {
 		>
 			{sectionKeys.map((sectionKey) => (
 				<View key={sectionKey} style={styles.section}>
-					<Text style={[styles.sectionTitle, { color: secondaryText }]}>
+					<ThemedText
+						variant="tab1Category"
+						colorName="secondary_base_0c"
+						style={{ marginBottom: 8 }}
+					>
 						{translate(sectionKey)}
-					</Text>
+					</ThemedText>
 
 					{programmes
 						.filter((programme) => programme.sectionKey === sectionKey)
@@ -130,23 +111,18 @@ export default function ProgrammesScreen() {
 				</View>
 			))}
 
-			<TouchableOpacity
-				style={[
-					styles.addButton,
-					{
-						backgroundColor: buttonBackground,
-						borderColor: buttonBorder,
-					},
-				]}
-				activeOpacity={0.85}
+			<ThemedView
+				style={[styles.addButton]}
+				borderColor="accent_base"
+				variant="wide"
 				onPress={() => router.replace("/funding/accumulated_funds")}
 				accessibilityRole="button"
 				accessibilityLabel={t("funding.addFunds")}
 			>
-				<Ionicons name="add" size={26} color={buttonText} />
+				<Ionicons name="add" size={26} color={colors.accent_base_2} />
 
-				<Text style={[styles.addButtonText, { color: buttonText }]}>{t("funding.addFunds")}</Text>
-			</TouchableOpacity>
+				<ThemedText tx="funding.addFunds" variant="main1Button" colorName="accent_base_2" />
+			</ThemedView>
 		</ScrollView>
 	)
 }
@@ -163,16 +139,7 @@ const styles = StyleSheet.create({
 	},
 
 	section: {
-		marginBottom: 28,
-	},
-
-	sectionTitle: {
-		fontFamily: "Inter_600SemiBold",
-		fontSize: 12,
-		lineHeight: 12,
-		letterSpacing: 0.48,
-		textTransform: "uppercase",
-		marginBottom: 14,
+		marginBottom: 10,
 	},
 
 	card: {
@@ -189,40 +156,7 @@ const styles = StyleSheet.create({
 	cardContent: {
 		flex: 1,
 		paddingRight: 12,
-	},
-
-	badge: {
-		alignSelf: "flex-start",
-		borderRadius: 12,
-		paddingHorizontal: 12,
-		paddingVertical: 3,
-		marginBottom: 8,
-	},
-
-	badgeText: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 14,
-		lineHeight: 14,
-		letterSpacing: 0.56,
-		textAlign: "center",
-	},
-
-	cardTitle: {
-		fontFamily: "Inter_600SemiBold",
-		fontSize: 16,
-		lineHeight: 16,
-		letterSpacing: 0.64,
-		textTransform: "uppercase",
-		marginBottom: 8,
-		flexShrink: 1,
-	},
-
-	cardDescription: {
-		fontFamily: "Afacad_400Regular",
-		fontSize: 14,
-		lineHeight: 18,
-		letterSpacing: 0.56,
-		flexShrink: 1,
+		alignItems: "flex-start",
 	},
 
 	addButton: {
@@ -236,13 +170,5 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 8,
 		marginTop: 2,
-	},
-
-	addButtonText: {
-		fontSize: 16,
-		fontWeight: "700",
-		lineHeight: 22,
-		textAlign: "center",
-		flexShrink: 1,
 	},
 })

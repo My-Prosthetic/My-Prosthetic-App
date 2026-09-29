@@ -1,0 +1,59 @@
+# CodeQL - setup type: ADVANCED - do not enable "Default setup" in settings
+name: "CodeQL"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  # Weekly scan - every Monday 03:30 UTC
+  schedule:
+    - cron: "30 3 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+      packages: read
+        
+    strategy:
+      # If the scan for one language fails, the other still finishes
+      fail-fast: false 
+      matrix:
+        include:
+          # JS / TS - Frontend, Mobile, Laravel's JS part
+          - language: javascript-typescript
+            build-mode: none
+
+          # GitHub Actions workflow files
+          - language: actions
+            build-mode: none
+            
+          # No PHP (not supported by CodeQL - check statis-analysis.yml)
+        
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
+          config: |
+            paths-ignore:
+              - "**/node_modules/**"
+              - "backend/vendor/**"
+              - "backend/public/build/**"
+              - "**/dist/**"
+              - "**/build/**"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with: 
+          category: "/language:${{ matrix.language }}"

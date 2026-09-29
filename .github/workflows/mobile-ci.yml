@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - '**'
+      - '!dependabot/**'
     paths:
       - 'mobile/**'
 
@@ -36,10 +37,10 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Lint (ESLint)
-        run: npm run lint
+        run: make lint
 
       - name: Format check (Prettier)
-        run: npm run format:check
+        run: make format-check
 
       - name: TypeScript check
-        run: npx tsc --noEmit
+        run: make typecheck

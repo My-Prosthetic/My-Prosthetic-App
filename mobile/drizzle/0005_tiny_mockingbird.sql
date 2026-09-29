@@ -1,0 +1,1 @@
+ALTER TABLE `conditions` DROP COLUMN `type`;

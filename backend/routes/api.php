@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\WalletEntryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class);
@@ -22,4 +23,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
     Route::post('/logout', [AuthController::class, 'mobileLogout'])->name('auth.mobile-logout');
     Route::post('/web/logout', [AuthController::class, 'webLogout'])->name('auth.web-logout');
+    Route::get('/wallet-entries', [WalletEntryController::class, 'index'])->name('wallet-entries.index');
+    Route::post('/wallet-entries', [WalletEntryController::class, 'store'])->name('wallet-entries.store');
 });
