@@ -33,7 +33,7 @@ jobs:
           - language: actions
             build-mode: none
             
-          # No PHP (not supported by CodeQL)
+          # No PHP (not supported by CodeQL - check statis-analysis.yml)
         
     steps: 
       - name: Checkout repository
