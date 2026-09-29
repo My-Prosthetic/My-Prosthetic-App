@@ -181,7 +181,7 @@ class ProsthesisTest extends TestCase
         ]);
     }
 
-    public function test_soft_deleting_a_prosthesis_soft_deletes_its_components(): void
+    public function test_soft_deleting_a_prosthesis_hides_its_components(): void
     {
         $patient = User::factory()->create();
         $prosthesis = Prosthesis::create([
@@ -201,10 +201,87 @@ class ProsthesisTest extends TestCase
         $prosthesis->delete();
 
         $this->assertSoftDeleted('prostheses', ['id' => $prosthesis->id]);
-        $this->assertSoftDeleted('components', ['id' => $component->id]);
+        $this->assertDatabaseHas('components', ['id' => $component->id, 'deleted_at' => null]);
         $this->assertNull(Prosthesis::find($prosthesis->id));
+        $this->assertNull(Component::find($component->id));
         $this->assertNotNull(Prosthesis::withTrashed()->find($prosthesis->id));
-        $this->assertNotNull(Component::withTrashed()->find($component->id));
+    }
+
+    public function test_restoring_a_prosthesis_restores_access_to_its_components(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $component = Component::factory()->for($prosthesis)->create();
+
+        $prosthesis->delete();
+        $this->assertNull(Component::find($component->id));
+
+        $prosthesis->restore();
+        $this->assertNotNull(Component::find($component->id));
+    }
+
+    public function test_bulk_soft_deleting_prostheses_hides_components_until_restored(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $component = Component::factory()->for($prosthesis)->create();
+
+        Prosthesis::whereKey($prosthesis->id)->delete();
+        $this->assertNull(Component::find($component->id));
+
+        $prosthesis->restore();
+        $this->assertNotNull(Component::find($component->id));
+    }
+
+    public function test_restoring_a_prosthesis_does_not_restore_a_separately_deleted_component(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $component = Component::factory()->for($prosthesis)->create();
+
+        $component->delete();
+        $prosthesis->delete();
+        $prosthesis->restore();
+
+        $this->assertSoftDeleted('components', ['id' => $component->id]);
+        $this->assertNull(Component::find($component->id));
+    }
+
+    public function test_force_deleting_a_prosthesis_removes_its_components(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $component = Component::factory()->for($prosthesis)->create();
+
+        $prosthesis->delete();
+        $prosthesis->forceDelete();
+
+        $this->assertDatabaseMissing('prostheses', ['id' => $prosthesis->id]);
+        $this->assertDatabaseMissing('components', ['id' => $component->id]);
+    }
+
+    public function test_bulk_force_deleting_prostheses_removes_their_components(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $component = Component::factory()->for($prosthesis)->create();
+
+        Prosthesis::whereKey($prosthesis->id)->forceDelete();
+
+        $this->assertDatabaseMissing('prostheses', ['id' => $prosthesis->id]);
+        $this->assertDatabaseMissing('components', ['id' => $component->id]);
+    }
+
+    public function test_deleting_a_user_cascades_to_active_and_soft_deleted_prostheses(): void
+    {
+        $patient = User::factory()->create();
+        $active = Prosthesis::factory()->for($patient, 'user')->create();
+        $archived = Prosthesis::factory()->for($patient, 'user')->create();
+        $activeComponent = Component::factory()->for($active)->create();
+        $archivedComponent = Component::factory()->for($archived)->create();
+        $archived->delete();
+
+        $patient->delete();
+
+        $this->assertDatabaseMissing('prostheses', ['id' => $active->id]);
+        $this->assertDatabaseMissing('prostheses', ['id' => $archived->id]);
+        $this->assertDatabaseMissing('components', ['id' => $activeComponent->id]);
+        $this->assertDatabaseMissing('components', ['id' => $archivedComponent->id]);
     }
 
     public function test_factories_create_a_valid_prosthesis_tree(): void

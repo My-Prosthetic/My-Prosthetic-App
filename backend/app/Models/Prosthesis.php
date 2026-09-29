@@ -30,15 +30,6 @@ class Prosthesis extends Model
 
     protected $keyType = 'string';
 
-    protected static function booted(): void
-    {
-        static::deleting(function (self $prosthesis): void {
-            if (! $prosthesis->isForceDeleting()) {
-                $prosthesis->components()->delete();
-            }
-        });
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

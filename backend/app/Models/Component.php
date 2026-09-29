@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ComponentType;
 use Database\Factories\ComponentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,13 @@ class Component extends Model
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('active_prosthesis', static function (Builder $builder): void {
+            $builder->whereHas('prosthesis');
+        });
+    }
 
     public function prosthesis(): BelongsTo
     {
