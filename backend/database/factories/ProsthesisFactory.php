@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\LimbType;
+use App\Enums\ProsthesisSide;
 use App\Models\Prosthesis;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -16,8 +18,8 @@ class ProsthesisFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => fake()->words(2, true),
-            'side' => fake()->randomElement(['left', 'right']),
-            'limb_type' => fake()->randomElement(['upper', 'lower']),
+            'side' => fake()->randomElement(ProsthesisSide::cases()),
+            'limb_type' => fake()->randomElement(LimbType::cases()),
             'amputation_level' => fake()->randomElement([
                 'transradial',
                 'transhumeral',

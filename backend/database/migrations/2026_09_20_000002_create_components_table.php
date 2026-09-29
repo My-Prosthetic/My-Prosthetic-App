@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('components', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('prosthesis_id')->constrained('prostheses')->cascadeOnDelete();
+            $table->foreignUuid('prosthesis_id')->index()->constrained('prostheses')->cascadeOnDelete();
             $table->string('type');
             $table->string('name')->nullable();
             $table->string('manufacturer')->nullable();

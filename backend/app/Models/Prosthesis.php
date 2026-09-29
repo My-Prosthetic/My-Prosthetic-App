@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\LimbType;
+use App\Enums\ProsthesisSide;
 use Database\Factories\ProsthesisFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -50,6 +52,8 @@ class Prosthesis extends Model
     protected function casts(): array
     {
         return [
+            'side' => ProsthesisSide::class,
+            'limb_type' => LimbType::class,
             'replacement_at' => 'datetime',
         ];
     }

@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Enums\ComponentType;
+use App\Enums\LimbType;
+use App\Enums\ProsthesisSide;
 use App\Models\Component;
 use App\Models\Prosthesis;
 use App\Models\User;
@@ -10,12 +12,20 @@ use Database\Seeders\ProsthesisSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProsthesisTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_equipment_foreign_keys_are_indexed(): void
+    {
+        $this->assertContains(['user_id'], array_column(Schema::getIndexes('prostheses'), 'columns'));
+        $this->assertContains(['prosthesis_id'], array_column(Schema::getIndexes('components'), 'columns'));
+    }
 
     public function test_patient_can_create_a_prosthesis_with_components(): void
     {
@@ -72,11 +82,49 @@ class ProsthesisTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Carbon::class, $prosthesis->replacement_at);
+        $this->assertSame(ProsthesisSide::LEFT, $prosthesis->side);
+        $this->assertSame(LimbType::LOWER, $prosthesis->limb_type);
         $this->assertInstanceOf(Carbon::class, $component->installed_at);
         $this->assertInstanceOf(Carbon::class, $component->warranty_until);
         $this->assertTrue($component->is_test_socket);
         $this->assertArrayNotHasKey('unexpected', $prosthesis->getAttributes());
         $this->assertArrayNotHasKey('unexpected', $component->getAttributes());
+    }
+
+    public function test_prosthesis_rejects_an_unknown_side(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+
+        $this->expectException(\ValueError::class);
+
+        $prosthesis->fill(['side' => 'center']);
+    }
+
+    public function test_prosthesis_rejects_an_unknown_limb_type(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+
+        $this->expectException(\ValueError::class);
+
+        $prosthesis->fill(['limb_type' => 'unknown']);
+    }
+
+    public function test_database_rejects_an_unknown_prosthesis_side(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+
+        $this->expectException(QueryException::class);
+
+        DB::table('prostheses')->where('id', $prosthesis->id)->update(['side' => 'center']);
+    }
+
+    public function test_database_rejects_an_unknown_prosthesis_limb_type(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+
+        $this->expectException(QueryException::class);
+
+        DB::table('prostheses')->where('id', $prosthesis->id)->update(['limb_type' => 'unknown']);
     }
 
     public function test_component_requires_an_installation_date(): void

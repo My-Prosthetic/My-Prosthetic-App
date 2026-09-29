@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\ComponentType;
+use App\Enums\LimbType;
+use App\Enums\ProsthesisSide;
 use App\Enums\UserRole;
 use App\Models\Component;
 use App\Models\Prosthesis;
@@ -29,8 +31,8 @@ class ProsthesisSeeder extends Seeder
                 'name' => 'Demo lower-limb prosthesis',
             ],
             [
-                'side' => 'left',
-                'limb_type' => 'lower',
+                'side' => ProsthesisSide::LEFT,
+                'limb_type' => LimbType::LOWER,
                 'amputation_level' => 'transtibial',
                 'replacement_at' => '2030-01-15 00:00:00',
             ],
