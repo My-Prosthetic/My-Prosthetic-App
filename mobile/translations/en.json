@@ -44,6 +44,20 @@
 		"switchToLightTheme": "Switch to light theme ☀️",
 		"addProsthesis": "Add prosthesis"
 	},
+	"auth": {
+		"errors": {
+			"apiUnavailable": "Authentication is unavailable. Please try again later.",
+			"network": "Could not connect to the server. Check your connection and try again.",
+			"invalidCredentials": "The email or password is incorrect.",
+			"emailTaken": "An account with this email already exists.",
+			"invalidEmail": "Enter a valid email address.",
+			"passwordMismatch": "Passwords must match.",
+			"passwordInvalid": "Password does not meet the security requirements.",
+			"validationFailed": "We could not validate the submitted data. Check the form.",
+			"requestFailed": "The request failed. Please try again.",
+			"unexpected": "An unexpected error occurred. Please try again."
+		}
+	},
 	"common": {
 		"cancel": "CANCEL",
 		"error": "Error",

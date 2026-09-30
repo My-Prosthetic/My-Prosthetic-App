@@ -44,6 +44,20 @@
 		"switchToLightTheme": "Zmień na jasny motyw ☀️",
 		"addProsthesis": "Dodaj protezę"
 	},
+	"auth": {
+		"errors": {
+			"apiUnavailable": "Usługa uwierzytelniania jest niedostępna. Spróbuj ponownie później.",
+			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.",
+			"invalidCredentials": "Nieprawidłowy email lub hasło.",
+			"emailTaken": "Konto z tym adresem email już istnieje.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa.",
+			"validationFailed": "Nie udało się zweryfikować danych. Sprawdź formularz.",
+			"requestFailed": "Żądanie nie powiodło się. Spróbuj ponownie.",
+			"unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+		}
+	},
 	"common": {
 		"cancel": "ANULUJ",
 		"error": "Błąd",

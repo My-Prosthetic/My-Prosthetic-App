@@ -1,13 +1,5 @@
 import { useState } from "react"
-import {
-	ActivityIndicator,
-	Modal,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from "react-native"
+import { ActivityIndicator, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
@@ -15,7 +7,7 @@ import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
-import { authService } from "@/src/services/authService"
+import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
@@ -102,7 +94,9 @@ export default function SignUpScreen() {
 			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
 			await createUser({ name: apiFirstName })
 		} catch (error) {
-			setErrorMessage(error instanceof Error ? error.message : "Rejestracja nie powiodła się.")
+			setErrorMessage(
+				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
+			)
 		} finally {
 			setIsSubmitting(false)
 		}
@@ -307,12 +301,14 @@ export default function SignUpScreen() {
 						{/* Sekcja Przycisków Akcji */}
 						<View style={styles.actionsSection}>
 							{errorMessage ? (
-								<Text
+								<ThemedText
 									accessibilityRole="alert"
-									style={[styles.errorMessage, { color: colors.false }]}
+									variant="body1Regular"
+									colorName="false"
+									style={styles.errorMessage}
 								>
 									{errorMessage}
-								</Text>
+								</ThemedText>
 							) : null}
 
 							{/* Przycisk ZAREJESTRUJ */}

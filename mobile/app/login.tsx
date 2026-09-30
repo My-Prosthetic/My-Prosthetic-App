@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ActivityIndicator, Modal, StyleSheet, View, Text, TextInput } from "react-native"
+import { ActivityIndicator, Modal, StyleSheet, View, TextInput } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
@@ -7,10 +7,9 @@ import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
-import { authService } from "@/src/services/authService"
+import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 
-//TODO klikając zaloguj bardziej blokujący waitingscreen, uniemożliwiający klikanie w ekran
 //TODO klikając zaloguj czyścimy zawartość pola password
 
 export default function LoginScreen() {
@@ -48,7 +47,9 @@ export default function LoginScreen() {
 			await createUser({ name: firstName })
 			//TODO fetch user database contents from api
 		} catch (error) {
-			setErrorMessage(error instanceof Error ? error.message : "Logowanie nie powiodło się.")
+			setErrorMessage(
+				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
+			)
 		} finally {
 			setIsLoading(false)
 		}
@@ -175,12 +176,14 @@ export default function LoginScreen() {
 					{/* Sekcja Przycisków Akcji */}
 					<View style={styles.actionsSection}>
 						{errorMessage ? (
-							<Text
+							<ThemedText
 								accessibilityRole="alert"
-								style={[styles.errorMessage, { color: colors.false }]}
+								variant="body1Regular"
+								colorName="false"
+								style={styles.errorMessage}
 							>
 								{errorMessage}
-							</Text>
+							</ThemedText>
 						) : null}
 
 						{/* Przycisk ZALOGUJ */}
