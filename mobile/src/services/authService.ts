@@ -18,6 +18,20 @@ export interface MobileLoginResponse {
 	token_type: "Bearer"
 }
 
+export interface RegisterPayload {
+	name: string
+	email: string
+	password: string
+	password_confirmation: string
+	device_name?: string | null
+}
+
+export interface RegisterResponse {
+	data: AuthenticatedUser
+	token: string
+	token_type: "Bearer"
+}
+
 export class AuthApiError extends Error {
 	constructor(
 		message: string,
@@ -72,6 +86,37 @@ async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> 
 	return body as MobileLoginResponse
 }
 
+async function register(payload: RegisterPayload): Promise<RegisterResponse> {
+	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
+	if (!baseUrl) {
+		throw new AuthApiError("Brak konfiguracji adresu API (EXPO_PUBLIC_API_URL).")
+	}
+
+	let response: Response
+	try {
+		response = await fetch(`${baseUrl}/register`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+			body: JSON.stringify(payload),
+		})
+	} catch {
+		throw new AuthApiError("Nie można połączyć się z serwerem. Sprawdź połączenie i adres API.")
+	}
+
+	const body: unknown = await response.json().catch(() => null)
+	if (response.status !== 201) {
+		throw new AuthApiError(
+			getErrorMessage(body) ?? `Rejestracja nie powiodła się (HTTP ${response.status}).`,
+			response.status
+		)
+	}
+
+	return body as RegisterResponse
+}
+
 async function logout(token: string): Promise<void> {
 	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
 	if (!baseUrl) {
@@ -96,4 +141,4 @@ async function logout(token: string): Promise<void> {
 	}
 }
 
-export const authService = { login, logout }
+export const authService = { login, register, logout }

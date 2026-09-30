@@ -1,11 +1,21 @@
 import { useState } from "react"
-import { View, TextInput, StyleSheet, ScrollView } from "react-native"
+import {
+	ActivityIndicator,
+	Modal,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
+import { useAuth } from "@/context/AuthContext"
+import { authService } from "@/src/services/authService"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 8
@@ -29,25 +39,45 @@ export default function SignUpScreen() {
 	const router = useRouter()
 	const { t } = useTranslation()
 	const { colors } = useTheme()
+	const { loginWithToken } = useAuth()
 
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [repeatPassword, setRepeatPassword] = useState("")
+	const [isSubmitting, setIsSubmitting] = useState(false)
+	const [errorMessage, setErrorMessage] = useState("")
 
 	const passwordRules = getPasswordRequirements(password, repeatPassword)
 	const sortedPasswordRules = [...passwordRules].sort((a, b) => Number(a.valid) - Number(b.valid))
 	const isPasswordValid = passwordRules.every((rule) => rule.valid)
 
-	const handleRegister = () => {
-		if (!isPasswordValid) {
+	const handleRegister = async () => {
+		if (isSubmitting || !isPasswordValid) {
 			return
-		} else {
-			//TODO
+		}
+
+		setIsSubmitting(true)
+		setErrorMessage("")
+		try {
+			const result = await authService.register({
+				name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+				email,
+				password,
+				password_confirmation: repeatPassword,
+			})
+			await loginWithToken(result.token)
+		} catch (error) {
+			setErrorMessage(error instanceof Error ? error.message : "Rejestracja nie powiodła się.")
+		} finally {
+			setIsSubmitting(false)
 		}
 	}
+
+	//TODO
 	const handleGoogleLogin = () => {}
+	//TODO
 	const handleFacebookLogin = () => {}
 	const handleLogin = () => {
 		router.push("../login")
@@ -68,7 +98,7 @@ export default function SignUpScreen() {
 					paddingHorizontal: 32,
 				}}
 			>
-				<ScrollView showsVerticalScrollIndicator={false}>
+				<ScrollView showsVerticalScrollIndicator={false} scrollEnabled={!isSubmitting}>
 					<View style={[styles.container, { paddingTop: 20 }]}>
 						{/* Sekcja pól formularza */}
 						<View style={styles.inputsSection}>
@@ -91,6 +121,7 @@ export default function SignUpScreen() {
 										placeholder={t("signup.firstName")}
 										placeholderTextColor={colors.primary_base_1}
 										autoCapitalize="words"
+										editable={!isSubmitting}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
@@ -115,6 +146,7 @@ export default function SignUpScreen() {
 										placeholder={t("signup.lastName")}
 										placeholderTextColor={colors.primary_base_1}
 										autoCapitalize="words"
+										editable={!isSubmitting}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
@@ -136,6 +168,7 @@ export default function SignUpScreen() {
 										placeholderTextColor={colors.primary_base_1}
 										keyboardType="email-address"
 										autoCapitalize="none"
+										editable={!isSubmitting}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
@@ -162,6 +195,7 @@ export default function SignUpScreen() {
 										secureTextEntry
 										autoCapitalize="none"
 										autoCorrect={false}
+										editable={!isSubmitting}
 										style={[styles.input, { color: colors.primary_base }]}
 									/>
 								</ThemedView>
@@ -215,16 +249,37 @@ export default function SignUpScreen() {
 										secureTextEntry
 										autoCapitalize="none"
 										autoCorrect={false}
+										editable={!isSubmitting}
 										style={[styles.input, { color: colors.primary_base, flex: 1 }]}
 									/>
 								</ThemedView>
 							</View>
 						</View>
 
+						{errorMessage ? (
+							<Text
+								accessibilityRole="alert"
+								style={[styles.errorMessage, { color: colors.false }]}
+							>
+								{errorMessage}
+							</Text>
+						) : null}
+
 						{/* Sekcja Przycisków Akcji */}
 						<View style={styles.actionsSection}>
 							{/* Przycisk ZAREJESTRUJ */}
-							<ThemedView variant="narrow" colorName="primary_base" shadow onPress={handleRegister}>
+							<ThemedView
+								variant="narrow"
+								colorName="primary_base"
+								shadow
+								onPress={handleRegister}
+								disabled={isSubmitting || !isPasswordValid}
+								accessibilityRole="button"
+								accessibilityState={{
+									disabled: isSubmitting || !isPasswordValid,
+									busy: isSubmitting,
+								}}
+							>
 								<ThemedText tx="signup.register" variant="main1Button" colorName="accent_base_1" />
 							</ThemedView>
 
@@ -234,6 +289,7 @@ export default function SignUpScreen() {
 								colorName="accent_base_2"
 								shadow
 								onPress={handleGoogleLogin}
+								disabled={isSubmitting}
 							>
 								<ThemedText
 									tx="login.continueGoogle"
@@ -248,6 +304,7 @@ export default function SignUpScreen() {
 								colorName="accent_base_2"
 								shadow
 								onPress={handleFacebookLogin}
+								disabled={isSubmitting}
 							>
 								<ThemedText
 									tx="login.continueFacebook"
@@ -268,7 +325,9 @@ export default function SignUpScreen() {
 									variant="tab1Category"
 									colorName="primary_base"
 									onPress={handleLogin}
-									style={{ paddingLeft: 12, paddingVertical: 14 }}
+									disabled={isSubmitting}
+									hitSlop={14}
+									style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
 								/>
 							</View>
 						</View>
@@ -278,11 +337,18 @@ export default function SignUpScreen() {
 		)
 	}
 	return (
-		<WaveFormLayout
-			topSectionRender={topSectionRender}
-			bottomSectionRender={bottomSectionRender}
-			variant="forms"
-		/>
+		<>
+			<WaveFormLayout
+				topSectionRender={topSectionRender}
+				bottomSectionRender={bottomSectionRender}
+				variant="forms"
+			/>
+			<Modal transparent visible={isSubmitting} animationType="fade" onRequestClose={() => {}}>
+				<View style={styles.loadingOverlay}>
+					<ActivityIndicator size="large" color={colors.primary_base} />
+				</View>
+			</Modal>
+		</>
 	)
 }
 
@@ -339,6 +405,16 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		paddingLeft: 16,
 		fontFamily: "Afacad-SemiBold",
+	},
+	errorMessage: {
+		marginTop: 8,
+		fontSize: 14,
+	},
+	loadingOverlay: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.25)",
 	},
 	inlineRow: {
 		flexDirection: "row",
