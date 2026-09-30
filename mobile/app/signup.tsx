@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ActivityIndicator, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native"
+import { ActivityIndicator, Modal, StyleSheet, TextInput, View } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
@@ -119,264 +119,264 @@ export default function SignUpScreen() {
 			<ThemedView
 				colorName="tertiary_base_2"
 				style={{
+					flexBasis: "auto",
+					flexShrink: 0,
 					borderTopLeftRadius: 10000,
 					justifyContent: "space-around",
 					paddingBottom: 0,
 					paddingHorizontal: 32,
 				}}
 			>
-				<ScrollView showsVerticalScrollIndicator={false} scrollEnabled={!isSubmitting}>
-					<View style={[styles.container, { paddingTop: 20 }]}>
-						{/* Sekcja pól formularza */}
-						<View style={styles.inputsSection}>
-							{/* Pole Imię */}
-							<View style={styles.inputGroup}>
+				<View style={[styles.container, { paddingTop: 20 }]}>
+					{/* Sekcja pól formularza */}
+					<View style={styles.inputsSection}>
+						{/* Pole Imię */}
+						<View style={styles.inputGroup}>
+							<ThemedText
+								tx="signup.firstName"
+								variant="tab1Category"
+								colorName="secondary_base_0c"
+							/>
+							<ThemedView
+								variant="wide"
+								colorName="tertiary_base_3"
+								borderColor="secondary_base_0c"
+								style={styles.themedInputWrapper}
+							>
+								<TextInput
+									value={firstName}
+									onChangeText={(value) => {
+										setFirstName(value)
+										setErrorMessage("")
+									}}
+									placeholder={t("signup.firstName")}
+									placeholderTextColor={colors.primary_base_1}
+									autoCapitalize="words"
+									editable={!isSubmitting}
+									style={[styles.input, { color: colors.primary_base }]}
+								/>
+							</ThemedView>
+						</View>
+
+						{/* Pole Nazwisko */}
+						<View style={styles.inputGroup}>
+							<ThemedText
+								tx="signup.lastName"
+								variant="tab1Category"
+								colorName="secondary_base_0c"
+							/>
+							<ThemedView
+								variant="wide"
+								colorName="tertiary_base_3"
+								borderColor="secondary_base_0c"
+								style={styles.themedInputWrapper}
+							>
+								<TextInput
+									value={lastName}
+									onChangeText={(value) => {
+										setLastName(value)
+										setErrorMessage("")
+									}}
+									placeholder={t("signup.lastName")}
+									placeholderTextColor={colors.primary_base_1}
+									autoCapitalize="words"
+									editable={!isSubmitting}
+									style={[styles.input, { color: colors.primary_base }]}
+								/>
+							</ThemedView>
+						</View>
+
+						{/* Pole Email */}
+						<View style={styles.inputGroup}>
+							<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
+							<ThemedView
+								variant="wide"
+								colorName="tertiary_base_3"
+								borderColor="secondary_base_0c"
+								style={styles.themedInputWrapper}
+							>
+								<TextInput
+									value={email}
+									onChangeText={(value) => {
+										setEmail(value)
+										setErrorMessage("")
+									}}
+									placeholder={t("signup.emailPlaceholder")}
+									placeholderTextColor={colors.primary_base_1}
+									keyboardType="email-address"
+									autoCapitalize="none"
+									editable={!isSubmitting}
+									style={[styles.input, { color: colors.primary_base }]}
+								/>
+							</ThemedView>
+						</View>
+
+						{/* Pole Hasło */}
+						<View style={styles.inputGroup}>
+							<ThemedText
+								tx="login.password"
+								variant="tab1Category"
+								colorName="secondary_base_0c"
+							/>
+							<ThemedView
+								variant="wide"
+								colorName="tertiary_base_3"
+								borderColor="secondary_base_0c"
+								style={styles.themedInputWrapper}
+							>
+								<TextInput
+									value={password}
+									onChangeText={(value) => {
+										setPassword(value)
+										setErrorMessage("")
+									}}
+									placeholder="••••••••"
+									placeholderTextColor={colors.primary_base_1}
+									secureTextEntry
+									autoCapitalize="none"
+									autoCorrect={false}
+									editable={!isSubmitting}
+									style={[styles.input, { color: colors.primary_base }]}
+								/>
+							</ThemedView>
+							<View style={styles.requirementsSection}>
 								<ThemedText
-									tx="signup.firstName"
+									tx="signup.passwordRequirements"
 									variant="tab1Category"
 									colorName="secondary_base_0c"
+									style={styles.requirementsTitle}
 								/>
-								<ThemedView
-									variant="wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={styles.themedInputWrapper}
-								>
-									<TextInput
-										value={firstName}
-										onChangeText={(value) => {
-											setFirstName(value)
-											setErrorMessage("")
-										}}
-										placeholder={t("signup.firstName")}
-										placeholderTextColor={colors.primary_base_1}
-										autoCapitalize="words"
-										editable={!isSubmitting}
-										style={[styles.input, { color: colors.primary_base }]}
-									/>
-								</ThemedView>
-							</View>
-
-							{/* Pole Nazwisko */}
-							<View style={styles.inputGroup}>
-								<ThemedText
-									tx="signup.lastName"
-									variant="tab1Category"
-									colorName="secondary_base_0c"
-								/>
-								<ThemedView
-									variant="wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={styles.themedInputWrapper}
-								>
-									<TextInput
-										value={lastName}
-										onChangeText={(value) => {
-											setLastName(value)
-											setErrorMessage("")
-										}}
-										placeholder={t("signup.lastName")}
-										placeholderTextColor={colors.primary_base_1}
-										autoCapitalize="words"
-										editable={!isSubmitting}
-										style={[styles.input, { color: colors.primary_base }]}
-									/>
-								</ThemedView>
-							</View>
-
-							{/* Pole Email */}
-							<View style={styles.inputGroup}>
-								<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
-								<ThemedView
-									variant="wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={styles.themedInputWrapper}
-								>
-									<TextInput
-										value={email}
-										onChangeText={(value) => {
-											setEmail(value)
-											setErrorMessage("")
-										}}
-										placeholder={t("signup.emailPlaceholder")}
-										placeholderTextColor={colors.primary_base_1}
-										keyboardType="email-address"
-										autoCapitalize="none"
-										editable={!isSubmitting}
-										style={[styles.input, { color: colors.primary_base }]}
-									/>
-								</ThemedView>
-							</View>
-
-							{/* Pole Hasło */}
-							<View style={styles.inputGroup}>
-								<ThemedText
-									tx="login.password"
-									variant="tab1Category"
-									colorName="secondary_base_0c"
-								/>
-								<ThemedView
-									variant="wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={styles.themedInputWrapper}
-								>
-									<TextInput
-										value={password}
-										onChangeText={(value) => {
-											setPassword(value)
-											setErrorMessage("")
-										}}
-										placeholder="••••••••"
-										placeholderTextColor={colors.primary_base_1}
-										secureTextEntry
-										autoCapitalize="none"
-										autoCorrect={false}
-										editable={!isSubmitting}
-										style={[styles.input, { color: colors.primary_base }]}
-									/>
-								</ThemedView>
-								<View style={styles.requirementsSection}>
-									<ThemedText
-										tx="signup.passwordRequirements"
-										variant="tab1Category"
-										colorName="secondary_base_0c"
-										style={styles.requirementsTitle}
-									/>
-									{sortedPasswordRules.map((rule) => (
-										<View key={rule.id} style={styles.requirementRow}>
-											<View
-												style={[
-													styles.requirementBullet,
-													{
-														backgroundColor: rule.valid ? colors.true : colors.primary_base_4,
-														borderColor: rule.valid ? colors.true : colors.primary_base_3,
-													},
-												]}
-											/>
-											<ThemedText
-												variant="body1Regular"
-												colorName={rule.valid ? "true" : "secondary_base_0c"}
-												style={styles.requirementText}
-												tx={rule.label as any}
-											/>
-										</View>
-									))}
-								</View>
-							</View>
-
-							{/* Pole Powtórz Hasło */}
-							<View style={styles.inputGroup}>
-								<ThemedText
-									tx="signup.repeatPassword"
-									variant="tab1Category"
-									colorName="secondary_base_0c"
-								/>
-								<ThemedView
-									variant="wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={[styles.themedInputWrapper, styles.repeatPasswordWrapper]}
-								>
-									<TextInput
-										value={repeatPassword}
-										onChangeText={(value) => {
-											setRepeatPassword(value)
-											setErrorMessage("")
-										}}
-										placeholder="••••••••"
-										placeholderTextColor={colors.primary_base_1}
-										secureTextEntry
-										autoCapitalize="none"
-										autoCorrect={false}
-										editable={!isSubmitting}
-										style={[styles.input, { color: colors.primary_base, flex: 1 }]}
-									/>
-								</ThemedView>
+								{sortedPasswordRules.map((rule) => (
+									<View key={rule.id} style={styles.requirementRow}>
+										<View
+											style={[
+												styles.requirementBullet,
+												{
+													backgroundColor: rule.valid ? colors.true : colors.primary_base_4,
+													borderColor: rule.valid ? colors.true : colors.primary_base_3,
+												},
+											]}
+										/>
+										<ThemedText
+											variant="body1Regular"
+											colorName={rule.valid ? "true" : "secondary_base_0c"}
+											style={styles.requirementText}
+											tx={rule.label as any}
+										/>
+									</View>
+								))}
 							</View>
 						</View>
 
-						{/* Sekcja Przycisków Akcji */}
-						<View style={styles.actionsSection}>
-							{errorMessage ? (
-								<ThemedText
-									accessibilityRole="alert"
-									variant="body1Regular"
-									colorName="false"
-									style={styles.errorMessage}
-								>
-									{errorMessage}
-								</ThemedText>
-							) : null}
-
-							{/* Przycisk ZAREJESTRUJ */}
+						{/* Pole Powtórz Hasło */}
+						<View style={styles.inputGroup}>
+							<ThemedText
+								tx="signup.repeatPassword"
+								variant="tab1Category"
+								colorName="secondary_base_0c"
+							/>
 							<ThemedView
-								variant="narrow"
-								colorName="primary_base"
-								shadow
-								onPress={handleRegister}
-								disabled={isSubmitting}
-								accessibilityRole="button"
-								accessibilityState={{
-									disabled: isSubmitting,
-									busy: isSubmitting,
-								}}
+								variant="wide"
+								colorName="tertiary_base_3"
+								borderColor="secondary_base_0c"
+								style={[styles.themedInputWrapper, styles.repeatPasswordWrapper]}
 							>
-								<ThemedText tx="signup.register" variant="main1Button" colorName="accent_base_1" />
-							</ThemedView>
-
-							{/* Przycisk Kontynuuj z Google */}
-							<ThemedView
-								variant="narrow"
-								colorName="accent_base_2"
-								shadow
-								onPress={handleGoogleLogin}
-								disabled={isSubmitting}
-							>
-								<ThemedText
-									tx="login.continueGoogle"
-									variant="tab1Category"
-									colorName="primary_base"
+								<TextInput
+									value={repeatPassword}
+									onChangeText={(value) => {
+										setRepeatPassword(value)
+										setErrorMessage("")
+									}}
+									placeholder="••••••••"
+									placeholderTextColor={colors.primary_base_1}
+									secureTextEntry
+									autoCapitalize="none"
+									autoCorrect={false}
+									editable={!isSubmitting}
+									style={[styles.input, { color: colors.primary_base, flex: 1 }]}
 								/>
 							</ThemedView>
-
-							{/* Przycisk Kontynuuj z Facebook */}
-							<ThemedView
-								variant="narrow"
-								colorName="accent_base_2"
-								shadow
-								onPress={handleFacebookLogin}
-								disabled={isSubmitting}
-							>
-								<ThemedText
-									tx="login.continueFacebook"
-									variant="tab1Category"
-									colorName="primary_base"
-								/>
-							</ThemedView>
-
-							{/* Link powrotu do logowania */}
-							<View style={[styles.inlineRow, styles.centerRow, { paddingBottom: 20 }]}>
-								<ThemedText
-									tx="login.alreadyHaveAccount"
-									variant="tab1Category"
-									colorName="secondary_base_0c"
-								/>
-								<ThemedText
-									tx="login.logIn"
-									variant="tab1Category"
-									colorName="primary_base"
-									onPress={handleLogin}
-									disabled={isSubmitting}
-									hitSlop={14}
-									style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
-								/>
-							</View>
 						</View>
 					</View>
-				</ScrollView>
+
+					{/* Sekcja Przycisków Akcji */}
+					<View style={styles.actionsSection}>
+						{errorMessage ? (
+							<ThemedText
+								accessibilityRole="alert"
+								variant="body1Regular"
+								colorName="false"
+								style={styles.errorMessage}
+							>
+								{errorMessage}
+							</ThemedText>
+						) : null}
+
+						{/* Przycisk ZAREJESTRUJ */}
+						<ThemedView
+							variant="narrow"
+							colorName="primary_base"
+							shadow
+							onPress={handleRegister}
+							disabled={isSubmitting}
+							accessibilityRole="button"
+							accessibilityState={{
+								disabled: isSubmitting,
+								busy: isSubmitting,
+							}}
+						>
+							<ThemedText tx="signup.register" variant="main1Button" colorName="accent_base_1" />
+						</ThemedView>
+
+						{/* Przycisk Kontynuuj z Google */}
+						<ThemedView
+							variant="narrow"
+							colorName="accent_base_2"
+							shadow
+							onPress={handleGoogleLogin}
+							disabled={isSubmitting}
+						>
+							<ThemedText
+								tx="login.continueGoogle"
+								variant="tab1Category"
+								colorName="primary_base"
+							/>
+						</ThemedView>
+
+						{/* Przycisk Kontynuuj z Facebook */}
+						<ThemedView
+							variant="narrow"
+							colorName="accent_base_2"
+							shadow
+							onPress={handleFacebookLogin}
+							disabled={isSubmitting}
+						>
+							<ThemedText
+								tx="login.continueFacebook"
+								variant="tab1Category"
+								colorName="primary_base"
+							/>
+						</ThemedView>
+
+						{/* Link powrotu do logowania */}
+						<View style={[styles.inlineRow, styles.centerRow, { paddingBottom: 20 }]}>
+							<ThemedText
+								tx="login.alreadyHaveAccount"
+								variant="tab1Category"
+								colorName="secondary_base_0c"
+							/>
+							<ThemedText
+								tx="login.logIn"
+								variant="tab1Category"
+								colorName="primary_base"
+								onPress={handleLogin}
+								disabled={isSubmitting}
+								hitSlop={14}
+								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
+							/>
+						</View>
+					</View>
+				</View>
 			</ThemedView>
 		)
 	}
@@ -405,7 +405,8 @@ export default function SignUpScreen() {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flexGrow: 1,
+		flexShrink: 0,
 		justifyContent: "space-between",
 		paddingTop: 10,
 		gap: 20,

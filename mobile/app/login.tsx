@@ -69,6 +69,8 @@ export default function LoginScreen() {
 			<ThemedView
 				colorName="tertiary_base_2"
 				style={{
+					flexBasis: "auto",
+					flexShrink: 0,
 					borderTopLeftRadius: 10000,
 					justifyContent: "space-around",
 					paddingHorizontal: 32,
@@ -76,7 +78,7 @@ export default function LoginScreen() {
 			>
 				<View style={styles.container}>
 					{/* Sekcja pól formularza */}
-					<View style={{ flex: 1, justifyContent: "flex-start" }}>
+					<View>
 						<View style={styles.inputsSection}>
 							{/* Pole Email */}
 							<View style={styles.inputGroup}>
@@ -278,8 +280,9 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		justifyContent: "space-between",
+		flexGrow: 1,
+		flexShrink: 0,
+		justifyContent: "flex-start",
 		paddingVertical: 10,
 	},
 	inputsSection: {

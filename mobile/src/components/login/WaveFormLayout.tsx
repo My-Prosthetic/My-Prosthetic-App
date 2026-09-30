@@ -1,4 +1,5 @@
-import { View, StyleSheet } from "react-native"
+import { ScrollView, useWindowDimensions, View, StyleSheet } from "react-native"
+import { useState } from "react"
 import { ThemeColors, useTheme } from "@/context/ThemeContext"
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -15,12 +16,28 @@ export function WaveFormLayout({
 }: WaveFormLayoutProps) {
 	const { colors } = useTheme()
 	const insets = useSafeAreaInsets()
+	const { height: windowHeight } = useWindowDimensions()
+	const [viewportHeight, setViewportHeight] = useState(windowHeight)
 
 	const styles = getStyles(colors, insets)
 
-	return (
-		<View style={styles.container}>
-			<View style={[styles.rightBulge, { flex: variant === "index" ? 2 : 1 }]}>
+	const layout = (
+		<View
+			style={[
+				styles.container,
+				variant === "forms" && {
+					flex: 0,
+					flexGrow: 1,
+					minHeight: viewportHeight,
+				},
+			]}
+		>
+			<View
+				style={[
+					styles.rightBulge,
+					variant === "index" ? { flex: 2 } : { height: viewportHeight * 0.3, flexShrink: 0 },
+				]}
+			>
 				<View
 					style={[
 						styles.topSection,
@@ -37,10 +54,37 @@ export function WaveFormLayout({
 					{topSectionRender()}
 				</View>
 			</View>
-			<View style={[styles.bottomSection, { flex: variant === "index" ? 1 : 2 }]}>
+			<View
+				style={[
+					styles.bottomSection,
+					variant === "index"
+						? { flex: 1 }
+						: {
+								flexGrow: 1,
+								flexShrink: 0,
+								flexBasis: "auto",
+								minHeight: viewportHeight * 0.7,
+								overflow: "visible",
+							},
+				]}
+			>
 				{bottomSectionRender()}
 			</View>
 		</View>
+	)
+
+	if (variant === "index") return layout
+
+	return (
+		<ScrollView
+			style={styles.scrollView}
+			contentContainerStyle={styles.scrollContent}
+			showsVerticalScrollIndicator={false}
+			keyboardShouldPersistTaps="handled"
+			onLayout={(event) => setViewportHeight(event.nativeEvent.layout.height)}
+		>
+			{layout}
+		</ScrollView>
 	)
 }
 
@@ -49,6 +93,13 @@ const getStyles = (colors: ThemeColors, insets: EdgeInsets) =>
 		container: {
 			flex: 1,
 			backgroundColor: colors.primary_base,
+		},
+		scrollView: {
+			flex: 1,
+			backgroundColor: colors.primary_base,
+		},
+		scrollContent: {
+			flexGrow: 1,
 		},
 		rightBulge: {
 			backgroundColor: colors.tertiary_base_2,
