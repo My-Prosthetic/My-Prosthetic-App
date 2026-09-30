@@ -313,6 +313,10 @@
 		"noAccount": "Nie masz konta?",
 		"email": "Email",
 		"password": "Hasło",
+		"validation": {
+			"required": "Wpisz email i hasło.",
+			"invalidEmail": "Podaj prawidłowy adres email."
+		},
 		"forgotPassword": "Nie pamiętasz hasła?",
 		"reset": "Resetuj",
 		"continueGoogle": "Kontynuuj z Google",
@@ -332,6 +336,13 @@
 			"number": "Co najmniej 1 cyfra",
 			"symbol": "Co najmniej 1 znak specjalny",
 			"match": "Hasła są takie same"
+		},
+		"validation": {
+			"required": "Uzupełnij wszystkie wymagane pola.",
+			"nameTooLong": "Imię i nazwisko mogą mieć maksymalnie 255 znaków.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
 		}
 	}
 }

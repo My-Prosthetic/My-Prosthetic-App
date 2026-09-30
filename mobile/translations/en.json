@@ -313,6 +313,10 @@
 		"noAccount": "Don't have an account?",
 		"email": "Email",
 		"password": "Password",
+		"validation": {
+			"required": "Enter your email and password.",
+			"invalidEmail": "Enter a valid email address."
+		},
 		"forgotPassword": "Forgot password?",
 		"reset": "Reset",
 		"continueGoogle": "Continue with Google",
@@ -332,6 +336,13 @@
 			"number": "At least 1 number",
 			"symbol": "At least 1 special character",
 			"match": "Passwords match"
+		},
+		"validation": {
+			"required": "Please fill in all required fields.",
+			"nameTooLong": "First and last name must be no longer than 255 characters.",
+			"invalidEmail": "Enter a valid email address.",
+			"passwordMismatch": "Passwords must match.",
+			"passwordInvalid": "Password does not meet the security requirements."
 		}
 	}
 }

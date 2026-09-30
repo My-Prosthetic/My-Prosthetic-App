@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ActivityIndicator, StyleSheet, View, Text, TextInput } from "react-native"
+import { ActivityIndicator, Modal, StyleSheet, View, Text, TextInput } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
@@ -29,10 +29,20 @@ export default function LoginScreen() {
 	const handleLogin = async () => {
 		if (isLoading) return
 
-		setIsLoading(true)
 		setErrorMessage("")
+		const normalizedEmail = email.trim()
+		if (!normalizedEmail || !password) {
+			setErrorMessage(t("login.validation.required"))
+			return
+		}
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+			setErrorMessage(t("login.validation.invalidEmail"))
+			return
+		}
+
+		setIsLoading(true)
 		try {
-			const result = await authService.login({ email, password })
+			const result = await authService.login({ email: normalizedEmail, password })
 			await loginWithToken(result.token)
 			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
 			await createUser({ name: firstName })
@@ -84,11 +94,15 @@ export default function LoginScreen() {
 								>
 									<TextInput
 										value={email}
-										onChangeText={setEmail}
+										onChangeText={(value) => {
+											setEmail(value)
+											setErrorMessage("")
+										}}
 										placeholder={t("signup.emailPlaceholder")}
 										placeholderTextColor={colors.primary_base_1}
 										keyboardType="email-address"
 										autoCapitalize="none"
+										editable={!isLoading}
 										style={{
 											width: "100%",
 											fontSize: 17,
@@ -121,12 +135,16 @@ export default function LoginScreen() {
 								>
 									<TextInput
 										value={password}
-										onChangeText={setPassword}
+										onChangeText={(value) => {
+											setPassword(value)
+											setErrorMessage("")
+										}}
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
 										autoCapitalize="none"
 										autoCorrect={false}
+										editable={!isLoading}
 										style={{ paddingLeft: 16, width: "100%" }}
 									/>
 								</ThemedView>
@@ -139,6 +157,7 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="secondary_base_0c"
 								onPress={handleResetPassword}
+								disabled={isLoading}
 								hitSlop={14}
 								style={{ paddingLeft: 12, minHeight: 44, textAlignVertical: "center" }}
 							/>
@@ -147,10 +166,14 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleResetPassword}
+								disabled={isLoading}
 								hitSlop={14}
 								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
 							/>
 						</View>
+					</View>
+					{/* Sekcja Przycisków Akcji */}
+					<View style={styles.actionsSection}>
 						{errorMessage ? (
 							<Text
 								accessibilityRole="alert"
@@ -159,9 +182,7 @@ export default function LoginScreen() {
 								{errorMessage}
 							</Text>
 						) : null}
-					</View>
-					{/* Sekcja Przycisków Akcji */}
-					<View style={styles.actionsSection}>
+
 						{/* Przycisk ZALOGUJ */}
 						<ThemedView
 							variant="narrow"
@@ -172,11 +193,7 @@ export default function LoginScreen() {
 							accessibilityRole="button"
 							accessibilityState={{ disabled: isLoading, busy: isLoading }}
 						>
-							{isLoading ? (
-								<ActivityIndicator color={colors.accent_base_1} />
-							) : (
-								<ThemedText tx="login.logIn" variant="main1Button" colorName="accent_base_1" />
-							)}
+							<ThemedText tx="login.logIn" variant="main1Button" colorName="accent_base_1" />
 						</ThemedView>
 
 						{/* Przycisk Kontynuuj z Google */}
@@ -185,6 +202,7 @@ export default function LoginScreen() {
 							colorName="accent_base_2"
 							shadow
 							onPress={handleGoogleLogin}
+							disabled={isLoading}
 						>
 							<ThemedText
 								tx="login.continueGoogle"
@@ -199,6 +217,7 @@ export default function LoginScreen() {
 							colorName="accent_base_2"
 							shadow
 							onPress={handleFacebookLogin}
+							disabled={isLoading}
 						>
 							<ThemedText
 								tx="login.continueFacebook"
@@ -220,6 +239,7 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleSignUp}
+								disabled={isLoading}
 								hitSlop={14}
 								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
 							/>
@@ -231,11 +251,25 @@ export default function LoginScreen() {
 	}
 
 	return (
-		<WaveFormLayout
-			topSectionRender={topSectionRender}
-			bottomSectionRender={bottomSectionRender}
-			variant="forms"
-		/>
+		<>
+			<WaveFormLayout
+				topSectionRender={topSectionRender}
+				bottomSectionRender={bottomSectionRender}
+				variant="forms"
+			/>
+			<Modal
+				transparent
+				visible={isLoading}
+				animationType="fade"
+				statusBarTranslucent
+				navigationBarTranslucent
+				onRequestClose={() => {}}
+			>
+				<View style={styles.loadingOverlay}>
+					<ActivityIndicator size="large" color={colors.primary_base} />
+				</View>
+			</Modal>
+		</>
 	)
 }
 
@@ -253,8 +287,19 @@ const styles = StyleSheet.create({
 		gap: 6,
 	},
 	errorMessage: {
-		marginTop: 8,
+		width: "100%",
 		fontSize: 14,
+		textAlign: "center",
+	},
+	loadingOverlay: {
+		position: "absolute",
+		top: 0,
+		right: 0,
+		bottom: 0,
+		left: 0,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.25)",
 	},
 	inlineRow: {
 		flexDirection: "row",

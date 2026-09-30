@@ -54,8 +54,38 @@ export default function SignUpScreen() {
 	const sortedPasswordRules = [...passwordRules].sort((a, b) => Number(a.valid) - Number(b.valid))
 	const isPasswordValid = passwordRules.every((rule) => rule.valid)
 
+	const getValidationMessage = () => {
+		const trimmedFirstName = firstName.trim()
+		const trimmedLastName = lastName.trim()
+		const trimmedEmail = email.trim()
+
+		if (!trimmedFirstName || !trimmedLastName || !trimmedEmail || !password || !repeatPassword) {
+			return t("signup.validation.required")
+		}
+
+		if (`${trimmedFirstName} ${trimmedLastName}`.length > 255) {
+			return t("signup.validation.nameTooLong")
+		}
+
+		if (trimmedEmail.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+			return t("signup.validation.invalidEmail")
+		}
+
+		if (!isPasswordValid) {
+			return password !== repeatPassword
+				? t("signup.validation.passwordMismatch")
+				: t("signup.validation.passwordInvalid")
+		}
+
+		return null
+	}
+
 	const handleRegister = async () => {
-		if (isSubmitting || !isPasswordValid) {
+		if (isSubmitting) return
+
+		const validationMessage = getValidationMessage()
+		if (validationMessage) {
+			setErrorMessage(validationMessage)
 			return
 		}
 
@@ -120,7 +150,10 @@ export default function SignUpScreen() {
 								>
 									<TextInput
 										value={firstName}
-										onChangeText={setFirstName}
+										onChangeText={(value) => {
+											setFirstName(value)
+											setErrorMessage("")
+										}}
 										placeholder={t("signup.firstName")}
 										placeholderTextColor={colors.primary_base_1}
 										autoCapitalize="words"
@@ -145,7 +178,10 @@ export default function SignUpScreen() {
 								>
 									<TextInput
 										value={lastName}
-										onChangeText={setLastName}
+										onChangeText={(value) => {
+											setLastName(value)
+											setErrorMessage("")
+										}}
 										placeholder={t("signup.lastName")}
 										placeholderTextColor={colors.primary_base_1}
 										autoCapitalize="words"
@@ -166,7 +202,10 @@ export default function SignUpScreen() {
 								>
 									<TextInput
 										value={email}
-										onChangeText={setEmail}
+										onChangeText={(value) => {
+											setEmail(value)
+											setErrorMessage("")
+										}}
 										placeholder={t("signup.emailPlaceholder")}
 										placeholderTextColor={colors.primary_base_1}
 										keyboardType="email-address"
@@ -192,7 +231,10 @@ export default function SignUpScreen() {
 								>
 									<TextInput
 										value={password}
-										onChangeText={setPassword}
+										onChangeText={(value) => {
+											setPassword(value)
+											setErrorMessage("")
+										}}
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
@@ -246,7 +288,10 @@ export default function SignUpScreen() {
 								>
 									<TextInput
 										value={repeatPassword}
-										onChangeText={setRepeatPassword}
+										onChangeText={(value) => {
+											setRepeatPassword(value)
+											setErrorMessage("")
+										}}
 										placeholder="••••••••"
 										placeholderTextColor={colors.primary_base_1}
 										secureTextEntry
@@ -259,27 +304,27 @@ export default function SignUpScreen() {
 							</View>
 						</View>
 
-						{errorMessage ? (
-							<Text
-								accessibilityRole="alert"
-								style={[styles.errorMessage, { color: colors.false }]}
-							>
-								{errorMessage}
-							</Text>
-						) : null}
-
 						{/* Sekcja Przycisków Akcji */}
 						<View style={styles.actionsSection}>
+							{errorMessage ? (
+								<Text
+									accessibilityRole="alert"
+									style={[styles.errorMessage, { color: colors.false }]}
+								>
+									{errorMessage}
+								</Text>
+							) : null}
+
 							{/* Przycisk ZAREJESTRUJ */}
 							<ThemedView
 								variant="narrow"
 								colorName="primary_base"
 								shadow
 								onPress={handleRegister}
-								disabled={isSubmitting || !isPasswordValid}
+								disabled={isSubmitting}
 								accessibilityRole="button"
 								accessibilityState={{
-									disabled: isSubmitting || !isPasswordValid,
+									disabled: isSubmitting,
 									busy: isSubmitting,
 								}}
 							>
@@ -346,7 +391,14 @@ export default function SignUpScreen() {
 				bottomSectionRender={bottomSectionRender}
 				variant="forms"
 			/>
-			<Modal transparent visible={isSubmitting} animationType="fade" onRequestClose={() => {}}>
+			<Modal
+				transparent
+				visible={isSubmitting}
+				animationType="fade"
+				statusBarTranslucent
+				navigationBarTranslucent
+				onRequestClose={() => {}}
+			>
 				<View style={styles.loadingOverlay}>
 					<ActivityIndicator size="large" color={colors.primary_base} />
 				</View>
@@ -360,6 +412,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "space-between",
 		paddingTop: 10,
+		gap: 20,
 	},
 	inputsSection: {
 		gap: 8,
@@ -410,11 +463,16 @@ const styles = StyleSheet.create({
 		fontFamily: "Afacad-SemiBold",
 	},
 	errorMessage: {
-		marginTop: 8,
+		width: "100%",
 		fontSize: 14,
+		textAlign: "center",
 	},
 	loadingOverlay: {
-		flex: 1,
+		position: "absolute",
+		top: 0,
+		right: 0,
+		bottom: 0,
+		left: 0,
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "rgba(0, 0, 0, 0.25)",
@@ -429,7 +487,6 @@ const styles = StyleSheet.create({
 		marginTop: 6,
 	},
 	actionsSection: {
-		paddingTop: 30,
 		gap: 16,
 		alignItems: "center",
 		width: "100%",
