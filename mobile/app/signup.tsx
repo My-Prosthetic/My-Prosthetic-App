@@ -16,6 +16,7 @@ import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { authService } from "@/src/services/authService"
+import { createUser } from "@/db/repositories/userRepository"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 8
@@ -68,6 +69,8 @@ export default function SignUpScreen() {
 				password_confirmation: repeatPassword,
 			})
 			await loginWithToken(result.token)
+			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
+			await createUser({ name: apiFirstName })
 		} catch (error) {
 			setErrorMessage(error instanceof Error ? error.message : "Rejestracja nie powiodła się.")
 		} finally {

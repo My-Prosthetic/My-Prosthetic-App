@@ -1,12 +1,18 @@
 import { useEffect } from "react"
+import { Text, View } from "react-native"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
+import { db } from "@/db/client"
+import migrations from "@/drizzle/migrations"
+
+//TODO tx
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
 	console.warn("SplashScreen error:", error)
@@ -20,8 +26,12 @@ function RootNavigationLayout({
 	fontsError: Error | null
 }) {
 	const { status } = useAuth()
+	const { success: migrationsLoaded, error: migrationError } = useMigrations(db, migrations)
 	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
-	const isReady = (fontsLoaded || !!fontsError) && status !== "INITIALIZING"
+	const isReady =
+		(fontsLoaded || !!fontsError) &&
+		status !== "INITIALIZING" &&
+		(migrationsLoaded || !!migrationError)
 
 	useEffect(() => {
 		if (isReady) {
@@ -33,6 +43,14 @@ function RootNavigationLayout({
 
 	if (!isReady) {
 		return null
+	}
+
+	if (migrationError) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
+				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
+			</View>
+		)
 	}
 
 	return (

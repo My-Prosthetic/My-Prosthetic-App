@@ -8,6 +8,7 @@ import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { authService } from "@/src/services/authService"
+import { createUser } from "@/db/repositories/userRepository"
 
 //TODO klikając zaloguj bardziej blokujący waitingscreen, uniemożliwiający klikanie w ekran
 //TODO klikając zaloguj czyścimy zawartość pola password
@@ -33,6 +34,8 @@ export default function LoginScreen() {
 		try {
 			const result = await authService.login({ email, password })
 			await loginWithToken(result.token)
+			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
+			await createUser({ name: firstName })
 			//TODO fetch user database contents from api
 		} catch (error) {
 			setErrorMessage(error instanceof Error ? error.message : "Logowanie nie powiodło się.")
