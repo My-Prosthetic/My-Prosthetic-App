@@ -20,7 +20,7 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	borderColor?: keyof ThemeColors
 	variant?: ThemedViewSize
 	shadow?: boolean
-	onPress?: () => void
+	onPress?: () => void | Promise<unknown>
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
 }
@@ -62,20 +62,25 @@ export const ThemedView = ({
 	const insets = useSafeAreaInsets()
 	const sizes = getSizes(insets)
 
-	// Zamiast timera przechowujemy tylko znacznik czasu ostatniego kliknięcia w ms
-	const lastPressRef = useRef(0)
+	const isProcessingRef = useRef(false)
+const lastPressRef = useRef(0)
 
-	const handlePress = () => {
-		const now = Date.now()
+const handlePress = async () => {
+    const now = Date.now()
 
-		// Jeśli od poprzedniego kliknięcia minęło mniej niż 500 ms – ignorujemy
-		if (now - lastPressRef.current < PRESS_GUARD_MS) {
-			return
-		}
+    if (isProcessingRef.current || now - lastPressRef.current < PRESS_GUARD_MS) {
+        return
+    }
 
-		lastPressRef.current = now
-		onPress?.()
-	}
+    lastPressRef.current = now
+    isProcessingRef.current = true
+
+    try {
+        await onPress?.()
+    } finally {
+        isProcessingRef.current = false
+    }
+}
 
 	const getElementStyle = (pressed = false): StyleProp<ViewStyle> => [
 		styles.base,
