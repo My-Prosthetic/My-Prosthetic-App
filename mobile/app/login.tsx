@@ -1,23 +1,45 @@
 import { useState } from "react"
-import { StyleSheet, View, TextInput } from "react-native"
+import { ActivityIndicator, StyleSheet, View, Text, TextInput } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { useTheme } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
+import { useAuth } from "@/context/AuthContext"
+import { authService } from "@/src/services/authService"
+
+//TODO klikając zaloguj bardziej blokujący waitingscreen, uniemożliwiający klikanie w ekran
+//TODO klikając zaloguj czyścimy zawartość pola password
 
 export default function LoginScreen() {
 	const router = useRouter()
 	const { t } = useTranslation()
+	const { loginWithToken } = useAuth()
 
 	const { colors } = useTheme()
 
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
+	const [isLoading, setIsLoading] = useState(false)
+	const [errorMessage, setErrorMessage] = useState("")
 
 	const handleResetPassword = () => {}
-	const handleLogin = () => {}
+	const handleLogin = async () => {
+		if (isLoading) return
+
+		setIsLoading(true)
+		setErrorMessage("")
+		try {
+			const result = await authService.login({ email, password })
+			await loginWithToken(result.token)
+			//TODO fetch user database contents from api
+		} catch (error) {
+			setErrorMessage(error instanceof Error ? error.message : "Logowanie nie powiodło się.")
+		} finally {
+			setIsLoading(false)
+		}
+	}
 	const handleGoogleLogin = () => {}
 	const handleFacebookLogin = () => {}
 	const handleSignUp = () => {
@@ -68,6 +90,7 @@ export default function LoginScreen() {
 											width: "100%",
 											fontSize: 17,
 											paddingLeft: 16,
+											minHeight: 44,
 											fontFamily: "Afacad-SemiBold",
 										}}
 									/>
@@ -113,22 +136,44 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="secondary_base_0c"
 								onPress={handleResetPassword}
-								style={{ paddingLeft: 12 }}
+								hitSlop={14}
+								style={{ paddingLeft: 12, minHeight: 44, textAlignVertical: "center" }}
 							/>
 							<ThemedText
 								tx="login.reset"
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleResetPassword}
-								style={{ paddingLeft: 12, paddingVertical: 14 }}
+								hitSlop={14}
+								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
 							/>
 						</View>
+						{errorMessage ? (
+							<Text
+								accessibilityRole="alert"
+								style={[styles.errorMessage, { color: colors.false }]}
+							>
+								{errorMessage}
+							</Text>
+						) : null}
 					</View>
 					{/* Sekcja Przycisków Akcji */}
 					<View style={styles.actionsSection}>
 						{/* Przycisk ZALOGUJ */}
-						<ThemedView variant="narrow" colorName="primary_base" shadow onPress={handleLogin}>
-							<ThemedText tx="login.logIn" variant="main1Button" colorName="accent_base_1" />
+						<ThemedView
+							variant="narrow"
+							colorName="primary_base"
+							shadow
+							onPress={handleLogin}
+							disabled={isLoading}
+							accessibilityRole="button"
+							accessibilityState={{ disabled: isLoading, busy: isLoading }}
+						>
+							{isLoading ? (
+								<ActivityIndicator color={colors.accent_base_1} />
+							) : (
+								<ThemedText tx="login.logIn" variant="main1Button" colorName="accent_base_1" />
+							)}
 						</ThemedView>
 
 						{/* Przycisk Kontynuuj z Google */}
@@ -172,7 +217,8 @@ export default function LoginScreen() {
 								variant="tab1Category"
 								colorName="primary_base"
 								onPress={handleSignUp}
-								style={{ paddingLeft: 12, paddingVertical: 14 }}
+								hitSlop={14}
+								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
 							/>
 						</View>
 					</View>
@@ -202,6 +248,10 @@ const styles = StyleSheet.create({
 	},
 	inputGroup: {
 		gap: 6,
+	},
+	errorMessage: {
+		marginTop: 8,
+		fontSize: 14,
 	},
 	inlineRow: {
 		flexDirection: "row",

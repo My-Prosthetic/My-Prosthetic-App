@@ -5,13 +5,14 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useAuth } from "@/context/AuthContext"
 
+//TODO tx
+
 export default function SignUpScreen() {
 	const router = useRouter()
 	const { loginAsGuest } = useAuth()
 
 	const onContinueWithoutAccountPress = () => {
 		loginAsGuest()
-		router.push("/(tabs)/(home)/home")
 	}
 
 	return (
@@ -112,7 +113,8 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		justifyContent: "space-between",
-		paddingVertical: 60,
+		paddingBottom: 60,
+		paddingTop: 80,
 	},
 	headerContainer: {
 		marginTop: 20,

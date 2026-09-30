@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import { Tabs } from "expo-router"
+import { Redirect, Tabs } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 
@@ -11,6 +11,10 @@ export default function TabsLayout() {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const { status } = useAuth()
+
+	if (status === "UNAUTHENTICATED") {
+		return <Redirect href="/" />
+	}
 
 	return (
 		<View style={{ flex: 1 }}>

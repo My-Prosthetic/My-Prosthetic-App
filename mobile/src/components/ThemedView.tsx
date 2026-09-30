@@ -63,24 +63,24 @@ export const ThemedView = ({
 	const sizes = getSizes(insets)
 
 	const isProcessingRef = useRef(false)
-const lastPressRef = useRef(0)
+	const lastPressRef = useRef(0)
 
-const handlePress = async () => {
-    const now = Date.now()
+	const handlePress = async () => {
+		const now = Date.now()
 
-    if (isProcessingRef.current || now - lastPressRef.current < PRESS_GUARD_MS) {
-        return
-    }
+		if (isProcessingRef.current || now - lastPressRef.current < PRESS_GUARD_MS) {
+			return
+		}
 
-    lastPressRef.current = now
-    isProcessingRef.current = true
+		lastPressRef.current = now
+		isProcessingRef.current = true
 
-    try {
-        await onPress?.()
-    } finally {
-        isProcessingRef.current = false
-    }
-}
+		try {
+			await onPress?.()
+		} finally {
+			isProcessingRef.current = false
+		}
+	}
 
 	const getElementStyle = (pressed = false): StyleProp<ViewStyle> => [
 		styles.base,

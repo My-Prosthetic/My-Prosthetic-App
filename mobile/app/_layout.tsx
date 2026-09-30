@@ -20,7 +20,7 @@ function RootNavigationLayout({
 	fontsError: Error | null
 }) {
 	const { status } = useAuth()
-
+	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
 	const isReady = (fontsLoaded || !!fontsError) && status !== "INITIALIZING"
 
 	useEffect(() => {
@@ -37,7 +37,15 @@ function RootNavigationLayout({
 
 	return (
 		<Stack screenOptions={{ headerShown: false }}>
-			<Stack.Screen name="index" />
+			<Stack.Protected guard={hasActiveSession}>
+				<Stack.Screen name="(tabs)" />
+			</Stack.Protected>
+			<Stack.Protected guard={!hasActiveSession}>
+				<Stack.Screen name="index" />
+				<Stack.Screen name="login" />
+				<Stack.Screen name="signup" />
+				<Stack.Screen name="noAccount" />
+			</Stack.Protected>
 		</Stack>
 	)
 }
