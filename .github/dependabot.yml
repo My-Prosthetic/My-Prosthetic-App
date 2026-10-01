@@ -16,6 +16,12 @@ updates:
     commit-message:
       prefix: "chore(deps-frontend)"
     groups:
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "eslint-*"
+          - "@microsoft/eslint-formatter-sarif"
       frontend-minor-patch:
         update-types: ["minor", "patch"]
 
@@ -32,6 +38,14 @@ updates:
     commit-message:
       prefix: "chore(deps-mobile)"
     groups:
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "eslint-*"
+          - "@microsoft/eslint-formatter-sarif"
+        exclude-patterns:
+          - "eslint-config-expo"
       mobile-minor-patch:
         update-types: ["minor", "patch"]
 
