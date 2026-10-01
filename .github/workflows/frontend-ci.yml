@@ -12,6 +12,9 @@ on:
     paths:
       - 'frontend/**'
 
+permissions:
+  contents: read
+  
 jobs:
   quality:
     name: Frontend Quality Checks
