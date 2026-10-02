@@ -66,6 +66,9 @@ updates:
           update-types: ["version-update:semver-major"]
         - dependency-name: "expo-*"
           update-types: ["version-update:semver-major"]
+        # ESLint majors must wait until eslint-config-expo supports them
+        - dependency-name: "eslint"
+          update-types: ["version-update:semver-major"]
 
   # ----- BACKEND: PHP's packages (composer) -----
   - package-ecosystem: "composer"
