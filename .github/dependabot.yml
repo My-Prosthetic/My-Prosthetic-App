@@ -54,6 +54,32 @@ updates:
           - 'eslint-config-expo'
       mobile-minor-patch:
         update-types: ['minor', 'patch']
+      # Versions controlled by the Expo SDK. Upgrade them via
+      # "npx expo install --fix" or an SDK upgrade, not via Dependabot.
+      # Patch updates (bug fixes) are still allowed.
+    ignore:
+      - dependency-name: 'react-native'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: 'react-native-*'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: 'react'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: 'expo'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-*'
+        update-types: ['version-update:semver-major']
+      # ESLint majors must wait until eslint-config-expo supports them
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
 
   # ----- BACKEND: PHP's packages (composer) -----
   - package-ecosystem: 'composer'
