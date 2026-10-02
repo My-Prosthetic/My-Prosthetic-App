@@ -48,7 +48,7 @@ export default function SignUpScreen() {
 				/>
 
 				<ThemedText
-					tx="login.cosntraints"
+					tx="login.constraints"
 					variant="subTitle1"
 					colorName="accent_base"
 					style={styles.bulletItem}

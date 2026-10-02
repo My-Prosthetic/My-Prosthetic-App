@@ -22,7 +22,7 @@ export function GuestBanner() {
 			<Ionicons name="warning-outline" size={22} color={colors.warning} />
 			<View style={styles.messages}>
 				<ThemedText tx="login.noCopy" variant="tab1Category" colorName="primary_base" />
-				<ThemedText tx="login.cosntraints" variant="body1Regular" colorName="primary_base" />
+				<ThemedText tx="login.constraints" variant="body1Regular" colorName="primary_base" />
 			</View>
 		</View>
 	)

@@ -322,7 +322,7 @@
 		"onlyLocal": "Korzystając z aplikacji bez konta Twoje dane są przetwarzane i przechowywane wyłącznie w pamięci lokalnej urządzenia.",
 		"itResultsIn": "Powoduje to:",
 		"noCopy": "Brak kopii zapasowej",
-		"cosntraints": "Ograniczenia w udostępnianiu historii medycznej specjalistom.",
+		"constraints": "Ograniczenia w udostępnianiu historii medycznej specjalistom.",
 		"alreadyHaveAccount": "Masz już konto?",
 		"noAccount": "Nie masz konta?",
 		"email": "Email",
