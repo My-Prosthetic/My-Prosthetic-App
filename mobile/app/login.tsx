@@ -24,7 +24,9 @@ export default function LoginScreen() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [errorMessage, setErrorMessage] = useState("")
 
+	//TODO
 	const handleResetPassword = () => {}
+
 	const handleLogin = async () => {
 		if (isLoading) return
 
@@ -54,8 +56,13 @@ export default function LoginScreen() {
 			setIsLoading(false)
 		}
 	}
+
+	//TODO
 	const handleGoogleLogin = () => {}
+
+	//TODO
 	const handleFacebookLogin = () => {}
+
 	const handleSignUp = () => {
 		router.push("../signup")
 	}
