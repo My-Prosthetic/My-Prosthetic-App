@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
+import { ParseKeys } from "i18next"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 8
@@ -106,6 +107,7 @@ export default function SignUpScreen() {
 	const handleGoogleLogin = () => {}
 	//TODO
 	const handleFacebookLogin = () => {}
+
 	const handleLogin = () => {
 		router.push("../login")
 	}
@@ -261,7 +263,7 @@ export default function SignUpScreen() {
 											variant="body1Regular"
 											colorName={rule.valid ? "true" : "secondary_base_0c"}
 											style={styles.requirementText}
-											tx={rule.label as any}
+											tx={rule.label as ParseKeys}
 										/>
 									</View>
 								))}
