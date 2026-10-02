@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
 	pillButton: {
 		paddingHorizontal: 18,
 		paddingVertical: 10,
+		minHeight: 44
 	},
 	mainActionButton: {
 		marginTop: 8,
