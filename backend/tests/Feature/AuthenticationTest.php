@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\TestResponse;
 use stdClass;
+use Tests\Support\EnforcedCsrfToken;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -148,12 +149,15 @@ class AuthenticationTest extends TestCase
 
     public function test_profile_requires_authentication(): void
     {
-        $this->getJson('/api/profile')
+        $response = $this->getJson('/api/profile')
             ->assertUnauthorized()
             ->assertExactJson([
                 'message' => 'Unauthenticated.',
-                'errors' => new stdClass,
+                'errors' => [],
             ]);
+
+        // assertExactJson decodes {} as [], so check that errors is a JSON object.
+        $this->assertEquals(new stdClass, $response->getData()->errors);
     }
 
     public function test_profile_accepts_a_mobile_bearer_token(): void
@@ -220,6 +224,8 @@ class AuthenticationTest extends TestCase
 
     public function test_stateful_web_login_requires_a_csrf_token(): void
     {
+        config(['sanctum.middleware.validate_csrf_token' => EnforcedCsrfToken::class]);
+
         $specialist = User::factory()->prosthetist()->create([
             'email' => 'csrf-specialist@example.com',
             'password' => 'Password123!',
@@ -243,6 +249,8 @@ class AuthenticationTest extends TestCase
         $this->withToken($currentToken)
             ->postJson('/api/logout')
             ->assertNoContent();
+
+        $this->forgetAuthenticatedUser();
 
         $this->assertDatabaseCount('personal_access_tokens', 1);
 
@@ -276,6 +284,8 @@ class AuthenticationTest extends TestCase
             ->withCookie(config('session.cookie'), $sessionCookie)
             ->postJson('/api/web/logout')
             ->assertNoContent();
+
+        $this->forgetAuthenticatedUser();
 
         $this->withHeader('Origin', 'http://localhost:5173')
             ->withCookie(config('session.cookie'), $sessionCookie)
