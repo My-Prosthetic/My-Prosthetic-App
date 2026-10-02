@@ -9,8 +9,7 @@ import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
-
-//TODO klikając zaloguj czyścimy zawartość pola password
+import { isValidEmail } from "@/src/utils/emailValidation"
 
 export default function LoginScreen() {
 	const router = useRouter()
@@ -36,7 +35,7 @@ export default function LoginScreen() {
 			setErrorMessage(t("login.validation.required"))
 			return
 		}
-		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+		if (!isValidEmail(normalizedEmail)) {
 			setErrorMessage(t("login.validation.invalidEmail"))
 			return
 		}

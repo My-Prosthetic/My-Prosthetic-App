@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 import { ParseKeys } from "i18next"
+import { isValidEmail } from "@/src/utils/emailValidation"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 8
@@ -60,7 +61,7 @@ export default function SignUpScreen() {
 			return t("signup.validation.nameTooLong")
 		}
 
-		if (trimmedEmail.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+		if (trimmedEmail.length > 255 || !isValidEmail(trimmedEmail)) {
 			return t("signup.validation.invalidEmail")
 		}
 
