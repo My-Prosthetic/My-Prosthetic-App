@@ -5,8 +5,6 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useAuth } from "@/context/AuthContext"
 
-//TODO tx
-
 export default function SignUpScreen() {
 	const router = useRouter()
 	const { loginAsGuest } = useAuth()
@@ -17,9 +15,12 @@ export default function SignUpScreen() {
 
 	return (
 		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
-			<ThemedText variant="title" colorName="primary_base" style={{ textAlign: "left" }}>
-				{"CZY NA PEWNO\nCHCESZ KORZYSTAĆ\nBEZ KONTA?"}
-			</ThemedText>
+			<ThemedText
+				tx="login.areYouSure"
+				variant="title"
+				colorName="primary_base"
+				style={{ textAlign: "left" }}
+			/>
 			<ThemedView
 				colorName="primary_base"
 				variant="wide"
@@ -57,9 +58,11 @@ export default function SignUpScreen() {
 			<View style={styles.actionsContainer}>
 				{/* Wiersz: Zaloguj się */}
 				<View style={styles.rowAction}>
-					<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-						MASZ JUŻ KONTO?
-					</ThemedText>
+					<ThemedText
+						tx="login.alreadyHaveAccount"
+						variant="tab1Category"
+						colorName="secondary_base_0c"
+					/>
 					<ThemedView
 						variant="tag"
 						colorName="accent_base_2"
@@ -67,16 +70,12 @@ export default function SignUpScreen() {
 						onPress={() => router.push("../login")}
 						style={styles.pillButton}
 					>
-						<ThemedText variant="tab1Category" colorName="primary_base">
-							ZALOGUJ SIĘ
-						</ThemedText>
+						<ThemedText tx="login.logIn" variant="tab1Category" colorName="primary_base" />
 					</ThemedView>
 				</View>
 				{/* Wiersz: Stwórz konto */}
 				<View style={styles.rowAction}>
-					<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-						NIE MASZ KONTA?
-					</ThemedText>
+					<ThemedText tx="login.noAccount" variant="tab1Category" colorName="secondary_base_0c" />
 					<ThemedView
 						variant="tag"
 						colorName="accent_base_2"
@@ -84,9 +83,7 @@ export default function SignUpScreen() {
 						onPress={() => router.push("../signup")}
 						style={styles.pillButton}
 					>
-						<ThemedText variant="tab1Category" colorName="primary_base">
-							STWÓRZ KONTO
-						</ThemedText>
+						<ThemedText tx="login.createAccount" variant="tab1Category" colorName="primary_base" />
 					</ThemedView>
 				</View>
 				<View style={styles.actionsContainer}></View>
@@ -98,9 +95,11 @@ export default function SignUpScreen() {
 					onPress={onContinueWithoutAccountPress}
 					style={styles.mainActionButton}
 				>
-					<ThemedText variant="main1Button" colorName="accent_base_1">
-						KORZYSTAJ BEZ KONTA
-					</ThemedText>
+					<ThemedText
+						tx="login.useWithoutAccount"
+						variant="main1Button"
+						colorName="accent_base_1"
+					/>
 				</ThemedView>
 			</View>
 		</ThemedView>
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
 	pillButton: {
 		paddingHorizontal: 18,
 		paddingVertical: 10,
-		minHeight: 44
+		minHeight: 44,
 	},
 	mainActionButton: {
 		marginTop: 8,
