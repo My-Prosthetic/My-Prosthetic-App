@@ -128,6 +128,21 @@ Run the focused authentication tests from this directory with:
 php artisan test --filter=AuthenticationTest
 ```
 
+## User identities
+
+Users have UUID primary keys, and every reference to a user (`sessions`,
+`personal_access_tokens`, `wallet_entries`, `prostheses`, `user_shares`) uses a
+UUID column. Registration, login, and profile responses keep their field names,
+but clients must treat `id` as an opaque string. New tables that reference users
+must use `foreignUuid()` (or `uuidMorphs()` for polymorphic owners).
+
+The schema used UUIDs before the first deployment, so no data conversion exists.
+After pulling this change, rebuild your local database:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use stdClass;
 use Tests\Support\EnforcedCsrfToken;
@@ -43,6 +44,8 @@ class AuthenticationTest extends TestCase
 
         $user = User::query()->where('email', 'jane.patient@example.com')->firstOrFail();
 
+        $this->assertIsString($response->json('data.id'));
+        $this->assertTrue(Str::isUuid($response->json('data.id')));
         $this->assertTrue(Hash::check('Password123!', $user->password));
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_id' => $user->id,
@@ -106,6 +109,7 @@ class AuthenticationTest extends TestCase
             ->assertJsonPath('token_type', 'Bearer')
             ->assertJsonStructure(['token']);
 
+        $this->assertTrue(Str::isUuid($response->json('data.id')));
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_id' => $user->id,
             'name' => 'Test phone',
@@ -165,16 +169,20 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('profile-test')->plainTextToken;
 
-        $this->withToken($token)
+        $response = $this->withToken($token)
             ->getJson('/api/profile')
             ->assertOk()
             ->assertJsonPath('data.id', $user->id)
             ->assertJsonPath('data.role', 'patient')
             ->assertJsonMissingPath('data.password');
+
+        $this->assertTrue(Str::isUuid($response->json('data.id')));
     }
 
     public function test_specialist_can_login_to_the_spa_session_flow_without_receiving_a_token(): void
     {
+        config(['session.driver' => 'database']);
+
         $specialist = User::factory()->prosthetist()->create([
             'email' => 'specialist@example.com',
             'password' => 'Password123!',
@@ -196,6 +204,7 @@ class AuthenticationTest extends TestCase
             ->assertJsonMissingPath('token')
             ->assertJsonMissingPath('token_type');
 
+        $this->assertTrue(Str::isUuid($loginResponse->json('data.id')));
         $sessionCookie = $loginResponse->getCookie(config('session.cookie'));
 
         $this->withHeader('Origin', 'http://localhost:5173')

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('prostheses', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->index()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->enum('side', ['left', 'right']);
             $table->enum('limb_type', ['upper', 'lower']);
