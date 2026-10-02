@@ -108,17 +108,10 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-	safeArea: {
-		flex: 1,
-	},
 	container: {
 		justifyContent: "space-between",
 		paddingBottom: 60,
 		paddingTop: 80,
-	},
-	headerContainer: {
-		marginTop: 20,
-		alignItems: "center",
 	},
 	cardText: {
 		marginBottom: 16,
