@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\LimbType;
+use App\Enums\ProsthesisSide;
+use Database\Factories\ProsthesisFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+#[Fillable([
+    'user_id',
+    'name',
+    'side',
+    'limb_type',
+    'amputation_level',
+    'replacement_at',
+])]
+class Prosthesis extends Model
+{
+    /** @use HasFactory<ProsthesisFactory> */
+    use HasFactory, HasUuids, SoftDeletes;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function components(): HasMany
+    {
+        return $this->hasMany(Component::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'side' => ProsthesisSide::class,
+            'limb_type' => LimbType::class,
+            'replacement_at' => 'datetime',
+        ];
+    }
+}

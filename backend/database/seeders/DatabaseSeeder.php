@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        $this->call(ProsthesisSeeder::class);
         $this->call(WalletEntrySeeder::class);
     }
 }
