@@ -2,94 +2,99 @@
 
 version: 2
 
-updates: 
+updates:
   # ----- FRONTEND (npm) -----
-  - package-ecosystem: "npm"
-    directory: "/frontend"
+  - package-ecosystem: 'npm'
+    directory: '/frontend'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Warsaw"
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Warsaw'
     open-pull-requests-limit: 10
-    labels: ["dependency", "Frontend"]
+    labels: ['dependency', 'Frontend']
     commit-message:
-      prefix: "chore(deps-frontend)"
+      prefix: 'chore(deps-frontend)'
     groups:
       eslint:
         patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-*"
-          - "@microsoft/eslint-formatter-sarif"
+          - 'eslint'
+          - '@eslint/*'
+          - 'eslint-*'
+          - '@microsoft/eslint-formatter-sarif'
       frontend-minor-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
+      # ESLint 10 blocked until eslint-plugin-react supports it
+    ignore:
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/*'
+        update-types: ['version-update:semver-major']
 
   # ----- MOBILE (npm) -----
-  - package-ecosystem: "npm"
-    directory: "/mobile"
+  - package-ecosystem: 'npm'
+    directory: '/mobile'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Warsaw"
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Warsaw'
     open-pull-requests-limit: 10
-    labels: ["dependency", "Mobile"]
+    labels: ['dependency', 'Mobile']
     commit-message:
-      prefix: "chore(deps-mobile)"
+      prefix: 'chore(deps-mobile)'
     groups:
       eslint:
         patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-*"
-          - "@microsoft/eslint-formatter-sarif"
+          - 'eslint'
+          - '@eslint/*'
+          - 'eslint-*'
+          - '@microsoft/eslint-formatter-sarif'
         exclude-patterns:
-          - "eslint-config-expo"
+          - 'eslint-config-expo'
       mobile-minor-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
 
   # ----- BACKEND: PHP's packages (composer) -----
-  - package-ecosystem: "composer"
-    directory: "/backend"
+  - package-ecosystem: 'composer'
+    directory: '/backend'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Warsaw"
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Warsaw'
     open-pull-requests-limit: 10
-    labels: ["dependency", "Backend"]
+    labels: ['dependency', 'Backend']
     commit-message:
-      prefix: "chore(deps-backend)"
+      prefix: 'chore(deps-backend)'
     groups:
       backend-minor-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
 
   # ----- BACKEND: Laravel's JS packages (npm) -----
-  - package-ecosystem: "npm"
-    directory: "/backend"
+  - package-ecosystem: 'npm'
+    directory: '/backend'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Warsaw"
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Warsaw'
     open-pull-requests-limit: 5
-    labels: ["dependency", "Backend"]
+    labels: ['dependency', 'Backend']
     commit-message:
-      prefix: "chore(deps-backend-js)"
+      prefix: 'chore(deps-backend-js)'
     groups:
       backend-js-minor-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
 
   # ---------- GITHUB ACTIONS ----------
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Warsaw"
-    labels: ["dependency", "DevOps"]
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Warsaw'
+    labels: ['dependency', 'DevOps']
     commit-message:
-      prefix: "chore(deps-ci)"
-    
+      prefix: 'chore(deps-ci)'
