@@ -45,6 +45,11 @@
 		"addProsthesis": "Add prosthesis"
 	},
 	"auth": {
+		"alerts": {
+			"loginFailed": "Login failed",
+			"guestLoginFailed": "Could not start guest mode",
+			"logoutFailed": "Logout failed"
+		},
 		"errors": {
 			"apiUnavailable": "Authentication is unavailable. Please try again later.",
 			"network": "Could not connect to the server. Check your connection and try again.",
@@ -55,7 +60,11 @@
 			"passwordInvalid": "Password does not meet the security requirements.",
 			"validationFailed": "We could not validate the submitted data. Check the form.",
 			"requestFailed": "The request failed. Please try again.",
-			"unexpected": "An unexpected error occurred. Please try again."
+			"unexpected": "An unexpected error occurred. Please try again.",
+			"sessionSetupFailed": "We couldn't prepare your session. Please try again.",
+			"guestSessionSetupFailed": "We couldn't start guest mode. Please try again.",
+			"logoutCredentialsReadFailed": "We couldn't read your session data. Please try again.",
+			"logoutCleanupFailed": "We couldn't clear local data. You remain in the current session."
 		}
 	},
 	"common": {

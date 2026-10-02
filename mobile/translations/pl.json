@@ -45,6 +45,11 @@
 		"addProsthesis": "Dodaj protezę"
 	},
 	"auth": {
+		"alerts": {
+			"loginFailed": "Logowanie nie powiodło się",
+			"guestLoginFailed": "Nie udało się uruchomić trybu gościa",
+			"logoutFailed": "Wylogowanie nie powiodło się"
+		},
 		"errors": {
 			"apiUnavailable": "Usługa uwierzytelniania jest niedostępna. Spróbuj ponownie później.",
 			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.",
@@ -55,7 +60,11 @@
 			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa.",
 			"validationFailed": "Nie udało się zweryfikować danych. Sprawdź formularz.",
 			"requestFailed": "Żądanie nie powiodło się. Spróbuj ponownie.",
-			"unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+			"unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+			"sessionSetupFailed": "Nie udało się przygotować sesji. Spróbuj ponownie.",
+			"guestSessionSetupFailed": "Nie udało się uruchomić trybu gościa. Spróbuj ponownie.",
+			"logoutCredentialsReadFailed": "Nie udało się odczytać danych sesji. Spróbuj ponownie.",
+			"logoutCleanupFailed": "Nie udało się wyczyścić danych lokalnych. Pozostajesz w bieżącej sesji."
 		}
 	},
 	"common": {

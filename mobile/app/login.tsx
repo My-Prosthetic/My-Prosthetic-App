@@ -43,7 +43,7 @@ export default function LoginScreen() {
 		setIsLoading(true)
 		try {
 			const result = await authService.login({ email: normalizedEmail, password })
-			await loginWithToken(result.token)
+			if (!(await loginWithToken(result.token))) return
 			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
 			await createUser({ name: firstName })
 			//TODO fetch user database contents from api

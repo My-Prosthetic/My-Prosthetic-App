@@ -92,7 +92,7 @@ export default function SignUpScreen() {
 				password,
 				password_confirmation: repeatPassword,
 			})
-			await loginWithToken(result.token)
+			if (!(await loginWithToken(result.token))) return
 			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
 			await createUser({ name: apiFirstName })
 		} catch (error) {
