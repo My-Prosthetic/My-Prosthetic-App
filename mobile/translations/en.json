@@ -24,7 +24,8 @@
 		"accumulatedTitle": "Accumulated Funds 💰"
 	},
 	"home": {
-		"greeting": "Hello,\n{{name}}",
+		"greetingGuest": "Hello",
+		"greetingUser": "Hello,\n{{name}}",
 		"dbMigrationErr": "Database migration error: ",
 		"dbInit": "Database initialization...",
 		"myProsthetics": "MY PROSTHETICS",
@@ -43,12 +44,36 @@
 		"switchToLightTheme": "Switch to light theme ☀️",
 		"addProsthesis": "Add prosthesis"
 	},
+	"auth": {
+		"alerts": {
+			"loginFailed": "Login failed",
+			"guestLoginFailed": "Could not start guest mode",
+			"logoutFailed": "Logout failed"
+		},
+		"errors": {
+			"apiUnavailable": "Authentication is unavailable. Please try again later.",
+			"network": "Could not connect to the server. Check your connection and try again.",
+			"invalidCredentials": "The email or password is incorrect.",
+			"emailTaken": "An account with this email already exists.",
+			"invalidEmail": "Enter a valid email address.",
+			"passwordMismatch": "Passwords must match.",
+			"passwordInvalid": "Password does not meet the security requirements.",
+			"validationFailed": "We could not validate the submitted data. Check the form.",
+			"requestFailed": "The request failed. Please try again.",
+			"unexpected": "An unexpected error occurred. Please try again.",
+			"sessionSetupFailed": "We couldn't prepare your session. Please try again.",
+			"guestSessionSetupFailed": "We couldn't start guest mode. Please try again.",
+			"logoutCredentialsReadFailed": "We couldn't read your session data. Please try again.",
+			"logoutCleanupFailed": "We couldn't clear local data. You remain in the current session."
+		}
+	},
 	"common": {
 		"cancel": "CANCEL",
 		"error": "Error",
 		"save": "SAVE",
 		"delete": "DELETE",
-		"today": "Today"
+		"today": "Today",
+		"mp": "My Prosthetics"
 	},
 	"funds": {
 		"title": "FUNDING",
@@ -297,5 +322,50 @@
 		"limb": "LIMB",
 		"amputationLevel": "AMPUTATION LEVEL",
 		"notFound": "Prosthesis not found."
+	},
+	"login": {
+		"logIn": "Log in",
+		"createAccount": "Sign up",
+		"useWithoutAccount": "Use without an account",
+		"areYouSure": "Are you sure you want to continue without an account?",
+		"onlyLocal": "By using the app without an account, your data is processed and stored exclusively in your device's local storage.",
+		"itResultsIn": "This results in:",
+		"noCopy": "No backup",
+		"constraints": "Limitations in sharing medical history with specialists.",
+		"alreadyHaveAccount": "Already have an account?",
+		"noAccount": "Don't have an account?",
+		"email": "Email",
+		"password": "Password",
+		"validation": {
+			"required": "Enter your email and password.",
+			"invalidEmail": "Enter a valid email address."
+		},
+		"forgotPassword": "Forgot password?",
+		"reset": "Reset",
+		"continueGoogle": "Continue with Google",
+		"continueFacebook": "Continue with Facebook"
+	},
+	"signup": {
+		"firstName": "First name",
+		"lastName": "Last name",
+		"emailPlaceholder": "name@email.com",
+		"repeatPassword": "Confirm password",
+		"register": "Register",
+		"passwordRequirements": "Password requirements",
+		"passwordRules": {
+			"minLength": "At least 8 characters",
+			"uppercase": "At least 1 uppercase letter",
+			"lowercase": "At least 1 lowercase letter",
+			"number": "At least 1 number",
+			"symbol": "At least 1 special character",
+			"match": "Passwords match"
+		},
+		"validation": {
+			"required": "Please fill in all required fields.",
+			"nameTooLong": "First and last name must be no longer than 255 characters.",
+			"invalidEmail": "Enter a valid email address.",
+			"passwordMismatch": "Passwords must match.",
+			"passwordInvalid": "Password does not meet the security requirements."
+		}
 	}
 }

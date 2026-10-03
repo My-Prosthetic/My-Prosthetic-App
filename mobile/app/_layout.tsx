@@ -1,22 +1,76 @@
 import { useEffect } from "react"
+import { Text, View } from "react-native"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
+import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
+import { db } from "@/db/client"
+import migrations from "@/drizzle/migrations"
 
-//TODO usunąć pliki z fontami, których ostatecznie nie używamy
+//TODO tx
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
 	console.warn("SplashScreen error:", error)
 })
 
+function RootNavigationLayout({
+	fontsLoaded,
+	fontsError,
+}: {
+	fontsLoaded: boolean
+	fontsError: Error | null
+}) {
+	const { status } = useAuth()
+	const { success: migrationsLoaded, error: migrationError } = useMigrations(db, migrations)
+	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
+	const isReady =
+		(fontsLoaded || !!fontsError) &&
+		status !== "INITIALIZING" &&
+		(migrationsLoaded || !!migrationError)
+
+	useEffect(() => {
+		if (isReady) {
+			SplashScreen.hideAsync().catch((error) => {
+				console.error("Failed to hide splash screen:", error)
+			})
+		}
+	}, [isReady])
+
+	if (!isReady) {
+		return null
+	}
+
+	if (migrationError) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
+				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
+			</View>
+		)
+	}
+
+	return (
+		<Stack screenOptions={{ headerShown: false }}>
+			<Stack.Protected guard={hasActiveSession}>
+				<Stack.Screen name="(tabs)" />
+			</Stack.Protected>
+			<Stack.Protected guard={!hasActiveSession}>
+				<Stack.Screen name="index" />
+				<Stack.Screen name="login" />
+				<Stack.Screen name="signup" />
+				<Stack.Screen name="noAccount" />
+			</Stack.Protected>
+		</Stack>
+	)
+}
+
 export default function RootLayout() {
 	useEffect(() => {
 		if (__DEV__) {
-			// Wypisze wszystkie tabele i wiersze w terminalu przy każdym odświeżeniu
 			try {
 				logFullDatabase()
 			} catch (error) {
@@ -34,23 +88,11 @@ export default function RootLayout() {
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
 	})
 
-	useEffect(() => {
-		if (loaded || error) {
-			SplashScreen.hideAsync().catch((error) => {
-				console.error("Failed to hide splash screen:", error)
-			})
-		}
-	}, [loaded, error])
-
-	if (!loaded && !error) {
-		return null
-	}
-
 	return (
 		<ThemeProvider>
-			<Stack screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="(tabs)" />
-			</Stack>
+			<AuthProvider>
+				<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+			</AuthProvider>
 		</ThemeProvider>
 	)
 }
