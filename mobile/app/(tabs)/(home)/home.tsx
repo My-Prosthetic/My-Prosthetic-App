@@ -1,30 +1,49 @@
-import { useState, useEffect } from "react"
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
+import { useState, useEffect, useCallback } from "react"
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native"
 import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
-import { useRouter } from "expo-router"
-
+import { useFocusEffect, useRouter } from "expo-router"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-import { getLatestUser } from "@/db/repositories/userRepository"
 import { useAuth } from "@/context/AuthContext"
 
-//TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
-//TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
+import { getLatestUser } from "@/db/repositories/userRepository"
+
+import { getAllProstheses, Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { Carousel } from "@/src/components/Carousel"
+
 //TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
 
 export default function HomeScreen() {
 	const [userName, setUserName] = useState<string>("")
-	const [showAddProsthesisCard, setShowAddProsthesisCard] = useState(false)
+	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const router = useRouter()
+
+
 
 	const { t, i18n } = useTranslation()
 	const { colors, themeType, setTheme } = useTheme()
 	const { status } = useAuth()
 
 	const styles = getStyles(colors)
+
+	useFocusEffect(
+		useCallback(() => {
+			let isActive = true
+
+			void getAllProstheses()
+				.then((data) => {
+					if (isActive) setProstheses(data)
+				})
+				.catch((error) => console.error("Błąd odczytu protez:", error))
+
+			return () => {
+				isActive = false
+			}
+		}, [])
+	)
 
 	useEffect(() => {
 		let isMounted = true
@@ -38,6 +57,36 @@ export default function HomeScreen() {
 			isMounted = false
 		}
 	}, [])
+
+
+	const renderAddProsthesis = () => (
+		<ThemedView
+			style={styles.prostheticCard}
+			onPress={() => router.push("/prosthesis/new")}
+			accessibilityRole="button"
+		>
+			<View style={styles.addProsthesisCircle}>
+				<Ionicons name="add" size={54} color={colors.primary_base} />
+			</View>
+			<ThemedText variant="subTitle1" colorName="accent_base" tx="home.addProsthesis" />
+		</ThemedView>
+	)
+
+	const renderProsthesisCard = (prosthesis: Prosthesis) => (
+		<ThemedView
+			style={styles.prostheticCard}
+			onPress={() => router.push(`/prosthesis/${prosthesis.id}/`)}
+		>
+			<Image
+				source={require("@/assets/mp_logo_accent.png")}
+				style={styles.logoImage}
+				resizeMode="contain"
+			/>
+			<ThemedText variant="subTitle1" colorName="accent_base">
+				{prosthesis.name}
+			</ThemedText>
+		</ThemedView>
+	)
 
 	return (
 		<ScrollView
@@ -66,61 +115,11 @@ export default function HomeScreen() {
 				style={styles.sectionContainer}
 			>
 				<ThemedText tx="home.myProsthetics" variant="main1Button" style={{ padding: 16 }} />
-
-				<View style={styles.carouselRow}>
-					{/* Lewa strzałka karuzeli */}
-					<TouchableOpacity
-						style={styles.carouselArrow}
-						onPress={() => setShowAddProsthesisCard(false)}
-						disabled={!showAddProsthesisCard}
-						accessibilityRole="button"
-					>
-						<Ionicons
-							name="chevron-back"
-							size={32}
-							color={showAddProsthesisCard ? colors.primary_base : colors.primary_base_3}
-						/>
-					</TouchableOpacity>
-
-					{/* Główna karta protezy */}
-					{showAddProsthesisCard ? (
-						<TouchableOpacity
-							style={styles.prostheticCard}
-							onPress={() => router.push("/prosthesis/new")}
-							accessibilityRole="button"
-						>
-							<View style={styles.addProsthesisCircle}>
-								<Ionicons name="add" size={54} color={colors.primary_base} />
-							</View>
-
-							<Text style={styles.prostheticCardText}>{t("home.addProsthesis")}</Text>
-						</TouchableOpacity>
-					) : (
-						<View style={styles.prostheticCard}>
-							{/* Logo protezy */}
-							<Image
-								source={require("../../../assets/mp_logo_accent.png")}
-								style={styles.logoImage}
-								resizeMode="contain"
-							/>
-							<Text style={styles.prostheticCardText}>{t("home.prostheticDaily")}</Text>
-						</View>
-					)}
-
-					{/* Prawa strzałka karuzeli */}
-					<TouchableOpacity
-						style={styles.carouselArrow}
-						onPress={() => setShowAddProsthesisCard(true)}
-						disabled={showAddProsthesisCard}
-						accessibilityRole="button"
-					>
-						<Ionicons
-							name="chevron-forward"
-							size={32}
-							color={showAddProsthesisCard ? colors.primary_base_3 : colors.primary_base}
-						/>
-					</TouchableOpacity>
-				</View>
+				<Carousel
+					items={prostheses}
+					renderItem={renderProsthesisCard}
+					renderPlus={renderAddProsthesis}
+				/>
 			</ThemedView>
 
 			{/* ----------------- SEKCJA: SZYBKIE PRZYCISKI AKCJI ----------------- */}
@@ -267,9 +266,8 @@ const getStyles = (colors: ThemeColors) => {
 			padding: 5,
 		},
 		prostheticCard: {
-			width: 200, // Zmniejszono nieco kartę, aby wszystko się mieściło
+			width: 200,
 			height: 200,
-			backgroundColor: colors.primary_base,
 			borderRadius: 40,
 			justifyContent: "center",
 			alignItems: "center",
@@ -293,12 +291,6 @@ const getStyles = (colors: ThemeColors) => {
 			justifyContent: "center",
 			alignItems: "center",
 			marginBottom: 24,
-		},
-		prostheticCardText: {
-			fontSize: 14,
-			fontWeight: "600",
-			color: colors.accent_base,
-			textAlign: "center",
 		},
 		actionButtonsRow: {
 			flexDirection: "row",

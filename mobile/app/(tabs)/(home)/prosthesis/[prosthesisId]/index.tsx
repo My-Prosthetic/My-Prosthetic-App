@@ -10,6 +10,7 @@ import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 
 const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
 	hemipelvectomy: "newProsthesis.amputationLevels.lower.hemipelvectomy",
@@ -92,21 +93,8 @@ export default function ProsthesisDetailsScreen() {
 		: ""
 
 	return (
-		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
-			<ThemedView colorName="primary_base" style={styles.header}>
-				<ThemedView
-					colorName="primary_base"
-					style={styles.backButton}
-					onPress={() => router.back()}
-					accessibilityRole="button"
-					accessibilityLabel={t("newProsthesis.back")}
-				>
-					<Ionicons name="chevron-back" size={28} color={colors.accent_base} />
-				</ThemedView>
-
-				<ThemedText tx="prosthesisDetails.title" variant="title" colorName="accent_base" />
-			</ThemedView>
-
+		<ThemedView colorName="tertiary_base_1" variant="background">
+			<ThemedHeader tx="prosthesisDetails.title" variant="transparent" onBack={()=>router.back()}/>
 			{isLoading ? (
 				<View style={styles.centered}>
 					<ActivityIndicator size="large" color={colors.primary_base} />
@@ -183,32 +171,6 @@ function InfoRow({ label, value, isLast = false }: InfoRowProps) {
 }
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-	},
-
-	header: {
-		width: "100%",
-		minHeight: 86,
-		paddingHorizontal: 20,
-		paddingTop: 18,
-		paddingBottom: 16,
-		borderBottomLeftRadius: 30,
-		borderBottomRightRadius: 30,
-		justifyContent: "center",
-		alignItems: "center",
-		position: "relative",
-	},
-
-	backButton: {
-		position: "absolute",
-		left: 16,
-		top: 18,
-		bottom: 16,
-		justifyContent: "center",
-		alignItems: "center",
-		zIndex: 2,
-	},
 
 	centered: {
 		flex: 1,
@@ -218,7 +180,6 @@ const styles = StyleSheet.create({
 	},
 
 	content: {
-		paddingHorizontal: 24,
 		paddingTop: 28,
 		paddingBottom: 48,
 		alignItems: "center",
