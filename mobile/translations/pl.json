@@ -321,7 +321,14 @@
 		"side": "STRONA",
 		"limb": "KOŃCZYNA",
 		"amputationLevel": "POZIOM AMPUTACJI",
-		"notFound": "Nie znaleziono protezy."
+		"notFound": "Nie znaleziono protezy.",
+		"components": "Komponenty",
+		"addComponent": "Dodaj komponent",
+		"loadingComponents": "Ładowanie komponentów...",
+		"noComponents": "Brak komponentów przypisanych do tej protezy."
+	},
+	"newComponent": {
+		"newComponent": "Nowy komponent"
 	},
 	"login": {
 		"logIn": "Zaloguj",
