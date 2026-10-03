@@ -87,7 +87,7 @@ export default function NewProsthesisScreen() {
 
 	return (
 		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
-			<ThemedHeader tx="newProsthesis.title"/>
+			<ThemedHeader tx="newProsthesis.title" />
 			<ScrollView
 				contentContainerStyle={styles.content}
 				showsVerticalScrollIndicator={false}

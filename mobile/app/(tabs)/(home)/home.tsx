@@ -21,8 +21,6 @@ export default function HomeScreen() {
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const router = useRouter()
 
-
-
 	const { t, i18n } = useTranslation()
 	const { colors, themeType, setTheme } = useTheme()
 	const { status } = useAuth()
@@ -57,7 +55,6 @@ export default function HomeScreen() {
 			isMounted = false
 		}
 	}, [])
-
 
 	const renderAddProsthesis = () => (
 		<ThemedView
