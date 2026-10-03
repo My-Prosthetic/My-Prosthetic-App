@@ -105,9 +105,8 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 					style={[
 						styles.sheetContainer,
 						{
-							paddingBottom: Math.max(insets.bottom, 24) + 40,
+							paddingBottom: insets.bottom + 10,
 							paddingHorizontal: 0,
-							marginBottom: -insets.bottom,
 						},
 					]}
 				>
@@ -155,11 +154,12 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 							colorName="primary_base"
 							borderColor="accent_base"
 							onPress={handleSave}
+							shadow
 						>
 							<ThemedText variant="main1Button" colorName="accent_base" tx="common.save" />
 						</ThemedView>
 
-						<ThemedView variant="narrow" colorName="accent_base_1" onPress={onClose}>
+						<ThemedView variant="narrow" colorName="accent_base_1" onPress={onClose} shadow>
 							<ThemedText variant="main1Button" colorName="primary_base" tx="common.cancel" />
 						</ThemedView>
 					</View>
@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
 	},
 	listContainer: {
 		height: ITEM_HEIGHT * VISIBLE_ITEMS,
-		marginVertical: 6,
 	},
 	dateRow: {
 		height: ITEM_HEIGHT,
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
 		opacity: 1,
 	},
 	actionsContainer: {
-		marginBottom: 16,
+		marginTop: 8,
 		gap: 10,
 		alignItems: "center",
 	},
