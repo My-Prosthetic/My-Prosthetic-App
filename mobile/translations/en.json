@@ -321,7 +321,14 @@
 		"side": "SIDE",
 		"limb": "LIMB",
 		"amputationLevel": "AMPUTATION LEVEL",
-		"notFound": "Prosthesis not found."
+		"notFound": "Prosthesis not found.",
+		"components": "Components",
+		"addComponent": "Add Components",
+		"loadingComponents": "Loading components...",
+		"noComponents": "No components are assigned to this prosthesis."
+	},
+	"newComponent": {
+		"newComponent": "New component"
 	},
 	"login": {
 		"logIn": "Log in",

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react"
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native"
+import React, { useCallback, useState } from "react"
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native"
 
 import { Ionicons } from "@expo/vector-icons"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 
 import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
 import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
+import type { Component } from "@/db/repositories/componentRepository"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
@@ -47,40 +49,57 @@ export default function ProsthesisDetailsScreen() {
 	}>()
 
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
+	const [components, setComponents] = useState<Component[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [areComponentsLoading, setAreComponentsLoading] = useState(true)
+	const [areComponentsExpanded, setAreComponentsExpanded] = useState(false)
 
-	useEffect(() => {
-		let mounted = true
+    const handleOnFiltersPress = () => {}
 
-		const loadProsthesis = async () => {
+	useFocusEffect(
+		useCallback(() => {
+			let isActive = true
+
 			if (!prosthesisId || typeof prosthesisId !== "string") {
-				if (mounted) {
-					setIsLoading(false)
-				}
-				return
-			}
-
-			try {
-				const result = await getProsthesisById(prosthesisId)
-
-				if (mounted) {
-					setProsthesis(result)
-				}
-			} catch (error) {
-				console.error("Failed to load prosthesis:", error)
-			} finally {
-				if (mounted) {
-					setIsLoading(false)
+				setIsLoading(false)
+				setAreComponentsLoading(false)
+				return () => {
+					isActive = false
 				}
 			}
-		}
 
-		loadProsthesis()
+			setIsLoading(true)
+			setAreComponentsLoading(true)
+
+			void getProsthesisById(prosthesisId)
+				.then((result) => {
+					if (isActive) setProsthesis(result)
+				})
+				.catch((error) => {
+					console.error("Failed to load prosthesis:", error)
+					if (isActive) setProsthesis(null)
+				})
+				.finally(() => {
+					if (isActive) setIsLoading(false)
+				})
+
+			void getComponentsByProsthesisId(prosthesisId)
+				.then((result) => {
+					if (isActive) setComponents(result)
+				})
+				.catch((error) => {
+					console.error("Failed to load prosthesis components:", error)
+					if (isActive) setComponents([])
+				})
+				.finally(() => {
+					if (isActive) setAreComponentsLoading(false)
+				})
 
 		return () => {
-			mounted = false
+			isActive = false
 		}
-	}, [prosthesisId])
+		}, [prosthesisId])
+	)
 
 	const amputationLevelKey = prosthesis
 		? AMPUTATION_LEVEL_KEYS[prosthesis.amputationLevel]
@@ -144,6 +163,131 @@ export default function ProsthesisDetailsScreen() {
 							isLast
 						/>
 					</ThemedView>
+
+					<ThemedView
+						colorName="secondary_base_3"
+                        borderColor="primary_base"
+						style={styles.componentsSection}
+					>
+						<ThemedView
+							colorName="secondary_base_3"
+							variant="wide"
+							style={styles.componentsHeader}
+							onPress={() => setAreComponentsExpanded((expanded) => !expanded)}
+							accessibilityRole="button"
+							accessibilityState={{ expanded: areComponentsExpanded }}
+						>
+							<ThemedView
+                                colorName="accent_base_1"
+                                borderColor="primary_base_2"
+								style={styles.filterIconBox}
+                                onPress={handleOnFiltersPress}
+							>
+								<Ionicons name="filter-outline" size={25} color={colors.primary_base_1} />
+							</ThemedView>
+							<ThemedText
+								tx="prosthesisDetails.components"
+								variant="main1Button"
+								colorName="primary_base"
+								style={styles.componentsHeaderText}
+							/>
+							<Ionicons
+								name={areComponentsExpanded ? "chevron-up" : "chevron-down"}
+								size={28}
+								color={colors.primary_base}
+							/>
+						</ThemedView>
+
+						{areComponentsExpanded && (
+							<View style={styles.componentsContent}>
+								<ThemedView
+									colorName="primary_base"
+									variant="wide"
+									style={styles.addComponentButton}
+									onPress={() =>
+										router.push(`/prosthesis/${prosthesisId}/components/new`)
+									}
+									accessibilityRole="button"
+								>
+									<Ionicons name="add-circle" size={38} color={colors.accent_base} />
+									<ThemedText
+										tx="prosthesisDetails.addComponent"
+										variant="main1Button"
+										colorName="accent_base"
+										style={styles.addComponentText}
+									/>
+								</ThemedView>
+
+								{areComponentsLoading ? (
+									<View style={styles.componentsMessage}>
+										<ActivityIndicator size="small" color={colors.primary_base} />
+										<ThemedText
+											tx="prosthesisDetails.loadingComponents"
+											variant="body1Regular"
+											colorName="primary_base"
+										/>
+									</View>
+								) : components.length === 0 ? (
+									<ThemedText
+										tx="prosthesisDetails.noComponents"
+										variant="body1Regular"
+										colorName="primary_base_1"
+										style={styles.componentsEmpty}
+									/>
+								) : (
+									<View>
+										{components.map((component) => {
+											const title = component.name?.trim() || component.model || component.type
+											const description = [component.manufacturer, component.model].filter(Boolean).join(" | ") || component.type
+
+											return (
+											<ThemedView
+												key={component.id}
+												colorName="secondary_base_3"
+												style={styles.componentRow}
+												accessibilityRole="button"
+											>
+												<View
+													style={[styles.componentIconBox, { backgroundColor: colors.primary_base }]}
+												>
+													<Image
+                                                        source={require("@/assets/mp_logo_accent.png")}
+                                                        style={styles.logoImage}
+                                                        resizeMode="contain"
+                                                    />
+												</View>
+												<View style={styles.componentCopy}>
+													<ThemedText
+														variant="tab1Category"
+														colorName="primary_base"
+														numberOfLines={1}
+														ellipsizeMode="tail"
+													>
+														{title}
+													</ThemedText>
+													<ThemedText
+														variant="body1Regular"
+														colorName="primary_base"
+														numberOfLines={2}
+													>
+														{description}
+													</ThemedText>
+												</View>
+												<View style={styles.componentChevronSlot}>
+													<Ionicons
+														name="chevron-forward"
+														size={26}
+														color={colors.primary_base}
+													/>
+												</View>
+											</ThemedView>
+										)
+									})}
+									</View>
+								)}
+							</View>
+						)}
+					</ThemedView>
 				</ScrollView>
 			)}
 		</ThemedView>
@@ -171,6 +315,11 @@ function InfoRow({ label, value, isLast = false }: InfoRowProps) {
 }
 
 const styles = StyleSheet.create({
+
+	logoImage: {
+		width: "80%",
+		height: "80%",
+	},
 
 	centered: {
 		flex: 1,
@@ -230,5 +379,103 @@ const styles = StyleSheet.create({
 
 	infoValue: {
 		fontSize: 15,
+	},
+
+	componentsSection: {
+		width: "100%",
+		marginTop: 22,
+		padding: 16,
+		borderRadius: 24,
+        borderWidth: 1
+	},
+
+	componentsHeader: {
+		minHeight: 58,
+		paddingHorizontal: 12,
+		paddingVertical: 6,
+		borderRadius: 16,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		gap: 12,
+	},
+
+	filterIconBox: {
+		width: 48,
+		height: 48,
+		borderWidth: 1,
+		borderRadius: 12,
+		alignItems: "center",
+		justifyContent: "center",
+        flex: 0
+	},
+
+	componentsHeaderText: {
+		flex: 1,
+		textAlign: "left",
+	},
+
+	componentsContent: {
+		marginTop: 18,
+		gap: 14,
+	},
+
+	addComponentButton: {
+		minHeight: 64,
+		paddingHorizontal: 14,
+		paddingVertical: 8,
+		borderRadius: 16,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		gap: 12,
+	},
+
+	addComponentText: {
+		flex: 1,
+		textAlign: "left",
+	},
+
+	componentsMessage: {
+		minHeight: 76,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		gap: 12,
+	},
+
+	componentsEmpty: {
+		paddingHorizontal: 12,
+		paddingVertical: 22,
+		textAlign: "center",
+	},
+
+	componentRow: {
+		width: "100%",
+		minHeight: 60,
+		paddingVertical: 8,
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 14,
+	},
+
+	componentCopy: {
+		flex: 1,
+		minWidth: 0,
+	},
+
+	componentChevronSlot: {
+		width: 26,
+		flexShrink: 0,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+
+	componentIconBox: {
+		width: 60,
+		height: 60,
+		borderRadius: 14,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 })
