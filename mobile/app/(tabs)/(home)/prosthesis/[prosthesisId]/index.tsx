@@ -143,12 +143,13 @@ export default function ProsthesisDetailsScreen() {
 				if (!Number.isFinite(assemblyTime) || assemblyTime > to.getTime()) return false
 			}
 
-			const warrantyTime = component.warrantyEndDate
-				? Date.parse(component.warrantyEndDate)
-				: NaN
+			const warrantyTime = component.warrantyEndDate ? Date.parse(component.warrantyEndDate) : NaN
 			const hasWarrantyDate = Number.isFinite(warrantyTime)
 			if (componentFilters.warranty === "noDate" && hasWarrantyDate) return false
-			if (componentFilters.warranty === "expired" && (!hasWarrantyDate || warrantyTime >= today.getTime())) {
+			if (
+				componentFilters.warranty === "expired" &&
+				(!hasWarrantyDate || warrantyTime >= today.getTime())
+			) {
 				return false
 			}
 			if (
@@ -183,7 +184,11 @@ export default function ProsthesisDetailsScreen() {
 
 	return (
 		<ThemedView colorName="tertiary_base_1" variant="background">
-			<ThemedHeader tx="prosthesisDetails.title" variant="transparent" onBack={()=>router.back()}/>
+			<ThemedHeader
+				tx="prosthesisDetails.title"
+				variant="transparent"
+				onBack={() => router.back()}
+			/>
 			{isLoading ? (
 				<View style={styles.centered}>
 					<ActivityIndicator size="large" color={colors.primary_base} />
@@ -236,7 +241,7 @@ export default function ProsthesisDetailsScreen() {
 
 					<ThemedView
 						colorName="secondary_base_3"
-                        borderColor="primary_base"
+						borderColor="primary_base"
 						style={styles.componentsSection}
 					>
 						<ThemedView
@@ -283,9 +288,7 @@ export default function ProsthesisDetailsScreen() {
 									colorName="primary_base"
 									variant="wide"
 									style={styles.addComponentButton}
-									onPress={() =>
-										router.push(`/prosthesis/${prosthesisId}/components/new`)
-									}
+									onPress={() => router.push(`/prosthesis/${prosthesisId}/components/new`)}
 									accessibilityRole="button"
 								>
 									<Ionicons name="add-circle" size={38} color={colors.accent_base} />
@@ -321,12 +324,12 @@ export default function ProsthesisDetailsScreen() {
 										style={styles.componentsEmpty}
 									/>
 								) : (
-						<ScrollView
-							style={styles.componentListViewport}
-							contentContainerStyle={styles.componentList}
-							nestedScrollEnabled
-							showsVerticalScrollIndicator
-						>
+									<ScrollView
+										style={styles.componentListViewport}
+										contentContainerStyle={styles.componentList}
+										nestedScrollEnabled
+										showsVerticalScrollIndicator
+									>
 										{visibleComponents.map((component) => {
 											const title = component.model?.trim() || component.type
 											const description =
@@ -334,49 +337,52 @@ export default function ProsthesisDetailsScreen() {
 												component.type
 
 											return (
-											<ThemedView
-												key={component.id}
-												colorName="secondary_base_3"
-												style={styles.componentRow}
-												accessibilityRole="button"
-											>
-												<View
-													style={[styles.componentIconBox, { backgroundColor: colors.primary_base }]}
+												<ThemedView
+													key={component.id}
+													colorName="secondary_base_3"
+													style={styles.componentRow}
+													accessibilityRole="button"
 												>
-													<Image
-                                                        source={require("@/assets/mp_logo_accent.png")}
-                                                        style={styles.logoImage}
-                                                        resizeMode="contain"
-                                                    />
-												</View>
-												<View style={styles.componentCopy}>
-													<ThemedText
-														variant="tab1Category"
-														colorName="primary_base"
-														numberOfLines={1}
-														ellipsizeMode="tail"
+													<View
+														style={[
+															styles.componentIconBox,
+															{ backgroundColor: colors.primary_base },
+														]}
 													>
-														{title}
-													</ThemedText>
-													<ThemedText
-														variant="body1Regular"
-														colorName="primary_base"
-														numberOfLines={2}
-													>
-														{description}
-													</ThemedText>
-												</View>
-												<View style={styles.componentChevronSlot}>
-													<Ionicons
-														name="chevron-forward"
-														size={26}
-														color={colors.primary_base}
-													/>
-												</View>
-											</ThemedView>
-										)
-									})}
-								</ScrollView>
+														<Image
+															source={require("@/assets/mp_logo_accent.png")}
+															style={styles.logoImage}
+															resizeMode="contain"
+														/>
+													</View>
+													<View style={styles.componentCopy}>
+														<ThemedText
+															variant="tab1Category"
+															colorName="primary_base"
+															numberOfLines={1}
+															ellipsizeMode="tail"
+														>
+															{title}
+														</ThemedText>
+														<ThemedText
+															variant="body1Regular"
+															colorName="primary_base"
+															numberOfLines={2}
+														>
+															{description}
+														</ThemedText>
+													</View>
+													<View style={styles.componentChevronSlot}>
+														<Ionicons
+															name="chevron-forward"
+															size={26}
+															color={colors.primary_base}
+														/>
+													</View>
+												</ThemedView>
+											)
+										})}
+									</ScrollView>
 								)}
 							</View>
 						)}
@@ -416,7 +422,6 @@ function InfoRow({ label, value, isLast = false }: InfoRowProps) {
 }
 
 const styles = StyleSheet.create({
-
 	logoImage: {
 		width: "80%",
 		height: "80%",
@@ -487,7 +492,7 @@ const styles = StyleSheet.create({
 		marginTop: 22,
 		padding: 16,
 		borderRadius: 24,
-        borderWidth: 1
+		borderWidth: 1,
 	},
 
 	componentsHeader: {
@@ -508,7 +513,7 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		alignItems: "center",
 		justifyContent: "center",
-        flex: 0
+		flex: 0,
 	},
 
 	componentsHeaderText: {

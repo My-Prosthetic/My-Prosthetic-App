@@ -37,18 +37,14 @@ export const components = sqliteTable(
 		remindExchangeEmail: integer("remind_exchange_email", { mode: "boolean" })
 			.notNull()
 			.default(false),
-		remindExchangeApp: integer("remind_exchange_app", { mode: "boolean" })
-			.notNull()
-			.default(false),
+		remindExchangeApp: integer("remind_exchange_app", { mode: "boolean" }).notNull().default(false),
 		remindExchangePush: integer("remind_exchange_push", { mode: "boolean" })
 			.notNull()
 			.default(false),
 		remindWarrantyEmail: integer("remind_warranty_email", { mode: "boolean" })
 			.notNull()
 			.default(false),
-		remindWarrantyApp: integer("remind_warranty_app", { mode: "boolean" })
-			.notNull()
-			.default(false),
+		remindWarrantyApp: integer("remind_warranty_app", { mode: "boolean" }).notNull().default(false),
 		remindWarrantyPush: integer("remind_warranty_push", { mode: "boolean" })
 			.notNull()
 			.default(false),
