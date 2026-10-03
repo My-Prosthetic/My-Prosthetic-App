@@ -325,7 +325,38 @@
 		"components": "Components",
 		"addComponent": "Add Components",
 		"loadingComponents": "Loading components...",
-		"noComponents": "No components are assigned to this prosthesis."
+		"noComponents": "No components are assigned to this prosthesis.",
+		"noFilterResults": "No components match the selected filters.",
+		"filters": {
+			"title": "Component filters",
+			"status": "Status",
+			"all": "All",
+			"active": "Active",
+			"historical": "Historical",
+			"category": "Categories",
+			"types": {
+				"socket": "Socket",
+				"knee": "Knee",
+				"foot": "Foot",
+				"liner": "Liner",
+				"adapter": "Adapter",
+				"other": "Other"
+			},
+			"assemblyDate": "Assembly date",
+			"assemblyFrom": "From",
+			"assemblyTo": "To",
+			"chooseDate": "Choose date",
+			"clearDate": "Clear date",
+			"warranty": "Warranty",
+			"warrantyOptions": {
+				"all": "Any date",
+				"endingSoon": "Ends within 30 days",
+				"expired": "Expired",
+				"noDate": "No date"
+			},
+			"reset": "Reset",
+			"apply": "Apply"
+		}
 	},
 	"newComponent": {
 		"newComponent": "New component"

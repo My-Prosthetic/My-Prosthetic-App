@@ -10,13 +10,20 @@ export type Component = typeof components.$inferSelect
 export type CreateComponentInput = {
 	prosthesisId: string
 	type: "socket" | "knee" | "foot" | "liner" | "adapter" | "other"
-	name?: string
-	manufacturer?: string
+	brand?: string
 	model?: string
-	serialNumber?: string
-	isTestSocket?: boolean
-	installedAt?: string
-	warrantyUntil?: string
+	isFinal?: boolean
+	isHistorical?: boolean
+	assemblyDate?: string
+	warrantyEndDate?: string
+	expectedExchangeDate?: string
+	description?: string
+	remindExchangeEmail?: boolean
+	remindExchangeApp?: boolean
+	remindExchangePush?: boolean
+	remindWarrantyEmail?: boolean
+	remindWarrantyApp?: boolean
+	remindWarrantyPush?: boolean
 }
 
 export type UpdateComponentInput = Partial<Omit<CreateComponentInput, "prosthesisId">>

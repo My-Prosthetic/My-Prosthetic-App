@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react"
-import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native"
+import React, { useEffect, useMemo, useState } from "react"
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native"
 
 import { Ionicons } from "@expo/vector-icons"
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 
 import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
@@ -13,6 +13,11 @@ import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
+import {
+	ComponentFiltersModal,
+	DEFAULT_COMPONENT_FILTERS,
+	type ComponentFilters,
+} from "@/src/components/ComponentFiltersModal"
 
 const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
 	hemipelvectomy: "newProsthesis.amputationLevels.lower.hemipelvectomy",
@@ -47,59 +52,108 @@ export default function ProsthesisDetailsScreen() {
 	const { prosthesisId } = useLocalSearchParams<{
 		prosthesisId: string
 	}>()
+	const hasValidProsthesisId = typeof prosthesisId === "string" && prosthesisId.length > 0
 
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
 	const [components, setComponents] = useState<Component[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [areComponentsLoading, setAreComponentsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState(hasValidProsthesisId)
+	const [areComponentsLoading, setAreComponentsLoading] = useState(hasValidProsthesisId)
 	const [areComponentsExpanded, setAreComponentsExpanded] = useState(false)
+	const [areFiltersVisible, setAreFiltersVisible] = useState(false)
+	const [componentFilters, setComponentFilters] =
+		useState<ComponentFilters>(DEFAULT_COMPONENT_FILTERS)
 
-    const handleOnFiltersPress = () => {}
+	useEffect(() => {
+		let isActive = true
 
-	useFocusEffect(
-		useCallback(() => {
-			let isActive = true
-
-			if (!prosthesisId || typeof prosthesisId !== "string") {
-				setIsLoading(false)
-				setAreComponentsLoading(false)
-				return () => {
-					isActive = false
-				}
+		if (!hasValidProsthesisId) {
+			return () => {
+				isActive = false
 			}
+		}
 
-			setIsLoading(true)
-			setAreComponentsLoading(true)
+		void getProsthesisById(prosthesisId)
+			.then((result) => {
+				if (isActive) setProsthesis(result)
+			})
+			.catch((error) => {
+				console.error("Failed to load prosthesis:", error)
+				if (isActive) setProsthesis(null)
+			})
+			.finally(() => {
+				if (isActive) setIsLoading(false)
+			})
 
-			void getProsthesisById(prosthesisId)
-				.then((result) => {
-					if (isActive) setProsthesis(result)
-				})
-				.catch((error) => {
-					console.error("Failed to load prosthesis:", error)
-					if (isActive) setProsthesis(null)
-				})
-				.finally(() => {
-					if (isActive) setIsLoading(false)
-				})
-
-			void getComponentsByProsthesisId(prosthesisId)
-				.then((result) => {
-					if (isActive) setComponents(result)
-				})
-				.catch((error) => {
-					console.error("Failed to load prosthesis components:", error)
-					if (isActive) setComponents([])
-				})
-				.finally(() => {
-					if (isActive) setAreComponentsLoading(false)
-				})
+		void getComponentsByProsthesisId(prosthesisId)
+			.then((result) => {
+				if (isActive) setComponents(result)
+			})
+			.catch((error) => {
+				console.error("Failed to load prosthesis components:", error)
+				if (isActive) setComponents([])
+			})
+			.finally(() => {
+				if (isActive) setAreComponentsLoading(false)
+			})
 
 		return () => {
 			isActive = false
 		}
-		}, [prosthesisId])
-	)
+		}, [hasValidProsthesisId, prosthesisId])
+
+	const visibleComponents = useMemo(() => {
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		const expiringSoonLimit = new Date(today)
+		expiringSoonLimit.setDate(expiringSoonLimit.getDate() + 30)
+		expiringSoonLimit.setHours(23, 59, 59, 999)
+
+		return components.filter((component) => {
+			if (componentFilters.status === "active" && component.isHistorical) return false
+			if (componentFilters.status === "historical" && !component.isHistorical) return false
+			if (componentFilters.types.length > 0 && !componentFilters.types.includes(component.type)) {
+				return false
+			}
+
+			const assemblyTime = component.assemblyDate ? Date.parse(component.assemblyDate) : NaN
+			if (componentFilters.assemblyFrom) {
+				const from = new Date(componentFilters.assemblyFrom)
+				from.setHours(0, 0, 0, 0)
+				if (!Number.isFinite(assemblyTime) || assemblyTime < from.getTime()) return false
+			}
+			if (componentFilters.assemblyTo) {
+				const to = new Date(componentFilters.assemblyTo)
+				to.setHours(23, 59, 59, 999)
+				if (!Number.isFinite(assemblyTime) || assemblyTime > to.getTime()) return false
+			}
+
+			const warrantyTime = component.warrantyEndDate
+				? Date.parse(component.warrantyEndDate)
+				: NaN
+			const hasWarrantyDate = Number.isFinite(warrantyTime)
+			if (componentFilters.warranty === "noDate" && hasWarrantyDate) return false
+			if (componentFilters.warranty === "expired" && (!hasWarrantyDate || warrantyTime >= today.getTime())) {
+				return false
+			}
+			if (
+				componentFilters.warranty === "endingSoon" &&
+				(!hasWarrantyDate ||
+					warrantyTime < today.getTime() ||
+					warrantyTime > expiringSoonLimit.getTime())
+			) {
+				return false
+			}
+
+			return true
+		})
+	}, [componentFilters, components])
+
+	const handleOnFiltersPress = () => setAreFiltersVisible(true)
+
+	const handleApplyFilters = (filters: ComponentFilters) => {
+		setComponentFilters(filters)
+		setAreFiltersVisible(false)
+	}
 
 	const amputationLevelKey = prosthesis
 		? AMPUTATION_LEVEL_KEYS[prosthesis.amputationLevel]
@@ -177,14 +231,23 @@ export default function ProsthesisDetailsScreen() {
 							accessibilityRole="button"
 							accessibilityState={{ expanded: areComponentsExpanded }}
 						>
-							<ThemedView
-                                colorName="accent_base_1"
-                                borderColor="primary_base_2"
-								style={styles.filterIconBox}
-                                onPress={handleOnFiltersPress}
+							<Pressable
+								style={[
+									styles.filterIconBox,
+									{
+										backgroundColor: colors.accent_base_1,
+										borderColor: colors.primary_base_2,
+									},
+								]}
+								onPress={(event) => {
+									event.stopPropagation()
+									handleOnFiltersPress()
+								}}
+								accessibilityRole="button"
+								accessibilityLabel={t("prosthesisDetails.filters.title")}
 							>
 								<Ionicons name="filter-outline" size={25} color={colors.primary_base_1} />
-							</ThemedView>
+							</Pressable>
 							<ThemedText
 								tx="prosthesisDetails.components"
 								variant="main1Button"
@@ -234,11 +297,25 @@ export default function ProsthesisDetailsScreen() {
 										colorName="primary_base_1"
 										style={styles.componentsEmpty}
 									/>
+								) : visibleComponents.length === 0 ? (
+									<ThemedText
+										tx="prosthesisDetails.noFilterResults"
+										variant="body1Regular"
+										colorName="primary_base_1"
+										style={styles.componentsEmpty}
+									/>
 								) : (
-									<View>
-										{components.map((component) => {
-											const title = component.name?.trim() || component.model || component.type
-											const description = [component.manufacturer, component.model].filter(Boolean).join(" | ") || component.type
+						<ScrollView
+							style={styles.componentListViewport}
+							contentContainerStyle={styles.componentList}
+							nestedScrollEnabled
+							showsVerticalScrollIndicator
+						>
+										{visibleComponents.map((component) => {
+											const title = component.model?.trim() || component.type
+											const description =
+												[component.brand, component.description].filter(Boolean).join(" | ") ||
+												component.type
 
 											return (
 											<ThemedView
@@ -283,12 +360,20 @@ export default function ProsthesisDetailsScreen() {
 											</ThemedView>
 										)
 									})}
-									</View>
+								</ScrollView>
 								)}
 							</View>
 						)}
 					</ThemedView>
 				</ScrollView>
+			)}
+			{areFiltersVisible && (
+				<ComponentFiltersModal
+					visible
+					filters={componentFilters}
+					onClose={() => setAreFiltersVisible(false)}
+					onApply={handleApplyFilters}
+				/>
 			)}
 		</ThemedView>
 	)
@@ -450,9 +535,18 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 
+	componentListViewport: {
+		height: 360,
+		flexGrow: 0,
+	},
+
+	componentList: {
+		gap: 8,
+	},
+
 	componentRow: {
 		width: "100%",
-		minHeight: 60,
+		height: 84,
 		paddingVertical: 8,
 		flexDirection: "row",
 		alignItems: "center",

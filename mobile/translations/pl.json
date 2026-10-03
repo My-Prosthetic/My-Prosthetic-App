@@ -325,7 +325,38 @@
 		"components": "Komponenty",
 		"addComponent": "Dodaj komponent",
 		"loadingComponents": "Ładowanie komponentów...",
-		"noComponents": "Brak komponentów przypisanych do tej protezy."
+		"noComponents": "Brak komponentów przypisanych do tej protezy.",
+		"noFilterResults": "Brak komponentów spełniających wybrane filtry.",
+		"filters": {
+			"title": "Filtry komponentów",
+			"status": "Status",
+			"all": "Wszystkie",
+			"active": "Aktywne",
+			"historical": "Historyczne",
+			"category": "Kategorie",
+			"types": {
+				"socket": "Lej",
+				"knee": "Kolano",
+				"foot": "Stopa",
+				"liner": "Liner",
+				"adapter": "Adapter",
+				"other": "Inne"
+			},
+			"assemblyDate": "Data montażu",
+			"assemblyFrom": "Od",
+			"assemblyTo": "Do",
+			"chooseDate": "Wybierz datę",
+			"clearDate": "Wyczyść datę",
+			"warranty": "Gwarancja",
+			"warrantyOptions": {
+				"all": "Dowolny termin",
+				"endingSoon": "Kończy się w 30 dni",
+				"expired": "Wygasła",
+				"noDate": "Brak daty"
+			},
+			"reset": "Wyczyść",
+			"apply": "Zastosuj"
+		}
 	},
 	"newComponent": {
 		"newComponent": "Nowy komponent"
