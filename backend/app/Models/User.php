@@ -43,6 +43,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function prostheses(): HasMany
+    {
+        return $this->hasMany(Prosthesis::class);
+    }
+
     /**
      * Get the patient's wallet entries.
      */
