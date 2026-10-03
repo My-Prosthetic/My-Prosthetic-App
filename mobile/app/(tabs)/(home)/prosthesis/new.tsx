@@ -15,6 +15,7 @@ import {
 	AmputationLevel,
 	AmputationLevelSelector,
 } from "@/src/components/prosthesis/AmputationLevelSelector"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 
 type Side = "left" | "right"
 type Limb = "upper" | "lower"
@@ -82,28 +83,16 @@ export default function NewProsthesisScreen() {
 		}
 	}
 
+	//TODO use Carousel component
+
 	return (
 		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
+			<ThemedHeader tx="newProsthesis.title"/>
 			<ScrollView
 				contentContainerStyle={styles.content}
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 			>
-				{/* HEADER */}
-				<ThemedView colorName="primary_base" style={styles.header}>
-					<ThemedView
-						colorName="primary_base"
-						style={styles.backButton}
-						onPress={() => router.back()}
-						accessibilityRole="button"
-						accessibilityLabel={t("newProsthesis.back")}
-					>
-						<Ionicons name="chevron-back" size={28} color={colors.accent_base} />
-					</ThemedView>
-
-					<ThemedText tx="newProsthesis.title" variant="title" colorName="accent_base" />
-				</ThemedView>
-
 				{/* IKONA */}
 				<View style={styles.section}>
 					<ThemedText
@@ -112,7 +101,6 @@ export default function NewProsthesisScreen() {
 						colorName="secondary_base_0c"
 						style={styles.sectionLabel}
 					/>
-
 					<View style={styles.iconSelector}>
 						<View style={styles.iconArrow}>
 							<Ionicons name="chevron-back" size={40} color={colors.secondary_base_0c} />
