@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native"
 
 import { Ionicons } from "@expo/vector-icons"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 
 import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
@@ -84,22 +84,38 @@ export default function ProsthesisDetailsScreen() {
 				if (isActive) setIsLoading(false)
 			})
 
-		void getComponentsByProsthesisId(prosthesisId)
-			.then((result) => {
-				if (isActive) setComponents(result)
-			})
-			.catch((error) => {
-				console.error("Failed to load prosthesis components:", error)
-				if (isActive) setComponents([])
-			})
-			.finally(() => {
-				if (isActive) setAreComponentsLoading(false)
-			})
-
 		return () => {
 			isActive = false
 		}
+	}, [hasValidProsthesisId, prosthesisId])
+
+	useFocusEffect(
+		useCallback(() => {
+			let isActive = true
+
+			if (!hasValidProsthesisId) {
+				return () => {
+					isActive = false
+				}
+			}
+
+			void getComponentsByProsthesisId(prosthesisId)
+				.then((result) => {
+					if (isActive) setComponents(result)
+				})
+				.catch((error) => {
+					console.error("Failed to load prosthesis components:", error)
+					if (isActive) setComponents([])
+				})
+				.finally(() => {
+					if (isActive) setAreComponentsLoading(false)
+				})
+
+			return () => {
+				isActive = false
+			}
 		}, [hasValidProsthesisId, prosthesisId])
+	)
 
 	const visibleComponents = useMemo(() => {
 		const today = new Date()
