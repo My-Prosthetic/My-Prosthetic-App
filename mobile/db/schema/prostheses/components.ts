@@ -14,17 +14,44 @@ export const components = sqliteTable(
 			enum: ["socket", "knee", "foot", "liner", "adapter", "other"],
 		}).notNull(),
 
-		name: text("name"),
-		manufacturer: text("manufacturer"),
+		brand: text("brand"),
 		model: text("model"),
-		serialNumber: text("serial_number"),
 
-		isTestSocket: integer("is_test_socket", {
+		isFinal: integer("is_final", {
 			mode: "boolean",
-		}),
+		})
+			.notNull()
+			.default(false),
 
-		installedAt: text("installed_at"),
-		warrantyUntil: text("warranty_until"),
+		isHistorical: integer("is_historical", {
+			mode: "boolean",
+		})
+			.notNull()
+			.default(false),
+
+		assemblyDate: text("assembly_date"),
+		warrantyEndDate: text("warranty_end_date"),
+		expectedExchangeDate: text("expected_exchange_date"),
+		description: text("description"),
+
+		remindExchangeEmail: integer("remind_exchange_email", { mode: "boolean" })
+			.notNull()
+			.default(false),
+		remindExchangeApp: integer("remind_exchange_app", { mode: "boolean" })
+			.notNull()
+			.default(false),
+		remindExchangePush: integer("remind_exchange_push", { mode: "boolean" })
+			.notNull()
+			.default(false),
+		remindWarrantyEmail: integer("remind_warranty_email", { mode: "boolean" })
+			.notNull()
+			.default(false),
+		remindWarrantyApp: integer("remind_warranty_app", { mode: "boolean" })
+			.notNull()
+			.default(false),
+		remindWarrantyPush: integer("remind_warranty_push", { mode: "boolean" })
+			.notNull()
+			.default(false),
 
 		createdAt: text("created_at").notNull(),
 
