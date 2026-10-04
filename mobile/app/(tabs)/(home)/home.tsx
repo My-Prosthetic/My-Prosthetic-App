@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react"
-import {
-	View,
-	Text,
-	Image,
-	StyleSheet,
-	TouchableOpacity,
-	ScrollView,
-	ActivityIndicator,
-} from "react-native"
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
 import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
@@ -16,96 +8,54 @@ import { useRouter } from "expo-router"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
-
-import { db } from "@/db/client"
-import { users } from "@/db/schema/users"
-import migrations from "@/drizzle/migrations"
+import { getLatestUser } from "@/db/repositories/userRepository"
+import { useAuth } from "@/context/AuthContext"
 
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
 //TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
 //TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
 
 export default function HomeScreen() {
-	const { success, error } = useMigrations(db, migrations)
-	const [userName, setUserName] = useState<string>("(init value)")
+	const [userName, setUserName] = useState<string>("")
 	const [showAddProsthesisCard, setShowAddProsthesisCard] = useState(false)
 	const router = useRouter()
 
 	const { t, i18n } = useTranslation()
 	const { colors, themeType, setTheme } = useTheme()
+	const { status } = useAuth()
 
 	const styles = getStyles(colors)
 
-	// Funkcja odczytująca użytkowników z bazy danych
-	const fetchUsers = async () => {
-		try {
-			const allUsers = await db.select().from(users)
-
-			if (allUsers.length > 0) {
-				setUserName(allUsers[allUsers.length - 1].name)
-			} else {
-				setUserName("(pusta baza)")
-			}
-		} catch (err) {
-			console.error("Błąd odczytu z bazy:", err)
-		}
-	}
-
-	// Automatyczny odczyt po załadowaniu bazy i wykonaniu migracji
 	useEffect(() => {
-		if (success) {
-			queueMicrotask(() => fetchUsers())
+		let isMounted = true
+		void getLatestUser()
+			.then((user) => {
+				if (isMounted) setUserName(user?.name ?? "")
+			})
+			.catch((err: Error) => console.error("Błąd odczytu użytkownika:", err))
+
+		return () => {
+			isMounted = false
 		}
-	}, [success])
-
-	if (error) {
-		return (
-			<View style={styles.container}>
-				<Text>Błąd migracji bazy danych: {error.message}</Text>
-			</View>
-		)
-	}
-
-	if (!success) {
-		return (
-			<View style={styles.container}>
-				<ActivityIndicator size="large" />
-				<Text>Inicjalizacja bazy danych...</Text>
-			</View>
-		)
-	}
-
-	// 2. Funkcja dodająca testowy rekord (striggeruje odczytanie z bazy jako osobny proces)
-	const handleAddUser = async () => {
-		try {
-			const testName = "Tym"
-
-			await db.insert(users).values({ name: testName })
-
-			await fetchUsers()
-		} catch (err) {
-			console.error("Błąd zapisu:", err)
-		}
-	}
+	}, [])
 
 	return (
 		<ScrollView
 			style={styles.scrollView}
-			contentContainerStyle={styles.container}
+			contentContainerStyle={[styles.container, { paddingTop: status === "GUEST" ? 0 : 50 }]}
 			showsVerticalScrollIndicator={false}
 		>
 			{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
 			<ThemedView variant="wide" colorName="tertiary_base_2" style={styles.headerRow}>
 				<ThemedText
-					tx="home.greeting"
+					tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
 					txOptions={{ name: userName.toLocaleUpperCase() }}
 					colorName="primary_base"
 					style={{ textAlign: "left" }}
 				/>
-				<TouchableOpacity style={styles.handIconContainer} onPress={handleAddUser}>
+				<View style={styles.handIconContainer}>
 					<Ionicons name="hand-left" size={48} color={colors.primary_base} />
-				</TouchableOpacity>
+				</View>
 			</ThemedView>
 
 			{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
@@ -290,7 +240,6 @@ const getStyles = (colors: ThemeColors) => {
 		},
 		container: {
 			paddingHorizontal: 24,
-			paddingTop: 50,
 			paddingBottom: 40,
 		},
 		headerRow: {
@@ -357,6 +306,7 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "stretch",
 			marginBottom: 28,
 			width: "100%",
+			gap: 20,
 		},
 		actionButtonCard: {
 			width: "45%",

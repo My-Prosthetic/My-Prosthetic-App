@@ -24,7 +24,8 @@
 		"accumulatedTitle": "Zgromadzone Środki 💰"
 	},
 	"home": {
-		"greeting": "Cześć,\n{{name}}",
+		"greetingGuest": "Cześć",
+		"greetingUser": "Cześć,\n{{name}}",
 		"dbMigrationErr": "Błąd migracji bazy danych: ",
 		"dbInit": "Inicjalizacja bazy danych...",
 		"myProsthetics": "MOJE PROTEZY",
@@ -43,12 +44,36 @@
 		"switchToLightTheme": "Zmień na jasny motyw ☀️",
 		"addProsthesis": "Dodaj protezę"
 	},
+	"auth": {
+		"alerts": {
+			"loginFailed": "Logowanie nie powiodło się",
+			"guestLoginFailed": "Nie udało się uruchomić trybu gościa",
+			"logoutFailed": "Wylogowanie nie powiodło się"
+		},
+		"errors": {
+			"apiUnavailable": "Usługa uwierzytelniania jest niedostępna. Spróbuj ponownie później.",
+			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.",
+			"invalidCredentials": "Nieprawidłowy email lub hasło.",
+			"emailTaken": "Konto z tym adresem email już istnieje.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa.",
+			"validationFailed": "Nie udało się zweryfikować danych. Sprawdź formularz.",
+			"requestFailed": "Żądanie nie powiodło się. Spróbuj ponownie.",
+			"unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+			"sessionSetupFailed": "Nie udało się przygotować sesji. Spróbuj ponownie.",
+			"guestSessionSetupFailed": "Nie udało się uruchomić trybu gościa. Spróbuj ponownie.",
+			"logoutCredentialsReadFailed": "Nie udało się odczytać danych sesji. Spróbuj ponownie.",
+			"logoutCleanupFailed": "Nie udało się wyczyścić danych lokalnych. Pozostajesz w bieżącej sesji."
+		}
+	},
 	"common": {
 		"cancel": "ANULUJ",
 		"error": "Błąd",
 		"save": "ZAPISZ",
 		"delete": "Usuń",
-		"today": "Dzisiaj"
+		"today": "Dzisiaj",
+		"mp": "My Prosthetics"
 	},
 	"funds": {
 		"title": "DOFINANSOWANIA",
@@ -297,5 +322,50 @@
 		"limb": "KOŃCZYNA",
 		"amputationLevel": "POZIOM AMPUTACJI",
 		"notFound": "Nie znaleziono protezy."
+	},
+	"login": {
+		"logIn": "Zaloguj",
+		"createAccount": "Stwórz konto",
+		"useWithoutAccount": "Korzystaj bez konta",
+		"areYouSure": "Czy na pewno chcesz korzystać bez konta?",
+		"onlyLocal": "Korzystając z aplikacji bez konta Twoje dane są przetwarzane i przechowywane wyłącznie w pamięci lokalnej urządzenia.",
+		"itResultsIn": "Powoduje to:",
+		"noCopy": "Brak kopii zapasowej",
+		"constraints": "Ograniczenia w udostępnianiu historii medycznej specjalistom.",
+		"alreadyHaveAccount": "Masz już konto?",
+		"noAccount": "Nie masz konta?",
+		"email": "Email",
+		"password": "Hasło",
+		"validation": {
+			"required": "Wpisz email i hasło.",
+			"invalidEmail": "Podaj prawidłowy adres email."
+		},
+		"forgotPassword": "Nie pamiętasz hasła?",
+		"reset": "Resetuj",
+		"continueGoogle": "Kontynuuj z Google",
+		"continueFacebook": "Kontynuuj z Facebook"
+	},
+	"signup": {
+		"firstName": "Imię",
+		"lastName": "Nazwisko",
+		"emailPlaceholder": "adres@email.com",
+		"repeatPassword": "Powtórz hasło",
+		"register": "Zarejestruj",
+		"passwordRequirements": "Wymagania hasła",
+		"passwordRules": {
+			"minLength": "Min. 8 znaków",
+			"uppercase": "Co najmniej 1 wielka litera",
+			"lowercase": "Co najmniej 1 mała litera",
+			"number": "Co najmniej 1 cyfra",
+			"symbol": "Co najmniej 1 znak specjalny",
+			"match": "Hasła są takie same"
+		},
+		"validation": {
+			"required": "Uzupełnij wszystkie wymagane pola.",
+			"nameTooLong": "Imię i nazwisko mogą mieć maksymalnie 255 znaków.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
+		}
 	}
 }
