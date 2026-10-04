@@ -2,6 +2,7 @@ import * as Crypto from "expo-crypto"
 import { and, asc, eq, inArray, sql } from "drizzle-orm"
 
 import { db } from "../client"
+import { brands } from "../schema/prostheses/brands"
 import { models } from "../schema/prostheses/models"
 import type { ComponentType } from "@/src/constants/componentTypes"
 
@@ -12,6 +13,10 @@ export type CreateModelInput = {
 	brandId: string
 	type: ComponentType
 	name: string
+}
+
+export type ModelNameMatch = Pick<Model, "id" | "brandId" | "name" | "type"> & {
+	brandName: string
 }
 
 export async function getModelById(id: string) {
@@ -32,7 +37,7 @@ export async function getModelById(id: string) {
 
 export async function getModelsByBrandAndType(
 	brandId: string,
-	type: ComponentType,
+	type: ComponentType
 ): Promise<Model[]> {
 	try {
 		return await db
@@ -46,10 +51,32 @@ export async function getModelsByBrandAndType(
 	}
 }
 
+export async function findModelsByName(
+	name: string,
+	type: ComponentType
+): Promise<ModelNameMatch[]> {
+	try {
+		return await db
+			.select({
+				id: models.id,
+				brandId: models.brandId,
+				name: models.name,
+				type: models.type,
+				brandName: brands.name,
+			})
+			.from(models)
+			.innerJoin(brands, eq(models.brandId, brands.id))
+			.where(and(eq(models.type, type), sql`lower(${models.name}) = lower(${name.trim()})`))
+	} catch (error) {
+		console.error("Failed to find models by name", error)
+		throw error
+	}
+}
+
 export async function searchModels(
 	brandId: string,
 	type: ComponentType[],
-	query: string,
+	query: string
 ): Promise<Model[]> {
 	try {
 		if (type.length === 0) {
@@ -63,8 +90,8 @@ export async function searchModels(
 				and(
 					sql`${models.brandId} = ${brandId}`,
 					inArray(models.type, type),
-					sql`lower(${models.name}) LIKE ${`%${query.toLowerCase()}%`}`,
-				),
+					sql`lower(${models.name}) LIKE ${`%${query.toLowerCase()}%`}`
+				)
 			)
 			.orderBy(models.name)
 	} catch (error) {
@@ -82,8 +109,8 @@ export async function createModel(input: CreateModelInput): Promise<Model | null
 				and(
 					sql`${models.brandId} = ${input.brandId}`,
 					sql`${models.type} = ${input.type}`,
-					sql`lower(${models.name}) = lower(${input.name})`,
-				),
+					sql`lower(${models.name}) = lower(${input.name})`
+				)
 			)
 			.limit(1)
 

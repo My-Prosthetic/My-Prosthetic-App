@@ -68,9 +68,9 @@
 		}
 	},
 	"common": {
-		"cancel": "ANULUJ",
+		"cancel": "Anuluj",
 		"error": "Błąd",
-		"save": "ZAPISZ",
+		"save": "Zapisz",
 		"delete": "Usuń",
 		"today": "Dzisiaj",
 		"mp": "My Prosthetics"
@@ -397,11 +397,33 @@
 			"category": "Wybierz kategorię",
 			"brand": "Wybierz markę",
 			"loadingBrands": "Ładowanie marek...",
+			"searchBrand": "Wyszukaj markę",
 			"model": "Wybierz model",
 			"loadingModels": "Ładowanie modeli...",
-			"addCustomModel": "Dodaj własny model",
+			"searchModel": "Wyszukaj model",
+			"addCustomModel": "Dodaj własny model +",
 			"selectBrandFirst": "Najpierw wybierz markę",
+			"brandName": "Wpisz nazwę marki",
+			"modelName": "Wpisz nazwę modelu",
 			"description": "Wpisz krótki opis, np. nr decyzji..."
+		},
+		"customOption": {
+			"successTitle": "Dodano"
+		},
+		"customBrand": {
+			"add": "Dodaj nową markę",
+			"title": "Dodaj markę",
+			"alreadyExists": "Ta marka już znajduje się w bazie.",
+			"created": "Dodałeś nową markę. W przyszłości możesz już z niej korzystać bez dodawania ponownie."
+		},
+		"customModel": {
+			"add": "Dodaj nowy model",
+			"title": "Dodaj model",
+			"duplicateTitle": "Model już istnieje",
+			"duplicateMessage": "Taki model występuje już w katalogu producenta marki {{existingBrand}}. Czy na pewno chcesz tworzyć nowy model dla marki {{selectedBrand}}?",
+			"confirm": "Utwórz nowy",
+			"alreadyExistsForBrand": "Taki model jest już dostępny dla wybranej marki i kategorii.",
+			"created": "Dodałeś nowy model. W przyszłości możesz już z niego korzystać bez dodawania ponownie."
 		},
 		"hints": {
 			"selectBrandForModel": "Aby wybrać model, najpierw wybierz markę podzespołu."
@@ -426,6 +448,8 @@
 		"errors": {
 			"loadBrands": "Nie udało się pobrać listy marek.",
 			"loadModels": "Nie udało się pobrać listy modeli.",
+			"createBrand": "Nie udało się zapisać nowej marki.",
+			"createModel": "Nie udało się zapisać nowego modelu.",
 			"saveComponent": "Nie udało się zapisać komponentu."
 		},
 		"validation": {
