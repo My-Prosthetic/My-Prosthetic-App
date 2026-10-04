@@ -10,9 +10,11 @@ import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
 import { formatDate } from "@/src/utils/dateFormatter"
 
+import { COMPONENT_TYPES, ComponentType } from "../constants/componentTypes"
+
 export type ComponentFilters = {
 	status: "all" | "active" | "historical"
-	types: Component["type"][]
+	types: ComponentType[]
 	assemblyFrom: Date | null
 	assemblyTo: Date | null
 	warranty: "all" | "endingSoon" | "expired" | "noDate"
@@ -35,8 +37,6 @@ interface ComponentFiltersModalProps {
 	onApply: (filters: ComponentFilters) => void
 }
 
-const componentTypes: Component["type"][] = ["socket", "knee", "foot", "liner", "adapter", "other"]
-
 export function ComponentFiltersModal({
 	visible,
 	filters,
@@ -52,7 +52,7 @@ export function ComponentFiltersModal({
 	}))
 	const [datePickerTarget, setDatePickerTarget] = useState<DateFilterTarget | null>(null)
 
-	const toggleType = (type: Component["type"]) => {
+	const toggleType = (type: ComponentType) => {
 		setDraftFilters((current) => ({
 			...current,
 			types: current.types.includes(type)
@@ -130,7 +130,7 @@ export function ComponentFiltersModal({
 
 							<ThemedText tx="prosthesisDetails.filters.category" variant="tab1Category" />
 							<View style={styles.choiceWrap}>
-								{componentTypes.map((type) =>
+								{COMPONENT_TYPES.map((type) =>
 									renderChoice(
 										t(`prosthesisDetails.filters.types.${type}`),
 										draftFilters.types.includes(type),

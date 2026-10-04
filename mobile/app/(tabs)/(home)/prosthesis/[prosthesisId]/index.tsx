@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next"
 import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
 import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
-import type { Component } from "@/db/repositories/componentRepository"
+import type { ComponentWithRelations } from "@/db/repositories/componentRepository"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
@@ -58,7 +58,7 @@ export default function ProsthesisDetailsScreen() {
 	const hasValidProsthesisId = typeof prosthesisId === "string" && prosthesisId.length > 0
 
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
-	const [components, setComponents] = useState<Component[]>([])
+	const [components, setComponents] = useState<ComponentWithRelations[]>([])
 	const [isLoading, setIsLoading] = useState(hasValidProsthesisId)
 	const [areComponentsLoading, setAreComponentsLoading] = useState(hasValidProsthesisId)
 	const [areComponentsExpanded, setAreComponentsExpanded] = useState(false)
@@ -130,7 +130,10 @@ export default function ProsthesisDetailsScreen() {
 		return components.filter((component) => {
 			if (componentFilters.status === "active" && component.isHistorical) return false
 			if (componentFilters.status === "historical" && !component.isHistorical) return false
-			if (componentFilters.types.length > 0 && !componentFilters.types.includes(component.type)) {
+			if (
+				componentFilters.types.length > 0 &&
+				!componentFilters.types.includes(component.model.type)
+			) {
 				return false
 			}
 
@@ -335,10 +338,11 @@ export default function ProsthesisDetailsScreen() {
 										showsVerticalScrollIndicator
 									>
 										{visibleComponents.map((component) => {
-											const title = component.model?.trim() || component.type
+											const title = component.model?.name.trim() || component.model.type
 											const description =
-												[component.brand, component.description].filter(Boolean).join(" | ") ||
-												component.type
+												[component.model.brand.name, component.description]
+													.filter(Boolean)
+													.join(" | ") || component.model.type
 
 											return (
 												<ThemedView

@@ -1,0 +1,20 @@
+{
+	"lastUpdated": "2026-10-04",
+	"catalogue": [
+		{
+			"id": "ottobock",
+			"name": "Ottobock",
+			"models": [
+				{ "id": "c-walk", "name": "C-Walk", "type": "foot" },
+				{ "id": "genium", "name": "Genium X3", "type": "knee" }
+			]
+		},
+		{
+			"id": "ossur",
+			"name": "Össur",
+			"models": [
+        { "id": "cheetah", "name": "Cheetah Xtend", "type": "foot" }
+      ]
+		}
+	]
+}

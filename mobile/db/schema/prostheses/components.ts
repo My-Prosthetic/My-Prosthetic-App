@@ -1,5 +1,7 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { prostheses } from "./prostheses"
+import { models } from "./models"
+import { relations } from "drizzle-orm"
 
 export const components = sqliteTable(
 	"components",
@@ -8,20 +10,15 @@ export const components = sqliteTable(
 
 		prosthesisId: text("prosthesis_id")
 			.notNull()
-			.references(() => prostheses.id),
+			.references(() => prostheses.id, { onDelete: "restrict" }),
 
-		type: text("type", {
-			enum: ["socket", "knee", "foot", "liner", "adapter", "other"],
-		}).notNull(),
-
-		brand: text("brand"),
-		model: text("model"),
+		modelId: text("model_id")
+			.notNull()
+			.references(() => models.id, { onDelete: "restrict" }),
 
 		isFinal: integer("is_final", {
 			mode: "boolean",
-		})
-			.notNull()
-			.default(false),
+		}).default(true),
 
 		isHistorical: integer("is_historical", {
 			mode: "boolean",
@@ -29,25 +26,21 @@ export const components = sqliteTable(
 			.notNull()
 			.default(false),
 
-		assemblyDate: text("assembly_date"),
+		assemblyDate: text("assembly_date").notNull(),
+
 		warrantyEndDate: text("warranty_end_date"),
+
 		expectedExchangeDate: text("expected_exchange_date"),
+
 		description: text("description"),
 
-		remindExchangeEmail: integer("remind_exchange_email", { mode: "boolean" })
-			.notNull()
-			.default(false),
-		remindExchangeApp: integer("remind_exchange_app", { mode: "boolean" }).notNull().default(false),
-		remindExchangePush: integer("remind_exchange_push", { mode: "boolean" })
-			.notNull()
-			.default(false),
-		remindWarrantyEmail: integer("remind_warranty_email", { mode: "boolean" })
-			.notNull()
-			.default(false),
-		remindWarrantyApp: integer("remind_warranty_app", { mode: "boolean" }).notNull().default(false),
-		remindWarrantyPush: integer("remind_warranty_push", { mode: "boolean" })
-			.notNull()
-			.default(false),
+		remindExchangeEmail: integer("remind_exchange_email", { mode: "boolean" }),
+		remindExchangeApp: integer("remind_exchange_app", { mode: "boolean" }),
+		remindExchangePush: integer("remind_exchange_push", { mode: "boolean" }),
+
+		remindWarrantyEmail: integer("remind_warranty_email", { mode: "boolean" }),
+		remindWarrantyApp: integer("remind_warranty_app", { mode: "boolean" }),
+		remindWarrantyPush: integer("remind_warranty_push", { mode: "boolean" }),
 
 		createdAt: text("created_at").notNull(),
 
@@ -63,3 +56,10 @@ export const components = sqliteTable(
 	},
 	(table) => [index("components_prosthesis_id_idx").on(table.prosthesisId)]
 )
+
+export const componentsRelations = relations(components, ({ one }) => ({
+	model: one(models, {
+		fields: [components.modelId],
+		references: [models.id],
+	}),
+}))

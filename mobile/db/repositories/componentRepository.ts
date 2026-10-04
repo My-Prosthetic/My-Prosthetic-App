@@ -6,15 +6,14 @@ import { prostheses } from "@/db/schema/prostheses/prostheses"
 import { components } from "@/db/schema/prostheses/components"
 
 export type Component = typeof components.$inferSelect
+export type ComponentWithRelations = NonNullable<Awaited<ReturnType<typeof getComponentById>>>
 
 export type CreateComponentInput = {
 	prosthesisId: string
-	type: "socket" | "knee" | "foot" | "liner" | "adapter" | "other"
-	brand?: string
-	model?: string
+	modelId: string
 	isFinal?: boolean
-	isHistorical?: boolean
-	assemblyDate?: string
+	isHistorical: boolean
+	assemblyDate: string
 	warrantyEndDate?: string
 	expectedExchangeDate?: string
 	description?: string
@@ -59,19 +58,34 @@ export async function createComponent(input: CreateComponentInput) {
 }
 
 export async function getComponentById(id: string) {
-	const [component] = await db
-		.select()
-		.from(components)
-		.where(and(eq(components.id, id), isNull(components.deletedAt)))
+	const component = await db.query.components.findFirst({
+		where: (fields, { eq, and, isNull }) => and(eq(fields.id, id), isNull(fields.deletedAt)),
+		with: {
+			model: {
+				with: {
+					brand: true,
+				},
+			},
+		},
+	})
 
 	return component ?? null
 }
 
 export async function getComponentsByProsthesisId(prosthesisId: string) {
-	return db
-		.select()
-		.from(components)
-		.where(and(eq(components.prosthesisId, prosthesisId), isNull(components.deletedAt)))
+	const component = await db.query.components.findMany({
+		where: (fields, { eq, and, isNull }) =>
+			and(eq(fields.prosthesisId, prosthesisId), isNull(fields.deletedAt)),
+		with: {
+			model: {
+				with: {
+					brand: true,
+				},
+			},
+		},
+	})
+
+	return component ?? null
 }
 
 export async function updateComponent(id: string, input: UpdateComponentInput) {

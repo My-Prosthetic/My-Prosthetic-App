@@ -11,7 +11,7 @@ import { formatDate } from "@/src/utils/dateFormatter"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { createComponent } from "@/db/repositories/componentRepository"
-import type { Component } from "@/db/repositories/componentRepository"
+import { ComponentType } from "@/src/constants/componentTypes"
 
 //TODO tx (placeholders, ThemedText and //tx comments)
 //TODO mocks
@@ -21,9 +21,9 @@ export default function NewComponentScreen() {
 	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
 	const { colors } = useTheme()
 
-	const [category, setCategory] = useState<Component["type"]>("socket")
-	const [brand, setBrand] = useState("Ottobock")
-	const [model, setModel] = useState("Rękawica kosmetyczna")
+	const [category, setCategory] = useState<ComponentType>("socket")
+	const [brand, setBrand] = useState("")
+	const [model, setModel] = useState("")
 	const [assemblyDate, setAssemblyDate] = useState(new Date())
 	const [warrantyEndDate, setWarrantyEndDate] = useState(new Date())
 	const [expectedExchangeDate, setExpectedExchangeDate] = useState(new Date())
@@ -47,7 +47,7 @@ export default function NewComponentScreen() {
 	const [description, setDescription] = useState("")
 
 	const handleOnAddFiles = () => {
-		// TODO: Implement file picker / upload logic
+		// TODO
 	}
 
 	const handleSave = async () => {
@@ -55,13 +55,26 @@ export default function NewComponentScreen() {
 			return
 		}
 
+		const missingFields = [
+			!category && "Kategoria podzespołu", //TODO tx
+			!brand.trim() && "Marka podzespołu",
+			!model.trim() && "Model",
+			(!(assemblyDate instanceof Date) || Number.isNaN(assemblyDate.getTime())) && "Data montażu",
+		].filter(Boolean)
+
+		if (missingFields.length > 0) {
+			Alert.alert(
+				"Uzupełnij wymagane pola",
+				`Wypełnij pola oznaczone *:\n${missingFields.map((field) => `• ${field}`).join("\n")}`
+			)
+			return
+		}
+
 		try {
 			setIsSaving(true)
 			await createComponent({
 				prosthesisId,
-				type: category,
-				brand: brand.trim(),
-				model: model.trim(),
+				modelId: model.trim(),
 				isFinal,
 				isHistorical,
 				assemblyDate: assemblyDate.toISOString(),
@@ -84,7 +97,7 @@ export default function NewComponentScreen() {
 		}
 	}
 
-	const componentCategories: { label: string; value: Component["type"] }[] = [
+	const componentCategories: { label: string; value: ComponentType }[] = [
 		{ label: "Lej protezowy", value: "socket" },
 		{ label: "Kolano", value: "knee" },
 		{ label: "Stopa protezowa", value: "foot" },
@@ -109,7 +122,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Kategoria podzespołu
+						Kategoria podzespołu *
 					</ThemedText>
 					<DropdownSelect
 						label="category"
@@ -121,8 +134,8 @@ export default function NewComponentScreen() {
 				</View>
 
 				{/* Przełączniki: Rodzaj leja & Typ komponentu */}
-				{category === "socket" && (
-					<View style={styles.switchRowsContainer}>
+				<View style={styles.switchRowsContainer}>
+					{category === "socket" && (
 						<View style={styles.switchRow}>
 							<ThemedText variant="tab1Category" colorName="secondary_base_0c">
 								RODZAJ LEJA:
@@ -143,29 +156,28 @@ export default function NewComponentScreen() {
 								</ThemedText>
 							</View>
 						</View>
-
-						<View style={styles.switchRow}>
-							<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-								TYP KOMPONENTU:
+					)}
+					<View style={styles.switchRow}>
+						<ThemedText variant="tab1Category" colorName="secondary_base_0c">
+							TYP KOMPONENTU:
+						</ThemedText>
+						<View style={styles.toggleContainer}>
+							<ThemedText variant="subTitle1" colorName="primary_base">
+								aktywny
 							</ThemedText>
-							<View style={styles.toggleContainer}>
-								<ThemedText variant="subTitle1" colorName="primary_base">
-									aktywny
-								</ThemedText>
-								<Switch
-									value={isHistorical}
-									onValueChange={setIsHistorical}
-									trackColor={{ false: colors.primary_base_2, true: colors.primary_base }}
-									thumbColor={colors.tertiary_base_1}
-									style={styles.switch}
-								/>
-								<ThemedText variant="subTitle1" colorName="primary_base" style={{}}>
-									historyczny
-								</ThemedText>
-							</View>
+							<Switch
+								value={isHistorical}
+								onValueChange={setIsHistorical}
+								trackColor={{ false: colors.primary_base_2, true: colors.primary_base }}
+								thumbColor={colors.tertiary_base_1}
+								style={styles.switch}
+							/>
+							<ThemedText variant="subTitle1" colorName="primary_base" style={{}}>
+								historyczny
+							</ThemedText>
 						</View>
 					</View>
-				)}
+				</View>
 
 				{/* Marka podzespołu */}
 				<View style={styles.fieldGroup}>
@@ -174,13 +186,18 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Marka podzespołu
+						Marka podzespołu *
 					</ThemedText>
 					<DropdownSelect
 						label="brand"
 						placeholder="Wybierz markę"
 						value={brand}
-						onChange={setBrand}
+						onChange={(value) => {
+							if (value !== brand) {
+								setModel("")
+							}
+							setBrand(value)
+						}}
 						options={mockBrands}
 					/>
 				</View>
@@ -192,15 +209,33 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Model
+						Model *
 					</ThemedText>
-					<DropdownSelect
-						label="model"
-						placeholder="Wybierz model"
-						value={model}
-						onChange={setModel}
-						options={mockModels}
-					/>
+					{brand ? (
+						<DropdownSelect
+							label="model"
+							placeholder="Wybierz model"
+							value={model}
+							onChange={setModel}
+							options={mockModels}
+						/>
+					) : (
+						<>
+							<View
+								style={[
+									styles.modelUnavailable,
+									{ backgroundColor: colors.tertiary_base_3, borderColor: colors.primary_base_2 },
+								]}
+							>
+								<ThemedText variant="main1Button" colorName="primary_base_3">
+									Najpierw wybierz markę
+								</ThemedText>
+							</View>
+							<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+								Aby wybrać model, najpierw wybierz markę podzespołu.
+							</ThemedText>
+						</>
+					)}
 				</View>
 
 				{/* Data montażu */}
@@ -210,7 +245,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Data montażu:
+						Data montażu: *
 					</ThemedText>
 					<ThemedView
 						borderColor="primary_base_2"
@@ -460,6 +495,14 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		paddingVertical: 0,
 		paddingHorizontal: 10,
+	},
+	modelUnavailable: {
+		minHeight: 48,
+		borderWidth: 1,
+		borderRadius: 16,
+		justifyContent: "center",
+		paddingHorizontal: 16,
+		opacity: 0.6,
 	},
 	textArea: {
 		minHeight: 90,
