@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
+import { Roboto_500Medium } from "@expo-google-fonts/roboto"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
@@ -32,6 +33,8 @@ export default function RootLayout() {
 
 		"Inter-Regular": require("@/assets/fonts/Inter/Inter_18pt-Regular.ttf"),
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
+
+		Roboto_500Medium,
 	})
 
 	useEffect(() => {

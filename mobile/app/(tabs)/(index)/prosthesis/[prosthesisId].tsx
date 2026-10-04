@@ -1,183 +1,183 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useState } from "react"
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native"
-
 import { Ionicons } from "@expo/vector-icons"
-import { useLocalSearchParams, useRouter } from "expo-router"
-import { useTranslation } from "react-i18next"
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 
-import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
-import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { useTheme } from "@/context/ThemeContext"
+import {
+	getAllComponentsByProsthesisId,
+	type Component,
+} from "@/db/repositories/componentRepository"
+import { getProsthesisById, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-
-const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
-	hemipelvectomy: "newProsthesis.amputationLevels.lower.hemipelvectomy",
-	hip_disarticulation: "newProsthesis.amputationLevels.lower.hipDisarticulation",
-	short_thigh: "newProsthesis.amputationLevels.lower.shortThigh",
-	medium_thigh: "newProsthesis.amputationLevels.lower.mediumThigh",
-	long_thigh: "newProsthesis.amputationLevels.lower.longThigh",
-	knee_disarticulation: "newProsthesis.amputationLevels.lower.kneeDisarticulation",
-	short_lower_leg: "newProsthesis.amputationLevels.lower.shortLowerLeg",
-	medium_lower_leg: "newProsthesis.amputationLevels.lower.mediumLowerLeg",
-	long_lower_leg: "newProsthesis.amputationLevels.lower.longLowerLeg",
-	syme: "newProsthesis.amputationLevels.lower.syme",
-	partial_foot: "newProsthesis.amputationLevels.lower.partialFoot",
-	forequarter: "newProsthesis.amputationLevels.upper.forequarter",
-	shoulder_disarticulation: "newProsthesis.amputationLevels.upper.shoulderDisarticulation",
-	short_upper_arm: "newProsthesis.amputationLevels.upper.shortUpperArm",
-	medium_upper_arm: "newProsthesis.amputationLevels.upper.mediumUpperArm",
-	long_upper_arm: "newProsthesis.amputationLevels.upper.longUpperArm",
-	elbow_disarticulation: "newProsthesis.amputationLevels.upper.elbowDisarticulation",
-	short_forearm: "newProsthesis.amputationLevels.upper.shortForearm",
-	medium_forearm: "newProsthesis.amputationLevels.upper.mediumForearm",
-	long_forearm: "newProsthesis.amputationLevels.upper.longForearm",
-	wrist_disarticulation: "newProsthesis.amputationLevels.upper.wristDisarticulation",
-	partial_hand: "newProsthesis.amputationLevels.upper.partialHand",
-}
+import { ComponentsPanel } from "@/src/components/prosthesis/details/ComponentsPanel"
+import { EditProsthesisModal } from "@/src/components/prosthesis/details/EditProsthesisModal"
+import { ProsthesisSummary } from "@/src/components/prosthesis/details/ProsthesisSummary"
 
 export default function ProsthesisDetailsScreen() {
 	const router = useRouter()
 	const { colors } = useTheme()
-	const { t } = useTranslation()
-
-	const { prosthesisId } = useLocalSearchParams<{
-		prosthesisId: string
-	}>()
+	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
 
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
+	const [components, setComponents] = useState<Component[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [editVisible, setEditVisible] = useState(false)
 
-	useEffect(() => {
-		let mounted = true
+	useFocusEffect(
+		useCallback(() => {
+			let mounted = true
 
-		const loadProsthesis = async () => {
-			if (!prosthesisId || typeof prosthesisId !== "string") {
-				if (mounted) {
-					setIsLoading(false)
+			const load = async () => {
+				if (!prosthesisId || typeof prosthesisId !== "string") {
+					if (mounted) setIsLoading(false)
+					return
 				}
-				return
+
+				try {
+					const [prosthesisResult, componentsResult] = await Promise.all([
+						getProsthesisById(prosthesisId),
+						getAllComponentsByProsthesisId(prosthesisId),
+					])
+
+					if (mounted) {
+						setProsthesis(prosthesisResult)
+						setComponents(componentsResult)
+					}
+				} catch (error) {
+					console.error("Failed to load prosthesis:", error)
+				} finally {
+					if (mounted) setIsLoading(false)
+				}
 			}
 
-			try {
-				const result = await getProsthesisById(prosthesisId)
+			void load()
 
-				if (mounted) {
-					setProsthesis(result)
-				}
-			} catch (error) {
-				console.error("Failed to load prosthesis:", error)
-			} finally {
-				if (mounted) {
-					setIsLoading(false)
-				}
+			return () => {
+				mounted = false
 			}
-		}
+		}, [prosthesisId])
+	)
 
-		loadProsthesis()
+	if (isLoading) {
+		return (
+			<ThemedView colorName="tertiary_base_1" style={styles.centered}>
+				<ActivityIndicator size="large" color={colors.primary_base} />
+			</ThemedView>
+		)
+	}
 
-		return () => {
-			mounted = false
-		}
-	}, [prosthesisId])
-
-	const amputationLevelKey = prosthesis
-		? AMPUTATION_LEVEL_KEYS[prosthesis.amputationLevel]
-		: undefined
-
-	const amputationLevelLabel = prosthesis
-		? amputationLevelKey
-			? t(amputationLevelKey as any)
-			: prosthesis.amputationLevel
-		: ""
+	if (!prosthesis) {
+		return (
+			<ThemedView colorName="tertiary_base_1" style={styles.centered}>
+				<ThemedText tx="prosthesisDetails.notFound" variant="subTitle2" colorName="primary_base" />
+			</ThemedView>
+		)
+	}
 
 	return (
 		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
-			<ThemedView colorName="primary_base" style={styles.header}>
-				<ThemedView
-					colorName="primary_base"
-					style={styles.backButton}
-					onPress={() => router.back()}
-					accessibilityRole="button"
-					accessibilityLabel={t("newProsthesis.back")}
-				>
-					<Ionicons name="chevron-back" size={28} color={colors.accent_base} />
-				</ThemedView>
+			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+				<ScreenHeader onBack={() => router.back()} />
 
-				<ThemedText tx="prosthesisDetails.title" variant="title" colorName="accent_base" />
-			</ThemedView>
+				<ProsthesisSummary prosthesis={prosthesis} onEdit={() => setEditVisible(true)} />
 
-			{isLoading ? (
-				<View style={styles.centered}>
-					<ActivityIndicator size="large" color={colors.primary_base} />
-				</View>
-			) : !prosthesis ? (
-				<View style={styles.centered}>
-					<ThemedText
-						tx="prosthesisDetails.notFound"
-						variant="subTitle2"
-						colorName="primary_base"
-					/>
-				</View>
-			) : (
-				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<ThemedView colorName="primary_base" style={styles.iconCard}>
-						<Ionicons name="body-outline" size={64} color={colors.accent_base} />
-					</ThemedView>
+				<PrimaryActionRow tx="prosthesisDetails.addIncident" iconName="add" />
 
-					<ThemedText variant="title" colorName="primary_base" style={styles.name}>
-						{prosthesis.name}
-					</ThemedText>
+				<ComponentsPanel
+					components={components}
+					onOpenComponent={(componentId) =>
+						router.push(`/(tabs)/(index)/component/${componentId}` as any)
+					}
+				/>
 
-					<ThemedView
-						colorName="tertiary_base_3"
-						borderColor="secondary_base_0c"
-						style={styles.infoCard}
-					>
-						<InfoRow
-							label={t("prosthesisDetails.side")}
-							value={
-								prosthesis.side === "left" ? t("newProsthesis.left") : t("newProsthesis.right")
-							}
-						/>
+				<ProsthesisFilesSection />
+			</ScrollView>
 
-						<InfoRow
-							label={t("prosthesisDetails.limb")}
-							value={
-								prosthesis.limbType === "upper"
-									? t("newProsthesis.upper")
-									: t("newProsthesis.lower")
-							}
-						/>
-
-						<InfoRow
-							label={t("prosthesisDetails.amputationLevel")}
-							value={amputationLevelLabel}
-							isLast
-						/>
-					</ThemedView>
-				</ScrollView>
-			)}
+			<EditProsthesisModal
+				visible={editVisible}
+				prosthesis={prosthesis}
+				onClose={() => setEditVisible(false)}
+				onSaved={setProsthesis}
+			/>
 		</ThemedView>
 	)
 }
 
-interface InfoRowProps {
-	label: string
-	value: string
-	isLast?: boolean
+function ScreenHeader({ onBack }: { onBack: () => void }) {
+	const { colors } = useTheme()
+
+	return (
+		<View style={styles.topBar}>
+			<ThemedView colorName="tertiary_base_1" onPress={onBack} style={styles.backButton}>
+				<Ionicons name="chevron-back" size={20} color={colors.primary_base} />
+			</ThemedView>
+			<ThemedText
+				tx="prosthesisDetails.title"
+				variant="title"
+				colorName="primary_base"
+				style={styles.pageTitle}
+			/>
+		</View>
+	)
 }
 
-function InfoRow({ label, value, isLast = false }: InfoRowProps) {
-	return (
-		<View style={[styles.infoRow, !isLast && styles.infoRowBorder]}>
-			<ThemedText variant="subTitle2" colorName="secondary_base_0c" style={styles.infoLabel}>
-				{label}
-			</ThemedText>
+function PrimaryActionRow({
+	tx,
+	iconName,
+	onPress,
+}: {
+	tx: string
+	iconName: React.ComponentProps<typeof Ionicons>["name"]
+	onPress?: () => void
+}) {
+	const { colors } = useTheme()
 
-			<ThemedText variant="body1Regular" colorName="primary_base" style={styles.infoValue}>
-				{value}
-			</ThemedText>
+	return (
+		<ThemedView colorName="tertiary_base_1" onPress={onPress} style={styles.primaryActionRow}>
+			<ThemedView colorName="primary_base" style={styles.primaryActionIcon}>
+				<Ionicons name={iconName} size={30} color={colors.accent_base} />
+			</ThemedView>
+			<ThemedText
+				tx={tx as any}
+				variant="main1Button"
+				colorName="primary_base"
+				style={styles.primaryActionText}
+			/>
+		</ThemedView>
+	)
+}
+
+function ProsthesisFilesSection() {
+	const { colors } = useTheme()
+
+	return (
+		<View style={styles.filesSection}>
+			<ThemedText
+				tx="prosthesisDetails.photosAndFiles"
+				variant="subTitle2"
+				colorName="neutral_text"
+				style={styles.filesTitle}
+			/>
+			<ThemedView colorName="neutral_gray" style={styles.filePlaceholder} />
+			<ThemedView colorName="tertiary_base_1" style={styles.addFileRow}>
+				<ThemedView colorName="neutral_gray" style={styles.smallAddCircle}>
+					<Ionicons name="add" size={30} color={colors.neutral_text} />
+				</ThemedView>
+				<ThemedText
+					tx="prosthesisDetails.addFile"
+					variant="body1Regular"
+					colorName="neutral_text"
+					style={styles.addFileText}
+				/>
+			</ThemedView>
+			<ThemedText
+				tx="prosthesisDetails.filesHint"
+				variant="body1Regular"
+				colorName="neutral_text"
+				style={styles.filesHint}
+			/>
 		</View>
 	)
 }
@@ -186,88 +186,100 @@ const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
 	},
-
-	header: {
-		width: "100%",
-		minHeight: 86,
-		paddingHorizontal: 20,
-		paddingTop: 18,
-		paddingBottom: 16,
-		borderBottomLeftRadius: 30,
-		borderBottomRightRadius: 30,
-		justifyContent: "center",
-		alignItems: "center",
-		position: "relative",
-	},
-
-	backButton: {
-		position: "absolute",
-		left: 16,
-		top: 18,
-		bottom: 16,
-		justifyContent: "center",
-		alignItems: "center",
-		zIndex: 2,
-	},
-
 	centered: {
 		flex: 1,
-		justifyContent: "center",
 		alignItems: "center",
-		paddingHorizontal: 24,
+		justifyContent: "center",
 	},
-
 	content: {
-		paddingHorizontal: 24,
-		paddingTop: 28,
-		paddingBottom: 48,
-		alignItems: "center",
+		paddingHorizontal: 18,
+		paddingTop: 10,
+		paddingBottom: 110,
 	},
-
-	iconCard: {
-		width: 120,
-		height: 120,
-		borderRadius: 16,
-		justifyContent: "center",
+	topBar: {
+		flexDirection: "row",
 		alignItems: "center",
-
-		shadowColor: "#052D8F",
-		shadowOffset: {
-			width: 0,
-			height: 3,
-		},
-		shadowOpacity: 0.2,
-		shadowRadius: 5,
-		elevation: 5,
-	},
-
-	name: {
+		marginBottom: 19,
 		marginTop: 20,
-		marginBottom: 20,
-		textAlign: "center",
 	},
-
-	infoCard: {
-		width: "100%",
-		borderWidth: 1,
+	backButton: {
+		width: 26,
+		height: 28,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 1,
+	},
+	pageTitle: {
+		fontSize: 19,
+		lineHeight: 22,
+		fontWeight: "700",
+		letterSpacing: 0.1,
+	},
+	primaryActionRow: {
+		width: "83%",
+		alignSelf: "center",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		marginTop: 18,
+		marginBottom: 18,
+		paddingHorizontal: 37,
+	},
+	primaryActionIcon: {
+		width: 38,
+		height: 38,
+		borderRadius: 19,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 10,
+	},
+	primaryActionText: {
+		fontSize: 18,
+		letterSpacing: 0.04,
+	},
+	filesSection: {
+		alignItems: "center",
+		marginTop: 45,
+	},
+	filesTitle: {
+		fontFamily: "Roboto_500Medium",
+		fontSize: 18,
+		lineHeight: 20,
+		letterSpacing: 0.04,
+		textTransform: "uppercase",
+	},
+	filePlaceholder: {
+		width: 188,
+		height: 188,
+		borderRadius: 7,
+		marginTop: 13,
+		marginBottom: 11,
+	},
+	addFileRow: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	smallAddCircle: {
+		width: 31,
+		height: 31,
 		borderRadius: 16,
-		paddingHorizontal: 16,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 10,
 	},
-
-	infoRow: {
-		paddingVertical: 16,
+	addFileText: {
+		fontFamily: "Roboto_500Medium",
+		fontSize: 12,
+		lineHeight: 20,
+		letterSpacing: 0.04,
 	},
-
-	infoRowBorder: {
-		borderBottomWidth: 1,
-		borderBottomColor: "#CBD5E1",
-	},
-
-	infoLabel: {
-		marginBottom: 4,
-	},
-
-	infoValue: {
-		fontSize: 15,
+	filesHint: {
+		fontFamily: "Roboto_500Medium",
+		maxWidth: 170,
+		marginTop: 8,
+		fontSize: 10,
+		lineHeight: 14,
+		fontWeight: "500",
+		textAlign: "center",
 	},
 })

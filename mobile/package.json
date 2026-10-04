@@ -5,6 +5,7 @@
 	"dependencies": {
 		"@expo-google-fonts/afacad": "^0.4.1",
 		"@expo-google-fonts/inter": "^0.4.2",
+		"@expo-google-fonts/roboto": "^0.4.3",
 		"@expo/vector-icons": "^15.0.2",
 		"drizzle-orm": "^0.45.2",
 		"expo": "~57.0.14",

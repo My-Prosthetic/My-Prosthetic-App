@@ -67,6 +67,10 @@ export async function getComponentsByProsthesisId(prosthesisId: string) {
 		.where(and(eq(components.prosthesisId, prosthesisId), isNull(components.deletedAt)))
 }
 
+export async function getAllComponentsByProsthesisId(prosthesisId: string) {
+	return db.select().from(components).where(eq(components.prosthesisId, prosthesisId))
+}
+
 export async function updateComponent(id: string, input: UpdateComponentInput) {
 	const [component] = await db
 		.update(components)
