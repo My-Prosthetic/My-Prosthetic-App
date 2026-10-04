@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Alert, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
@@ -55,17 +55,6 @@ export function EditProsthesisModal({
 	const [startedAt, setStartedAt] = useState(prosthesis.startedAt ?? prosthesis.createdAt)
 	const [datePickerVisible, setDatePickerVisible] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
-
-	useEffect(() => {
-		if (!visible) return
-
-		setName(prosthesis.name)
-		setSide(prosthesis.side)
-		setLimbType(prosthesis.limbType)
-		setAmputationLevel(prosthesis.amputationLevel as AmputationLevel)
-		setDescription(prosthesis.description ?? "")
-		setStartedAt(prosthesis.startedAt ?? prosthesis.createdAt)
-	}, [visible, prosthesis])
 
 	const canSave = name.trim().length > 0 && amputationLevel !== null && !isSaving
 

@@ -37,13 +37,6 @@ const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
 	partial_hand: "newProsthesis.amputationLevels.upper.partialHand",
 }
 
-const formatDate = (date: string | null | undefined) => {
-	if (!date) return "-"
-
-	const parsedDate = new Date(date)
-	return Number.isNaN(parsedDate.getTime()) ? date : parsedDate.toLocaleDateString()
-}
-
 const formatStartDate = (value: string | null | undefined) => {
 	if (!value) return "-"
 

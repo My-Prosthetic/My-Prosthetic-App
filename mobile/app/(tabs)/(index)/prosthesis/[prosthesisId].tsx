@@ -95,12 +95,14 @@ export default function ProsthesisDetailsScreen() {
 				<ProsthesisFilesSection />
 			</ScrollView>
 
-			<EditProsthesisModal
-				visible={editVisible}
-				prosthesis={prosthesis}
-				onClose={() => setEditVisible(false)}
-				onSaved={setProsthesis}
-			/>
+			{editVisible && (
+				<EditProsthesisModal
+					visible
+					prosthesis={prosthesis}
+					onClose={() => setEditVisible(false)}
+					onSaved={setProsthesis}
+				/>
+			)}
 		</ThemedView>
 	)
 }
