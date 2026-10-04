@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
 	View,
 	Text,
@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
-import { useRouter } from "expo-router"
+import { useFocusEffect, useRouter } from "expo-router"
 
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
@@ -21,6 +21,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { db } from "@/db/client"
 import { users } from "@/db/schema/users"
 import migrations from "@/drizzle/migrations"
+import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 
 //TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
 //TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
@@ -29,7 +30,8 @@ import migrations from "@/drizzle/migrations"
 export default function HomeScreen() {
 	const { success, error } = useMigrations(db, migrations)
 	const [userName, setUserName] = useState<string>("(init value)")
-	const [showAddProsthesisCard, setShowAddProsthesisCard] = useState(false)
+	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
+	const [prosthesisIndex, setProsthesisIndex] = useState(0)
 	const router = useRouter()
 
 	const { t, i18n } = useTranslation()
@@ -51,6 +53,20 @@ export default function HomeScreen() {
 			console.error("Błąd odczytu z bazy:", err)
 		}
 	}
+
+	const fetchProstheses = useCallback(async () => {
+		const allProstheses = await getAllProstheses()
+		setProstheses(allProstheses)
+		setProsthesisIndex((index) => Math.min(index, allProstheses.length))
+	}, [])
+
+	useFocusEffect(
+		useCallback(() => {
+			if (success) {
+				void fetchProstheses()
+			}
+		}, [success, fetchProstheses])
+	)
 
 	// Automatyczny odczyt po załadowaniu bazy i wykonaniu migracji
 	useEffect(() => {
@@ -118,22 +134,20 @@ export default function HomeScreen() {
 				<ThemedText tx="home.myProsthetics" variant="main1Button" style={{ padding: 16 }} />
 
 				<View style={styles.carouselRow}>
-					{/* Lewa strzałka karuzeli */}
 					<TouchableOpacity
 						style={styles.carouselArrow}
-						onPress={() => setShowAddProsthesisCard(false)}
-						disabled={!showAddProsthesisCard}
+						onPress={() => setProsthesisIndex((index) => Math.max(0, index - 1))}
+						disabled={prosthesisIndex === 0}
 						accessibilityRole="button"
 					>
 						<Ionicons
 							name="chevron-back"
 							size={32}
-							color={showAddProsthesisCard ? colors.primary_base : colors.primary_base_3}
+							color={prosthesisIndex === 0 ? colors.primary_base_3 : colors.primary_base}
 						/>
 					</TouchableOpacity>
 
-					{/* Główna karta protezy */}
-					{showAddProsthesisCard ? (
+					{prosthesisIndex === prostheses.length ? (
 						<TouchableOpacity
 							style={styles.prostheticCard}
 							onPress={() => router.push("/prosthesis/new")}
@@ -142,32 +156,40 @@ export default function HomeScreen() {
 							<View style={styles.addProsthesisCircle}>
 								<Ionicons name="add" size={54} color={colors.primary_base} />
 							</View>
-
 							<Text style={styles.prostheticCardText}>{t("home.addProsthesis")}</Text>
 						</TouchableOpacity>
 					) : (
-						<View style={styles.prostheticCard}>
-							{/* Logo protezy */}
+						<TouchableOpacity
+							style={styles.prostheticCard}
+							onPress={() =>
+								router.push({
+									pathname: "/prosthesis/[prosthesisId]",
+									params: { prosthesisId: prostheses[prosthesisIndex].id },
+								})
+							}
+							accessibilityRole="button"
+						>
 							<Image
 								source={require("../../../assets/mp_logo_accent.png")}
 								style={styles.logoImage}
 								resizeMode="contain"
 							/>
-							<Text style={styles.prostheticCardText}>{t("home.prostheticDaily")}</Text>
-						</View>
+							<Text style={styles.prostheticCardText}>{prostheses[prosthesisIndex].name}</Text>
+						</TouchableOpacity>
 					)}
 
-					{/* Prawa strzałka karuzeli */}
 					<TouchableOpacity
 						style={styles.carouselArrow}
-						onPress={() => setShowAddProsthesisCard(true)}
-						disabled={showAddProsthesisCard}
+						onPress={() => setProsthesisIndex((index) => Math.min(prostheses.length, index + 1))}
+						disabled={prosthesisIndex === prostheses.length}
 						accessibilityRole="button"
 					>
 						<Ionicons
 							name="chevron-forward"
 							size={32}
-							color={showAddProsthesisCard ? colors.primary_base_3 : colors.primary_base}
+							color={
+								prosthesisIndex === prostheses.length ? colors.primary_base_3 : colors.primary_base
+							}
 						/>
 					</TouchableOpacity>
 				</View>
