@@ -367,7 +367,71 @@
 		}
 	},
 	"newComponent": {
-		"newComponent": "New component"
+		"newComponent": "New component",
+		"fields": {
+			"category": "Component category",
+			"brand": "Component brand",
+			"model": "Model",
+			"assemblyDate": "Assembly date",
+			"description": "Description",
+			"warrantyEndDate": "Warranty end date",
+			"expectedExchangeDate": "Expected replacement date"
+		},
+		"categories": {
+			"socket": "Prosthetic socket",
+			"knee": "Knee",
+			"foot": "Prosthetic foot",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Other component"
+		},
+		"switches": {
+			"socketType": "SOCKET TYPE:",
+			"test": "test",
+			"final": "final",
+			"componentType": "COMPONENT STATUS:",
+			"active": "active",
+			"historical": "historical"
+		},
+		"placeholders": {
+			"category": "Select a category",
+			"brand": "Select a brand",
+			"loadingBrands": "Loading brands...",
+			"model": "Select a model",
+			"loadingModels": "Loading models...",
+			"addCustomModel": "Add a custom model",
+			"selectBrandFirst": "Select a brand first",
+			"description": "Enter a short description, e.g. decision number..."
+		},
+		"hints": {
+			"selectBrandForModel": "Select a component brand before choosing a model."
+		},
+		"modelsUnavailable": "No models in this category for the selected manufacturer",
+		"sections": {
+			"warrantyAndUsage": "WARRANTY AND USAGE"
+		},
+		"reminders": {
+			"exchangeDate": "REMIND ME ABOUT\nREPLACEMENT DATE",
+			"warrantyEnd": "REMIND ME ABOUT\nWARRANTY EXPIRATION"
+		},
+		"reminderChannels": {
+			"email": "email",
+			"app": "in the\napp",
+			"push": "push\nnotification"
+		},
+		"addFiles": "ADD FILES",
+		"filesDescription": "add photos, documentation,\n3D scans and other files\nrelated to the prosthesis",
+		"save": "Save component",
+		"saving": "Saving...",
+		"errors": {
+			"loadBrands": "Failed to load brands.",
+			"loadModels": "Failed to load models.",
+			"saveComponent": "Failed to save the component."
+		},
+		"validation": {
+			"title": "Complete the required fields",
+			"requiredFields": "Complete the fields marked *:\n{{fields}}"
+		}
 	},
 	"login": {
 		"logIn": "Log in",

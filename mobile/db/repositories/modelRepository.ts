@@ -1,5 +1,5 @@
 import * as Crypto from "expo-crypto"
-import { and, inArray, sql } from "drizzle-orm"
+import { and, asc, eq, inArray, sql } from "drizzle-orm"
 
 import { db } from "../client"
 import { models } from "../schema/prostheses/models"
@@ -26,6 +26,22 @@ export async function getModelById(id: string) {
 		return model ?? null
 	} catch (error) {
 		console.error("Failed to get model by ID", error)
+		throw error
+	}
+}
+
+export async function getModelsByBrandAndType(
+	brandId: string,
+	type: ComponentType,
+): Promise<Model[]> {
+	try {
+		return await db
+			.select()
+			.from(models)
+			.where(and(eq(models.brandId, brandId), eq(models.type, type)))
+			.orderBy(asc(models.name))
+	} catch (error) {
+		console.error("Failed to get models by brand and type", error)
 		throw error
 	}
 }
