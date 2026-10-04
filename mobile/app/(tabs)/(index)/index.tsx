@@ -180,6 +180,7 @@ export default function HomeScreen() {
 					<ThemedText tx="home.addMeasure" variant="main1Button" style={{ textAlign: "center" }} />
 				</ThemedView>
 				<ThemedView
+					onPress={() => router.push("./incident/new")}
 					colorName="accent_base_1"
 					shadow={true}
 					style={[styles.actionButtonCard, { borderWidth: 4, borderColor: colors.primary_base }]}

@@ -26,7 +26,26 @@
 		"experiments": {
 			"typedRoutes": true
 		},
-		"plugins": ["expo-router", "expo-status-bar", "expo-sqlite", "expo-font", "expo-splash-screen"],
+		"plugins": [
+			"expo-router",
+			"expo-status-bar",
+			"expo-sqlite",
+			"expo-font",
+			"expo-splash-screen",
+			[
+				"expo-audio",
+				{
+					"microphonePermission": "Pozwól aplikacji MyProsthetics na nagrywanie notatek głosowych."
+				}
+			],
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "Pozwól aplikacji MyProsthetics na dostęp do zdjęć dołączanych do incydentu.",
+					"cameraPermission": "Pozwól aplikacji MyProsthetics na użycie aparatu do dokumentacji incydentu."
+				}
+			]
+		],
 		"extra": {
 			"router": {},
 			"eas": {

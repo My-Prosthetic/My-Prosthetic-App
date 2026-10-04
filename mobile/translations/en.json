@@ -291,6 +291,79 @@
 			}
 		}
 	},
+	"newIncident": {
+		"title": "NEW INCIDENT",
+		"time": "TIME",
+		"type": "INCIDENT TYPE:",
+		"selectType": "Select incident type",
+		"circumstances": "CIRCUMSTANCES:",
+		"description": "DESCRIPTION:",
+		"descriptionPlaceholder": "Briefly describe the incident...",
+		"intensity": "PAIN INTENSITY:",
+		"relatedProsthesis": "RELATED PROSTHESIS:",
+		"component": "COMPONENT:",
+		"schema": "DIAGRAM",
+		"addFile": "ADD FILE",
+		"fileDescription": "ADD PHOTOS, DOCUMENTATION AND OTHER FILES RELATED TO THE INCIDENT",
+		"save": "SAVE INCIDENT",
+		"saving": "SAVING...",
+		"none": "-",
+		"types": {
+			"pain": "Pain",
+			"abrasion": "Abrasion",
+			"poorFit": "Loose or poor fit",
+			"phantomPain": "Phantom pain",
+			"mechanicalFailure": "Mechanical failure"
+		},
+		"activities": {
+			"walking": "Walking",
+			"running": "Running",
+			"sitting": "Sitting",
+			"standing": "Standing",
+			"sport": "Sport"
+		},
+		"componentTypes": {
+			"socket": "Socket",
+			"knee": "Knee",
+			"foot": "Foot",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Other component"
+		},
+		"schemaViews": {
+			"side": "Side view",
+			"topInside": "Top view (inside)",
+			"frontBack": "Front / Back"
+		},
+		"loadError": "Could not load incident form data.",
+		"microphonePermission": "Allow microphone access to record a voice note.",
+		"recordingError": "Could not record the voice note.",
+		"recording": "Recording: {{seconds}} s",
+		"voiceNoteAdded": "Voice note added",
+		"remove": "Remove",
+		"photoLimitTitle": "Photo limit",
+		"photoLimit": "You can add up to 3 photos to one incident.",
+		"fileError": "Could not save the file to device storage.",
+		"cameraPermission": "Allow camera access to take a photo.",
+		"galleryPermission": "Allow photo library access to select a photo.",
+		"choosePhotoSource": "Choose photo source",
+		"camera": "Camera",
+		"gallery": "Gallery",
+		"removePhoto": "Remove photo {{number}}",
+		"customValuePlaceholder": "Add custom value",
+		"duplicateValue": "This value is already on the list.",
+		"noProsthesis": "Add a prosthesis before saving an incident.",
+		"savedTitle": "Saved",
+		"savedMessage": "The incident has been saved.",
+		"saveError": "Could not save the incident to the database.",
+		"validation": {
+			"prosthesis": "Select the prosthesis related to the incident.",
+			"type": "Select the incident type.",
+			"description": "Enter an incident description.",
+			"intensity": "Set the problem intensity from 1 to 10.",
+			"time": "Enter time in HH:MM format."
+		}
+	},
 	"prosthesisDetails": {
 		"title": "MY PROSTHESIS",
 		"side": "SIDE",
