@@ -1,29 +1,35 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Alert, ScrollView, StyleSheet, TextInput, View, Switch } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
+import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
+import type { DropdownOption } from "@/src/components/DropdownSelect"
 import { useTheme } from "@/context/ThemeContext"
 import { formatDate } from "@/src/utils/dateFormatter"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { createComponent } from "@/db/repositories/componentRepository"
-import { ComponentType } from "@/src/constants/componentTypes"
-
-//TODO tx (placeholders, ThemedText and //tx comments)
-//TODO mocks
+import { getBrands } from "@/db/repositories/brandRepository"
+import { getModelsByBrandAndType } from "@/db/repositories/modelRepository"
+import type { ComponentType } from "@/src/constants/componentTypes"
 
 export default function NewComponentScreen() {
 	const router = useRouter()
 	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
 	const { colors } = useTheme()
+	const { t } = useTranslation()
 
 	const [category, setCategory] = useState<ComponentType>("socket")
 	const [brand, setBrand] = useState("")
 	const [model, setModel] = useState("")
+	const [brandsList, setBrandsList] = useState<DropdownOption<string>[]>([])
+	const [isLoadingBrands, setIsLoadingBrands] = useState(true)
+	const [modelsList, setModelsList] = useState<DropdownOption<string>[]>([])
+	const [isLoadingModels, setIsLoadingModels] = useState(false)
 	const [assemblyDate, setAssemblyDate] = useState(new Date())
 	const [warrantyEndDate, setWarrantyEndDate] = useState(new Date())
 	const [expectedExchangeDate, setExpectedExchangeDate] = useState(new Date())
@@ -46,6 +52,74 @@ export default function NewComponentScreen() {
 
 	const [description, setDescription] = useState("")
 
+	useEffect(() => {
+		let isMounted = true
+
+		getBrands()
+			.then((brands) => {
+				if (isMounted) {
+					setBrandsList(
+						brands.map((currentBrand) => ({
+							label: currentBrand.name,
+							value: currentBrand.id,
+						}))
+					)
+				}
+			})
+			.catch((error: unknown) => {
+				console.error("Failed to load brands:", error)
+				if (isMounted) {
+					Alert.alert(t("common.error"), t("newComponent.errors.loadBrands"))
+				}
+			})
+			.finally(() => {
+				if (isMounted) {
+					setIsLoadingBrands(false)
+				}
+			})
+
+		return () => {
+			isMounted = false
+		}
+	}, [t])
+
+	useEffect(() => {
+		let isCurrentRequest = true
+
+		if (!brand) {
+			return () => {
+				isCurrentRequest = false
+			}
+		}
+
+		getModelsByBrandAndType(brand, category)
+			.then((models) => {
+				if (isCurrentRequest) {
+					setModelsList(
+						models.map((currentModel) => ({
+							label: currentModel.name,
+							value: currentModel.id,
+						}))
+					)
+				}
+			})
+			.catch((error: unknown) => {
+				console.error("Failed to load models:", error)
+				if (isCurrentRequest) {
+					Alert.alert(t("common.error"), t("newComponent.errors.loadModels"))
+				}
+			})
+			.finally(() => {
+				if (isCurrentRequest) {
+					setIsLoadingModels(false)
+				}
+			})
+
+		return () => {
+			isCurrentRequest = false
+		}
+	}, [brand, category, t])
+
 	const handleOnAddFiles = () => {
 		// TODO
 	}
@@ -55,17 +129,27 @@ export default function NewComponentScreen() {
 			return
 		}
 
-		const missingFields = [
-			!category && "Kategoria podzespołu", //TODO tx
-			!brand.trim() && "Marka podzespołu",
-			!model.trim() && "Model",
-			(!(assemblyDate instanceof Date) || Number.isNaN(assemblyDate.getTime())) && "Data montażu",
-		].filter(Boolean)
+		const missingFields: string[] = []
+
+		if (!category) {
+			missingFields.push(t("newComponent.fields.category"))
+		}
+		if (!brand.trim()) {
+			missingFields.push(t("newComponent.fields.brand"))
+		}
+		if (!model.trim()) {
+			missingFields.push(t("newComponent.fields.model"))
+		}
+		if (!(assemblyDate instanceof Date) || Number.isNaN(assemblyDate.getTime())) {
+			missingFields.push(t("newComponent.fields.assemblyDate"))
+		}
 
 		if (missingFields.length > 0) {
 			Alert.alert(
-				"Uzupełnij wymagane pola",
-				`Wypełnij pola oznaczone *:\n${missingFields.map((field) => `• ${field}`).join("\n")}`
+				t("newComponent.validation.title"),
+				t("newComponent.validation.requiredFields", {
+					fields: missingFields.map((field) => `• ${field}`).join("\n"),
+				})
 			)
 			return
 		}
@@ -91,25 +175,20 @@ export default function NewComponentScreen() {
 			router.back()
 		} catch (error) {
 			console.error("Failed to save component:", error)
-			Alert.alert("Błąd", "Nie udało się zapisać komponentu.")
+			Alert.alert(t("common.error"), t("newComponent.errors.saveComponent"))
 		} finally {
 			setIsSaving(false)
 		}
 	}
 
 	const componentCategories: { label: string; value: ComponentType }[] = [
-		{ label: "Lej protezowy", value: "socket" },
-		{ label: "Kolano", value: "knee" },
-		{ label: "Stopa protezowa", value: "foot" },
-		{ label: "Liner", value: "liner" },
-		{ label: "Adapter", value: "adapter" },
-		{ label: "Inny komponent", value: "other" },
+		{ label: t("newComponent.categories.socket"), value: "socket" },
+		{ label: t("newComponent.categories.knee"), value: "knee" },
+		{ label: t("newComponent.categories.foot"), value: "foot" },
+		{ label: t("newComponent.categories.liner"), value: "liner" },
+		{ label: t("newComponent.categories.adapter"), value: "adapter" },
+		{ label: t("newComponent.categories.other"), value: "other" },
 	]
-	const mockBrands = [
-		{ label: "Ottobock", value: "Ottobock" },
-		{ label: "Össur", value: "Össur" },
-	]
-	const mockModels = [{ label: "Rękawica kosmetyczna", value: "Rękawica kosmetyczna" }]
 
 	return (
 		<ThemedView variant="background" colorName="tertiary_base_1">
@@ -122,13 +201,18 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Kategoria podzespołu *
+						{t("newComponent.fields.category")} *
 					</ThemedText>
 					<DropdownSelect
-						label="category"
-						placeholder="Wybierz kategorię"
+						label={t("newComponent.fields.category")}
+						placeholder={t("newComponent.placeholders.category")}
 						value={category}
-						onChange={setCategory}
+						onChange={(value) => {
+							setModel("")
+							setModelsList([])
+							setIsLoadingModels(Boolean(brand))
+							setCategory(value)
+						}}
 						options={componentCategories}
 					/>
 				</View>
@@ -138,13 +222,13 @@ export default function NewComponentScreen() {
 					{category === "socket" && (
 						<View style={styles.switchRow}>
 							<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-								RODZAJ LEJA:
+								{t("newComponent.switches.socketType")}
 							</ThemedText>
 							<View style={styles.toggleContainer}>
 								<ThemedText variant="subTitle1" colorName="primary_base">
-									testowy
+									{t("newComponent.switches.test")}
 								</ThemedText>
-								<Switch //useThemedSwitch
+								<Switch //TODO useThemedSwitch
 									value={isFinal}
 									onValueChange={setIsFinal}
 									trackColor={{ false: colors.primary_base_2, true: colors.primary_base }}
@@ -152,18 +236,18 @@ export default function NewComponentScreen() {
 									style={styles.switch}
 								/>
 								<ThemedText variant="subTitle1" colorName="primary_base">
-									finalny
+									{t("newComponent.switches.final")}
 								</ThemedText>
 							</View>
 						</View>
 					)}
 					<View style={styles.switchRow}>
 						<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-							TYP KOMPONENTU:
+							{t("newComponent.switches.componentType")}
 						</ThemedText>
 						<View style={styles.toggleContainer}>
 							<ThemedText variant="subTitle1" colorName="primary_base">
-								aktywny
+								{t("newComponent.switches.active")}
 							</ThemedText>
 							<Switch
 								value={isHistorical}
@@ -173,7 +257,7 @@ export default function NewComponentScreen() {
 								style={styles.switch}
 							/>
 							<ThemedText variant="subTitle1" colorName="primary_base" style={{}}>
-								historyczny
+								{t("newComponent.switches.historical")}
 							</ThemedText>
 						</View>
 					</View>
@@ -186,19 +270,23 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Marka podzespołu *
+						{t("newComponent.fields.brand")} *
 					</ThemedText>
 					<DropdownSelect
-						label="brand"
-						placeholder="Wybierz markę"
+						label={t("newComponent.fields.brand")}
+						placeholder={
+							isLoadingBrands
+								? t("newComponent.placeholders.loadingBrands")
+								: t("newComponent.placeholders.brand")
+						}
 						value={brand}
 						onChange={(value) => {
-							if (value !== brand) {
-								setModel("")
-							}
+							setModel("")
+							setModelsList([])
+							setIsLoadingModels(Boolean(value))
 							setBrand(value)
 						}}
-						options={mockBrands}
+						options={brandsList}
 					/>
 				</View>
 
@@ -209,16 +297,29 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Model *
+						{t("newComponent.fields.model")} *
 					</ThemedText>
 					{brand ? (
-						<DropdownSelect
-							label="model"
-							placeholder="Wybierz model"
-							value={model}
-							onChange={setModel}
-							options={mockModels}
-						/>
+						<>
+							<DropdownSelect
+								label={t("newComponent.fields.model")}
+								placeholder={
+									isLoadingModels
+										? t("newComponent.placeholders.loadingModels")
+										: modelsList.length === 0
+											? t("newComponent.placeholders.addCustomModel")
+											: t("newComponent.placeholders.model")
+								}
+								value={model}
+								onChange={setModel}
+								options={modelsList}
+							/>
+							{!isLoadingModels && modelsList.length === 0 && (
+								<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+									{t("newComponent.modelsUnavailable")}
+								</ThemedText>
+							)}
+						</>
 					) : (
 						<>
 							<View
@@ -228,11 +329,11 @@ export default function NewComponentScreen() {
 								]}
 							>
 								<ThemedText variant="main1Button" colorName="primary_base_3">
-									Najpierw wybierz markę
+									{t("newComponent.placeholders.selectBrandFirst")}
 								</ThemedText>
 							</View>
 							<ThemedText variant="subTitle2" colorName="secondary_base_0c">
-								Aby wybrać model, najpierw wybierz markę podzespołu.
+								{t("newComponent.hints.selectBrandForModel")}
 							</ThemedText>
 						</>
 					)}
@@ -245,7 +346,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Data montażu: *
+						{t("newComponent.fields.assemblyDate")}: *
 					</ThemedText>
 					<ThemedView
 						borderColor="primary_base_2"
@@ -268,13 +369,13 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Opis:
+						{t("newComponent.fields.description")}:
 					</ThemedText>
 					<TextInput
 						multiline
 						value={description}
 						onChangeText={setDescription}
-						placeholder="Wpisz krótki opis, np. nr decyzji..."
+						placeholder={t("newComponent.placeholders.description")}
 						placeholderTextColor={colors.primary_base_3}
 						style={[
 							styles.textArea,
@@ -294,7 +395,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.sectionTitle}
 					>
-						GWARANCJA I ZUŻYCIE
+						{t("newComponent.sections.warrantyAndUsage")}
 					</ThemedText>
 				</View>
 
@@ -305,7 +406,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Data końca gwarancji:
+						{t("newComponent.fields.warrantyEndDate")}:
 					</ThemedText>
 					<ThemedView
 						borderColor="primary_base_2"
@@ -328,7 +429,7 @@ export default function NewComponentScreen() {
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
 					>
-						Przewidywana data wymiany
+						{t("newComponent.fields.expectedExchangeDate")}
 					</ThemedText>
 					<ThemedView
 						borderColor="primary_base_2"
@@ -347,7 +448,7 @@ export default function NewComponentScreen() {
 				{/* Sekcja przypomnień / checklist */}
 				<View style={styles.remindersContainer}>
 					<ReminderCheckRow
-						label={"PRZYPOMNIJ O\nDACIE WYMIANY"} //tx
+						label={t("newComponent.reminders.exchangeDate")}
 						emailValue={remindExchangeEmail}
 						appValue={remindExchangeApp}
 						pushValue={remindExchangePush}
@@ -357,7 +458,7 @@ export default function NewComponentScreen() {
 					/>
 
 					<ReminderCheckRow
-						label={"PRZYPOMNIJ O\nUPŁYWIE GWARANCJI"} //tx
+						label={t("newComponent.reminders.warrantyEnd")}
 						emailValue={remindWarrantyEmail}
 						appValue={remindWarrantyApp}
 						pushValue={remindWarrantyPush}
@@ -375,11 +476,11 @@ export default function NewComponentScreen() {
 				>
 					<Ionicons name="add-circle" size={28} color={colors.primary_base} />
 					<ThemedText variant="main1Button" colorName="primary_base">
-						DODAJ PLIKI
+						{t("newComponent.addFiles")}
 					</ThemedText>
 				</ThemedView>
 				<ThemedText variant="subTitle2" colorName="primary_base" style={styles.addFilesSubtitle}>
-					{"tutaj możesz dodać zdjęcia,\ndokumentację i skany 3D\ninne pliki dotyczące protezy"}
+					{t("newComponent.filesDescription")}
 				</ThemedText>
 
 				{/* Zapisz komponent */}
@@ -396,7 +497,7 @@ export default function NewComponentScreen() {
 						numberOfLines={1}
 						adjustsFontSizeToFit
 					>
-						{isSaving ? "Zapisywanie..." : "Zapisz komponent"}
+						{isSaving ? t("newComponent.saving") : t("newComponent.save")}
 					</ThemedText>
 				</ThemedView>
 			</ScrollView>
@@ -444,6 +545,8 @@ function ReminderCheckRow({
 	onAppChange,
 	onPushChange,
 }: ReminderCheckRowProps) {
+	const { t } = useTranslation()
+
 	return (
 		<View style={styles.reminderRow}>
 			<View style={styles.reminderTitleWrapper}>
@@ -453,9 +556,21 @@ function ReminderCheckRow({
 			</View>
 
 			<View style={styles.checkboxesGroup}>
-				<ThemedCheckbox label="e-mail" checked={emailValue} onPress={onEmailChange} />
-				<ThemedCheckbox label={"w\naplikacji"} checked={appValue} onPress={onAppChange} />
-				<ThemedCheckbox label={"powiadomienie\npush"} checked={pushValue} onPress={onPushChange} />
+				<ThemedCheckbox
+					label={t("newComponent.reminderChannels.email")}
+					checked={emailValue}
+					onPress={onEmailChange}
+				/>
+				<ThemedCheckbox
+					label={t("newComponent.reminderChannels.app")}
+					checked={appValue}
+					onPress={onAppChange}
+				/>
+				<ThemedCheckbox
+					label={t("newComponent.reminderChannels.push")}
+					checked={pushValue}
+					onPress={onPushChange}
+				/>
 			</View>
 		</View>
 	)

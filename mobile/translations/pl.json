@@ -367,7 +367,71 @@
 		}
 	},
 	"newComponent": {
-		"newComponent": "Nowy komponent"
+		"newComponent": "Nowy komponent",
+		"fields": {
+			"category": "Kategoria podzespołu",
+			"brand": "Marka podzespołu",
+			"model": "Model",
+			"assemblyDate": "Data montażu",
+			"description": "Opis",
+			"warrantyEndDate": "Data końca gwarancji",
+			"expectedExchangeDate": "Przewidywana data wymiany"
+		},
+		"categories": {
+			"socket": "Lej protezowy",
+			"knee": "Kolano",
+			"foot": "Stopa protezowa",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Inny komponent"
+		},
+		"switches": {
+			"socketType": "RODZAJ LEJA:",
+			"test": "testowy",
+			"final": "finalny",
+			"componentType": "TYP KOMPONENTU:",
+			"active": "aktywny",
+			"historical": "historyczny"
+		},
+		"placeholders": {
+			"category": "Wybierz kategorię",
+			"brand": "Wybierz markę",
+			"loadingBrands": "Ładowanie marek...",
+			"model": "Wybierz model",
+			"loadingModels": "Ładowanie modeli...",
+			"addCustomModel": "Dodaj własny model",
+			"selectBrandFirst": "Najpierw wybierz markę",
+			"description": "Wpisz krótki opis, np. nr decyzji..."
+		},
+		"hints": {
+			"selectBrandForModel": "Aby wybrać model, najpierw wybierz markę podzespołu."
+		},
+		"modelsUnavailable": "Brak modeli w tej kategorii dla wybranego producenta",
+		"sections": {
+			"warrantyAndUsage": "GWARANCJA I ZUŻYCIE"
+		},
+		"reminders": {
+			"exchangeDate": "PRZYPOMNIJ O\nDACIE WYMIANY",
+			"warrantyEnd": "PRZYPOMNIJ O\nUPŁYWIE GWARANCJI"
+		},
+		"reminderChannels": {
+			"email": "e-mail",
+			"app": "w\naplikacji",
+			"push": "powiadomienie\npush"
+		},
+		"addFiles": "DODAJ PLIKI",
+		"filesDescription": "tutaj możesz dodać zdjęcia,\ndokumentację i skany 3D\noraz inne pliki dotyczące protezy",
+		"save": "Zapisz komponent",
+		"saving": "Zapisywanie...",
+		"errors": {
+			"loadBrands": "Nie udało się pobrać listy marek.",
+			"loadModels": "Nie udało się pobrać listy modeli.",
+			"saveComponent": "Nie udało się zapisać komponentu."
+		},
+		"validation": {
+			"title": "Uzupełnij wymagane pola",
+			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}"
+		}
 	},
 	"login": {
 		"logIn": "Zaloguj",
