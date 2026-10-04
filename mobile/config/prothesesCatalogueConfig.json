@@ -12,9 +12,7 @@
 		{
 			"id": "ossur",
 			"name": "Össur",
-			"models": [
-        { "id": "cheetah", "name": "Cheetah Xtend", "type": "foot" }
-      ]
+			"models": [{ "id": "cheetah", "name": "Cheetah Xtend", "type": "foot" }]
 		}
 	]
 }

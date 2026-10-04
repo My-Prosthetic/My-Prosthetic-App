@@ -4,7 +4,6 @@ import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import type { Component } from "@/db/repositories/componentRepository"
 import { useTheme } from "@/context/ThemeContext"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"

@@ -3,24 +3,26 @@ import { relations } from "drizzle-orm"
 import { brands } from "./brands"
 import { COMPONENT_TYPES } from "@/src/constants/componentTypes"
 
-export const models = sqliteTable("models", {
-	id: text("id").primaryKey(),
+export const models = sqliteTable(
+	"models",
+	{
+		id: text("id").primaryKey(),
 
-	brandId: text("brand_id")
-		.notNull()
-		.references(() => brands.id, { onDelete: "cascade" }),
+		brandId: text("brand_id")
+			.notNull()
+			.references(() => brands.id, { onDelete: "cascade" }),
 
-	name: text("name").notNull(),
+		name: text("name").notNull(),
 
-	type: text("type", {
-		enum: COMPONENT_TYPES,
-	}).notNull(),
+		type: text("type", {
+			enum: COMPONENT_TYPES,
+		}).notNull(),
 
-	isCustom: integer("is_custom", {
-		mode: "boolean",
-	})
-		.notNull()
-		.default(false),
+		isCustom: integer("is_custom", {
+			mode: "boolean",
+		})
+			.notNull()
+			.default(false),
 	},
 	(table) => [
 		index("models_brand_type_idx").on(table.brandId, table.type),
