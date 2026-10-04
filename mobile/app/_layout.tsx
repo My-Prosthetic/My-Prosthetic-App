@@ -47,7 +47,7 @@ function RootNavigationLayout({
 			.catch((error: unknown) => {
 				if (isMounted) {
 					setCatalogueError(
-						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu"),
+						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
 					)
 				}
 			})

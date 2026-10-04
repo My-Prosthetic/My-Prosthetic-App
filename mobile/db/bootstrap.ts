@@ -77,7 +77,7 @@ export async function seedCatalogIfNotInitialized(): Promise<void> {
 				if (!seededBrand) {
 					if (__DEV__) {
 						console.warn(
-							`Skipping catalogue models for "${brand.name}" because its brand ID conflicts with an existing record.`,
+							`Skipping catalogue models for "${brand.name}" because its brand ID conflicts with an existing record.`
 						)
 					}
 					continue
