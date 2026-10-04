@@ -377,12 +377,14 @@ export default function NewComponentScreen() {
 				initialDate={warrantyEndDate}
 				onClose={() => setWarrantyEndDateModalVisible(false)}
 				onSave={setWarrantyEndDate}
+				variant="calendar"
 			/>
 			<DatePickerModal
 				visible={expectedExchangeDateModalVisible}
 				initialDate={expectedExchangeDate}
 				onClose={() => setExpectedExchangeDateModalVisible(false)}
 				onSave={setExpectedExchangeDate}
+				variant="calendar"
 			/>
 		</ThemedView>
 	)
