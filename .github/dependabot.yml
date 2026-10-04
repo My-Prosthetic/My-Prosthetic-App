@@ -24,6 +24,12 @@ updates:
           - '@microsoft/eslint-formatter-sarif'
       frontend-minor-patch:
         update-types: ['minor', 'patch']
+    # ESLint 10 blocked until eslint-plugin-react supports it
+    ignore:
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/*'
+        update-types: ['version-update:semver-major']
 
   # ----- MOBILE (npm) -----
   - package-ecosystem: 'npm'
