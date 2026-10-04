@@ -1,16 +1,5 @@
-import React, { useEffect, useState } from "react"
-import {
-	Alert,
-	KeyboardAvoidingView,
-	Modal,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	TextInput,
-	View,
-	Switch,
-} from "react-native"
+import React, { useState } from "react"
+import { Alert, ScrollView, StyleSheet, TextInput, View, Switch } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
@@ -18,19 +7,14 @@ import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
-import type { DropdownOption } from "@/src/components/DropdownSelect"
 import { useTheme } from "@/context/ThemeContext"
 import { formatDate } from "@/src/utils/dateFormatter"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { createComponent } from "@/db/repositories/componentRepository"
-import { createBrand, findBrandByName, getBrands } from "@/db/repositories/brandRepository"
-import {
-	createModel,
-	findModelsByName,
-	getModelsByBrandAndType,
-} from "@/db/repositories/modelRepository"
 import type { ComponentType } from "@/src/constants/componentTypes"
+import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
+import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
 
 export default function NewComponentScreen() {
 	const router = useRouter()
@@ -41,10 +25,6 @@ export default function NewComponentScreen() {
 	const [category, setCategory] = useState<ComponentType>("socket")
 	const [brand, setBrand] = useState("")
 	const [model, setModel] = useState("")
-	const [brandsList, setBrandsList] = useState<DropdownOption<string>[]>([])
-	const [isLoadingBrands, setIsLoadingBrands] = useState(true)
-	const [modelsList, setModelsList] = useState<DropdownOption<string>[]>([])
-	const [isLoadingModels, setIsLoadingModels] = useState(false)
 	const [assemblyDate, setAssemblyDate] = useState(new Date())
 	const [warrantyEndDate, setWarrantyEndDate] = useState(new Date())
 	const [expectedExchangeDate, setExpectedExchangeDate] = useState(new Date())
@@ -66,221 +46,27 @@ export default function NewComponentScreen() {
 	const [remindWarrantyPush, setRemindWarrantyPush] = useState(false)
 
 	const [description, setDescription] = useState("")
-	const [customOptionType, setCustomOptionType] = useState<"brand" | "model" | null>(null)
-	const [customOptionName, setCustomOptionName] = useState("")
-	const [isCreatingCustomOption, setIsCreatingCustomOption] = useState(false)
-
-	useEffect(() => {
-		let isMounted = true
-
-		getBrands()
-			.then((brands) => {
-				if (isMounted) {
-					setBrandsList(
-						brands.map((currentBrand) => ({
-							label: currentBrand.name,
-							value: currentBrand.id,
-						}))
-					)
-				}
-			})
-			.catch((error: unknown) => {
-				console.error("Failed to load brands:", error)
-				if (isMounted) {
-					Alert.alert(t("common.error"), t("newComponent.errors.loadBrands"))
-				}
-			})
-			.finally(() => {
-				if (isMounted) {
-					setIsLoadingBrands(false)
-				}
-			})
-
-		return () => {
-			isMounted = false
-		}
-	}, [t])
-
-	useEffect(() => {
-		let isCurrentRequest = true
-
-		if (!brand) {
-			return () => {
-				isCurrentRequest = false
-			}
-		}
-
-		getModelsByBrandAndType(brand, category)
-			.then((models) => {
-				if (isCurrentRequest) {
-					setModelsList(
-						models.map((currentModel) => ({
-							label: currentModel.name,
-							value: currentModel.id,
-						}))
-					)
-				}
-			})
-			.catch((error: unknown) => {
-				console.error("Failed to load models:", error)
-				if (isCurrentRequest) {
-					Alert.alert(t("common.error"), t("newComponent.errors.loadModels"))
-				}
-			})
-			.finally(() => {
-				if (isCurrentRequest) {
-					setIsLoadingModels(false)
-				}
-			})
-
-		return () => {
-			isCurrentRequest = false
-		}
-	}, [brand, category, t])
-
-	const openCustomOptionDialog = (type: "brand" | "model") => {
-		setCustomOptionName("")
-		setCustomOptionType(type)
-	}
-
-	const closeCustomOptionDialog = () => {
-		if (isCreatingCustomOption) {
-			return
-		}
-		setCustomOptionType(null)
-		setCustomOptionName("")
-	}
-
-	const confirmCreateModel = (existingBrandName: string, selectedBrandName: string) =>
-		new Promise<boolean>((resolve) => {
-			Alert.alert(
-				t("newComponent.customModel.duplicateTitle"),
-				t("newComponent.customModel.duplicateMessage", {
-					existingBrand: existingBrandName,
-					selectedBrand: selectedBrandName,
-				}),
-				[
-					{
-						text: t("common.cancel"),
-						style: "cancel",
-						onPress: () => resolve(false),
-					},
-					{
-						text: t("newComponent.customModel.confirm"),
-						onPress: () => resolve(true),
-					},
-				],
-				{ cancelable: true, onDismiss: () => resolve(false) }
-			)
-		})
-
-	const saveCustomOption = async () => {
-		const name = customOptionName.trim()
-
-		if (!name || !customOptionType || isCreatingCustomOption) {
-			return
-		}
-
-		setIsCreatingCustomOption(true)
-		try {
-			if (customOptionType === "brand") {
-				const existingBrand = await findBrandByName(name)
-				if (existingBrand) {
-					Alert.alert(t("common.error"), t("newComponent.customBrand.alreadyExists"))
-					return
-				}
-
-				const newBrand = await createBrand(name)
-				if (!newBrand) {
-					Alert.alert(t("common.error"), t("newComponent.customBrand.alreadyExists"))
-					return
-				}
-
-				setBrandsList((currentBrands) =>
-					currentBrands.some((option) => option.value === newBrand.id)
-						? currentBrands
-						: [...currentBrands, { label: newBrand.name, value: newBrand.id }]
-				)
-				setBrand(newBrand.id)
-				setModel("")
-				setCustomOptionType(null)
-				setCustomOptionName("")
-				Alert.alert(
-					t("newComponent.customOption.successTitle"),
-					t("newComponent.customBrand.created")
-				)
-				return
-			}
-
-			if (!brand) {
-				return
-			}
-
-			const existingModels = await findModelsByName(name, category)
-			const existingModelForSelectedBrand = existingModels.find(
-				(existingModel) => existingModel.brandId === brand
-			)
-			if (existingModelForSelectedBrand) {
-				setModelsList((currentModels) =>
-					currentModels.some((option) => option.value === existingModelForSelectedBrand.id)
-						? currentModels
-						: [
-								...currentModels,
-								{
-									label: existingModelForSelectedBrand.name,
-									value: existingModelForSelectedBrand.id,
-								},
-							]
-				)
-				setModel(existingModelForSelectedBrand.id)
-				setCustomOptionType(null)
-				setCustomOptionName("")
-				Alert.alert(t("common.error"), t("newComponent.customModel.alreadyExistsForBrand"))
-				return
-			}
-
-			const existingModel = existingModels[0]
-			if (
-				existingModel &&
-				!(await confirmCreateModel(
-					existingModel.brandName,
-					brandsList.find((option) => option.value === brand)?.label ??
-						t("newComponent.fields.brand")
-				))
-			) {
-				return
-			}
-
-			const newModel = await createModel({ brandId: brand, type: category, name })
-			if (!newModel) {
-				Alert.alert(t("common.error"), t("newComponent.customModel.alreadyExistsForBrand"))
-				return
-			}
-
-			setModelsList((currentModels) =>
-				currentModels.some((option) => option.value === newModel.id)
-					? currentModels
-					: [...currentModels, { label: newModel.name, value: newModel.id }]
-			)
-			setModel(newModel.id)
-			setCustomOptionType(null)
-			setCustomOptionName("")
-			Alert.alert(
-				t("newComponent.customOption.successTitle"),
-				t("newComponent.customModel.created")
-			)
-		} catch (error) {
-			console.error(`Failed to create custom ${customOptionType}:`, error)
-			Alert.alert(
-				t("common.error"),
-				customOptionType === "brand"
-					? t("newComponent.errors.createBrand")
-					: t("newComponent.errors.createModel")
-			)
-		} finally {
-			setIsCreatingCustomOption(false)
-		}
-	}
+	const {
+		brandsList,
+		isLoadingBrands,
+		modelsList,
+		isLoadingModels,
+		customOptionType,
+		customOptionName,
+		setCustomOptionName,
+		isCreatingCustomOption,
+		openCustomOptionDialog,
+		closeCustomOptionDialog,
+		saveCustomOption,
+	} = useBrandModelCatalog({
+		category,
+		selectedBrandId: brand,
+		onBrandCreatedAndSelected: (brandId) => {
+			setBrand(brandId)
+			setModel("")
+		},
+		onModelCreatedAndSelected: setModel,
+	})
 
 	const handleOnAddFiles = () => {
 		// TODO
@@ -371,8 +157,6 @@ export default function NewComponentScreen() {
 						value={category}
 						onChange={(value) => {
 							setModel("")
-							setModelsList([])
-							setIsLoadingModels(Boolean(brand))
 							setCategory(value)
 						}}
 						options={componentCategories}
@@ -444,8 +228,6 @@ export default function NewComponentScreen() {
 						value={brand}
 						onChange={(value) => {
 							setModel("")
-							setModelsList([])
-							setIsLoadingModels(Boolean(value))
 							setBrand(value)
 						}}
 						options={brandsList}
@@ -672,78 +454,15 @@ export default function NewComponentScreen() {
 				</ThemedView>
 			</ScrollView>
 
-			<Modal
+			<CustomOptionDialogModal
 				visible={customOptionType !== null}
-				transparent
-				animationType="fade"
-				onRequestClose={closeCustomOptionDialog}
-			>
-				<KeyboardAvoidingView
-					behavior={Platform.OS === "ios" ? "padding" : undefined}
-					style={styles.customModalOverlay}
-				>
-					<Pressable
-						accessibilityRole="button"
-						accessibilityLabel={t("common.cancel")}
-						onPress={closeCustomOptionDialog}
-						style={StyleSheet.absoluteFill}
-					/>
-					<View style={[styles.customModalCard, { backgroundColor: colors.tertiary_base_1 }]}>
-						<ThemedText variant="subTitle1" colorName="primary_base">
-							{customOptionType === "brand"
-								? t("newComponent.customBrand.title")
-								: t("newComponent.customModel.title")}
-						</ThemedText>
-						<TextInput
-							autoFocus
-							autoCapitalize="words"
-							returnKeyType="done"
-							onSubmitEditing={() => void saveCustomOption()}
-							editable={!isCreatingCustomOption}
-							value={customOptionName}
-							onChangeText={setCustomOptionName}
-							placeholder={
-								customOptionType === "brand"
-									? t("newComponent.placeholders.brandName")
-									: t("newComponent.placeholders.modelName")
-							}
-							placeholderTextColor={colors.primary_base_3}
-							style={[
-								styles.customModalInput,
-								{
-									backgroundColor: colors.tertiary_base_3,
-									borderColor: colors.primary_base_2,
-									color: colors.primary_base,
-								},
-							]}
-						/>
-						<View style={styles.customModalActions}>
-							<ThemedView
-								variant="narrow"
-								colorName="tertiary_base_3"
-								onPress={closeCustomOptionDialog}
-								disabled={isCreatingCustomOption}
-								style={styles.customModalAction}
-							>
-								<ThemedText variant="body1Regular" colorName="primary_base">
-									{t("common.cancel")}
-								</ThemedText>
-							</ThemedView>
-							<ThemedView
-								variant="narrow"
-								colorName="primary_base"
-								onPress={() => void saveCustomOption()}
-								disabled={!customOptionName.trim() || isCreatingCustomOption}
-								style={[styles.customModalAction, { backgroundColor: colors.primary_base }]}
-							>
-								<ThemedText variant="body1Regular" colorName="tertiary_base_3">
-									{isCreatingCustomOption ? t("newComponent.saving") : t("common.save")}
-								</ThemedText>
-							</ThemedView>
-						</View>
-					</View>
-				</KeyboardAvoidingView>
-			</Modal>
+				type={customOptionType}
+				value={customOptionName}
+				onChangeText={setCustomOptionName}
+				onSave={() => void saveCustomOption()}
+				onClose={closeCustomOptionDialog}
+				isSaving={isCreatingCustomOption}
+			/>
 
 			<DatePickerModal
 				visible={assemblyDateModalVisible}
@@ -907,36 +626,5 @@ const styles = StyleSheet.create({
 	},
 	addFilesSubtitle: {
 		textAlign: "center",
-	},
-	customModalOverlay: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 24,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-	},
-	customModalCard: {
-		width: "100%",
-		maxWidth: 420,
-		borderRadius: 20,
-		padding: 20,
-		gap: 16,
-		elevation: 8,
-	},
-	customModalInput: {
-		minHeight: 50,
-		borderWidth: 1,
-		borderRadius: 14,
-		paddingHorizontal: 14,
-		fontFamily: "Afacad-Regular",
-		fontSize: 17,
-	},
-	customModalActions: {
-		flexDirection: "row",
-		gap: 12,
-	},
-	customModalAction: {
-		flex: 1,
-		minHeight: 46,
 	},
 })
