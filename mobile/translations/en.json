@@ -68,10 +68,10 @@
 		}
 	},
 	"common": {
-		"cancel": "CANCEL",
+		"cancel": "Cancel",
 		"error": "Error",
-		"save": "SAVE",
-		"delete": "DELETE",
+		"save": "Save",
+		"delete": "Delete",
 		"today": "Today",
 		"mp": "My Prosthetics"
 	},
@@ -397,11 +397,33 @@
 			"category": "Select a category",
 			"brand": "Select a brand",
 			"loadingBrands": "Loading brands...",
+			"searchBrand": "Search brands",
 			"model": "Select a model",
 			"loadingModels": "Loading models...",
-			"addCustomModel": "Add a custom model",
+			"searchModel": "Search models",
+			"addCustomModel": "Add a custom model +",
 			"selectBrandFirst": "Select a brand first",
+			"brandName": "Enter a brand name",
+			"modelName": "Enter a model name",
 			"description": "Enter a short description, e.g. decision number..."
+		},
+		"customOption": {
+			"successTitle": "Added"
+		},
+		"customBrand": {
+			"add": "Add a new brand",
+			"title": "Add brand",
+			"alreadyExists": "This brand is already in the database.",
+			"created": "You added a new brand. You can use it in the future without adding it again."
+		},
+		"customModel": {
+			"add": "Add a new model",
+			"title": "Add model",
+			"duplicateTitle": "Model already exists",
+			"duplicateMessage": "This model is already listed under {{existingBrand}}. Are you sure you want to create a new model for {{selectedBrand}}?",
+			"confirm": "Create new",
+			"alreadyExistsForBrand": "This model is already available for the selected brand and category.",
+			"created": "You added a new model. You can use it in the future without adding it again."
 		},
 		"hints": {
 			"selectBrandForModel": "Select a component brand before choosing a model."
@@ -426,6 +448,8 @@
 		"errors": {
 			"loadBrands": "Failed to load brands.",
 			"loadModels": "Failed to load models.",
+			"createBrand": "Failed to save the new brand.",
+			"createModel": "Failed to save the new model.",
 			"saveComponent": "Failed to save the component."
 		},
 		"validation": {

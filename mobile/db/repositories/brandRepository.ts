@@ -28,6 +28,21 @@ export async function searchBrands(query: string): Promise<Brand[]> {
 	}
 }
 
+export async function findBrandByName(name: string): Promise<Brand | null> {
+	try {
+		const [brand] = await db
+			.select()
+			.from(brands)
+			.where(sql`lower(${brands.name}) = lower(${name.trim()})`)
+			.limit(1)
+
+		return brand ?? null
+	} catch (error) {
+		console.error("Failed to find brand by name", error)
+		throw error
+	}
+}
+
 export async function createBrand(name: string): Promise<Brand | null> {
 	try {
 		const [existingBrand] = await db
