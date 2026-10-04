@@ -128,6 +128,70 @@ Run the focused authentication tests from this directory with:
 php artisan test --filter=AuthenticationTest
 ```
 
+## User identities
+
+Users have UUID primary keys, and every reference to a user (`sessions`,
+`personal_access_tokens`, `wallet_entries`, `prostheses`, `user_shares`) uses a
+UUID column. Registration, login, and profile responses keep their field names,
+but clients must treat `id` as an opaque string. New tables that reference users
+must use `foreignUuid()` (or `uuidMorphs()` for polymorphic owners).
+
+The schema used UUIDs before the first deployment, so no data conversion exists.
+After pulling this change, rebuild your local database:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+## Sharing persistence
+
+`UserShare` is the pivot between a patient and a prosthetist: one current
+directional share per pair, identified by its own UUID, with a JSON `permissions`
+column that describes exactly what the specialist was selected to see:
+
+```json
+{ "medical_history": true, "prostheses": ["<uuid>"], "incidents": ["<uuid>"] }
+```
+
+The column is cast to the `App\ValueObjects\SharePermissions` value object.
+Missing keys default to an empty selection, IDs are normalized to unique
+lowercase UUIDs, and unknown keys or malformed values are rejected before they
+reach the database. `SharePermissions::none()` is a valid share that selects
+nothing. Selections are independent: a prosthesis does not imply its incidents,
+and a selection never grants access to records the patient does not own.
+
+Relations on `User`:
+
+| Relation | Returns |
+|---|---|
+| `sharedSpecialists()` | Specialists a patient shares data with (`belongsToMany`) |
+| `sharedPatients()` | Patients sharing data with a specialist (`belongsToMany`) |
+| `grantedShares()` / `receivedShares()` | The `UserShare` records themselves (`hasMany`) |
+
+On the `belongsToMany` relations the share is available as `$user->share`, with
+cast permissions. `UserShare` also exposes `patient` and `specialist`.
+
+Create a share with `$patient->sharedSpecialists()->attach($specialist, ['permissions' => $permissions])`,
+replace the selection with `updateExistingPivot()` or by updating `permissions`
+on the share, and revoke it with `detach()` or by deleting the share. Only
+`permissions` is mass assignable; participants are fixed when the share is created.
+
+The database rejects missing participants or permissions and duplicate pairs,
+and permanently deleting either participant cascades to their shares. A user
+cannot share with themselves: the model rejects it on every driver, and
+PostgreSQL also enforces it with the `user_shares_distinct_participants` CHECK
+constraint.
+
+This is storage only. Specialist search, sharing endpoints, role/resource
+validation, component visibility, and effective authorization remain out of
+scope; a stored share never authorizes a request on its own.
+
+Run the focused persistence checks from this directory:
+
+```bash
+php vendor/bin/phpunit tests/Feature/UserShareTest.php tests/Unit/SharePermissionsTest.php
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

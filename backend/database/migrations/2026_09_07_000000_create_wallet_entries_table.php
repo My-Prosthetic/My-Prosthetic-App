@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wallet_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->index()->constrained('users')->cascadeOnDelete();
             $table->uuid('goal_id')->index();
             $table->string('source', 32);
             $table->unsignedBigInteger('amount');
