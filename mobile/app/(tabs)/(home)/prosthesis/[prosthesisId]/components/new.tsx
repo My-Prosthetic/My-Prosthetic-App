@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { Alert, ScrollView, StyleSheet, TextInput, View, Switch } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -12,7 +12,9 @@ import { formatDate } from "@/src/utils/dateFormatter"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { createComponent } from "@/db/repositories/componentRepository"
-import type { ComponentType } from "@/src/constants/componentTypes"
+import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
+import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
 import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
 import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
 
@@ -23,6 +25,7 @@ export default function NewComponentScreen() {
 	const { t } = useTranslation()
 
 	const [category, setCategory] = useState<ComponentType>("socket")
+	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
 	const [brand, setBrand] = useState("")
 	const [model, setModel] = useState("")
 	const [assemblyDate, setAssemblyDate] = useState(new Date())
@@ -46,6 +49,33 @@ export default function NewComponentScreen() {
 	const [remindWarrantyPush, setRemindWarrantyPush] = useState(false)
 
 	const [description, setDescription] = useState("")
+	useEffect(() => {
+		let isActive = true
+
+		if (typeof prosthesisId !== "string" || prosthesisId.length === 0) {
+			return () => {
+				isActive = false
+			}
+		}
+
+		void getProsthesisById(prosthesisId)
+			.then((result) => {
+				if (isActive) {
+					setProsthesis(result)
+				}
+			})
+			.catch((error: unknown) => {
+				console.error("Failed to load prosthesis:", error)
+				if (isActive) {
+					setProsthesis(null)
+				}
+			})
+
+		return () => {
+			isActive = false
+		}
+	}, [prosthesisId])
+
 	const {
 		brandsList,
 		isLoadingBrands,
@@ -129,14 +159,13 @@ export default function NewComponentScreen() {
 		}
 	}
 
-	const componentCategories: { label: string; value: ComponentType }[] = [
-		{ label: t("newComponent.categories.socket"), value: "socket" },
-		{ label: t("newComponent.categories.knee"), value: "knee" },
-		{ label: t("newComponent.categories.foot"), value: "foot" },
-		{ label: t("newComponent.categories.liner"), value: "liner" },
-		{ label: t("newComponent.categories.adapter"), value: "adapter" },
-		{ label: t("newComponent.categories.other"), value: "other" },
-	]
+	const componentCategories = useMemo(() => {
+		const availableTypes = getComponentTypesForProsthesis(prosthesis?.limbType)
+		return availableTypes.map((type) => ({
+			label: t(`newComponent.categories.${type}`),
+			value: type,
+		}))
+	}, [prosthesis?.limbType, t])
 
 	return (
 		<ThemedView variant="background" colorName="tertiary_base_1">

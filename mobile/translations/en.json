@@ -379,10 +379,18 @@
 		},
 		"categories": {
 			"socket": "Prosthetic socket",
+			"liner": "Liner",
+			"hip": "Hip",
 			"knee": "Knee",
 			"foot": "Prosthetic foot",
-			"liner": "Liner",
+			"elbow": "Elbow",
+			"wrist": "Wrist",
+			"hand": "Hand",
+			"electrodes": "Electrodes",
+			"mechanical": "Mechanical",
 			"adapter": "Adapter",
+			"suspension": "Suspension",
+			"cosmetic": "Cosmetic",
 			"other": "Other component"
 		},
 		"switches": {

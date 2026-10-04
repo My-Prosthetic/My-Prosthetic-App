@@ -379,10 +379,18 @@
 		},
 		"categories": {
 			"socket": "Lej protezowy",
+			"liner": "Liner",
+			"hip": "Biodro",
 			"knee": "Kolano",
 			"foot": "Stopa protezowa",
-			"liner": "Liner",
+			"elbow": "Łokieć",
+			"wrist": "Nadgarstek",
+			"hand": "Dłoń",
+			"electrodes": "Elektrody",
+			"mechanical": "Mechaniczny",
 			"adapter": "Adapter",
+			"suspension": "Zawieszenie",
+			"cosmetic": "Kosmetyczny",
 			"other": "Inny komponent"
 		},
 		"switches": {
