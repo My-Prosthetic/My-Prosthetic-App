@@ -44,6 +44,9 @@ const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
 	partial_hand: "newProsthesis.amputationLevels.upper.partialHand",
 }
 
+const COMPONENT_LIST_MAX_ROWS = 4
+const COMPONENT_ROW_HEIGHT = 75
+
 export default function ProsthesisDetailsScreen() {
 	const router = useRouter()
 	const { colors } = useTheme()
@@ -165,6 +168,8 @@ export default function ProsthesisDetailsScreen() {
 		})
 	}, [componentFilters, components])
 
+	const visibleComponentRowCount = Math.min(visibleComponents.length, COMPONENT_LIST_MAX_ROWS)
+	const componentListHeight = visibleComponentRowCount * COMPONENT_ROW_HEIGHT
 	const handleOnFiltersPress = () => setAreFiltersVisible(true)
 
 	const handleApplyFilters = (filters: ComponentFilters) => {
@@ -325,8 +330,7 @@ export default function ProsthesisDetailsScreen() {
 									/>
 								) : (
 									<ScrollView
-										style={styles.componentListViewport}
-										contentContainerStyle={styles.componentList}
+										style={[styles.componentListViewport, { height: componentListHeight }]}
 										nestedScrollEnabled
 										showsVerticalScrollIndicator
 									>
@@ -557,17 +561,12 @@ const styles = StyleSheet.create({
 	},
 
 	componentListViewport: {
-		height: 360,
 		flexGrow: 0,
-	},
-
-	componentList: {
-		gap: 8,
 	},
 
 	componentRow: {
 		width: "100%",
-		height: 84,
+		height: COMPONENT_ROW_HEIGHT,
 		paddingVertical: 8,
 		flexDirection: "row",
 		alignItems: "center",
