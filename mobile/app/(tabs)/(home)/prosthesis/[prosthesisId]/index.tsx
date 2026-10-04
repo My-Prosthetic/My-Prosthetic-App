@@ -338,11 +338,13 @@ export default function ProsthesisDetailsScreen() {
 										showsVerticalScrollIndicator
 									>
 										{visibleComponents.map((component) => {
-											const title = component.model?.name.trim() || component.model.type
-											const description =
-												[component.model.brand.name, component.description]
-													.filter(Boolean)
-													.join(" | ") || component.model.type
+											const title = t(`prosthesisDetails.filters.types.${component.model.type}`)
+											const description = [
+												component.model.brand.name,
+												component.description || component.model.name,
+											]
+												.filter(Boolean)
+												.join(" | ")
 
 											return (
 												<ThemedView
