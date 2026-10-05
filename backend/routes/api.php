@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistSearchController;
 use App\Http\Controllers\WalletEntryController;
 use Illuminate\Support\Facades\Route;
@@ -29,4 +30,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/specialists/search', SpecialistSearchController::class)
         ->middleware('throttle:specialist-search')
         ->name('specialists.search');
+    Route::get('/shares', [ShareController::class, 'index'])->name('shares.index');
+    Route::post('/shares', [ShareController::class, 'store'])->name('shares.store');
+    Route::put('/shares/{specialist}', [ShareController::class, 'update'])
+        ->whereUuid('specialist')
+        ->name('shares.update');
+    Route::delete('/shares/{specialist}', [ShareController::class, 'destroy'])
+        ->whereUuid('specialist')
+        ->name('shares.destroy');
 });
