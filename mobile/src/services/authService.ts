@@ -118,10 +118,6 @@ function toAuthApiError(error: unknown, operation: "login" | "register"): AuthAp
 
 // replaced login function that uses axios apiClient
 async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> {
-	if (!process.env.EXPO_PUBLIC_API_URL) {
-		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
-	}
-
 	try {
 		const response = await apiClient.post<MobileLoginResponse>("/login", payload)
 		return response.data
@@ -131,10 +127,6 @@ async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> 
 }
 
 async function register(payload: RegisterPayload): Promise<RegisterResponse> {
-	if (!process.env.EXPO_PUBLIC_API_URL) {
-		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
-	}
-
 	try {
 		const response = await apiClient.post<RegisterResponse>("/register", payload)
 		return response.data
