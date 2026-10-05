@@ -1,118 +1,118 @@
-# Dependabot - automatic PRs with dependencies updates
+# # Dependabot - automatic PRs with dependencies updates
 
-version: 2
+# version: 2
 
-updates:
-  # ----- FRONTEND (npm) -----
-  - package-ecosystem: 'npm'
-    directory: '/frontend'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/Warsaw'
-    open-pull-requests-limit: 10
-    labels: ['dependency', 'Frontend']
-    commit-message:
-      prefix: 'chore(deps-frontend)'
-    groups:
-      eslint:
-        patterns:
-          - 'eslint'
-          - '@eslint/*'
-          - 'eslint-*'
-          - '@microsoft/eslint-formatter-sarif'
-      frontend-minor-patch:
-        update-types: ['minor', 'patch']
-    # ESLint 10 blocked until eslint-plugin-react supports it
-    ignore:
-      - dependency-name: 'eslint'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@eslint/*'
-        update-types: ['version-update:semver-major']
+# updates:
+#   # ----- FRONTEND (npm) -----
+#   - package-ecosystem: 'npm'
+#     directory: '/frontend'
+#     schedule:
+#       interval: 'weekly'
+#       day: 'monday'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 10
+#     labels: ['dependency', 'Frontend']
+#     commit-message:
+#       prefix: 'chore(deps-frontend)'
+#     groups:
+#       eslint:
+#         patterns:
+#           - 'eslint'
+#           - '@eslint/*'
+#           - 'eslint-*'
+#           - '@microsoft/eslint-formatter-sarif'
+#       frontend-minor-patch:
+#         update-types: ['minor', 'patch']
+#     # ESLint 10 blocked until eslint-plugin-react supports it
+#     ignore:
+#       - dependency-name: 'eslint'
+#         update-types: ['version-update:semver-major']
+#       - dependency-name: '@eslint/*'
+#         update-types: ['version-update:semver-major']
 
-  # ----- MOBILE (npm) -----
-  - package-ecosystem: 'npm'
-    directory: '/mobile'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/Warsaw'
-    open-pull-requests-limit: 10
-    labels: ['dependency', 'Mobile']
-    commit-message:
-      prefix: 'chore(deps-mobile)'
-    groups:
-      eslint:
-        patterns:
-          - 'eslint'
-          - '@eslint/*'
-          - 'eslint-*'
-          - '@microsoft/eslint-formatter-sarif'
-        exclude-patterns:
-          - 'eslint-config-expo'
-      mobile-minor-patch:
-        update-types: ['minor', 'patch']
-      # Versions controlled by the Expo SDK. Upgrade them via
-      # "npx expo install --fix" or an SDK upgrade, not via Dependabot.
-      # Patch updates (bug fixes) are still allowed.
-    ignore:
-      - dependency-name: 'react'
-      - dependency-name: 'react-dom'
-      - dependency-name: 'react-native'
-      - dependency-name: 'react-native-*'
-      - dependency-name: '@types/react'
-        update-types:
-          ['version-update:semver-minor', 'version-update:semver-major']
-      - dependency-name: 'expo'
-        update-types: ['version-update:semver-minor', 'version-update:semver-major']
-      - dependency-name: 'expo-*'
-        update-types: ['version-update:semver-minor', 'version-update:semver-major']
-      # ESLint majors must wait until eslint-config-expo supports them
-      - dependency-name: 'eslint'
-        update-types: ['version-update:semver-major']
+#   # ----- MOBILE (npm) -----
+#   - package-ecosystem: 'npm'
+#     directory: '/mobile'
+#     schedule:
+#       interval: 'weekly'
+#       day: 'monday'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 10
+#     labels: ['dependency', 'Mobile']
+#     commit-message:
+#       prefix: 'chore(deps-mobile)'
+#     groups:
+#       eslint:
+#         patterns:
+#           - 'eslint'
+#           - '@eslint/*'
+#           - 'eslint-*'
+#           - '@microsoft/eslint-formatter-sarif'
+#         exclude-patterns:
+#           - 'eslint-config-expo'
+#       mobile-minor-patch:
+#         update-types: ['minor', 'patch']
+#       # Versions controlled by the Expo SDK. Upgrade them via
+#       # "npx expo install --fix" or an SDK upgrade, not via Dependabot.
+#       # Patch updates (bug fixes) are still allowed.
+#     ignore:
+#       - dependency-name: 'react'
+#       - dependency-name: 'react-dom'
+#       - dependency-name: 'react-native'
+#       - dependency-name: 'react-native-*'
+#       - dependency-name: '@types/react'
+#         update-types:
+#           ['version-update:semver-minor', 'version-update:semver-major']
+#       - dependency-name: 'expo'
+#         update-types: ['version-update:semver-minor', 'version-update:semver-major']
+#       - dependency-name: 'expo-*'
+#         update-types: ['version-update:semver-minor', 'version-update:semver-major']
+#       # ESLint majors must wait until eslint-config-expo supports them
+#       - dependency-name: 'eslint'
+#         update-types: ['version-update:semver-major']
 
-  # ----- BACKEND: PHP's packages (composer) -----
-  - package-ecosystem: 'composer'
-    directory: '/backend'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/Warsaw'
-    open-pull-requests-limit: 10
-    labels: ['dependency', 'Backend']
-    commit-message:
-      prefix: 'chore(deps-backend)'
-    groups:
-      backend-minor-patch:
-        update-types: ['minor', 'patch']
+#   # ----- BACKEND: PHP's packages (composer) -----
+#   - package-ecosystem: 'composer'
+#     directory: '/backend'
+#     schedule:
+#       interval: 'weekly'
+#       day: 'monday'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 10
+#     labels: ['dependency', 'Backend']
+#     commit-message:
+#       prefix: 'chore(deps-backend)'
+#     groups:
+#       backend-minor-patch:
+#         update-types: ['minor', 'patch']
 
-  # ----- BACKEND: Laravel's JS packages (npm) -----
-  - package-ecosystem: 'npm'
-    directory: '/backend'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/Warsaw'
-    open-pull-requests-limit: 5
-    labels: ['dependency', 'Backend']
-    commit-message:
-      prefix: 'chore(deps-backend-js)'
-    groups:
-      backend-js-minor-patch:
-        update-types: ['minor', 'patch']
+#   # ----- BACKEND: Laravel's JS packages (npm) -----
+#   - package-ecosystem: 'npm'
+#     directory: '/backend'
+#     schedule:
+#       interval: 'weekly'
+#       day: 'monday'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 5
+#     labels: ['dependency', 'Backend']
+#     commit-message:
+#       prefix: 'chore(deps-backend-js)'
+#     groups:
+#       backend-js-minor-patch:
+#         update-types: ['minor', 'patch']
 
-  # ---------- GITHUB ACTIONS ----------
-  - package-ecosystem: 'github-actions'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/Warsaw'
-    labels: ['dependency', 'DevOps']
-    commit-message:
-      prefix: 'chore(deps-ci)'
+#   # ---------- GITHUB ACTIONS ----------
+#   - package-ecosystem: 'github-actions'
+#     directory: '/'
+#     schedule:
+#       interval: 'weekly'
+#       day: 'monday'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     labels: ['dependency', 'DevOps']
+#     commit-message:
+#       prefix: 'chore(deps-ci)'
