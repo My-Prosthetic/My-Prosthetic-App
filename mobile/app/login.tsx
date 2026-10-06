@@ -167,8 +167,7 @@ export default function LoginScreen() {
 								colorName="secondary_base_0c"
 								onPress={handleResetPassword}
 								disabled={isLoading}
-								hitSlop={14}
-								style={{ paddingLeft: 12, minHeight: 44, textAlignVertical: "center" }}
+								style={{ paddingLeft: 12, textAlignVertical: "center" }}
 							/>
 							<ThemedText
 								tx="login.reset"
@@ -176,8 +175,7 @@ export default function LoginScreen() {
 								colorName="primary_base"
 								onPress={handleResetPassword}
 								disabled={isLoading}
-								hitSlop={14}
-								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
+								style={{ paddingLeft: 12 }}
 							/>
 						</View>
 					</View>
@@ -251,8 +249,7 @@ export default function LoginScreen() {
 								colorName="primary_base"
 								onPress={handleSignUp}
 								disabled={isLoading}
-								hitSlop={14}
-								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
+								style={{ paddingLeft: 12 }}
 							/>
 						</View>
 					</View>

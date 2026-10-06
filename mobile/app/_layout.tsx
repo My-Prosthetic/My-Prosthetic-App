@@ -86,6 +86,13 @@ export default function RootLayout() {
 
 		"Inter-Regular": require("@/assets/fonts/Inter/Inter_18pt-Regular.ttf"),
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
+
+		"Cabin-Bold": require("@/assets/fonts/Cabin/Cabin-Bold.ttf"),
+		"Cabin-Medium": require("@/assets/fonts/Cabin/Cabin-Medium.ttf"),
+
+		"Montserrat-Bold": require("@/assets/fonts/Montserrat/Montserrat-Bold.ttf"),
+		"Montserrat-Regular": require("@/assets/fonts/Montserrat/Montserrat-Regular.ttf"),
+		"Montserrat-SemiBold": require("@/assets/fonts/Montserrat/Montserrat-SemiBold.ttf"),
 	})
 
 	return (

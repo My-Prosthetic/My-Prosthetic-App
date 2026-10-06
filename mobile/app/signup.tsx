@@ -374,8 +374,7 @@ export default function SignUpScreen() {
 								colorName="primary_base"
 								onPress={handleLogin}
 								disabled={isSubmitting}
-								hitSlop={14}
-								style={{ paddingLeft: 12, paddingVertical: 14, minHeight: 44 }}
+								style={{ paddingLeft: 12 }}
 							/>
 						</View>
 					</View>

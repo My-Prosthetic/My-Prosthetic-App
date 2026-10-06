@@ -4,7 +4,7 @@ import { ParseKeys, TOptions } from "i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
 type Variant =
-	"title" | "tab1Category" | "main1Button" | "subTitle1" | "subTitle2" | "body1Regular" | "basic1"
+	"H0" | "H1" | "H2" | "H3" | "H4" | "H5" | "title" | "tab1Category" | "main1Button" | "subTitle1" | "subTitle2" | "body1Regular" | "basic1"
 
 interface ThemedTextProps extends TextProps {
 	tx?: ParseKeys
@@ -12,7 +12,6 @@ interface ThemedTextProps extends TextProps {
 	variant?: Variant
 	colorName?: keyof ThemeColors
 	onPress?: () => void
-	hitSlop?: number
 	children?: React.ReactNode
 }
 
@@ -22,7 +21,6 @@ export const ThemedText = ({
 	variant = "title",
 	colorName = "primary_base",
 	onPress,
-	hitSlop = 6,
 	style,
 	children,
 	...props
@@ -32,10 +30,11 @@ export const ThemedText = ({
 
 	const content = tx ? t(tx, txOptions) : children
 
+
 	if (onPress) {
 		return (
-			<Pressable onPress={onPress} hitSlop={hitSlop} accessibilityRole="button">
-				<Text style={[typography[variant], { color: colors[colorName] }, style]} {...props}>
+			<Pressable onPress={onPress} accessibilityRole="button" style={styles.hitbox}>
+				<Text style={[{color: colors[colorName], textAlignVertical: "center"}, typography[variant], style]} {...props}>
 					{content}
 				</Text>
 			</Pressable>
@@ -43,13 +42,56 @@ export const ThemedText = ({
 	}
 
 	return (
-		<Text style={[{ color: colors[colorName] }, typography[variant], style]} {...props}>
+		<Text style={[{color: colors[colorName], textAlignVertical: "center"}, typography[variant], style]} {...props}>
 			{content}
 		</Text>
 	)
 }
 
+const styles = StyleSheet.create({
+    hitbox: {
+        minWidth: 48,
+        minHeight: 48,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+})
+
 const typography = StyleSheet.create({
+	H0: {
+		fontFamily: "Montserrat-Bold",
+		fontSize: 22,
+		lineHeight: 27.5,
+	},
+	H1: {
+		fontFamily: "Montserrat-SemiBold",
+		fontSize: 13,
+		lineHeight: 16.25,
+		letterSpacing: 0.26,
+		textTransform: "uppercase",
+	},
+	H2: {
+		fontFamily: "Cabin-Bold",
+		fontSize: 14,
+		lineHeight: 17.5,
+		letterSpacing: 0.42,
+	},
+	H3: {
+		fontFamily: "Cabin-Medium",
+		fontSize: 16,
+		lineHeight: 20,
+		letterSpacing: 0.48,
+	},
+	H4: {
+		fontFamily: "Montserrat-Regular",
+		fontSize: 12,
+		lineHeight: 15,
+	},
+	H5: {
+		fontFamily: "Montserrat-Bold",
+		fontSize: 12,
+		lineHeight: 15,
+	},
 	title: {
 		fontFamily: "Afacad-Medium",
 		fontSize: 30,
