@@ -2,9 +2,22 @@ import { Text, TextProps, StyleSheet, Pressable } from "react-native"
 import { useTranslation } from "react-i18next"
 import { ParseKeys, TOptions } from "i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
+import { useRef } from "react"
 
 type Variant =
-	"H0" | "H1" | "H2" | "H3" | "H4" | "H5" | "title" | "tab1Category" | "main1Button" | "subTitle1" | "subTitle2" | "body1Regular" | "basic1"
+	| "H0"
+	| "H1"
+	| "H2"
+	| "H3"
+	| "H4"
+	| "H5"
+	| "title"
+	| "tab1Category"
+	| "main1Button"
+	| "subTitle1"
+	| "subTitle2"
+	| "body1Regular"
+	| "basic1"
 
 interface ThemedTextProps extends TextProps {
 	tx?: ParseKeys
@@ -14,6 +27,8 @@ interface ThemedTextProps extends TextProps {
 	onPress?: () => void
 	children?: React.ReactNode
 }
+
+const PRESS_GUARD_MS = 500
 
 export const ThemedText = ({
 	tx,
@@ -30,11 +45,34 @@ export const ThemedText = ({
 
 	const content = tx ? t(tx, txOptions) : children
 
+	const isProcessingRef = useRef(false)
+	const lastPressRef = useRef(0)
+
+	const handlePress = async () => {
+		const now = Date.now()
+		if (isProcessingRef.current || now - lastPressRef.current < PRESS_GUARD_MS) {
+			return
+		}
+		lastPressRef.current = now
+		isProcessingRef.current = true
+		try {
+			await onPress?.()
+		} finally {
+			isProcessingRef.current = false
+		}
+	}
 
 	if (onPress) {
 		return (
-			<Pressable onPress={onPress} accessibilityRole="button" style={styles.hitbox}>
-				<Text style={[{color: colors[colorName], textAlignVertical: "center"}, typography[variant], style]} {...props}>
+			<Pressable onPress={handlePress} accessibilityRole="button" style={styles.hitbox}>
+				<Text
+					style={[
+						{ color: colors[colorName], textAlignVertical: "center" },
+						typography[variant],
+						style,
+					]}
+					{...props}
+				>
 					{content}
 				</Text>
 			</Pressable>
@@ -42,19 +80,26 @@ export const ThemedText = ({
 	}
 
 	return (
-		<Text style={[{color: colors[colorName], textAlignVertical: "center"}, typography[variant], style]} {...props}>
+		<Text
+			style={[
+				{ color: colors[colorName], textAlignVertical: "center" },
+				typography[variant],
+				style,
+			]}
+			{...props}
+		>
 			{content}
 		</Text>
 	)
 }
 
 const styles = StyleSheet.create({
-    hitbox: {
-        minWidth: 48,
-        minHeight: 48,
-        justifyContent: "center",
-        alignItems: "center",
-    },
+	hitbox: {
+		minWidth: 48,
+		minHeight: 48,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 })
 
 const typography = StyleSheet.create({
