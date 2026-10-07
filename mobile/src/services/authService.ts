@@ -1,3 +1,6 @@
+import axios from "axios"
+import { apiClient } from "./apiClient"
+
 export interface MobileLoginPayload {
 	email: string
 	password: string
@@ -100,36 +103,31 @@ function getErrorTranslationKey(
 	return "auth.errors.validationFailed"
 }
 
+// takes whatever error axios throws and translates it into an AuthApiError
+function toAuthApiError(error: unknown, operation: "login" | "register"): AuthApiError {
+	if (axios.isAxiosError(error) && error.response) {
+		const { status, data } = error.response
+		return new AuthApiError(
+			getErrorMessage(data) ?? `Request failed with HTTP ${status}.`,
+			status,
+			getErrorTranslationKey(status, data, operation)
+		)
+	}
+	return new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+}
+
+// replaced login function that uses axios apiClient
 async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> {
-	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
-	if (!baseUrl) {
+	if (!process.env.EXPO_PUBLIC_API_URL) {
 		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
 	}
 
-	let response: Response
 	try {
-		response = await fetch(`${baseUrl}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify(payload),
-		})
-	} catch {
-		throw new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+		const response = await apiClient.post<MobileLoginResponse>("/login", payload)
+		return response.data
+	} catch (error) {
+		throw toAuthApiError(error, "login")
 	}
-
-	const body: unknown = await response.json().catch(() => null)
-	if (response.status !== 200) {
-		throw new AuthApiError(
-			getErrorMessage(body) ?? `Login failed with HTTP ${response.status}.`,
-			response.status,
-			getErrorTranslationKey(response.status, body, "login")
-		)
-	}
-
-	return body as MobileLoginResponse
 }
 
 async function register(payload: RegisterPayload): Promise<RegisterResponse> {
