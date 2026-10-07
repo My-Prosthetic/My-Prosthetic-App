@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ActivityIndicator, Modal, StyleSheet, View, TextInput } from "react-native"
+import { ActivityIndicator, Modal, StyleSheet, View } from "react-native"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 import { isValidEmail } from "@/src/utils/emailValidation"
+import { ThemedInput } from "@/src/components/ThemedInput"
 
 export default function LoginScreen() {
 	const router = useRouter()
@@ -24,7 +25,9 @@ export default function LoginScreen() {
 	const [errorMessage, setErrorMessage] = useState("")
 
 	//TODO
-	const handleResetPassword = () => {}
+	const handleResetPassword = () => {
+		router.back()
+	}
 
 	const handleLogin = async () => {
 		if (isLoading) return
@@ -67,191 +70,127 @@ export default function LoginScreen() {
 	}
 
 	const topSectionRender = () => {
-		return <ThemedText tx="login.logIn" colorName="accent_base" />
+		return (
+			<ThemedText
+				tx="login.logIn"
+				variant="H0"
+				colorName="blue0"
+				numberOfLines={1}
+				style={{ textTransform: "uppercase", flexShrink: 0 }}
+			/>
+		)
 	}
 
 	const bottomSectionRender = () => {
 		return (
 			<ThemedView
-				colorName="tertiary_base_2"
+				variant="background"
+				colorName="bg_0"
 				style={{
-					flexBasis: "auto",
-					flexShrink: 0,
-					borderTopLeftRadius: 10000,
 					justifyContent: "space-around",
-					paddingHorizontal: 32,
+					borderTopLeftRadius: 1000,
 				}}
 			>
-				<View style={styles.container}>
-					{/* Sekcja pól formularza */}
-					<View>
-						<View style={styles.inputsSection}>
-							{/* Pole Email */}
-							<View style={styles.inputGroup}>
-								<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
-								<ThemedView
-									variant="old_wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={{
-										borderWidth: 1,
-										minHeight: 44,
-										paddingVertical: 0,
-										paddingHorizontal: 0,
-										justifyContent: "flex-start",
-									}}
-								>
-									<TextInput
-										value={email}
-										onChangeText={(value) => {
-											setEmail(value)
-											setErrorMessage("")
-										}}
-										placeholder={t("signup.emailPlaceholder")}
-										placeholderTextColor={colors.primary_base_1}
-										keyboardType="email-address"
-										autoCapitalize="none"
-										editable={!isLoading}
-										style={{
-											width: "100%",
-											fontSize: 17,
-											paddingLeft: 16,
-											minHeight: 44,
-											fontFamily: "Afacad-SemiBold",
-										}}
-									/>
-								</ThemedView>
-							</View>
-
-							{/* Pole Hasło */}
-							<View style={styles.inputGroup}>
-								<ThemedText
-									tx="login.password"
-									variant="tab1Category"
-									colorName="secondary_base_0c"
-								/>
-								<ThemedView
-									variant="old_wide"
-									colorName="tertiary_base_3"
-									borderColor="secondary_base_0c"
-									style={{
-										borderWidth: 1,
-										minHeight: 44,
-										paddingVertical: 0,
-										paddingHorizontal: 0,
-										justifyContent: "flex-start",
-									}}
-								>
-									<TextInput
-										value={password}
-										onChangeText={(value) => {
-											setPassword(value)
-											setErrorMessage("")
-										}}
-										placeholder="••••••••"
-										placeholderTextColor={colors.primary_base_1}
-										secureTextEntry
-										autoCapitalize="none"
-										autoCorrect={false}
-										editable={!isLoading}
-										style={{ paddingLeft: 16, width: "100%" }}
-									/>
-								</ThemedView>
-							</View>
-						</View>
-						{/* Link Reset Hasła */}
-						<View style={styles.inlineRow}>
-							<ThemedText
-								tx="login.forgotPassword"
-								variant="tab1Category"
-								colorName="secondary_base_0c"
-								onPress={handleResetPassword}
-								disabled={isLoading}
-								style={{ paddingLeft: 12, textAlignVertical: "center" }}
+				<View style={styles.inputsAndReset}>
+					<View style={styles.inputsSection}>
+						{/* Pole Email */}
+						<View style={styles.inputGroup}>
+							<ThemedText tx="login.email" variant="H1" colorName="blue2" />
+							<ThemedInput
+								variant="email"
+								value={email}
+								onChangeText={(value) => {
+									setEmail(value)
+									setErrorMessage("")
+								}}
+								editable={!isLoading}
 							/>
-							<ThemedText
-								tx="login.reset"
-								variant="tab1Category"
-								colorName="primary_base"
-								onPress={handleResetPassword}
-								disabled={isLoading}
-								style={{ paddingLeft: 12 }}
+						</View>
+
+						{/* Pole Hasło */}
+						<View style={styles.inputGroup}>
+							<ThemedText tx="login.password" variant="H1" colorName="blue2" />
+							<ThemedInput
+								variant="password"
+								value={password}
+								onChangeText={(value) => {
+									setPassword(value)
+									setErrorMessage("")
+								}}
+								editable={!isLoading}
 							/>
 						</View>
 					</View>
-					{/* Sekcja Przycisków Akcji */}
-					<View style={styles.actionsSection}>
-						{errorMessage ? (
-							<ThemedText
-								accessibilityRole="alert"
-								variant="body1Regular"
-								colorName="false"
-								style={styles.errorMessage}
-							>
-								{errorMessage}
-							</ThemedText>
-						) : null}
 
-						{/* Przycisk ZALOGUJ */}
-						<ThemedView
-							variant="old_narrow"
-							colorName="primary_base"
-							shadow
-							onPress={handleLogin}
+					{/* Link Reset Hasła */}
+					<View style={styles.inlineRow}>
+						<ThemedText
+							tx="login.forgotPassword"
+							variant="H1"
+							colorName="blue2"
 							disabled={isLoading}
-							accessibilityRole="button"
-							accessibilityState={{ disabled: isLoading, busy: isLoading }}
-						>
-							<ThemedText tx="login.logIn" variant="main1Button" colorName="accent_base_1" />
-						</ThemedView>
-
-						{/* Przycisk Kontynuuj z Google */}
-						<ThemedView
-							variant="old_narrow"
-							colorName="accent_base_2"
-							shadow
-							onPress={handleGoogleLogin}
+						/>
+						<ThemedText
+							tx="login.reset"
+							variant="H1"
+							colorName="magenta0"
+							onPress={handleResetPassword}
 							disabled={isLoading}
-						>
-							<ThemedText
-								tx="login.continueGoogle"
-								variant="tab1Category"
-								colorName="primary_base"
-							/>
-						</ThemedView>
+						/>
+					</View>
+				</View>
 
-						{/* Przycisk Kontynuuj z Facebook */}
-						<ThemedView
-							variant="old_narrow"
-							colorName="accent_base_2"
-							shadow
-							onPress={handleFacebookLogin}
+				{/* Sekcja Przycisków Akcji */}
+				<View style={styles.actionsSection}>
+					{errorMessage && (
+						<ThemedText accessibilityRole="alert" variant="H3" colorName="false">
+							{errorMessage}
+						</ThemedText>
+					)}
+
+					{/* Przycisk ZALOGUJ */}
+					<ThemedView
+						variant="narrow"
+						colorName="blue2"
+						onPress={handleLogin}
+						disabled={isLoading}
+						accessibilityState={{ disabled: isLoading, busy: isLoading }}
+					>
+						<ThemedText tx="login.logIn" variant="H1" colorName="bg_0" />
+					</ThemedView>
+
+					{/* Przycisk Kontynuuj z Google */}
+					<ThemedView
+						variant="narrow"
+						colorName="blue0"
+						onPress={handleGoogleLogin}
+						disabled={isLoading}
+						accessibilityState={{ disabled: isLoading, busy: isLoading }}
+					>
+						<ThemedText tx="login.continueGoogle" variant="H1" colorName="graphite0" />
+					</ThemedView>
+
+					{/* Przycisk Kontynuuj z Facebook */}
+					<ThemedView
+						variant="narrow"
+						colorName="blue0"
+						onPress={handleFacebookLogin}
+						disabled={isLoading}
+						accessibilityState={{ disabled: isLoading, busy: isLoading }}
+					>
+						<ThemedText tx="login.continueFacebook" variant="H1" colorName="graphite0" />
+					</ThemedView>
+
+					{/* Link do rejestracji konta */}
+					<View style={styles.inlineRow}>
+						<ThemedText tx="login.noAccount" variant="H3" colorName="blue2" />
+						<ThemedText
+							tx="login.createAccount"
+							variant="H3"
+							colorName="magenta0"
+							onPress={handleSignUp}
 							disabled={isLoading}
-						>
-							<ThemedText
-								tx="login.continueFacebook"
-								variant="tab1Category"
-								colorName="primary_base"
-							/>
-						</ThemedView>
-
-						{/* Link do rejestracji konta */}
-						<View style={[styles.inlineRow, styles.centerRow]}>
-							<ThemedText
-								tx="login.noAccount"
-								variant="tab1Category"
-								colorName="secondary_base_0c"
-								style={{ paddingLeft: 12 }}
-							/>
-							<ThemedText
-								tx="login.createAccount"
-								variant="tab1Category"
-								colorName="primary_base"
-								onPress={handleSignUp}
-								disabled={isLoading}
-								style={{ paddingLeft: 12 }}
-							/>
-						</View>
+						/>
 					</View>
 				</View>
 			</ThemedView>
@@ -282,11 +221,8 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flexGrow: 1,
-		flexShrink: 0,
-		justifyContent: "flex-start",
-		paddingVertical: 10,
+	inputsAndReset: {
+		paddingTop: 20,
 	},
 	inputsSection: {
 		gap: 14,
@@ -294,11 +230,6 @@ const styles = StyleSheet.create({
 	},
 	inputGroup: {
 		gap: 6,
-	},
-	errorMessage: {
-		width: "100%",
-		fontSize: 14,
-		textAlign: "center",
 	},
 	loadingOverlay: {
 		position: "absolute",
@@ -313,13 +244,11 @@ const styles = StyleSheet.create({
 	inlineRow: {
 		flexDirection: "row",
 		alignItems: "center",
-	},
-	centerRow: {
-		justifyContent: "center",
-		paddingLeft: 0,
+		marginTop: 10,
+		gap: 20,
 	},
 	actionsSection: {
-		gap: 12,
+		gap: 16,
 		alignItems: "center",
 		width: "100%",
 	},

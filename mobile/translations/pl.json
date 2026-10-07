@@ -73,7 +73,7 @@
 		"save": "ZAPISZ",
 		"delete": "Usuń",
 		"today": "Dzisiaj",
-		"mp": "My Prosthetics"
+		"mp": "My Prosthetic"
 	},
 	"funds": {
 		"title": "DOFINANSOWANIA",
@@ -325,11 +325,11 @@
 	},
 	"login": {
 		"logIn": "Zaloguj",
-		"createAccount": "Stwórz konto",
+		"logIn2": "Zaloguj się",
+		"createAccount": "Utwórz konto",
 		"useWithoutAccount": "Korzystaj bez konta",
-		"areYouSure": "Czy na pewno chcesz korzystać bez konta?",
-		"onlyLocal": "Korzystając z aplikacji bez konta Twoje dane są przetwarzane i przechowywane wyłącznie w pamięci lokalnej urządzenia.",
-		"itResultsIn": "Powoduje to:",
+		"areYouSure": "CZY NA PEWNO\nCHCESZ KORZYSTAĆ\nBEZ KONTA?",
+		"onlyLocal": "Korzystając z aplikacji bez konta Twoje dane są przetwarzane i przechowywane wyłącznie w pamięci lokalnej urządzenia.\n\nPowoduje to:",
 		"noCopy": "Brak kopii zapasowej",
 		"constraints": "Ograniczenia w udostępnianiu historii medycznej specjalistom.",
 		"alreadyHaveAccount": "Masz już konto?",

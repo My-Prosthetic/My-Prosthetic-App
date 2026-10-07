@@ -73,7 +73,7 @@
 		"save": "SAVE",
 		"delete": "DELETE",
 		"today": "Today",
-		"mp": "My Prosthetics"
+		"mp": "My Prosthetic"
 	},
 	"funds": {
 		"title": "FUNDING",
@@ -325,11 +325,11 @@
 	},
 	"login": {
 		"logIn": "Log in",
+		"logIn2": "Log in",
 		"createAccount": "Sign up",
 		"useWithoutAccount": "Use without an account",
-		"areYouSure": "Are you sure you want to continue without an account?",
-		"onlyLocal": "By using the app without an account, your data is processed and stored exclusively in your device's local storage.",
-		"itResultsIn": "This results in:",
+		"areYouSure": "ARE YOU SURE\nYOU WANT TO CONTINUE\nWITHOUT AN ACCOUNT?",
+		"onlyLocal": "By using the app without an account, your data is processed and stored exclusively in your device's local storage.\n\nThis results in:",
 		"noCopy": "No backup",
 		"constraints": "Limitations in sharing medical history with specialists.",
 		"alreadyHaveAccount": "Already have an account?",
