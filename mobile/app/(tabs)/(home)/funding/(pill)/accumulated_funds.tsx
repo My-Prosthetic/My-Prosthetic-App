@@ -96,7 +96,7 @@ export default function AccumulatedFundsScreen() {
 
 	const renderPlus = () => (
 		<ThemedView
-			variant="wide"
+			variant="old_wide"
 			colorName="tertiary_base_3"
 			style={styles.carouselOutline}
 			onPress={() => router.push("/funding/new_goal")}
@@ -108,7 +108,7 @@ export default function AccumulatedFundsScreen() {
 	const renderGoal = (item: Goal) => (
 		<ThemedView
 			key={item.id}
-			variant="wide"
+			variant="old_wide"
 			colorName="tertiary_base_3"
 			style={styles.carouselOutline}
 			onPress={() =>
@@ -150,7 +150,7 @@ export default function AccumulatedFundsScreen() {
 				<>
 					{/*ILE ZEBRANO*/}
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_3"
 						style={styles.summaryCard}
@@ -170,7 +170,11 @@ export default function AccumulatedFundsScreen() {
 									{formatCurrency(accumulatedDeposit, currency)}
 								</ThemedText>
 							</View>
-							<ThemedView variant="tag" colorName="primary_base_4" style={{ marginVertical: 0 }}>
+							<ThemedView
+								variant="old_tag"
+								colorName="primary_base_4"
+								style={{ marginVertical: 0 }}
+							>
 								<ThemedText
 									variant="main1Button"
 									colorName="primary_base"
@@ -231,7 +235,7 @@ export default function AccumulatedFundsScreen() {
 
 					{/*DODAJ UZYSKANE ŚRODKI*/}
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="primary_base"
 						borderColor="accent_base"
 						onPress={() =>

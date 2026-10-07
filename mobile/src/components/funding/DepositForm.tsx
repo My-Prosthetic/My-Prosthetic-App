@@ -199,7 +199,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						tx="funds.grantedAmount"
 					/>
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_2"
 						style={styles.amountField}
@@ -227,7 +227,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 					<ThemedView
 						borderColor="primary_base_2"
 						colorName="tertiary_base_3"
-						variant="wide"
+						variant="old_wide"
 						onPress={() => setDateModalVisible(true)}
 						style={styles.dateField}
 					>
@@ -245,7 +245,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						tx="funds.additionalNote"
 					/>
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_2"
 						style={styles.noteField}
@@ -264,7 +264,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 
 			<View style={styles.actions}>
 				<ThemedView
-					variant={mode === "create" ? "wide" : "narrow"}
+					variant={mode === "create" ? "old_wide" : "old_narrow"}
 					colorName="primary_base"
 					borderColor="accent_base"
 					onPress={isSubmitting ? undefined : handleSave}

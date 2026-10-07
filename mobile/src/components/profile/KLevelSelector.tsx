@@ -79,7 +79,7 @@ export function KLevelSelector({
 				accessibilityState={{ expanded: isOpen }}
 			>
 				<ThemedView
-					variant="wide"
+					variant="old_wide"
 					colorName="tertiary_base_3"
 					style={[styles.activityDropdown, { shadowColor: colors.primary_base }]}
 				>

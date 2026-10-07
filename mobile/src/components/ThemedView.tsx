@@ -1,7 +1,6 @@
 import React, { useRef } from "react"
 import {
 	View,
-	ViewProps,
 	Pressable,
 	PressableProps,
 	StyleSheet,
@@ -13,7 +12,15 @@ import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
 export type ThemedViewSize =
-	"none" | "wide" | "narrow" | "background" | "tag" | "divider" | "header"
+	| "none"
+	| "background"
+	| "divider"
+	| "old_wide"
+	| "old_narrow"
+	| "old_tag"
+	| "wide"
+	| "narrow"
+	| "tag"
 
 export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	colorName?: keyof ThemeColors
@@ -23,6 +30,10 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	onPress?: () => void | Promise<unknown>
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
+	leftChild?: React.ReactNode
+	centerChild?: React.ReactNode
+	rightChild?: React.ReactNode
+	childrenContainerStyle?: StyleProp<ViewStyle>
 }
 
 const getShadowStyle = (enabled: boolean): ViewStyle => {
@@ -49,13 +60,17 @@ const getShadowStyle = (enabled: boolean): ViewStyle => {
 const PRESS_GUARD_MS = 500
 
 export const ThemedView = ({
-	colorName = "primary_base",
+	colorName,
 	borderColor,
 	variant: size = "none",
 	shadow = false,
 	onPress,
 	style,
 	children,
+	leftChild,
+	centerChild,
+	rightChild,
+	childrenContainerStyle,
 	...props
 }: ThemedViewProps) => {
 	const { colors } = useTheme()
@@ -85,53 +100,90 @@ export const ThemedView = ({
 	const getElementStyle = (pressed = false): StyleProp<ViewStyle> => [
 		styles.base,
 		borderColor && {
-			borderWidth: 3,
+			borderWidth: 1,
 			borderColor: colors[borderColor],
 		},
 		sizes[size],
-		{ backgroundColor: colors[colorName] },
+		{ backgroundColor: colorName ? colors[colorName] : "transparent" },
 		getShadowStyle(shadow),
 		pressed && styles.pressed,
 		style,
 	]
 
+	const renderContent = () => {
+		const hasSlotContent = Boolean(leftChild || centerChild || rightChild)
+		const onlyCenter = !Boolean(leftChild || rightChild)
+
+		if (!hasSlotContent) {
+			return children
+		}
+
+		return (
+			<View style={[styles.slotRow, childrenContainerStyle]}>
+				<View style={styles.slotSide}>{leftChild}</View>
+				<View style={[styles.slotCenter, { alignItems: onlyCenter ? "center" : "flex-start" }]}>
+					{centerChild}
+				</View>
+				<View style={styles.slotSide}>{rightChild}</View>
+			</View>
+		)
+	}
+
 	if (onPress) {
 		return (
 			<Pressable onPress={handlePress} style={({ pressed }) => getElementStyle(pressed)} {...props}>
-				{children}
+				{renderContent()}
 			</Pressable>
 		)
 	}
 
 	return (
-		<View style={getElementStyle()} {...(props as ViewProps)}>
-			{children}
+		<View style={getElementStyle()} {...props}>
+			{renderContent()}
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	base: {
-		flexDirection: "column",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 20,
 	},
 	pressed: {
 		opacity: 0.75,
+	},
+	slotRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		width: "100%",
+		gap: 15,
+		paddingHorizontal: 18,
+	},
+	slotSide: {
+		flexShrink: 0,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	slotCenter: {
+		flex: 1,
+		justifyContent: "flex-start",
 	},
 })
 
 const getSizes = (insets: EdgeInsets) =>
 	StyleSheet.create({
-		none: {
-			flex: 1,
-		},
-		tag: {
+		none: {},
+		old_tag: {
 			alignSelf: "flex-start",
 			borderRadius: 9999,
 			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "center",
 		},
-		narrow: {
+		old_narrow: {
 			paddingVertical: 10,
 			paddingHorizontal: 14,
 			height: 60,
@@ -142,7 +194,7 @@ const getSizes = (insets: EdgeInsets) =>
 			alignSelf: "center",
 			justifyContent: "center",
 		},
-		wide: {
+		old_wide: {
 			paddingVertical: 14,
 			paddingHorizontal: 16,
 			minHeight: 60,
@@ -154,24 +206,24 @@ const getSizes = (insets: EdgeInsets) =>
 		},
 		background: {
 			flex: 1,
-			paddingHorizontal: 32,
-			paddingBottom: insets.bottom,
-			paddingTop: insets.top,
-			margin: 0,
+			paddingHorizontal: "8%",
+			flexDirection: "column",
+			alignItems: "center",
 		},
 		divider: {
 			height: 1,
 			width: "100%",
 			alignSelf: "stretch",
 		},
-		header: {
+		wide: {
 			width: "100%",
-			minHeight: 54,
-			paddingVertical: 12,
-			paddingHorizontal: 16,
-			borderRadius: 0,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between",
+			minHeight: 50,
+		},
+		narrow: {
+			width: "75%",
+			minHeight: 50,
+		},
+		tag: {
+			height: 22,
 		},
 	})

@@ -164,7 +164,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						tx="funds.goalName"
 					/>
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_2"
 						style={styles.textField}
@@ -187,7 +187,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						tx="funds.goalAmount"
 					/>
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_2"
 						style={styles.amountField}
@@ -214,7 +214,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						tx="funds.additionalNote"
 					/>
 					<ThemedView
-						variant="wide"
+						variant="old_wide"
 						colorName="tertiary_base_3"
 						borderColor="primary_base_2"
 						style={styles.noteField}
@@ -233,7 +233,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 			<View style={styles.actions}>
 				<ThemedView
-					variant="narrow"
+					variant="old_narrow"
 					colorName="primary_base"
 					borderColor="accent_base"
 					onPress={isSubmitting ? undefined : handleSave}

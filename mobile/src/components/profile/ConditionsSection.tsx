@@ -81,7 +81,7 @@ export function ConditionsSection({
 				{visibleConditions.map((condition) => (
 					<ThemedView
 						key={condition.id}
-						variant="tag"
+						variant="old_tag"
 						colorName="primary_base"
 						style={styles.conditionTag}
 					>
@@ -134,7 +134,7 @@ export function ConditionsSection({
 							count: hiddenConditionsCount,
 						})}
 					>
-						<ThemedView variant="tag" colorName="primary_base" style={styles.moreTag}>
+						<ThemedView variant="old_tag" colorName="primary_base" style={styles.moreTag}>
 							<ThemedText variant="subTitle2" colorName="accent_base" style={styles.moreTagText}>
 								+{hiddenConditionsCount}
 							</ThemedText>
@@ -143,7 +143,7 @@ export function ConditionsSection({
 				)}
 
 				<ThemedView
-					variant="tag"
+					variant="old_tag"
 					colorName="tertiary_base_3"
 					borderColor="primary_base"
 					style={styles.addConditionTag}

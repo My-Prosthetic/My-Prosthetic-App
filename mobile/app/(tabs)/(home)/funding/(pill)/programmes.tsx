@@ -48,7 +48,7 @@ export default function ProgrammesScreen() {
 			>
 				<View style={styles.cardContent}>
 					<ThemedView
-						variant="tag"
+						variant="old_tag"
 						colorName="secondary_base_3"
 						style={{
 							paddingHorizontal: 12,
@@ -114,7 +114,7 @@ export default function ProgrammesScreen() {
 			<ThemedView
 				style={[styles.addButton]}
 				borderColor="accent_base"
-				variant="wide"
+				variant="old_wide"
 				onPress={() => router.replace("/funding/accumulated_funds")}
 				accessibilityRole="button"
 				accessibilityLabel={t("funding.addFunds")}

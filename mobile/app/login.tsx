@@ -90,7 +90,7 @@ export default function LoginScreen() {
 							<View style={styles.inputGroup}>
 								<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
 								<ThemedView
-									variant="wide"
+									variant="old_wide"
 									colorName="tertiary_base_3"
 									borderColor="secondary_base_0c"
 									style={{
@@ -131,7 +131,7 @@ export default function LoginScreen() {
 									colorName="secondary_base_0c"
 								/>
 								<ThemedView
-									variant="wide"
+									variant="old_wide"
 									colorName="tertiary_base_3"
 									borderColor="secondary_base_0c"
 									style={{
@@ -194,7 +194,7 @@ export default function LoginScreen() {
 
 						{/* Przycisk ZALOGUJ */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="primary_base"
 							shadow
 							onPress={handleLogin}
@@ -207,7 +207,7 @@ export default function LoginScreen() {
 
 						{/* Przycisk Kontynuuj z Google */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="accent_base_2"
 							shadow
 							onPress={handleGoogleLogin}
@@ -222,7 +222,7 @@ export default function LoginScreen() {
 
 						{/* Przycisk Kontynuuj z Facebook */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="accent_base_2"
 							shadow
 							onPress={handleFacebookLogin}

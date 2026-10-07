@@ -11,7 +11,7 @@ export default function SettingsScreen() {
 			<ThemedText tx="screens.settingsTitle" />
 			{__DEV__ ? (
 				<ThemedView
-					variant="narrow"
+					variant="old_narrow"
 					colorName="false"
 					shadow
 					onPress={logout}

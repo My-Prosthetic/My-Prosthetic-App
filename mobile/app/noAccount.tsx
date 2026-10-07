@@ -23,7 +23,7 @@ export default function SignUpScreen() {
 			/>
 			<ThemedView
 				colorName="primary_base"
-				variant="wide"
+				variant="old_wide"
 				style={{ flexDirection: "column", alignItems: "flex-start" }}
 			>
 				<ThemedText
@@ -64,7 +64,7 @@ export default function SignUpScreen() {
 						colorName="secondary_base_0c"
 					/>
 					<ThemedView
-						variant="tag"
+						variant="old_tag"
 						colorName="accent_base_2"
 						shadow
 						onPress={() => router.push("../login")}
@@ -77,7 +77,7 @@ export default function SignUpScreen() {
 				<View style={styles.rowAction}>
 					<ThemedText tx="login.noAccount" variant="tab1Category" colorName="secondary_base_0c" />
 					<ThemedView
-						variant="tag"
+						variant="old_tag"
 						colorName="accent_base_2"
 						shadow
 						onPress={() => router.push("../signup")}
@@ -89,7 +89,7 @@ export default function SignUpScreen() {
 				<View style={styles.actionsContainer}></View>
 				{/* Główny przycisk: Korzystaj bez konta */}
 				<ThemedView
-					variant="wide"
+					variant="old_wide"
 					colorName="primary_base"
 					shadow
 					onPress={onContinueWithoutAccountPress}

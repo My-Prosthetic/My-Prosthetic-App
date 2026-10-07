@@ -310,7 +310,7 @@ export default function NewProsthesisScreen() {
 
 				{/* ZAPISZ PROTEZĘ */}
 				<ThemedView
-					variant="wide"
+					variant="old_wide"
 					colorName={canSave ? "primary_base" : "primary_base_3"}
 					borderColor="accent_base"
 					style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}

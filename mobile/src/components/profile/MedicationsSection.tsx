@@ -118,7 +118,7 @@ export function MedicationsSection({
 			</View>
 
 			<ThemedView
-				variant="tag"
+				variant="old_tag"
 				colorName="tertiary_base_3"
 				borderColor="primary_base"
 				style={styles.actionTag}

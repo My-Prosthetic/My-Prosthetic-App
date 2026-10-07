@@ -141,7 +141,7 @@ export default function SignUpScreen() {
 								colorName="secondary_base_0c"
 							/>
 							<ThemedView
-								variant="wide"
+								variant="old_wide"
 								colorName="tertiary_base_3"
 								borderColor="secondary_base_0c"
 								style={styles.themedInputWrapper}
@@ -169,7 +169,7 @@ export default function SignUpScreen() {
 								colorName="secondary_base_0c"
 							/>
 							<ThemedView
-								variant="wide"
+								variant="old_wide"
 								colorName="tertiary_base_3"
 								borderColor="secondary_base_0c"
 								style={styles.themedInputWrapper}
@@ -193,7 +193,7 @@ export default function SignUpScreen() {
 						<View style={styles.inputGroup}>
 							<ThemedText tx="login.email" variant="tab1Category" colorName="secondary_base_0c" />
 							<ThemedView
-								variant="wide"
+								variant="old_wide"
 								colorName="tertiary_base_3"
 								borderColor="secondary_base_0c"
 								style={styles.themedInputWrapper}
@@ -222,7 +222,7 @@ export default function SignUpScreen() {
 								colorName="secondary_base_0c"
 							/>
 							<ThemedView
-								variant="wide"
+								variant="old_wide"
 								colorName="tertiary_base_3"
 								borderColor="secondary_base_0c"
 								style={styles.themedInputWrapper}
@@ -279,7 +279,7 @@ export default function SignUpScreen() {
 								colorName="secondary_base_0c"
 							/>
 							<ThemedView
-								variant="wide"
+								variant="old_wide"
 								colorName="tertiary_base_3"
 								borderColor="secondary_base_0c"
 								style={[styles.themedInputWrapper, styles.repeatPasswordWrapper]}
@@ -317,7 +317,7 @@ export default function SignUpScreen() {
 
 						{/* Przycisk ZAREJESTRUJ */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="primary_base"
 							shadow
 							onPress={handleRegister}
@@ -333,7 +333,7 @@ export default function SignUpScreen() {
 
 						{/* Przycisk Kontynuuj z Google */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="accent_base_2"
 							shadow
 							onPress={handleGoogleLogin}
@@ -348,7 +348,7 @@ export default function SignUpScreen() {
 
 						{/* Przycisk Kontynuuj z Facebook */}
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="accent_base_2"
 							shadow
 							onPress={handleFacebookLogin}

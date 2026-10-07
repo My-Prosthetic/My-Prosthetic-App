@@ -42,11 +42,14 @@ export default function HomeScreen() {
 	return (
 		<ScrollView
 			style={styles.scrollView}
-			contentContainerStyle={[styles.container, { paddingTop: status === "GUEST" ? 0 : 50 }]}
+			contentContainerStyle={[
+				styles.container,
+				{ paddingTop: status === "GUEST" ? 0 : 50, alignItems: "center" },
+			]}
 			showsVerticalScrollIndicator={false}
 		>
 			{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
-			<ThemedView variant="wide" colorName="tertiary_base_2" style={styles.headerRow}>
+			<ThemedView variant="old_wide" colorName="tertiary_base_2" style={styles.headerRow}>
 				<ThemedText
 					tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
 					txOptions={{ name: userName.toLocaleUpperCase() }}
@@ -60,7 +63,7 @@ export default function HomeScreen() {
 
 			{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
 			<ThemedView
-				variant="wide"
+				variant="old_wide"
 				colorName="tertiary_base_3"
 				shadow={true}
 				style={styles.sectionContainer}
@@ -147,7 +150,7 @@ export default function HomeScreen() {
 			/>
 			<ThemedView
 				colorName="tertiary_base_3"
-				variant="wide"
+				variant="old_wide"
 				style={{ borderWidth: 1, borderColor: colors.secondary_base_0c }}
 			>
 				<View style={styles.activityCard}>
@@ -170,7 +173,7 @@ export default function HomeScreen() {
 			</ThemedView>
 
 			<ThemedView
-				variant="wide"
+				variant="old_wide"
 				colorName="tertiary_base_2"
 				style={{
 					flexDirection: "row",
@@ -186,7 +189,7 @@ export default function HomeScreen() {
 
 			<ThemedView
 				onPress={() => router.push("./funding/accumulated_funds")}
-				variant="wide"
+				variant="old_wide"
 				colorName="tertiary_base_3"
 				shadow={true}
 				style={{ justifyContent: "space-between", marginBottom: 32 }}
@@ -196,7 +199,7 @@ export default function HomeScreen() {
 				<Ionicons name="chevron-forward" size={24} color={colors.primary_base} />
 			</ThemedView>
 			<ThemedView
-				variant="wide"
+				variant="old_wide"
 				colorName="tertiary_base_3"
 				shadow={true}
 				style={{ justifyContent: "space-between", marginBottom: 60 }}
@@ -211,7 +214,6 @@ export default function HomeScreen() {
 				onPress={() => setTheme(themeType === "light" ? "high-contrast" : "light")}
 				variant="subTitle1"
 				tx={themeType === "light" ? "home.switchToHighContrast" : "home.switchToLightTheme"}
-				style={{ alignSelf: "center" }}
 			/>
 
 			{/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
@@ -222,7 +224,6 @@ export default function HomeScreen() {
 					i18n.changeLanguage(nextLang)
 				}}
 				variant="subTitle1"
-				style={{ alignSelf: "center" }}
 			>
 				{i18n.language.startsWith("pl")
 					? "Zmień język: English (EN)"

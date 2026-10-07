@@ -223,7 +223,7 @@ export default function ProfileScreen() {
 						/>
 
 						<ThemedView
-							variant="tag"
+							variant="old_tag"
 							colorName="accent_base_1"
 							borderColor="primary_base"
 							style={styles.actionTag}
@@ -320,7 +320,7 @@ function ProfileMenuCard({
 
 	return (
 		<ThemedView
-			variant="wide"
+			variant="old_wide"
 			colorName={colorName}
 			style={[styles.utilityCard, { shadowColor: colors.primary_base }]}
 			onPress={onPress}

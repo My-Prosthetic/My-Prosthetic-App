@@ -151,7 +151,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 					{/* Przyciski akcji */}
 					<View style={styles.actionsContainer}>
 						<ThemedView
-							variant="narrow"
+							variant="old_narrow"
 							colorName="primary_base"
 							borderColor="accent_base"
 							onPress={handleSave}
@@ -159,7 +159,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 							<ThemedText variant="main1Button" colorName="accent_base" tx="common.save" />
 						</ThemedView>
 
-						<ThemedView variant="narrow" colorName="accent_base_1" onPress={onClose}>
+						<ThemedView variant="old_narrow" colorName="accent_base_1" onPress={onClose}>
 							<ThemedText variant="main1Button" colorName="primary_base" tx="common.cancel" />
 						</ThemedView>
 					</View>

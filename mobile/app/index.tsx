@@ -42,21 +42,21 @@ export default function InitialScreen() {
 					}}
 				>
 					<ThemedView
-						variant="narrow"
+						variant="old_narrow"
 						colorName="primary_base"
 						onPress={() => router.push("../login")}
 					>
 						<ThemedText tx="login.logIn" colorName="accent_base_1" variant="main1Button" />
 					</ThemedView>
 					<ThemedView
-						variant="narrow"
+						variant="old_narrow"
 						colorName="primary_base"
 						onPress={() => router.push("../signup")}
 					>
 						<ThemedText tx="login.createAccount" colorName="accent_base_1" variant="main1Button" />
 					</ThemedView>
 					<ThemedView
-						variant="narrow"
+						variant="old_narrow"
 						colorName="accent_base_2"
 						shadow={true}
 						onPress={() => router.push("../noAccount")}

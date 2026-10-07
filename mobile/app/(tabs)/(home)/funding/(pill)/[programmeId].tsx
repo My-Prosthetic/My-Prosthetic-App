@@ -80,7 +80,7 @@ export default function ProgrammeDetailsScreen() {
 
 	if (!programme) {
 		return (
-			<ThemedView variant="wide" colorName="secondary_base" style={styles.notFoundContainer}>
+			<ThemedView variant="old_wide" colorName="secondary_base" style={styles.notFoundContainer}>
 				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="primary_base" />
 			</ThemedView>
 		)
@@ -183,7 +183,7 @@ export default function ProgrammeDetailsScreen() {
 				{details.externalUrl && details.externalButtonLabelKey && (
 					<ThemedView
 						onPress={() => openExternalUrl(details.externalUrl)}
-						variant="wide"
+						variant="old_wide"
 						colorName="primary_base"
 						borderColor="accent_base"
 						style={styles.mainButton}
@@ -243,7 +243,7 @@ export default function ProgrammeDetailsScreen() {
 				{details.externalUrl && details.externalButtonLabelKey && (
 					<ThemedView
 						onPress={() => openExternalUrl(details.externalUrl)}
-						variant="wide"
+						variant="old_wide"
 						colorName="primary_base"
 						style={styles.actionButton}
 					>

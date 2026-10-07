@@ -18,6 +18,14 @@ export interface ThemeColors {
 	warning: string
 	false: string
 	true: string
+	bg_0: string
+	bg_1: string
+	bg_2: string
+	blue0: string
+	blue1: string
+	blue2: string
+	graphite0: string
+	magenta0: string
 }
 
 export const lightTheme: ThemeColors = {
@@ -38,8 +46,17 @@ export const lightTheme: ThemeColors = {
 	warning: "#ED9D1D",
 	false: "#B51932",
 	true: "#15A959",
+	bg_0: "#FAFCFF",
+	bg_1: "#F1F6FB",
+	bg_2: "#E0E6EE",
+	blue0: "#D3EEFF",
+	blue1: "#72AACC",
+	blue2: "#065A8E",
+	graphite0: "#2B3A51",
+	magenta0: "#B74CC5",
 }
 
+//TODO upewnić się że wysoki kontrast dobrze spełnia swoją funkcję, szczególnie w zestawieniu z tekstem
 export const highContrastTheme: ThemeColors = {
 	primary_base: "#001A5E",
 	primary_base_1: "#0B3C9E",
@@ -58,6 +75,14 @@ export const highContrastTheme: ThemeColors = {
 	warning: "#FF8C00",
 	false: "#B51932",
 	true: "#15A959",
+	bg_0: "#FAFCFF",
+	bg_1: "#F1F6FB",
+	bg_2: "#E0E6EE",
+	blue0: "#000080",
+	blue1: "#000080",
+	blue2: "#000080",
+	graphite0: "#121212",
+	magenta0: "#F2CA19",
 }
 
 type ThemeType = "light" | "high-contrast"
