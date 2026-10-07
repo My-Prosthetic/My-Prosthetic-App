@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store"
 
 export const AUTH_TOKEN_KEY = "auth_token"
 
+// eslint-diable-next-line import/no-named-as-default-member
 export const apiClient = axios.create({
 	baseURL: process.env.EXPO_PUBLIC_API_URL,
 	timeout: 10000,
