@@ -131,36 +131,49 @@ async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> 
 }
 
 async function register(payload: RegisterPayload): Promise<RegisterResponse> {
-	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
-	if (!baseUrl) {
+	if (!process.env.EXPO_PUBLIC_API_URL) {
 		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
 	}
 
-	let response: Response
 	try {
-		response = await fetch(`${baseUrl}/register`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify(payload),
-		})
-	} catch {
-		throw new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+		const response = await apiClient.post<RegisterResponse>("/register", payload)
+		return response.data
+	} catch (error) {
+		throw toAuthApiError(error, "register")
 	}
-
-	const body: unknown = await response.json().catch(() => null)
-	if (response.status !== 201) {
-		throw new AuthApiError(
-			getErrorMessage(body) ?? `Registration failed with HTTP ${response.status}.`,
-			response.status,
-			getErrorTranslationKey(response.status, body, "register")
-		)
-	}
-
-	return body as RegisterResponse
 }
+
+// async function register(payload: RegisterPayload): Promise<RegisterResponse> {
+// 	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
+// 	if (!baseUrl) {
+// 		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
+// 	}
+
+// 	let response: Response
+// 	try {
+// 		response = await fetch(`${baseUrl}/register`, {
+// 			method: "POST",
+// 			headers: {
+// 				"Content-Type": "application/json",
+// 				Accept: "application/json",
+// 			},
+// 			body: JSON.stringify(payload),
+// 		})
+// 	} catch {
+// 		throw new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+// 	}
+
+// 	const body: unknown = await response.json().catch(() => null)
+// 	if (response.status !== 201) {
+// 		throw new AuthApiError(
+// 			getErrorMessage(body) ?? `Registration failed with HTTP ${response.status}.`,
+// 			response.status,
+// 			getErrorTranslationKey(response.status, body, "register")
+// 		)
+// 	}
+
+// 	return body as RegisterResponse
+// }
 
 async function logout(token: string): Promise<void> {
 	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
