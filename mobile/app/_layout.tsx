@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Text, View } from "react-native"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
@@ -9,6 +9,7 @@ import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
+import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
 import { db } from "@/db/client"
 import migrations from "@/drizzle/migrations"
 
@@ -27,11 +28,41 @@ function RootNavigationLayout({
 }) {
 	const { status } = useAuth()
 	const { success: migrationsLoaded, error: migrationError } = useMigrations(db, migrations)
+	const [catalogueSeeded, setCatalogueSeeded] = useState(false)
+	const [catalogueError, setCatalogueError] = useState<Error | null>(null)
+
+	useEffect(() => {
+		if (!migrationsLoaded) {
+			return
+		}
+
+		let isMounted = true
+
+		seedCatalogIfNotInitialized()
+			.then(() => {
+				if (isMounted) {
+					setCatalogueSeeded(true)
+				}
+			})
+			.catch((error: unknown) => {
+				if (isMounted) {
+					setCatalogueError(
+						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
+					)
+				}
+			})
+
+		return () => {
+			isMounted = false
+		}
+	}, [migrationsLoaded])
+
 	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
 	const isReady =
 		(fontsLoaded || !!fontsError) &&
 		status !== "INITIALIZING" &&
-		(migrationsLoaded || !!migrationError)
+		(migrationsLoaded || !!migrationError) &&
+		(catalogueSeeded || !!catalogueError || !!migrationError)
 
 	useEffect(() => {
 		if (isReady) {
@@ -49,6 +80,14 @@ function RootNavigationLayout({
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
 				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
+			</View>
+		)
+	}
+
+	if (catalogueError) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
+				<Text>Błąd inicjalizacji katalogu producentów: {catalogueError.message}</Text>
 			</View>
 		)
 	}

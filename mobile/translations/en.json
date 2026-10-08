@@ -68,10 +68,10 @@
 		}
 	},
 	"common": {
-		"cancel": "CANCEL",
+		"cancel": "Cancel",
 		"error": "Error",
-		"save": "SAVE",
-		"delete": "DELETE",
+		"save": "Save",
+		"delete": "Delete",
 		"today": "Today",
 		"mp": "My Prosthetics"
 	},
@@ -321,7 +321,149 @@
 		"side": "SIDE",
 		"limb": "LIMB",
 		"amputationLevel": "AMPUTATION LEVEL",
-		"notFound": "Prosthesis not found."
+		"notFound": "Prosthesis not found.",
+		"components": "Components",
+		"addComponent": "Add Components",
+		"loadingComponents": "Loading components...",
+		"noComponents": "No components are assigned to this prosthesis.",
+		"noFilterResults": "No components match the selected filters.",
+		"filters": {
+			"title": "Component filters",
+			"status": "Status",
+			"all": "All",
+			"active": "Active",
+			"historical": "Historical",
+			"category": "Categories",
+			"types": {
+				"socket": "Socket",
+				"liner": "Liner",
+				"hip": "Hip",
+				"knee": "Knee",
+				"foot": "Foot",
+				"elbow": "Elbow",
+				"wrist": "Wrist",
+				"hand": "Hand",
+				"electrodes": "Electrodes",
+				"mechanical": "Mechanical",
+				"adapter": "Adapter",
+				"suspension": "Suspension",
+				"cosmetic": "Cosmetic",
+				"other": "Other"
+			},
+			"assemblyDate": "Assembly date",
+			"assemblyFrom": "From",
+			"assemblyTo": "To",
+			"chooseDate": "Choose date",
+			"clearDate": "Clear date",
+			"warranty": "Warranty",
+			"warrantyOptions": {
+				"all": "Any date",
+				"endingSoon": "Ends within 30 days",
+				"expired": "Expired",
+				"noDate": "No date"
+			},
+			"reset": "Reset",
+			"apply": "Apply"
+		}
+	},
+	"newComponent": {
+		"newComponent": "New component",
+		"fields": {
+			"category": "Component category",
+			"brand": "Component brand",
+			"model": "Model",
+			"assemblyDate": "Assembly date",
+			"description": "Description",
+			"warrantyEndDate": "Warranty end date",
+			"expectedExchangeDate": "Expected replacement date"
+		},
+		"categories": {
+			"socket": "Prosthetic socket",
+			"liner": "Liner",
+			"hip": "Hip",
+			"knee": "Knee",
+			"foot": "Prosthetic foot",
+			"elbow": "Elbow",
+			"wrist": "Wrist",
+			"hand": "Hand",
+			"electrodes": "Electrodes",
+			"mechanical": "Mechanical",
+			"adapter": "Adapter",
+			"suspension": "Suspension",
+			"cosmetic": "Cosmetic",
+			"other": "Other component"
+		},
+		"switches": {
+			"socketType": "SOCKET TYPE:",
+			"test": "test",
+			"final": "final",
+			"componentType": "COMPONENT STATUS:",
+			"active": "active",
+			"historical": "historical"
+		},
+		"placeholders": {
+			"category": "Select a category",
+			"brand": "Select a brand",
+			"loadingBrands": "Loading brands...",
+			"searchBrand": "Search brands",
+			"model": "Select a model",
+			"loadingModels": "Loading models...",
+			"searchModel": "Search models",
+			"addCustomModel": "Add a custom model +",
+			"selectBrandFirst": "Select a brand first",
+			"brandName": "Enter a brand name",
+			"modelName": "Enter a model name",
+			"description": "Enter a short description, e.g. decision number..."
+		},
+		"customOption": {
+			"successTitle": "Added"
+		},
+		"customBrand": {
+			"add": "Add a new brand",
+			"title": "Add brand",
+			"alreadyExists": "This brand is already in the database.",
+			"created": "You added a new brand. You can use it in the future without adding it again."
+		},
+		"customModel": {
+			"add": "Add a new model",
+			"title": "Add model",
+			"duplicateTitle": "Model already exists",
+			"duplicateMessage": "This model is already listed under {{existingBrand}}. Are you sure you want to create a new model for {{selectedBrand}}?",
+			"confirm": "Create new",
+			"alreadyExistsForBrand": "This model is already available for the selected brand and category.",
+			"created": "You added a new model. You can use it in the future without adding it again."
+		},
+		"hints": {
+			"selectBrandForModel": "Select a component brand before choosing a model."
+		},
+		"modelsUnavailable": "No models in this category for the selected manufacturer",
+		"sections": {
+			"warrantyAndUsage": "WARRANTY AND USAGE"
+		},
+		"reminders": {
+			"exchangeDate": "REMIND ME ABOUT\nREPLACEMENT DATE",
+			"warrantyEnd": "REMIND ME ABOUT\nWARRANTY EXPIRATION"
+		},
+		"reminderChannels": {
+			"email": "email",
+			"app": "in the\napp",
+			"push": "push\nnotification"
+		},
+		"addFiles": "ADD FILES",
+		"filesDescription": "add photos, documentation,\n3D scans and other files\nrelated to the prosthesis",
+		"save": "Save component",
+		"saving": "Saving...",
+		"errors": {
+			"loadBrands": "Failed to load brands.",
+			"loadModels": "Failed to load models.",
+			"createBrand": "Failed to save the new brand.",
+			"createModel": "Failed to save the new model.",
+			"saveComponent": "Failed to save the component."
+		},
+		"validation": {
+			"title": "Complete the required fields",
+			"requiredFields": "Complete the fields marked *:\n{{fields}}"
+		}
 	},
 	"login": {
 		"logIn": "Log in",
