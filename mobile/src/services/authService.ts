@@ -1,3 +1,6 @@
+import { isAxiosError } from "axios"
+import { apiClient } from "./apiClient"
+
 export interface MobileLoginPayload {
 	email: string
 	password: string
@@ -100,89 +103,41 @@ function getErrorTranslationKey(
 	return "auth.errors.validationFailed"
 }
 
-async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> {
-	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
-	if (!baseUrl) {
-		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
-	}
-
-	let response: Response
-	try {
-		response = await fetch(`${baseUrl}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify(payload),
-		})
-	} catch {
-		throw new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
-	}
-
-	const body: unknown = await response.json().catch(() => null)
-	if (response.status !== 200) {
-		throw new AuthApiError(
-			getErrorMessage(body) ?? `Login failed with HTTP ${response.status}.`,
-			response.status,
-			getErrorTranslationKey(response.status, body, "login")
+// takes whatever error axios throws and translates it into an AuthApiError
+function toAuthApiError(error: unknown, operation: "login" | "register"): AuthApiError {
+	if (isAxiosError(error) && error.response) {
+		const { status, data } = error.response
+		return new AuthApiError(
+			getErrorMessage(data) ?? `Request failed with HTTP ${status}.`,
+			status,
+			getErrorTranslationKey(status, data, operation)
 		)
 	}
+	return new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+}
 
-	return body as MobileLoginResponse
+// replaced login function that uses axios apiClient
+async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> {
+	try {
+		const response = await apiClient.post<MobileLoginResponse>("/login", payload)
+		return response.data
+	} catch (error) {
+		throw toAuthApiError(error, "login")
+	}
 }
 
 async function register(payload: RegisterPayload): Promise<RegisterResponse> {
-	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
-	if (!baseUrl) {
-		throw new AuthApiError("API configuration is missing.", undefined, "auth.errors.apiUnavailable")
-	}
-
-	let response: Response
 	try {
-		response = await fetch(`${baseUrl}/register`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify(payload),
-		})
-	} catch {
-		throw new AuthApiError("API request failed to connect.", undefined, "auth.errors.network")
+		const response = await apiClient.post<RegisterResponse>("/register", payload)
+		return response.data
+	} catch (error) {
+		throw toAuthApiError(error, "register")
 	}
-
-	const body: unknown = await response.json().catch(() => null)
-	if (response.status !== 201) {
-		throw new AuthApiError(
-			getErrorMessage(body) ?? `Registration failed with HTTP ${response.status}.`,
-			response.status,
-			getErrorTranslationKey(response.status, body, "register")
-		)
-	}
-
-	return body as RegisterResponse
 }
 
-async function logout(token: string): Promise<void> {
-	const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "")
-	if (!baseUrl) {
-		console.error("Cannot notify the API about logout: EXPO_PUBLIC_API_URL is not configured.")
-		return
-	}
-
+async function logout(): Promise<void> {
 	try {
-		const response = await fetch(`${baseUrl}/logout`, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-				Accept: "application/json",
-			},
-		})
-
-		if (!response.ok) {
-			console.error(`API logout failed with HTTP ${response.status}.`)
-		}
+		await apiClient.post("logout")
 	} catch (error) {
 		console.error("API logout request failed; continuing with local logout.", error)
 	}
