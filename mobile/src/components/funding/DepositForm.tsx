@@ -265,6 +265,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 			<View style={styles.actions}>
 				<ThemedView
 					variant={mode === "create" ? "old_wide" : "old_narrow"}
+					style={{ flexDirection: "column" }}
 					colorName="primary_base"
 					borderColor="accent_base"
 					onPress={isSubmitting ? undefined : handleSave}

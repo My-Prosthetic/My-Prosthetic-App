@@ -100,7 +100,7 @@ export default function ProgrammeDetailsScreen() {
 				style={styles.summaryBox}
 			>
 				{details.summaryRows.map((row, index) => (
-					<View key={`${row.labelKey}-${index}`}>
+					<View key={`${row.labelKey}-${index}`} style={{ width: "100%" }}>
 						<View style={styles.summaryRow}>
 							<ThemedText variant="basic1" colorName="primary_base">
 								{translate(row.labelKey)}
@@ -331,8 +331,12 @@ export default function ProgrammeDetailsScreen() {
 	}
 
 	return (
-		<ThemedView colorName="tertiary_base_2" variant="background">
-			<ScrollView showsVerticalScrollIndicator={false}>
+		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+			<ThemedView
+				colorName="tertiary_base_2"
+				variant="background"
+				style={{ alignItems: "flex-start" }}
+			>
 				<ThemedText
 					variant="main1Button"
 					colorName="primary_base"
@@ -359,8 +363,8 @@ export default function ProgrammeDetailsScreen() {
 				{renderSteps()}
 				{renderEligibility()}
 				{renderFoundations()}
-			</ScrollView>
-		</ThemedView>
+			</ThemedView>
+		</ScrollView>
 	)
 }
 
@@ -370,13 +374,14 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		paddingHorizontal: 14,
 		marginBottom: 28,
+		flexDirection: "column",
 	},
 	summaryRow: {
 		minHeight: 50,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		gap: 12,
+		width: "100%",
 	},
 	stepsContainer: {
 		gap: 0,
@@ -385,6 +390,7 @@ const styles = StyleSheet.create({
 	stepRow: {
 		flexDirection: "row",
 		alignItems: "flex-start",
+		width: "100%",
 	},
 	stepIndicator: {
 		width: 30,
@@ -441,7 +447,9 @@ const styles = StyleSheet.create({
 		paddingTop: 14,
 		paddingBottom: 10,
 		marginBottom: 28,
+		flexDirection: "column",
 		justifyContent: "center",
+		width: "100%",
 	},
 	eligibilityRow: {
 		flexDirection: "row",

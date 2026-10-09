@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react"
-import { StyleSheet, ActivityIndicator, View, ScrollView, Pressable } from "react-native"
+import { StyleSheet, ActivityIndicator, View, ScrollView } from "react-native"
 import { useFocusEffect, router } from "expo-router"
 import { eq } from "drizzle-orm"
 import { useTranslation } from "react-i18next"
@@ -123,141 +123,152 @@ export default function AccumulatedFundsScreen() {
 	)
 
 	return (
-		<ThemedView colorName="tertiary_base_2" variant="background" style={styles.container}>
-			<ThemedText
-				variant="tab1Category"
-				colorName="secondary_base_0c"
-				tx="funds.prostheticBudget"
-				style={{ marginBottom: 10 }}
-			/>
+		<>
+			<View
+				style={{
+					flexDirection: "column",
+					alignContent: "center",
+				}}
+			>
+				<ThemedText
+					variant="tab1Category"
+					colorName="secondary_base_0c"
+					tx="funds.prostheticBudget"
+					style={{ marginVertical: 10, textAlign: "center" }}
+				/>
 
-			{/*KARUZELA*/}
-			{loading ? (
-				<ActivityIndicator color={colors.primary_base} style={{ marginVertical: 20 }} />
-			) : (
-				<View style={{ marginBottom: 6 }}>
-					<Carousel
-						items={goalsList}
-						renderItem={renderGoal}
-						renderPlus={renderPlus}
-						cardStyle={styles.carouselCard}
-						setExternalIndex={setCurrentGoalIndex}
-					/>
-				</View>
-			)}
-
-			{currentGoal !== undefined && (
-				<>
-					{/*ILE ZEBRANO*/}
-					<ThemedView
-						variant="old_wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_3"
-						style={styles.summaryCard}
-					>
-						<View style={styles.summaryHeader}>
-							<View>
-								<ThemedText
-									variant="body1Regular"
-									colorName="secondary_base_0c"
-									tx="funds.collected"
-								/>
-								<ThemedText
-									variant="main1Button"
-									style={{ fontSize: 24, paddingTop: 6 }}
-									colorName="primary_base"
-								>
-									{formatCurrency(accumulatedDeposit, currency)}
-								</ThemedText>
-							</View>
-							<ThemedView
-								variant="old_tag"
-								colorName="primary_base_4"
-								style={{ marginVertical: 0 }}
-							>
-								<ThemedText
-									variant="main1Button"
-									colorName="primary_base"
-									style={{ fontSize: 10 }}
-									tx="funds.datePlaceholder"
-								/>
-							</ThemedView>
-						</View>
-
-						<View style={styles.progressBarBackground}>
-							<View style={[styles.progressBarFill, { width: `${progressPercentage}%` }]} />
-						</View>
-					</ThemedView>
-
-					{/*LISTA ZAPISANYCH WPŁAT*/}
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={{ marginBottom: 6, marginTop: 16 }}
-						tx="funds.savedSources"
-					/>
-					<ScrollView showsVerticalScrollIndicator={true}>
-						<View>
-							{depositsList.length === 0 ? (
-								<ThemedText
-									variant="body1Regular"
-									colorName="secondary_base_0c"
-									style={{ lineHeight: 20, paddingVertical: 3 }}
-									tx="funds.noDeposits"
-								/>
-							) : (
-								depositsList.map((deposit) => (
-									<Pressable
-										key={deposit.id}
-										style={styles.depositItem}
-										onPress={() =>
-											router.push({
-												pathname: "/funding/edit_deposit",
-												params: { depositId: String(deposit.id) },
-											})
-										}
+				{/*KARUZELA*/}
+				{loading ? (
+					<ActivityIndicator color={colors.primary_base} style={{ marginVertical: 20 }} />
+				) : (
+					<View style={{ marginBottom: 6, width: "100%" }}>
+						<Carousel
+							items={goalsList}
+							renderItem={renderGoal}
+							renderPlus={renderPlus}
+							cardStyle={styles.carouselCard}
+							setExternalIndex={setCurrentGoalIndex}
+						/>
+					</View>
+				)}
+			</View>
+			<ThemedView colorName="tertiary_base_2" variant="background" style={styles.container}>
+				{currentGoal !== undefined && (
+					<>
+						{/*ILE ZEBRANO*/}
+						<ThemedView
+							variant="old_wide"
+							colorName="tertiary_base_3"
+							borderColor="primary_base_3"
+							style={styles.summaryCard}
+						>
+							<View style={styles.summaryHeader}>
+								<View>
+									<ThemedText
+										variant="body1Regular"
+										colorName="secondary_base_0c"
+										tx="funds.collected"
+									/>
+									<ThemedText
+										variant="main1Button"
+										style={{ fontSize: 24, paddingTop: 6 }}
+										colorName="primary_base"
 									>
-										<ThemedText
-											variant="subTitle1"
-											colorName="primary_base"
-											style={{ paddingVertical: 10 }}
-										>
-											{deposit.source ? getSourceLabel(deposit.source) : t("funds.deposit")}
-										</ThemedText>
-										<ThemedText variant="body1Regular" colorName="primary_base">
-											{formatCurrency(deposit.amount / 100 || 0, currency)}
-										</ThemedText>
-									</Pressable>
-								))
-							)}
-						</View>
-					</ScrollView>
+										{formatCurrency(accumulatedDeposit, currency)}
+									</ThemedText>
+								</View>
+								<ThemedView
+									variant="old_tag"
+									colorName="primary_base_4"
+									style={{ marginVertical: 0 }}
+								>
+									<ThemedText
+										variant="main1Button"
+										colorName="primary_base"
+										style={{ fontSize: 10 }}
+										tx="funds.datePlaceholder"
+									/>
+								</ThemedView>
+							</View>
 
-					{/*DODAJ UZYSKANE ŚRODKI*/}
-					<ThemedView
-						variant="old_wide"
-						colorName="primary_base"
-						borderColor="accent_base"
-						onPress={() =>
-							router.push({
-								pathname: "/funding/new_deposit",
-								params: { goalId: String(currentGoal.id) },
-							})
-						}
-						style={{ marginVertical: 16 }}
-					>
-						<ThemedText colorName="accent_base_2" style={{ paddingHorizontal: 10 }}>
-							+
-						</ThemedText>
+							<View style={styles.progressBarBackground}>
+								<View style={[styles.progressBarFill, { width: `${progressPercentage}%` }]} />
+							</View>
+						</ThemedView>
+
+						{/*LISTA ZAPISANYCH WPŁAT*/}
 						<ThemedText
-							variant="main1Button"
-							tx="funds.addDeposit"
-							colorName="accent_base_2"
-						></ThemedText>
-					</ThemedView>
-				</>
-			)}
-		</ThemedView>
+							variant="tab1Category"
+							colorName="secondary_base_0c"
+							style={{ marginBottom: 6, marginTop: 16 }}
+							tx="funds.savedSources"
+						/>
+						<ScrollView showsVerticalScrollIndicator={true}>
+							<View>
+								{depositsList.length === 0 ? (
+									<ThemedText
+										variant="body1Regular"
+										colorName="secondary_base_0c"
+										style={{ lineHeight: 20, paddingVertical: 3 }}
+										tx="funds.noDeposits"
+									/>
+								) : (
+									depositsList.map((deposit) => (
+										<View key={deposit.id}>
+											<ThemedView
+												variant="wide"
+												style={styles.depositItem}
+												onPress={() =>
+													router.push({
+														pathname: "/funding/edit_deposit",
+														params: { depositId: String(deposit.id) },
+													})
+												}
+											>
+												<ThemedText
+													variant="subTitle1"
+													colorName="primary_base"
+													style={{ paddingVertical: 10 }}
+												>
+													{deposit.source ? getSourceLabel(deposit.source) : t("funds.deposit")}
+												</ThemedText>
+												<ThemedText variant="body1Regular" colorName="primary_base">
+													{formatCurrency(deposit.amount / 100 || 0, currency)}
+												</ThemedText>
+											</ThemedView>
+											<ThemedView variant="divider" colorName="blue1" />
+										</View>
+									))
+								)}
+							</View>
+						</ScrollView>
+
+						{/*DODAJ UZYSKANE ŚRODKI*/}
+						<ThemedView
+							variant="old_wide"
+							colorName="primary_base"
+							borderColor="accent_base"
+							onPress={() =>
+								router.push({
+									pathname: "/funding/new_deposit",
+									params: { goalId: String(currentGoal.id) },
+								})
+							}
+							style={{ marginVertical: 16 }}
+						>
+							<ThemedText colorName="accent_base_2" style={{ paddingHorizontal: 10 }}>
+								+
+							</ThemedText>
+							<ThemedText
+								variant="main1Button"
+								tx="funds.addDeposit"
+								colorName="accent_base_2"
+							></ThemedText>
+						</ThemedView>
+					</>
+				)}
+			</ThemedView>
+		</>
 	)
 }
 
@@ -266,15 +277,15 @@ const getStyles = (colors: ThemeColors) =>
 		container: {
 			flex: 1,
 			paddingTop: 10,
+			justifyContent: "flex-start",
 		},
 		carouselCard: {
-			width: "100%",
 			height: 100,
+			flex: 1,
 		},
 		carouselOutline: {
 			borderWidth: 2,
 			borderColor: colors.primary_base,
-			padding: 16,
 			borderRadius: 16,
 			height: "100%",
 		},
@@ -308,7 +319,5 @@ const getStyles = (colors: ThemeColors) =>
 			flexDirection: "row",
 			justifyContent: "space-between",
 			alignItems: "center",
-			borderBottomWidth: StyleSheet.hairlineWidth,
-			borderBottomColor: colors.primary_base_3,
 		},
 	})

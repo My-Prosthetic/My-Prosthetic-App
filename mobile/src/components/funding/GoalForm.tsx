@@ -234,6 +234,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 			<View style={styles.actions}>
 				<ThemedView
 					variant="old_narrow"
+					style={{ flexDirection: "column" }}
 					colorName="primary_base"
 					borderColor="accent_base"
 					onPress={isSubmitting ? undefined : handleSave}

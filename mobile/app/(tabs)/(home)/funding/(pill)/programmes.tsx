@@ -115,6 +115,7 @@ export default function ProgrammesScreen() {
 				style={[styles.addButton]}
 				borderColor="accent_base"
 				variant="old_wide"
+				colorName="primary_base"
 				onPress={() => router.replace("/funding/accumulated_funds")}
 				accessibilityRole="button"
 				accessibilityLabel={t("funding.addFunds")}
