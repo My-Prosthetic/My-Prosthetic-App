@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * The public face of a prosthetist: never their email or Specialist Code.
+ *
  * @mixin User
  */
-class UserResource extends JsonResource
+class SpecialistResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -19,10 +21,6 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'role' => $this->role->value,
-            'specialist_code' => $this->specialist_code,
-            'email_verified_at' => $this->email_verified_at?->toISOString(),
         ];
     }
 }
