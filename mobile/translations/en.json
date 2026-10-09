@@ -24,8 +24,8 @@
 		"accumulatedTitle": "Accumulated Funds 💰"
 	},
 	"home": {
-		"greetingGuest": "Hello",
-		"greetingUser": "Hello,\n{{name}}",
+		"greetingGuest": "Hello!",
+		"greetingUser": "Hello,\n{{name}}!",
 		"dbMigrationErr": "Database migration error: ",
 		"dbInit": "Database initialization...",
 		"myProsthetics": "MY PROSTHETICS",

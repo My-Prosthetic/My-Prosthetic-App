@@ -24,8 +24,8 @@
 		"accumulatedTitle": "Zgromadzone Środki 💰"
 	},
 	"home": {
-		"greetingGuest": "Cześć",
-		"greetingUser": "Cześć,\n{{name}}",
+		"greetingGuest": "Cześć!",
+		"greetingUser": "Cześć,\n{{name}}!",
 		"dbMigrationErr": "Błąd migracji bazy danych: ",
 		"dbInit": "Inicjalizacja bazy danych...",
 		"myProsthetics": "MOJE PROTEZY",

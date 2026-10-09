@@ -131,7 +131,12 @@ export const ThemedView = ({
 
 	if (onPress) {
 		return (
-			<Pressable onPress={handlePress} style={({ pressed }) => getElementStyle(pressed)} {...props}>
+			<Pressable
+				onPress={handlePress}
+				style={({ pressed }) => getElementStyle(pressed)}
+				accessibilityRole="button"
+				{...props}
+			>
 				{renderContent()}
 			</Pressable>
 		)
@@ -206,6 +211,7 @@ const getSizes = (insets: EdgeInsets) =>
 		},
 		background: {
 			flex: 1,
+			width: "100%",
 			paddingHorizontal: "8%",
 			flexDirection: "column",
 			alignItems: "center",
@@ -213,7 +219,6 @@ const getSizes = (insets: EdgeInsets) =>
 		divider: {
 			height: 1,
 			width: "100%",
-			alignSelf: "stretch",
 		},
 		wide: {
 			width: "100%",
