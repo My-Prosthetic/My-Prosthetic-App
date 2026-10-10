@@ -29,8 +29,8 @@ export default function NewComponentScreen() {
 	const [brand, setBrand] = useState("")
 	const [model, setModel] = useState("")
 	const [assemblyDate, setAssemblyDate] = useState(new Date())
-	const [warrantyEndDate, setWarrantyEndDate] = useState(new Date())
-	const [expectedExchangeDate, setExpectedExchangeDate] = useState(new Date())
+	const [warrantyEndDate, setWarrantyEndDate] = useState<Date | null>(null)
+	const [expectedExchangeDate, setExpectedExchangeDate] = useState<Date | null>(null)
 
 	const [assemblyDateModalVisible, setAssemblyDateModalVisible] = useState(false)
 	const [warrantyEndDateModalVisible, setWarrantyEndDateModalVisible] = useState(false)
@@ -132,6 +132,39 @@ export default function NewComponentScreen() {
 			return
 		}
 
+		const assemblyDay = new Date(assemblyDate)
+		assemblyDay.setHours(0, 0, 0, 0)
+
+		if (warrantyEndDate) {
+			const warrantyDay = new Date(warrantyEndDate)
+			warrantyDay.setHours(0, 0, 0, 0)
+			if (warrantyDay < assemblyDay) {
+				Alert.alert(
+					t("common.validationError", "Błąd walidacji"),
+					t(
+						"newComponent.validation.warrantyBeforeAssembly",
+						"Koniec gwarancji nie może być wcześniejszy niż data montażu."
+					)
+				)
+				return
+			}
+		}
+
+		if (expectedExchangeDate) {
+			const exchangeDay = new Date(expectedExchangeDate)
+			exchangeDay.setHours(0, 0, 0, 0)
+			if (exchangeDay < assemblyDay) {
+				Alert.alert(
+					t("common.validationError", "Błąd walidacji"),
+					t(
+						"newComponent.validation.exchangeBeforeAssembly",
+						"Przewidywana wymiana nie może być wcześniejsza niż data montażu."
+					)
+				)
+				return
+			}
+		}
+
 		try {
 			setIsSaving(true)
 			await createComponent({
@@ -140,8 +173,8 @@ export default function NewComponentScreen() {
 				isFinal,
 				isHistorical,
 				assemblyDate: assemblyDate.toISOString(),
-				warrantyEndDate: warrantyEndDate.toISOString(),
-				expectedExchangeDate: expectedExchangeDate.toISOString(),
+				warrantyEndDate: warrantyEndDate?.toISOString(),
+				expectedExchangeDate: expectedExchangeDate?.toISOString(),
 				description: description.trim(),
 				remindExchangeEmail,
 				remindExchangeApp,
@@ -397,7 +430,9 @@ export default function NewComponentScreen() {
 						style={styles.dateField}
 					>
 						<ThemedText variant="main1Button" colorName="primary_base">
-							{formatDate(warrantyEndDate, "numeric")}
+							{warrantyEndDate
+								? formatDate(warrantyEndDate, "numeric")
+								: t("prosthesisDetails.filters.chooseDate")}
 						</ThemedText>
 						<Ionicons name="chevron-down" size={20} color={colors.primary_base} />
 					</ThemedView>
@@ -420,7 +455,9 @@ export default function NewComponentScreen() {
 						style={styles.dateField}
 					>
 						<ThemedText variant="main1Button" colorName="primary_base">
-							{formatDate(expectedExchangeDate, "numeric")}
+							{expectedExchangeDate
+								? formatDate(expectedExchangeDate, "numeric")
+								: t("prosthesisDetails.filters.chooseDate")}
 						</ThemedText>
 						<Ionicons name="chevron-down" size={20} color={colors.primary_base} />
 					</ThemedView>
@@ -501,14 +538,14 @@ export default function NewComponentScreen() {
 			/>
 			<DatePickerModal
 				visible={warrantyEndDateModalVisible}
-				initialDate={warrantyEndDate}
+				initialDate={warrantyEndDate ?? assemblyDate}
 				onClose={() => setWarrantyEndDateModalVisible(false)}
 				onSave={setWarrantyEndDate}
 				variant="calendar"
 			/>
 			<DatePickerModal
 				visible={expectedExchangeDateModalVisible}
-				initialDate={expectedExchangeDate}
+				initialDate={expectedExchangeDate ?? assemblyDate}
 				onClose={() => setExpectedExchangeDateModalVisible(false)}
 				onSave={setExpectedExchangeDate}
 				variant="calendar"
