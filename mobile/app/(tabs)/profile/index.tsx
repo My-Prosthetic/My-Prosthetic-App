@@ -130,7 +130,7 @@ export default function ProfileScreen() {
 				onScrollBeginDrag={closeExpandableSections}
 			>
 				<Pressable onPress={closeExpandableSections}>
-					<ThemedHeader tx="profile.title" variant="prominent" />
+					<ThemedHeader tx="profile.title" />
 					{/* K-Levels */}
 					<View style={[styles.section, styles.firstSection]}>
 						<ThemedText

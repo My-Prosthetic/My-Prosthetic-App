@@ -18,10 +18,7 @@ export default function FundingTabsLayout() {
 
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.tertiary_base_2 }}>
-			<ThemedHeader
-				tx={isProgrammeDetails ? "funding.detailsHeader" : "funding.header"}
-				variant="prominent"
-			/>
+			<ThemedHeader tx={isProgrammeDetails ? "funding.detailsHeader" : "funding.header"} />
 
 			{!isProgrammeDetails && (
 				<View style={styles.toggleWrapper}>

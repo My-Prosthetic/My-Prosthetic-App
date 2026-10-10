@@ -1,34 +1,25 @@
-import {
-	View,
-	StyleSheet,
-	TouchableOpacity,
-	StyleProp,
-	ViewStyle,
-	useWindowDimensions,
-} from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { View, StyleSheet, StyleProp, ViewStyle, Platform } from "react-native"
 import { useRouter } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useTheme, ThemeColors } from "@/context/ThemeContext"
+import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import { ThemedText } from "./ThemedText"
 
-export type HeaderVariant = "prominent" | "transparent"
+import IconChevronLeft from "@/assets/icons/chevron-left.svg"
+import { ThemedView } from "./ThemedView"
 
 interface ThemedHeaderProps {
 	tx?: ParseKeys
-	variant?: HeaderVariant
 	onBack?: () => void
 	style?: StyleProp<ViewStyle>
 }
 
-export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: ThemedHeaderProps) => {
+export const ThemedHeader = ({ tx, onBack, style }: ThemedHeaderProps) => {
 	const router = useRouter()
 	const { colors } = useTheme()
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
-	const { width } = useWindowDimensions()
 
 	const handleBack = () => {
 		if (onBack) {
@@ -38,39 +29,44 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 		}
 	}
 
-	const isTransparent = variant === "transparent"
-
-	const backgroundColor = isTransparent ? "transparent" : colors.primary_base
-	const contentColorName: keyof ThemeColors = isTransparent ? "primary_base" : "accent_base"
-	const contentColor = colors[contentColorName]
+	const shadowStyle = Platform.select({
+		ios: {
+			shadowColor: "#000",
+			shadowOffset: { width: 0, height: 3 },
+			shadowOpacity: 0.15,
+			shadowRadius: 10,
+		},
+		android: {
+			elevation: 2,
+		},
+		default: {
+			elevation: 2,
+		},
+	}) as ViewStyle
 
 	return (
 		<View
 			style={[
-				variant === "prominent" ? styles.prominentHeader : styles.transparentHeader,
-				{
-					backgroundColor,
-					width,
-					alignSelf: "center",
-					paddingTop: status !== "GUEST" ? insets.top : 20,
-				},
+				styles.header,
+				{ paddingTop: status !== "GUEST" ? insets.top + 15 : 20, backgroundColor: colors.bg_0 },
+				shadowStyle,
 				style,
 			]}
 		>
 			<View style={styles.container}>
-				<TouchableOpacity
+				<ThemedView
 					style={styles.backButton}
 					onPress={handleBack}
-					hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+					hitSlop={{ top: 15, bottom: 15, left: 13, right: 13 }}
 				>
-					<Ionicons name="chevron-back" size={28} color={contentColor} />
-				</TouchableOpacity>
+					<IconChevronLeft color={colors.blue2} height={18} />
+				</ThemedView>
 
 				<View style={styles.titleContainer} pointerEvents="box-none">
 					<ThemedText
 						tx={tx}
-						variant="title"
-						colorName={contentColorName}
+						variant="H0"
+						colorName="blue2"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 						minimumFontScale={0.7}
@@ -82,14 +78,13 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 }
 
 const styles = StyleSheet.create({
-	prominentHeader: {
-		borderBottomLeftRadius: 24,
-		borderBottomRightRadius: 24,
-		flexDirection: "column",
-		justifyContent: "flex-end",
+	header: {
+		alignSelf: "center",
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
 		paddingBottom: 20,
+		width: "100%",
 	},
-	transparentHeader: {},
 	container: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -97,7 +92,7 @@ const styles = StyleSheet.create({
 	backButton: {
 		justifyContent: "center",
 		alignItems: "center",
-		paddingHorizontal: 10,
+		paddingLeft: 15,
 	},
 	titleContainer: {
 		justifyContent: "center",
