@@ -343,6 +343,9 @@
 		"warrantyUntil": "Warranty until",
 		"save": "Save",
 		"notFound": "Component not found.",
-		"saveError": "Could not save the component."
+		"saveError": "Could not save the component.",
+		"loadError": "Failed to load component data.",
+		"selectDate": "Select date",
+		"clearDate": "Clear date"
 	}
 }

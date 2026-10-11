@@ -1,5 +1,5 @@
 import * as Crypto from "expo-crypto"
-import { and, eq, isNull } from "drizzle-orm"
+import { and, asc, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
 import { prostheses } from "@/db/schema/prostheses/prostheses"
@@ -19,7 +19,14 @@ export type CreateComponentInput = {
 	warrantyUntil?: string
 }
 
-export type UpdateComponentInput = Partial<Omit<CreateComponentInput, "prosthesisId">>
+export type UpdateComponentInput = Partial<
+	Omit<CreateComponentInput, "prosthesisId" | "name" | "manufacturer" | "model" | "warrantyUntil">
+> & {
+	name?: string | null
+	manufacturer?: string | null
+	model?: string | null
+	warrantyUntil?: string | null
+}
 
 export async function createComponent(input: CreateComponentInput) {
 	const now = new Date().toISOString()
@@ -32,8 +39,8 @@ export async function createComponent(input: CreateComponentInput) {
 	if (!prosthesis) {
 		throw new Error("Active prosthesis not found")
 	}
-	const [component] = await db
 
+	const [component] = await db
 		.insert(components)
 		.values({
 			id: Crypto.randomUUID(),
@@ -65,10 +72,11 @@ export async function getComponentsByProsthesisId(prosthesisId: string) {
 		.select()
 		.from(components)
 		.where(and(eq(components.prosthesisId, prosthesisId), isNull(components.deletedAt)))
+		.orderBy(asc(components.createdAt), asc(components.id))
 }
 
 export async function getAllComponentsByProsthesisId(prosthesisId: string) {
-	return db.select().from(components).where(eq(components.prosthesisId, prosthesisId))
+	return getComponentsByProsthesisId(prosthesisId)
 }
 
 export async function updateComponent(id: string, input: UpdateComponentInput) {

@@ -343,6 +343,9 @@
 		"warrantyUntil": "Gwarancja do",
 		"save": "Zapisz",
 		"notFound": "Nie znaleziono komponentu.",
-		"saveError": "Nie udało się zapisać komponentu."
+		"saveError": "Nie udało się zapisać komponentu.",
+		"loadError": "Nie udało się wczytać danych komponentu.",
+		"selectDate": "Wybierz datę",
+		"clearDate": "Usuń datę"
 	}
 }
