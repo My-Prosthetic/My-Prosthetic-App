@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { Alert } from "react-native"
 import { useTranslation } from "react-i18next"
 
-import { createBrand, findBrandByName, getBrands } from "@/db/repositories/brandRepository"
+import { createBrand, getBrands } from "@/db/repositories/brandRepository"
+import { DuplicateBrandError } from "@/db/errors"
 import {
 	createModel,
 	findModelsByName,
@@ -121,12 +122,12 @@ export function useBrandModelCatalog({
 		setCustomOptionName("")
 	}
 
-	const confirmCreateModel = (existingBrandName: string, selectedBrandName: string) =>
+	const confirmCreateModel = (existingBrandNames: string, selectedBrandName: string) =>
 		new Promise<boolean>((resolve) => {
 			Alert.alert(
 				t("newComponent.customModel.duplicateTitle"),
 				t("newComponent.customModel.duplicateMessage", {
-					existingBrand: existingBrandName,
+					existingBrands: existingBrandNames,
 					selectedBrand: selectedBrandName,
 				}),
 				[
@@ -154,17 +155,7 @@ export function useBrandModelCatalog({
 		setIsCreatingCustomOption(true)
 		try {
 			if (customOptionType === "brand") {
-				const existingBrand = await findBrandByName(name)
-				if (existingBrand) {
-					Alert.alert(t("common.error"), t("newComponent.customBrand.alreadyExists"))
-					return
-				}
-
 				const newBrand = await createBrand(name)
-				if (!newBrand) {
-					Alert.alert(t("common.error"), t("newComponent.customBrand.alreadyExists"))
-					return
-				}
 
 				setBrandsList((currentBrands) =>
 					currentBrands.some((option) => option.value === newBrand.id)
@@ -186,33 +177,20 @@ export function useBrandModelCatalog({
 			}
 
 			const existingModels = await findModelsByName(name, category)
-			const existingModelForSelectedBrand = existingModels.find(
+			const sameBrandModel = existingModels.find(
 				(existingModel) => existingModel.brandId === selectedBrandId
 			)
-			if (existingModelForSelectedBrand) {
-				setModelsList((currentModels) =>
-					currentModels.some((option) => option.value === existingModelForSelectedBrand.id)
-						? currentModels
-						: [
-								...currentModels,
-								{
-									label: existingModelForSelectedBrand.name,
-									value: existingModelForSelectedBrand.id,
-								},
-							]
-				)
-				setCustomOptionType(null)
-				setCustomOptionName("")
-				onModelCreatedAndSelected(existingModelForSelectedBrand.id)
-				Alert.alert(t("common.error"), t("newComponent.customModel.alreadyExistsForBrand"))
+			const otherBrandNames = existingModels
+				.filter((existingModel) => existingModel.brandId !== selectedBrandId)
+				.map((existingModel) => existingModel.brandName)
+			if (sameBrandModel) {
+				Alert.alert(t("common.info"), t("newComponent.customModel.alreadyExistsForBrand"))
+				onModelCreatedAndSelected(sameBrandModel.id)
 				return
-			}
-
-			const existingModel = existingModels[0]
-			if (
-				existingModel &&
+			} else if (
+				otherBrandNames.length > 0 &&
 				!(await confirmCreateModel(
-					existingModel.brandName,
+					otherBrandNames.join(", "),
 					brandsList.find((option) => option.value === selectedBrandId)?.label ??
 						t("newComponent.fields.brand")
 				))
@@ -225,10 +203,6 @@ export function useBrandModelCatalog({
 				type: category,
 				name,
 			})
-			if (!newModel) {
-				Alert.alert(t("common.error"), t("newComponent.customModel.alreadyExistsForBrand"))
-				return
-			}
 
 			setModelsList((currentModels) =>
 				currentModels.some((option) => option.value === newModel.id)
@@ -243,6 +217,11 @@ export function useBrandModelCatalog({
 				t("newComponent.customModel.created")
 			)
 		} catch (error) {
+			if (error instanceof DuplicateBrandError) {
+				Alert.alert(t("common.info"), t("newComponent.customBrand.alreadyExists"))
+				onBrandCreatedAndSelected(error.existingBrandId)
+				return
+			}
 			console.error(`Failed to create custom ${customOptionType}:`, error)
 			Alert.alert(
 				t("common.error"),
@@ -252,6 +231,7 @@ export function useBrandModelCatalog({
 			)
 		} finally {
 			setIsCreatingCustomOption(false)
+			closeCustomOptionDialog()
 		}
 	}
 

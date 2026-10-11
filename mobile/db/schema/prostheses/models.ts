@@ -1,5 +1,5 @@
 import { text, sqliteTable, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core"
-import { relations } from "drizzle-orm"
+import { relations, sql } from "drizzle-orm"
 import { brands } from "./brands"
 import { COMPONENT_TYPES } from "@/src/constants/componentTypes"
 
@@ -26,7 +26,11 @@ export const models = sqliteTable(
 	},
 	(table) => [
 		index("models_brand_type_idx").on(table.brandId, table.type),
-		uniqueIndex("models_brand_type_name_unique_idx").on(table.brandId, table.type, table.name),
+		uniqueIndex("models_brand_type_name_unique_idx").on(
+			table.brandId,
+			table.type,
+			sql`${table.name} COLLATE NOCASE`
+		),
 	]
 )
 
