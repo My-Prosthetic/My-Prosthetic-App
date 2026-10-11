@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { View, Pressable, StyleSheet, StyleProp, ViewStyle, PanResponder } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "@/context/ThemeContext"
 
 import IconLeftChevron from "@/assets/icons/chevron-left.svg"
@@ -61,11 +60,11 @@ export function Carousel<T>({
 	return (
 		<View style={styles.container} {...panResponder.panHandlers}>
 			{/* Lewa strzałka */}
-			<View style={[styles.arrowSlot, {paddingRight: 15}]}>
+			<View style={[styles.arrowSlot, { paddingRight: 15 }]}>
 				<Pressable
 					disabled={!hasPrev}
 					style={({ pressed }) => [{ opacity: !hasPrev ? 0 : pressed ? 0.6 : 1 }]}
-					hitSlop={{top: 4, bottom: 4, left: 8, right: 8}}
+					hitSlop={{ top: 4, bottom: 4, left: 8, right: 8 }}
 					onPress={() => {
 						changeIndex(currentIndex - 1)
 					}}
@@ -80,11 +79,11 @@ export function Carousel<T>({
 			</View>
 
 			{/* Prawa strzałka */}
-			<View style={[styles.arrowSlot, {paddingLeft: 15}]}>
+			<View style={[styles.arrowSlot, { paddingLeft: 15 }]}>
 				<Pressable
 					disabled={!hasNext}
 					style={({ pressed }) => [{ opacity: !hasNext ? 0 : pressed ? 0.6 : 1 }]}
-					hitSlop={{top: 4, bottom: 4, left: 8, right: 8}}
+					hitSlop={{ top: 4, bottom: 4, left: 8, right: 8 }}
 					onPress={() => {
 						changeIndex(currentIndex + 1)
 					}}
