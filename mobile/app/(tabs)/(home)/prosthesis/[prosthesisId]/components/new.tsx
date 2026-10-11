@@ -258,7 +258,7 @@ export default function NewComponentScreen() {
 								thumbColor={colors.tertiary_base_1}
 								style={styles.switch}
 							/>
-							<ThemedText variant="subTitle1" colorName="primary_base" style={{}}>
+							<ThemedText variant="subTitle1" colorName="primary_base">
 								{t("newComponent.switches.historical")}
 							</ThemedText>
 						</View>
