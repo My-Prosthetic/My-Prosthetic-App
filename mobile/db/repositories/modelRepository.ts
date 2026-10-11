@@ -2,6 +2,7 @@ import * as Crypto from "expo-crypto"
 import { and, asc, eq, inArray, sql } from "drizzle-orm"
 
 import { db } from "../client"
+import { DuplicateModelError } from "../errors"
 import { brands } from "../schema/prostheses/brands"
 import { models } from "../schema/prostheses/models"
 import type { ComponentType } from "@/src/constants/componentTypes"
@@ -100,24 +101,24 @@ export async function searchModels(
 	}
 }
 
-export async function createModel(input: CreateModelInput): Promise<Model | null> {
-	try {
-		const [existingModel] = await db
-			.select({ id: models.id })
-			.from(models)
-			.where(
-				and(
-					sql`${models.brandId} = ${input.brandId}`,
-					sql`${models.type} = ${input.type}`,
-					sql`lower(${models.name}) = lower(${input.name})`
-				)
+export async function createModel(input: CreateModelInput): Promise<Model> {
+	const [existingModel] = await db
+		.select({ id: models.id })
+		.from(models)
+		.where(
+			and(
+				eq(models.brandId, input.brandId),
+				eq(models.type, input.type),
+				sql`lower(${models.name}) = lower(${input.name})`
 			)
-			.limit(1)
+		)
+		.limit(1)
 
-		if (existingModel) {
-			return null
-		}
+	if (existingModel) {
+		throw new DuplicateModelError(input.name, existingModel.id)
+	}
 
+	try {
 		const [model] = await db
 			.insert(models)
 			.values({

@@ -15,7 +15,7 @@ CREATE TABLE `models` (
 );
 --> statement-breakpoint
 CREATE INDEX `models_brand_type_idx` ON `models` (`brand_id`,`type`);--> statement-breakpoint
-CREATE UNIQUE INDEX `models_brand_type_name_unique_idx` ON `models` (`brand_id`,`type`,`name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `models_brand_type_name_unique_idx` ON `models` (`brand_id`,`type`,"name" COLLATE NOCASE);--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
 CREATE TABLE `__new_components` (
 	`id` text PRIMARY KEY NOT NULL,

@@ -87,10 +87,10 @@ export default function ProsthesisDetailsScreen() {
 
 				<ComponentsPanel
 					components={components}
-					onAddComponent={() => router.push(`/prosthesis/${prosthesisId}/components/new` as any)}
-					onOpenComponent={(componentId) =>
-						router.push(`/component/${componentId}` as any)
+					onAddComponent={() =>
+						router.push(`/prosthesis/${prosthesisId}/components/newComponent` as any)
 					}
+					onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
 				/>
 
 				<ProsthesisFilesSection />

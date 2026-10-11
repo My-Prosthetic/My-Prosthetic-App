@@ -75,7 +75,8 @@
 		"save": "Zapisz",
 		"delete": "Usuń",
 		"today": "Dzisiaj",
-		"mp": "My Prosthetics"
+		"mp": "My Prosthetics",
+		"info": "Informacja"
 	},
 	"funds": {
 		"title": "DOFINANSOWANIA",
@@ -463,7 +464,7 @@
 			"add": "Dodaj nowy model",
 			"title": "Dodaj model",
 			"duplicateTitle": "Model już istnieje",
-			"duplicateMessage": "Taki model występuje już w katalogu producenta marki {{existingBrand}}. Czy na pewno chcesz tworzyć nowy model dla marki {{selectedBrand}}?",
+			"duplicateMessage": "Taki model występuje już w katalogach producentów: {{existingBrands}}. Czy na pewno chcesz tworzyć nowy model dla marki {{selectedBrand}}?",
 			"confirm": "Utwórz nowy",
 			"alreadyExistsForBrand": "Taki model jest już dostępny dla wybranej marki i kategorii.",
 			"created": "Dodałeś nowy model. W przyszłości możesz już z niego korzystać bez dodawania ponownie."

@@ -4,6 +4,8 @@ import { asc, sql } from "drizzle-orm"
 import { db } from "../client"
 import { brands } from "../schema/prostheses/brands"
 
+import { DuplicateBrandError } from "../errors"
+
 export type Brand = typeof brands.$inferSelect
 
 export async function getBrands(): Promise<Brand[]> {
@@ -43,34 +45,25 @@ export async function findBrandByName(name: string): Promise<Brand | null> {
 	}
 }
 
-export async function createBrand(name: string): Promise<Brand | null> {
-	try {
-		const [existingBrand] = await db
-			.select({ id: brands.id })
-			.from(brands)
-			.where(sql`lower(${brands.name}) = lower(${name})`)
-			.limit(1)
+export async function createBrand(name: string): Promise<Brand> {
+	const existingBrand = await findBrandByName(name)
 
-		if (existingBrand) {
-			return null
-		}
-
-		const [brand] = await db
-			.insert(brands)
-			.values({
-				id: Crypto.randomUUID(),
-				name,
-				isCustom: true,
-			})
-			.returning()
-
-		if (!brand) {
-			throw new Error("Failed to create brand")
-		}
-
-		return brand
-	} catch (error) {
-		console.error("Failed to create brand", error)
-		throw error
+	if (existingBrand) {
+		throw new DuplicateBrandError(name, existingBrand.id)
 	}
+
+	const [brand] = await db
+		.insert(brands)
+		.values({
+			id: Crypto.randomUUID(),
+			name,
+			isCustom: true,
+		})
+		.returning()
+
+	if (!brand) {
+		throw new Error("Failed to create brand")
+	}
+
+	return brand
 }
