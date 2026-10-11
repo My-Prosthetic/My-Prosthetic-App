@@ -120,7 +120,13 @@ export default function EditComponentScreen() {
 	}
 
 	const fields = [
-		{ key: "description", label: t("prosthesisDetails.description"), value: name, onChange: setName, editable: true },
+		{
+			key: "description",
+			label: t("prosthesisDetails.description"),
+			value: name,
+			onChange: setName,
+			editable: true,
+		},
 		{
 			key: "manufacturer",
 			label: t("componentEdit.manufacturer"),
@@ -128,7 +134,13 @@ export default function EditComponentScreen() {
 			onChange: setManufacturer,
 			editable: false,
 		},
-		{ key: "model", label: t("componentEdit.model"), value: model, onChange: setModel, editable: false },
+		{
+			key: "model",
+			label: t("componentEdit.model"),
+			value: model,
+			onChange: setModel,
+			editable: false,
+		},
 	]
 
 	return (

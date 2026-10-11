@@ -5,7 +5,11 @@ import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
 import type { ComponentWithRelations } from "@/db/repositories/componentRepository"
-import { ComponentFiltersModal, DEFAULT_COMPONENT_FILTERS, type ComponentFilters } from "@/src/components/ComponentFiltersModal"
+import {
+	ComponentFiltersModal,
+	DEFAULT_COMPONENT_FILTERS,
+	type ComponentFilters,
+} from "@/src/components/ComponentFiltersModal"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
@@ -15,7 +19,11 @@ type ComponentsPanelProps = {
 	onOpenComponent: (componentId: string) => void
 }
 
-export function ComponentsPanel({ components, onOpenComponent, onAddComponent }: ComponentsPanelProps) {
+export function ComponentsPanel({
+	components,
+	onOpenComponent,
+	onAddComponent,
+}: ComponentsPanelProps) {
 	const { colors } = useTheme()
 	const [expanded, setExpanded] = useState(true)
 	const [filtersVisible, setFiltersVisible] = useState(false)
@@ -48,8 +56,13 @@ export function ComponentsPanel({ components, onOpenComponent, onAddComponent }:
 			const warrantyDate = component.warrantyEndDate ? Date.parse(component.warrantyEndDate) : NaN
 			const hasWarranty = Number.isFinite(warrantyDate)
 			if (filters.warranty === "noDate" && hasWarranty) return false
-			if (filters.warranty === "expired" && (!hasWarranty || warrantyDate >= today.getTime())) return false
-			if (filters.warranty === "endingSoon" && (!hasWarranty || warrantyDate < today.getTime() || warrantyDate > endingSoon.getTime())) return false
+			if (filters.warranty === "expired" && (!hasWarranty || warrantyDate >= today.getTime()))
+				return false
+			if (
+				filters.warranty === "endingSoon" &&
+				(!hasWarranty || warrantyDate < today.getTime() || warrantyDate > endingSoon.getTime())
+			)
+				return false
 			return true
 		})
 	}, [components, filters])
@@ -154,7 +167,13 @@ export function ComponentsPanel({ components, onOpenComponent, onAddComponent }:
 	)
 }
 
-function ComponentListItem({ component, onOpen }: { component: ComponentWithRelations; onOpen: () => void }) {
+function ComponentListItem({
+	component,
+	onOpen,
+}: {
+	component: ComponentWithRelations
+	onOpen: () => void
+}) {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
 	const warning = isWarrantyWarning(component.warrantyEndDate)
@@ -180,7 +199,9 @@ function ComponentListItem({ component, onOpen }: { component: ComponentWithRela
 					style={styles.componentDescription}
 					numberOfLines={2}
 				>
-					{[component.model.brand.name, component.description || component.model.name].filter(Boolean).join(" | ")}
+					{[component.model.brand.name, component.description || component.model.name]
+						.filter(Boolean)
+						.join(" | ")}
 				</ThemedText>
 				<ThemedText
 					variant="body1Regular"
