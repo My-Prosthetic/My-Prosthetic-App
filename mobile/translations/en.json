@@ -354,7 +354,7 @@
 		"register": "Register",
 		"passwordRequirements": "Password requirements",
 		"passwordRules": {
-			"minLength": "At least 8 characters",
+			"minLength": "At least 12 characters",
 			"uppercase": "At least 1 uppercase letter",
 			"lowercase": "At least 1 lowercase letter",
 			"number": "At least 1 number",

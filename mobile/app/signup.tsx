@@ -14,7 +14,7 @@ import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
-	const hasMinLength = value.length >= 8
+	const hasMinLength = value.length >= 12
 	const hasUppercase = /[A-Z]/.test(value)
 	const hasLowercase = /[a-z]/.test(value)
 	const hasNumber = /\d/.test(value)

@@ -354,7 +354,7 @@
 		"register": "Zarejestruj",
 		"passwordRequirements": "Wymagania hasła",
 		"passwordRules": {
-			"minLength": "Min. 8 znaków",
+			"minLength": "Min. 12 znaków",
 			"uppercase": "Co najmniej 1 wielka litera",
 			"lowercase": "Co najmniej 1 mała litera",
 			"number": "Co najmniej 1 cyfra",
