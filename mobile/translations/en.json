@@ -70,6 +70,7 @@
 	"common": {
 		"cancel": "Cancel",
 		"error": "Error",
+		"validationError": "Validation error",
 		"save": "Save",
 		"delete": "Delete",
 		"today": "Today",
@@ -461,8 +462,9 @@
 			"saveComponent": "Failed to save the component."
 		},
 		"validation": {
-			"title": "Complete the required fields",
-			"requiredFields": "Complete the fields marked *:\n{{fields}}"
+			"requiredFields": "Complete the fields marked *:\n{{fields}}",
+			"warrantyBeforeAssembly": "The warranty end date cannot be earlier than the assembly date.",
+			"exchangeBeforeAssembly": "The expected replacement date cannot be earlier than the assembly date."
 		}
 	},
 	"login": {

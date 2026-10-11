@@ -70,6 +70,7 @@
 	"common": {
 		"cancel": "Anuluj",
 		"error": "Błąd",
+		"validationError": "Błąd walidacji",
 		"save": "Zapisz",
 		"delete": "Usuń",
 		"today": "Dzisiaj",
@@ -461,8 +462,9 @@
 			"saveComponent": "Nie udało się zapisać komponentu."
 		},
 		"validation": {
-			"title": "Uzupełnij wymagane pola",
-			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}"
+			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}",
+			"warrantyBeforeAssembly": "Koniec gwarancji nie może być wcześniejszy niż data montażu.",
+			"exchangeBeforeAssembly": "Przewidywana wymiana nie może być wcześniejsza niż data montażu."
 		}
 	},
 	"login": {

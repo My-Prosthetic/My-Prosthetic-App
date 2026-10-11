@@ -124,7 +124,7 @@ export default function NewComponentScreen() {
 
 		if (missingFields.length > 0) {
 			Alert.alert(
-				t("newComponent.validation.title"),
+				t("common.validationError"),
 				t("newComponent.validation.requiredFields", {
 					fields: missingFields.map((field) => `• ${field}`).join("\n"),
 				})
@@ -140,11 +140,8 @@ export default function NewComponentScreen() {
 			warrantyDay.setHours(0, 0, 0, 0)
 			if (warrantyDay < assemblyDay) {
 				Alert.alert(
-					t("common.validationError", "Błąd walidacji"),
-					t(
-						"newComponent.validation.warrantyBeforeAssembly",
-						"Koniec gwarancji nie może być wcześniejszy niż data montażu."
-					)
+					t("common.validationError"),
+					t("newComponent.validation.warrantyBeforeAssembly")
 				)
 				return
 			}
@@ -155,11 +152,8 @@ export default function NewComponentScreen() {
 			exchangeDay.setHours(0, 0, 0, 0)
 			if (exchangeDay < assemblyDay) {
 				Alert.alert(
-					t("common.validationError", "Błąd walidacji"),
-					t(
-						"newComponent.validation.exchangeBeforeAssembly",
-						"Przewidywana wymiana nie może być wcześniejsza niż data montażu."
-					)
+					t("common.validationError"),
+					t("newComponent.validation.exchangeBeforeAssembly")
 				)
 				return
 			}
