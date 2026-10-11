@@ -67,12 +67,7 @@ export default function NoAccountScreen() {
 					</View>
 
 					{/* Główny przycisk: Korzystaj bez konta */}
-					<ThemedView
-						variant="narrow"
-						colorName="blue2"
-						onPress={onContinueWithoutAccountPress}
-						style={{ marginTop: 20 }}
-					>
+					<ThemedView variant="narrow" colorName="blue2" onPress={onContinueWithoutAccountPress}>
 						<ThemedText tx="login.useWithoutAccount" variant="H1" colorName="bg_0" />
 					</ThemedView>
 				</View>
@@ -91,9 +86,9 @@ const styles = StyleSheet.create({
 		alignSelf: "flex-start",
 	},
 	lower: {
+		flexGrow: 1,
 		flexDirection: "column",
 		justifyContent: "space-around",
-		gap: 20,
 		paddingBottom: 20,
 		width: "100%",
 	},

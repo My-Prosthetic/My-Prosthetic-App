@@ -349,6 +349,7 @@
 		"firstName": "First name",
 		"lastName": "Last name",
 		"emailPlaceholder": "name@email.com",
+		"passwordPlaceholder": "Enter password",
 		"repeatPassword": "Confirm password",
 		"register": "Register",
 		"passwordRequirements": "Password requirements",

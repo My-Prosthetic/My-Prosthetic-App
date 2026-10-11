@@ -3,6 +3,9 @@ import { View, Pressable, StyleSheet, StyleProp, ViewStyle, PanResponder } from 
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "@/context/ThemeContext"
 
+import IconLeftChevron from "@/assets/icons/chevron-left.svg"
+import IconRightChevron from "@/assets/icons/chevron-right.svg"
+
 interface CarouselProps<T> {
 	items: T[]
 	renderItem: (item: T) => React.ReactNode
@@ -58,15 +61,16 @@ export function Carousel<T>({
 	return (
 		<View style={styles.container} {...panResponder.panHandlers}>
 			{/* Lewa strzałka */}
-			<View style={styles.arrowSlot}>
+			<View style={[styles.arrowSlot, {paddingRight: 15}]}>
 				<Pressable
 					disabled={!hasPrev}
 					style={({ pressed }) => [{ opacity: !hasPrev ? 0 : pressed ? 0.6 : 1 }]}
+					hitSlop={{top: 4, bottom: 4, left: 8, right: 8}}
 					onPress={() => {
 						changeIndex(currentIndex - 1)
 					}}
 				>
-					<Ionicons name="chevron-back" size={30} color={colors.primary_base} />
+					<IconLeftChevron width={22} height={40} color={colors.blue2} />
 				</Pressable>
 			</View>
 
@@ -76,15 +80,16 @@ export function Carousel<T>({
 			</View>
 
 			{/* Prawa strzałka */}
-			<View style={styles.arrowSlot}>
+			<View style={[styles.arrowSlot, {paddingLeft: 15}]}>
 				<Pressable
 					disabled={!hasNext}
 					style={({ pressed }) => [{ opacity: !hasNext ? 0 : pressed ? 0.6 : 1 }]}
+					hitSlop={{top: 4, bottom: 4, left: 8, right: 8}}
 					onPress={() => {
 						changeIndex(currentIndex + 1)
 					}}
 				>
-					<Ionicons name="chevron-forward" size={30} color={colors.primary_base} />
+					<IconRightChevron width={22} height={40} color={colors.blue2} />
 				</Pressable>
 			</View>
 		</View>

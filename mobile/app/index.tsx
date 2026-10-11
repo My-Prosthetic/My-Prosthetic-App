@@ -6,11 +6,13 @@ import { useAuth } from "@/context/AuthContext"
 
 import Logo from "@/assets/MP_text_logo.svg"
 import { useTheme } from "@/context/ThemeContext"
+import { Dimensions } from "react-native"
 
 export default function InitialScreen() {
 	const router = useRouter()
 	const { status } = useAuth()
 	const { colors } = useTheme()
+	const windowWidth = Dimensions.get("window").width
 
 	if (status === "AUTHENTICATED" || status === "GUEST") {
 		return <Redirect href="/(tabs)/(home)/home" />
@@ -19,14 +21,13 @@ export default function InitialScreen() {
 	const topSectionRender = () => {
 		return (
 			<>
-				<Logo width={278.8} height={154.82} color={colors.blue0} />
+				<Logo width={0.71 * windowWidth} color={colors.blue0} />
 				<ThemedText
 					tx="common.mp"
 					colorName="blue0"
 					variant="H0"
 					style={{
 						fontSize: 30,
-						paddingTop: 20,
 						lineHeight: 46,
 						letterSpacing: 1.44,
 						textTransform: "uppercase",
@@ -40,12 +41,14 @@ export default function InitialScreen() {
 		return (
 			<>
 				<ThemedView
+					variant="background"
 					style={{
 						flexDirection: "column",
 						flex: 1,
 						justifyContent: "space-between",
 						paddingTop: "12%",
 						paddingBottom: "18%",
+						gap: 20,
 					}}
 				>
 					<ThemedView variant="narrow" colorName="blue2" onPress={() => router.push("../login")}>

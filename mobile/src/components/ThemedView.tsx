@@ -225,7 +225,7 @@ const getSizes = (insets: EdgeInsets) =>
 			minHeight: 50,
 		},
 		narrow: {
-			width: "75%",
+			width: "73%",
 			minHeight: 50,
 		},
 		tag: {

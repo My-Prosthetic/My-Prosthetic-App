@@ -21,7 +21,7 @@ export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedI
 			autoCapitalize: "none",
 		},
 		password: {
-			placeholder: "••••••••",
+			placeholder: t("signup.passwordPlaceholder"),
 			secureTextEntry: true,
 			autoCapitalize: "none",
 			autoCorrect: false,
@@ -47,7 +47,7 @@ export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedI
 	return (
 		<ThemedView
 			variant="wide"
-			colorName="bg_0"
+			colorName="bg_1"
 			borderColor="blue1"
 			style={[{ minHeight: 48, borderRadius: 15 }, viewStyle]}
 		>

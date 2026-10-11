@@ -119,7 +119,7 @@ export default function SignUpScreen() {
 			<ThemedText
 				tx="login.createAccount"
 				variant="H0"
-				colorName="bg_0"
+				colorName="blue0"
 				numberOfLines={1}
 				style={{ textTransform: "uppercase", flexShrink: 0 }}
 			/>
@@ -255,7 +255,7 @@ export default function SignUpScreen() {
 							busy: isSubmitting,
 						}}
 					>
-						<ThemedText tx="signup.register" variant="H1" colorName="bg_0" />
+						<ThemedText tx="login.createAccount" variant="H1" colorName="bg_0" />
 					</ThemedView>
 
 					{/* Przycisk Kontynuuj z Google */}
@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
 		marginTop: 4,
 		paddingLeft: 4,
 		gap: 6,
+		marginBottom: 10,
 	},
 	requirementsTitle: {
 		marginBottom: 2,

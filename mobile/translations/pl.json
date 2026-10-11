@@ -349,6 +349,7 @@
 		"firstName": "Imię",
 		"lastName": "Nazwisko",
 		"emailPlaceholder": "adres@email.com",
+		"passwordPlaceholder": "Podaj hasło",
 		"repeatPassword": "Powtórz hasło",
 		"register": "Zarejestruj",
 		"passwordRequirements": "Wymagania hasła",
