@@ -1,52 +1,58 @@
 import { useMemo, useState } from "react"
-import { Modal, ScrollView, StyleSheet, TextInput, View } from "react-native"
+import { ScrollView, StyleSheet, View } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
-import type { Component } from "@/db/repositories/componentRepository"
+import type { ComponentWithRelations } from "@/db/repositories/componentRepository"
+import { ComponentFiltersModal, DEFAULT_COMPONENT_FILTERS, type ComponentFilters } from "@/src/components/ComponentFiltersModal"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-const COMPONENT_TYPES = ["socket", "knee", "foot", "liner", "adapter", "other"] as const
-
-type ComponentType = (typeof COMPONENT_TYPES)[number]
-type ComponentStatus = "all" | "active" | "historical"
-
 type ComponentsPanelProps = {
-	components: Component[]
+	components: ComponentWithRelations[]
+	onAddComponent: () => void
 	onOpenComponent: (componentId: string) => void
 }
 
-export function ComponentsPanel({ components, onOpenComponent }: ComponentsPanelProps) {
+export function ComponentsPanel({ components, onOpenComponent, onAddComponent }: ComponentsPanelProps) {
 	const { colors } = useTheme()
 	const [expanded, setExpanded] = useState(true)
 	const [filtersVisible, setFiltersVisible] = useState(false)
-	const [addComponentVisible, setAddComponentVisible] = useState(false)
-	const [status, setStatus] = useState<ComponentStatus>("active")
-	const [type, setType] = useState<ComponentType | "all">("all")
-	const [installedFrom, setInstalledFrom] = useState("")
-	const [installedTo, setInstalledTo] = useState("")
-	const [warrantyFrom, setWarrantyFrom] = useState("")
-	const [warrantyTo, setWarrantyTo] = useState("")
+	const [filters, setFilters] = useState<ComponentFilters>(DEFAULT_COMPONENT_FILTERS)
 
-	const filteredComponents = useMemo(
-		() =>
-			components.filter((component) => {
-				const statusMatches =
-					status === "all" ||
-					(status === "active" && !component.deletedAt) ||
-					(status === "historical" && !!component.deletedAt)
+	const filteredComponents = useMemo(() => {
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		const endingSoon = new Date(today)
+		endingSoon.setDate(endingSoon.getDate() + 30)
+		endingSoon.setHours(23, 59, 59, 999)
 
-				return (
-					statusMatches &&
-					(type === "all" || component.type === type) &&
-					isInRange(component.installedAt, installedFrom, installedTo) &&
-					isInRange(component.warrantyUntil, warrantyFrom, warrantyTo)
-				)
-			}),
-		[components, status, type, installedFrom, installedTo, warrantyFrom, warrantyTo]
-	)
+		return components.filter((component) => {
+			if (filters.status === "active" && component.isHistorical) return false
+			if (filters.status === "historical" && !component.isHistorical) return false
+			if (filters.types.length > 0 && !filters.types.includes(component.model.type)) return false
+
+			const assemblyDate = component.assemblyDate ? Date.parse(component.assemblyDate) : NaN
+			if (filters.assemblyFrom) {
+				const from = new Date(filters.assemblyFrom)
+				from.setHours(0, 0, 0, 0)
+				if (!Number.isFinite(assemblyDate) || assemblyDate < from.getTime()) return false
+			}
+			if (filters.assemblyTo) {
+				const to = new Date(filters.assemblyTo)
+				to.setHours(23, 59, 59, 999)
+				if (!Number.isFinite(assemblyDate) || assemblyDate > to.getTime()) return false
+			}
+
+			const warrantyDate = component.warrantyEndDate ? Date.parse(component.warrantyEndDate) : NaN
+			const hasWarranty = Number.isFinite(warrantyDate)
+			if (filters.warranty === "noDate" && hasWarranty) return false
+			if (filters.warranty === "expired" && (!hasWarranty || warrantyDate >= today.getTime())) return false
+			if (filters.warranty === "endingSoon" && (!hasWarranty || warrantyDate < today.getTime() || warrantyDate > endingSoon.getTime())) return false
+			return true
+		})
+	}, [components, filters])
 
 	return (
 		<>
@@ -87,7 +93,7 @@ export function ComponentsPanel({ components, onOpenComponent }: ComponentsPanel
 					<>
 						<ThemedView
 							colorName="secondary_base_3"
-							onPress={() => setAddComponentVisible(true)}
+							onPress={onAddComponent}
 							style={styles.addComponentRow}
 						>
 							<View style={[styles.addCircle, { backgroundColor: colors.primary_base }]}>
@@ -106,7 +112,7 @@ export function ComponentsPanel({ components, onOpenComponent }: ComponentsPanel
 								<ThemedText
 									tx={
 										components.length > 0
-											? "prosthesisDetails.noMatchingComponents"
+											? "prosthesisDetails.noFilterResults"
 											: "prosthesisDetails.noComponents"
 									}
 									variant="body1Regular"
@@ -133,35 +139,25 @@ export function ComponentsPanel({ components, onOpenComponent }: ComponentsPanel
 				)}
 			</ThemedView>
 
-			<ComponentsFilterModal
-				visible={filtersVisible}
-				status={status}
-				type={type}
-				installedFrom={installedFrom}
-				installedTo={installedTo}
-				warrantyFrom={warrantyFrom}
-				warrantyTo={warrantyTo}
-				onStatusChange={setStatus}
-				onTypeChange={setType}
-				onInstalledFromChange={setInstalledFrom}
-				onInstalledToChange={setInstalledTo}
-				onWarrantyFromChange={setWarrantyFrom}
-				onWarrantyToChange={setWarrantyTo}
-				onClose={() => setFiltersVisible(false)}
-			/>
-
-			<AddComponentModal
-				visible={addComponentVisible}
-				onClose={() => setAddComponentVisible(false)}
-			/>
+			{filtersVisible && (
+				<ComponentFiltersModal
+					visible
+					filters={filters}
+					onClose={() => setFiltersVisible(false)}
+					onApply={(nextFilters) => {
+						setFilters(nextFilters)
+						setFiltersVisible(false)
+					}}
+				/>
+			)}
 		</>
 	)
 }
 
-function ComponentListItem({ component, onOpen }: { component: Component; onOpen: () => void }) {
+function ComponentListItem({ component, onOpen }: { component: ComponentWithRelations; onOpen: () => void }) {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
-	const warning = isWarrantyWarning(component.warrantyUntil)
+	const warning = isWarrantyWarning(component.warrantyEndDate)
 
 	return (
 		<ThemedView colorName="tertiary_base_2" style={styles.componentItem} onPress={onOpen}>
@@ -176,9 +172,7 @@ function ComponentListItem({ component, onOpen }: { component: Component; onOpen
 					style={styles.componentName}
 					numberOfLines={1}
 				>
-					{(
-						component.name || t(`prosthesisDetails.componentTypes.${component.type}` as any)
-					).toUpperCase()}
+					{t(`prosthesisDetails.filters.types.${component.model.type}` as any).toUpperCase()}
 				</ThemedText>
 				<ThemedText
 					variant="body1Regular"
@@ -186,7 +180,7 @@ function ComponentListItem({ component, onOpen }: { component: Component; onOpen
 					style={styles.componentDescription}
 					numberOfLines={2}
 				>
-					{component.manufacturer || component.model || component.type}
+					{[component.model.brand.name, component.description || component.model.name].filter(Boolean).join(" | ")}
 				</ThemedText>
 				<ThemedText
 					variant="body1Regular"
@@ -194,7 +188,7 @@ function ComponentListItem({ component, onOpen }: { component: Component; onOpen
 					style={[styles.warranty, warning && { color: colors.warning }]}
 					numberOfLines={1}
 				>
-					{t("prosthesisDetails.warranty")}: {formatDate(component.warrantyUntil)}
+					{t("prosthesisDetails.warranty")}: {formatDate(component.warrantyEndDate)}
 				</ThemedText>
 			</View>
 
@@ -205,231 +199,6 @@ function ComponentListItem({ component, onOpen }: { component: Component; onOpen
 				style={styles.componentChevron}
 			/>
 		</ThemedView>
-	)
-}
-
-function ComponentsFilterModal({
-	visible,
-	status,
-	type,
-	installedFrom,
-	installedTo,
-	warrantyFrom,
-	warrantyTo,
-	onStatusChange,
-	onTypeChange,
-	onInstalledFromChange,
-	onInstalledToChange,
-	onWarrantyFromChange,
-	onWarrantyToChange,
-	onClose,
-}: {
-	visible: boolean
-	status: ComponentStatus
-	type: ComponentType | "all"
-	installedFrom: string
-	installedTo: string
-	warrantyFrom: string
-	warrantyTo: string
-	onStatusChange: (value: ComponentStatus) => void
-	onTypeChange: (value: ComponentType | "all") => void
-	onInstalledFromChange: (value: string) => void
-	onInstalledToChange: (value: string) => void
-	onWarrantyFromChange: (value: string) => void
-	onWarrantyToChange: (value: string) => void
-	onClose: () => void
-}) {
-	const { colors } = useTheme()
-	const { t } = useTranslation()
-
-	return (
-		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-			<View style={styles.modalBackdrop}>
-				<View
-					pointerEvents="none"
-					style={[styles.modalBackdropOverlay, { backgroundColor: colors.primary_base }]}
-				/>
-				<ThemedView colorName="tertiary_base_1" style={styles.filterModal}>
-					<View style={styles.modalHeader}>
-						<ThemedText tx="prosthesisDetails.filters" variant="title" colorName="primary_base" />
-						<ThemedView colorName="tertiary_base_1" onPress={onClose}>
-							<Ionicons name="close" size={26} color={colors.primary_base} />
-						</ThemedView>
-					</View>
-
-					<ScrollView showsVerticalScrollIndicator={false}>
-						<FilterLabel text={t("prosthesisDetails.status")} />
-						<View style={styles.chips}>
-							{(["all", "active", "historical"] as ComponentStatus[]).map((item) => (
-								<FilterChip
-									key={item}
-									selected={status === item}
-									label={t(`prosthesisDetails.${item}` as any)}
-									onPress={() => onStatusChange(item)}
-								/>
-							))}
-						</View>
-
-						<FilterLabel text={t("prosthesisDetails.category")} />
-						<View style={styles.chips}>
-							<FilterChip
-								selected={type === "all"}
-								label={t("prosthesisDetails.all")}
-								onPress={() => onTypeChange("all")}
-							/>
-							{COMPONENT_TYPES.map((item) => (
-								<FilterChip
-									key={item}
-									selected={type === item}
-									label={t(`prosthesisDetails.componentTypes.${item}` as any)}
-									onPress={() => onTypeChange(item)}
-								/>
-							))}
-						</View>
-
-						<DateRange
-							label={t("prosthesisDetails.installationDate")}
-							from={installedFrom}
-							to={installedTo}
-							onFrom={onInstalledFromChange}
-							onTo={onInstalledToChange}
-						/>
-						<DateRange
-							label={t("prosthesisDetails.warrantyDate")}
-							from={warrantyFrom}
-							to={warrantyTo}
-							onFrom={onWarrantyFromChange}
-							onTo={onWarrantyToChange}
-						/>
-					</ScrollView>
-				</ThemedView>
-			</View>
-		</Modal>
-	)
-}
-
-function FilterLabel({ text }: { text: string }) {
-	return (
-		<ThemedText variant="subTitle2" colorName="primary_base" style={styles.filterLabel}>
-			{text}
-		</ThemedText>
-	)
-}
-
-function FilterChip({
-	label,
-	selected,
-	onPress,
-}: {
-	label: string
-	selected: boolean
-	onPress: () => void
-}) {
-	return (
-		<ThemedView
-			colorName={selected ? "primary_base" : "tertiary_base_3"}
-			style={styles.chip}
-			onPress={onPress}
-		>
-			<ThemedText variant="body1Regular" colorName={selected ? "accent_base" : "primary_base"}>
-				{label}
-			</ThemedText>
-		</ThemedView>
-	)
-}
-
-function DateRange({
-	label,
-	from,
-	to,
-	onFrom,
-	onTo,
-}: {
-	label: string
-	from: string
-	to: string
-	onFrom: (value: string) => void
-	onTo: (value: string) => void
-}) {
-	const { colors } = useTheme()
-	const { t } = useTranslation()
-
-	return (
-		<View>
-			<FilterLabel text={label} />
-			<View style={styles.dateRow}>
-				<TextInput
-					value={from}
-					onChangeText={onFrom}
-					placeholder={t("prosthesisDetails.from")}
-					placeholderTextColor={colors.secondary_base_0c}
-					style={[
-						styles.dateInput,
-						{ color: colors.primary_base, borderColor: colors.secondary_base },
-					]}
-				/>
-				<TextInput
-					value={to}
-					onChangeText={onTo}
-					placeholder={t("prosthesisDetails.to")}
-					placeholderTextColor={colors.secondary_base_0c}
-					style={[
-						styles.dateInput,
-						{ color: colors.primary_base, borderColor: colors.secondary_base },
-					]}
-				/>
-			</View>
-		</View>
-	)
-}
-
-function AddComponentModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-	const { colors } = useTheme()
-
-	return (
-		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-			<View style={styles.modalBackdrop}>
-				<View
-					pointerEvents="none"
-					style={[styles.modalBackdropOverlay, { backgroundColor: colors.primary_base }]}
-				/>
-				<ThemedView colorName="tertiary_base_1" style={styles.addModal}>
-					<View style={styles.modalHeader}>
-						<ThemedText
-							tx="prosthesisDetails.addComponent"
-							variant="title"
-							colorName="primary_base"
-						/>
-						<ThemedView colorName="tertiary_base_1" onPress={onClose}>
-							<Ionicons name="close" size={26} color={colors.primary_base} />
-						</ThemedView>
-					</View>
-					<ThemedText
-						tx="prosthesisDetails.addComponentQuestion"
-						variant="body1Regular"
-						colorName="secondary_base_0c"
-					/>
-					<View style={styles.addOptions}>
-						<ThemedView colorName="tertiary_base_3" style={styles.addOption}>
-							<Ionicons name="create-outline" size={26} color={colors.primary_base} />
-							<ThemedText
-								tx="prosthesisDetails.fromCreator"
-								variant="body1Regular"
-								colorName="primary_base"
-							/>
-						</ThemedView>
-						<ThemedView colorName="tertiary_base_3" style={styles.addOption}>
-							<Ionicons name="document-outline" size={26} color={colors.primary_base} />
-							<ThemedText
-								tx="prosthesisDetails.fromFile"
-								variant="body1Regular"
-								colorName="primary_base"
-							/>
-						</ThemedView>
-					</View>
-				</ThemedView>
-			</View>
-		</Modal>
 	)
 }
 
@@ -451,14 +220,6 @@ const formatDate = (date: string | null | undefined) => {
 
 	const parsedDate = new Date(date)
 	return Number.isNaN(parsedDate.getTime()) ? date : parsedDate.toLocaleDateString()
-}
-
-const isInRange = (value: string | null, from: string, to: string) => {
-	if (!from && !to) return true
-	if (!value) return false
-
-	const date = value.slice(0, 10)
-	return (!from || date >= from) && (!to || date <= to)
 }
 
 const styles = StyleSheet.create({

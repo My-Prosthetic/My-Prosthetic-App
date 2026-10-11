@@ -19,6 +19,7 @@ export interface ThemeColors {
 	false: string
 	neutral_text: string
 	neutral_gray: string
+	true: string
 }
 
 export const lightTheme: ThemeColors = {
@@ -40,6 +41,7 @@ export const lightTheme: ThemeColors = {
 	false: "#B51932",
 	neutral_text: "#000000",
 	neutral_gray: "#A4A4A4",
+	true: "#15A959",
 }
 
 export const highContrastTheme: ThemeColors = {
@@ -61,6 +63,7 @@ export const highContrastTheme: ThemeColors = {
 	false: "#B51932",
 	neutral_text: "#000000",
 	neutral_gray: "#7A7A7A",
+	true: "#15A959",
 }
 
 type ThemeType = "light" | "high-contrast"

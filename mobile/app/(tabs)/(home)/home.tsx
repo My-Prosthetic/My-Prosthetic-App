@@ -1,127 +1,107 @@
 import { useState, useEffect, useCallback } from "react"
-import {
-	View,
-	Text,
-	Image,
-	StyleSheet,
-	TouchableOpacity,
-	ScrollView,
-	ActivityIndicator,
-} from "react-native"
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native"
 import { useTranslation } from "react-i18next"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useFocusEffect, useRouter } from "expo-router"
-
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
+import { useAuth } from "@/context/AuthContext"
 
-import { db } from "@/db/client"
-import { users } from "@/db/schema/users"
-import migrations from "@/drizzle/migrations"
-import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { getLatestUser } from "@/db/repositories/userRepository"
 
-//TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
-//TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
+import { getAllProstheses, Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { Carousel } from "@/src/components/Carousel"
+
 //TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
 
 export default function HomeScreen() {
-	const { success, error } = useMigrations(db, migrations)
-	const [userName, setUserName] = useState<string>("(init value)")
+	const [userName, setUserName] = useState<string>("")
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
-	const [prosthesisIndex, setProsthesisIndex] = useState(0)
 	const router = useRouter()
 
 	const { t, i18n } = useTranslation()
 	const { colors, themeType, setTheme } = useTheme()
+	const { status } = useAuth()
 
 	const styles = getStyles(colors)
 
-	// Funkcja odczytująca użytkowników z bazy danych
-	const fetchUsers = async () => {
-		try {
-			const allUsers = await db.select().from(users)
-
-			if (allUsers.length > 0) {
-				setUserName(allUsers[allUsers.length - 1].name)
-			} else {
-				setUserName("(pusta baza)")
-			}
-		} catch (err) {
-			console.error("Błąd odczytu z bazy:", err)
-		}
-	}
-
-	const fetchProstheses = useCallback(async () => {
-		const allProstheses = await getAllProstheses()
-		setProstheses(allProstheses)
-		setProsthesisIndex((index) => Math.min(index, allProstheses.length))
-	}, [])
-
 	useFocusEffect(
 		useCallback(() => {
-			if (success) {
-				void fetchProstheses()
+			let isActive = true
+
+			void getAllProstheses()
+				.then((data) => {
+					if (isActive) setProstheses(data)
+				})
+				.catch((error) => console.error("Błąd odczytu protez:", error))
+
+			return () => {
+				isActive = false
 			}
-		}, [success, fetchProstheses])
+		}, [])
 	)
 
-	// Automatyczny odczyt po załadowaniu bazy i wykonaniu migracji
 	useEffect(() => {
-		if (success) {
-			queueMicrotask(() => fetchUsers())
+		let isMounted = true
+		void getLatestUser()
+			.then((user) => {
+				if (isMounted) setUserName(user?.name ?? "")
+			})
+			.catch((err: Error) => console.error("Błąd odczytu użytkownika:", err))
+
+		return () => {
+			isMounted = false
 		}
-	}, [success])
+	}, [])
 
-	if (error) {
-		return (
-			<View style={styles.container}>
-				<Text>Błąd migracji bazy danych: {error.message}</Text>
+	const renderAddProsthesis = () => (
+		<ThemedView
+			style={styles.prostheticCard}
+			onPress={() => router.push("/prosthesis/new")}
+			accessibilityRole="button"
+		>
+			<View style={styles.addProsthesisCircle}>
+				<Ionicons name="add" size={54} color={colors.primary_base} />
 			</View>
-		)
-	}
+			<ThemedText variant="subTitle1" colorName="accent_base" tx="home.addProsthesis" />
+		</ThemedView>
+	)
 
-	if (!success) {
-		return (
-			<View style={styles.container}>
-				<ActivityIndicator size="large" />
-				<Text>Inicjalizacja bazy danych...</Text>
-			</View>
-		)
-	}
-
-	// 2. Funkcja dodająca testowy rekord (striggeruje odczytanie z bazy jako osobny proces)
-	const handleAddUser = async () => {
-		try {
-			const testName = "Tym"
-
-			await db.insert(users).values({ name: testName })
-
-			await fetchUsers()
-		} catch (err) {
-			console.error("Błąd zapisu:", err)
-		}
-	}
+	const renderProsthesisCard = (prosthesis: Prosthesis) => (
+		<ThemedView
+			style={styles.prostheticCard}
+			onPress={() => router.push(`/prosthesis/${prosthesis.id}/`)}
+		>
+			<Image
+				source={require("@/assets/mp_logo_accent.png")}
+				style={styles.logoImage}
+				resizeMode="contain"
+			/>
+			<ThemedText variant="subTitle1" colorName="accent_base">
+				{prosthesis.name}
+			</ThemedText>
+		</ThemedView>
+	)
 
 	return (
 		<ScrollView
 			style={styles.scrollView}
-			contentContainerStyle={styles.container}
+			contentContainerStyle={[styles.container, { paddingTop: status === "GUEST" ? 0 : 50 }]}
 			showsVerticalScrollIndicator={false}
 		>
 			{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
 			<ThemedView variant="wide" colorName="tertiary_base_2" style={styles.headerRow}>
 				<ThemedText
-					tx="home.greeting"
+					tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
 					txOptions={{ name: userName.toLocaleUpperCase() }}
 					colorName="primary_base"
 					style={{ textAlign: "left" }}
 				/>
-				<TouchableOpacity style={styles.handIconContainer} onPress={handleAddUser}>
+				<View style={styles.handIconContainer}>
 					<Ionicons name="hand-left" size={48} color={colors.primary_base} />
-				</TouchableOpacity>
+				</View>
 			</ThemedView>
 
 			{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
@@ -132,67 +112,11 @@ export default function HomeScreen() {
 				style={styles.sectionContainer}
 			>
 				<ThemedText tx="home.myProsthetics" variant="main1Button" style={{ padding: 16 }} />
-
-				<View style={styles.carouselRow}>
-					<TouchableOpacity
-						style={styles.carouselArrow}
-						onPress={() => setProsthesisIndex((index) => Math.max(0, index - 1))}
-						disabled={prosthesisIndex === 0}
-						accessibilityRole="button"
-					>
-						<Ionicons
-							name="chevron-back"
-							size={32}
-							color={prosthesisIndex === 0 ? colors.primary_base_3 : colors.primary_base}
-						/>
-					</TouchableOpacity>
-
-					{prosthesisIndex === prostheses.length ? (
-						<TouchableOpacity
-							style={styles.prostheticCard}
-							onPress={() => router.push("/prosthesis/new")}
-							accessibilityRole="button"
-						>
-							<View style={styles.addProsthesisCircle}>
-								<Ionicons name="add" size={54} color={colors.primary_base} />
-							</View>
-							<Text style={styles.prostheticCardText}>{t("home.addProsthesis")}</Text>
-						</TouchableOpacity>
-					) : (
-						<TouchableOpacity
-							style={styles.prostheticCard}
-							onPress={() =>
-								router.push({
-									pathname: "/prosthesis/[prosthesisId]",
-									params: { prosthesisId: prostheses[prosthesisIndex].id },
-								})
-							}
-							accessibilityRole="button"
-						>
-							<Image
-								source={require("../../../assets/mp_logo_accent.png")}
-								style={styles.logoImage}
-								resizeMode="contain"
-							/>
-							<Text style={styles.prostheticCardText}>{prostheses[prosthesisIndex].name}</Text>
-						</TouchableOpacity>
-					)}
-
-					<TouchableOpacity
-						style={styles.carouselArrow}
-						onPress={() => setProsthesisIndex((index) => Math.min(prostheses.length, index + 1))}
-						disabled={prosthesisIndex === prostheses.length}
-						accessibilityRole="button"
-					>
-						<Ionicons
-							name="chevron-forward"
-							size={32}
-							color={
-								prosthesisIndex === prostheses.length ? colors.primary_base_3 : colors.primary_base
-							}
-						/>
-					</TouchableOpacity>
-				</View>
+				<Carousel
+					items={prostheses}
+					renderItem={renderProsthesisCard}
+					renderPlus={renderAddProsthesis}
+				/>
 			</ThemedView>
 
 			{/* ----------------- SEKCJA: SZYBKIE PRZYCISKI AKCJI ----------------- */}
@@ -312,7 +236,6 @@ const getStyles = (colors: ThemeColors) => {
 		},
 		container: {
 			paddingHorizontal: 24,
-			paddingTop: 50,
 			paddingBottom: 40,
 		},
 		headerRow: {
@@ -340,9 +263,8 @@ const getStyles = (colors: ThemeColors) => {
 			padding: 5,
 		},
 		prostheticCard: {
-			width: 200, // Zmniejszono nieco kartę, aby wszystko się mieściło
+			width: 200,
 			height: 200,
-			backgroundColor: colors.primary_base,
 			borderRadius: 40,
 			justifyContent: "center",
 			alignItems: "center",
@@ -367,18 +289,13 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "center",
 			marginBottom: 24,
 		},
-		prostheticCardText: {
-			fontSize: 14,
-			fontWeight: "600",
-			color: colors.accent_base,
-			textAlign: "center",
-		},
 		actionButtonsRow: {
 			flexDirection: "row",
 			justifyContent: "space-between",
 			alignItems: "stretch",
 			marginBottom: 28,
 			width: "100%",
+			gap: 20,
 		},
 		actionButtonCard: {
 			width: "45%",

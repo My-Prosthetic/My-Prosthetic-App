@@ -5,8 +5,8 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 
 import { useTheme } from "@/context/ThemeContext"
 import {
-	getAllComponentsByProsthesisId,
-	type Component,
+	getComponentsByProsthesisId,
+	type ComponentWithRelations,
 } from "@/db/repositories/componentRepository"
 import { getProsthesisById, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { ThemedText } from "@/src/components/ThemedText"
@@ -21,7 +21,7 @@ export default function ProsthesisDetailsScreen() {
 	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
 
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
-	const [components, setComponents] = useState<Component[]>([])
+	const [components, setComponents] = useState<ComponentWithRelations[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [editVisible, setEditVisible] = useState(false)
 
@@ -38,7 +38,7 @@ export default function ProsthesisDetailsScreen() {
 				try {
 					const [prosthesisResult, componentsResult] = await Promise.all([
 						getProsthesisById(prosthesisId),
-						getAllComponentsByProsthesisId(prosthesisId),
+						getComponentsByProsthesisId(prosthesisId),
 					])
 
 					if (mounted) {
@@ -87,8 +87,9 @@ export default function ProsthesisDetailsScreen() {
 
 				<ComponentsPanel
 					components={components}
+					onAddComponent={() => router.push(`/prosthesis/${prosthesisId}/components/new` as any)}
 					onOpenComponent={(componentId) =>
-						router.push(`/(tabs)/(index)/component/${componentId}` as any)
+						router.push(`/component/${componentId}` as any)
 					}
 				/>
 

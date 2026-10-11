@@ -1,35 +1,46 @@
 import * as Crypto from "expo-crypto"
-import { and, asc, eq, isNull } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
 import { prostheses } from "@/db/schema/prostheses/prostheses"
 import { components } from "@/db/schema/prostheses/components"
+import { getModelById } from "./modelRepository"
 
 export type Component = typeof components.$inferSelect
+export type ComponentWithRelations = NonNullable<Awaited<ReturnType<typeof getComponentById>>>
 
 export type CreateComponentInput = {
 	prosthesisId: string
-	type: "socket" | "knee" | "foot" | "liner" | "adapter" | "other"
-	name?: string
-	manufacturer?: string
-	model?: string
-	serialNumber?: string
-	isTestSocket?: boolean
-	installedAt?: string
-	warrantyUntil?: string
+	modelId: string
+	isFinal?: boolean
+	isHistorical: boolean
+	assemblyDate: string
+	warrantyEndDate?: string
+	expectedExchangeDate?: string
+	description?: string
+	remindExchangeEmail?: boolean
+	remindExchangeApp?: boolean
+	remindExchangePush?: boolean
+	remindWarrantyEmail?: boolean
+	remindWarrantyApp?: boolean
+	remindWarrantyPush?: boolean
 }
 
 export type UpdateComponentInput = Partial<
-	Omit<CreateComponentInput, "prosthesisId" | "name" | "manufacturer" | "model" | "warrantyUntil">
+	Omit<CreateComponentInput, "prosthesisId" | "description" | "warrantyEndDate">
 > & {
-	name?: string | null
-	manufacturer?: string | null
-	model?: string | null
-	warrantyUntil?: string | null
+	description?: string | null
+	warrantyEndDate?: string | null
 }
 
 export async function createComponent(input: CreateComponentInput) {
 	const now = new Date().toISOString()
+
+	const model = await getModelById(input.modelId)
+	if (!model) {
+		throw new Error(`Model with id "${input.modelId}" not found`)
+	}
+	const valueIsFinal = model.type === "socket" ? input.isFinal : null
 
 	const [prosthesis] = await db
 		.select({ id: prostheses.id })
@@ -39,12 +50,13 @@ export async function createComponent(input: CreateComponentInput) {
 	if (!prosthesis) {
 		throw new Error("Active prosthesis not found")
 	}
-
 	const [component] = await db
+
 		.insert(components)
 		.values({
 			id: Crypto.randomUUID(),
 			...input,
+			isFinal: valueIsFinal,
 			createdAt: now,
 			updatedAt: now,
 			isDirty: true,
@@ -59,31 +71,67 @@ export async function createComponent(input: CreateComponentInput) {
 }
 
 export async function getComponentById(id: string) {
-	const [component] = await db
-		.select()
-		.from(components)
-		.where(and(eq(components.id, id), isNull(components.deletedAt)))
+	const component = await db.query.components.findFirst({
+		where: (fields, { eq, and, isNull }) => and(eq(fields.id, id), isNull(fields.deletedAt)),
+		with: {
+			model: {
+				with: {
+					brand: true,
+				},
+			},
+		},
+	})
 
 	return component ?? null
 }
 
 export async function getComponentsByProsthesisId(prosthesisId: string) {
-	return db
-		.select()
-		.from(components)
-		.where(and(eq(components.prosthesisId, prosthesisId), isNull(components.deletedAt)))
-		.orderBy(asc(components.createdAt), asc(components.id))
-}
+	const components = await db.query.components.findMany({
+		where: (fields, { eq, and, isNull }) =>
+			and(eq(fields.prosthesisId, prosthesisId), isNull(fields.deletedAt)),
+		with: {
+			model: {
+				with: {
+					brand: true,
+				},
+			},
+		},
+	})
 
-export async function getAllComponentsByProsthesisId(prosthesisId: string) {
-	return getComponentsByProsthesisId(prosthesisId)
+	return components
 }
 
 export async function updateComponent(id: string, input: UpdateComponentInput) {
+	const tempComponent = await getComponentById(id)
+
+	if (!tempComponent) {
+		throw new Error(`Component with id "${id}" not found`)
+	}
+
+	let modelType = tempComponent.model.type
+
+	if (input.modelId && input.modelId !== tempComponent.modelId) {
+		const newModel = await getModelById(input.modelId)
+		if (!newModel) {
+			throw new Error(`Model with id "${input.modelId}" not found`)
+		}
+		if (
+			newModel.type === "socket" &&
+			tempComponent.model.type !== "socket" &&
+			input.isFinal === undefined
+		) {
+			throw new Error(`Socket type isFinal was not provided`)
+		}
+		modelType = newModel.type
+	}
+
+	const valueOfIsFinal = modelType === "socket" ? (input.isFinal ?? undefined) : null
+
 	const [component] = await db
 		.update(components)
 		.set({
 			...input,
+			isFinal: valueOfIsFinal,
 			updatedAt: new Date().toISOString(),
 			isDirty: true,
 		})

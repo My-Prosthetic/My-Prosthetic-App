@@ -9,7 +9,7 @@ import { useTheme } from "@/context/ThemeContext"
 import {
 	getComponentById,
 	updateComponent,
-	type Component,
+	type ComponentWithRelations,
 } from "@/db/repositories/componentRepository"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
@@ -37,7 +37,7 @@ export default function EditComponentScreen() {
 	const { t } = useTranslation()
 	const { componentId } = useLocalSearchParams<{ componentId: string }>()
 
-	const [component, setComponent] = useState<Component | null>(null)
+	const [component, setComponent] = useState<ComponentWithRelations | null>(null)
 	const [name, setName] = useState("")
 	const [manufacturer, setManufacturer] = useState("")
 	const [model, setModel] = useState("")
@@ -61,10 +61,10 @@ export default function EditComponentScreen() {
 				const result = await getComponentById(componentId)
 				if (!active) return
 				setComponent(result)
-				setName(result?.name ?? "")
-				setManufacturer(result?.manufacturer ?? "")
-				setModel(result?.model ?? "")
-				setWarrantyUntil(result?.warrantyUntil ?? "")
+				setName(result?.description ?? "")
+				setManufacturer(result?.model.brand.name ?? "")
+				setModel(result?.model.name ?? "")
+				setWarrantyUntil(result?.warrantyEndDate ?? "")
 			} catch (error) {
 				console.error("Failed to load component:", error)
 				if (active) {
@@ -86,10 +86,8 @@ export default function EditComponentScreen() {
 		try {
 			setIsSaving(true)
 			const updated = await updateComponent(component.id, {
-				name: name.trim() || null,
-				manufacturer: manufacturer.trim() || null,
-				model: model.trim() || null,
-				warrantyUntil: warrantyUntil || null,
+				description: name.trim() || null,
+				warrantyEndDate: warrantyUntil || null,
 			})
 			if (!updated) throw new Error("Component not found or deleted")
 			router.back()
@@ -122,14 +120,15 @@ export default function EditComponentScreen() {
 	}
 
 	const fields = [
-		{ key: "name", label: t("componentEdit.name"), value: name, onChange: setName },
+		{ key: "description", label: t("prosthesisDetails.description"), value: name, onChange: setName, editable: true },
 		{
 			key: "manufacturer",
 			label: t("componentEdit.manufacturer"),
 			value: manufacturer,
 			onChange: setManufacturer,
+			editable: false,
 		},
-		{ key: "model", label: t("componentEdit.model"), value: model, onChange: setModel },
+		{ key: "model", label: t("componentEdit.model"), value: model, onChange: setModel, editable: false },
 	]
 
 	return (
@@ -146,7 +145,7 @@ export default function EditComponentScreen() {
 			</ThemedView>
 
 			<View style={styles.content}>
-				{fields.map(({ key, label, value, onChange }) => (
+				{fields.map(({ key, label, value, onChange, editable }) => (
 					<View key={key} style={styles.field}>
 						<ThemedText variant="subTitle2" colorName="primary_base">
 							{label}
@@ -159,6 +158,7 @@ export default function EditComponentScreen() {
 							<TextInput
 								value={value}
 								onChangeText={onChange}
+								editable={editable}
 								style={[styles.input, { color: colors.primary_base }]}
 							/>
 						</ThemedView>
