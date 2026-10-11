@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "6f41e273-580a-4542-94ea-113d593d332c",
+	"id": "84bdd57b-1b78-4c03-a5ed-1e80f8717ef9",
 	"prevId": "cff1a3af-72a5-42c2-af7d-4e6fa6e46c76",
 	"tables": {
 		"prostheses": {
@@ -334,7 +334,7 @@
 				},
 				"models_brand_type_name_unique_idx": {
 					"name": "models_brand_type_name_unique_idx",
-					"columns": ["brand_id", "type", "name"],
+					"columns": ["brand_id", "type", "\"name\" COLLATE NOCASE"],
 					"isUnique": true
 				}
 			},
@@ -720,6 +720,13 @@
 	"internal": {
 		"indexes": {
 			"brands_name_unique_idx": {
+				"columns": {
+					"\"name\" COLLATE NOCASE": {
+						"isExpression": true
+					}
+				}
+			},
+			"models_brand_type_name_unique_idx": {
 				"columns": {
 					"\"name\" COLLATE NOCASE": {
 						"isExpression": true
