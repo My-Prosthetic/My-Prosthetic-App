@@ -9,7 +9,9 @@ import {
 import { Ionicons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { ParseKeys } from "i18next"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
+import { useAuth } from "@/context/AuthContext"
 import { ThemedText } from "./ThemedText"
 
 export type HeaderVariant = "prominent" | "transparent"
@@ -24,6 +26,8 @@ interface ThemedHeaderProps {
 export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: ThemedHeaderProps) => {
 	const router = useRouter()
 	const { colors } = useTheme()
+	const { status } = useAuth()
+	const insets = useSafeAreaInsets()
 	const { width } = useWindowDimensions()
 
 	const handleBack = () => {
@@ -43,8 +47,14 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 	return (
 		<View
 			style={[
-				variant === "prominent" ? styles.prominentHeader : styles.transparentHeader,
-				{ backgroundColor, width, alignSelf: "center" },
+				isTransparent ? styles.transparentHeader : styles.prominentHeader,
+				{
+					backgroundColor,
+					width,
+					alignSelf: "center",
+					paddingTop: status !== "GUEST" ? insets.top + 10 : 20,
+					paddingBottom: 20,
+				},
 				style,
 			]}
 		>
@@ -57,7 +67,10 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 					<Ionicons name="chevron-back" size={28} color={contentColor} />
 				</TouchableOpacity>
 
-				<View style={styles.titleContainer} pointerEvents="box-none">
+				<View
+					style={isTransparent ? styles.transparentTitleContainer : styles.prominentTitleContainer}
+					pointerEvents="box-none"
+				>
 					<ThemedText
 						tx={tx}
 						variant="title"
@@ -74,12 +87,10 @@ export const ThemedHeader = ({ tx, variant = "prominent", onBack, style }: Theme
 
 const styles = StyleSheet.create({
 	prominentHeader: {
-		minHeight: 100,
 		borderBottomLeftRadius: 24,
 		borderBottomRightRadius: 24,
 		flexDirection: "column",
 		justifyContent: "flex-end",
-		paddingBottom: 20,
 	},
 	transparentHeader: {},
 	container: {
@@ -91,12 +102,17 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingHorizontal: 10,
 	},
-	titleContainer: {
-		justifyContent: "center",
-		alignItems: "center",
+	prominentTitleContainer: {
 		position: "absolute",
 		left: 0,
 		right: 0,
-		paddingLeft: 20,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingHorizontal: 48,
+	},
+	transparentTitleContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "flex-start",
 	},
 })

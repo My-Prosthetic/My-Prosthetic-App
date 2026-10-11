@@ -24,7 +24,8 @@
 		"accumulatedTitle": "Zgromadzone Środki 💰"
 	},
 	"home": {
-		"greeting": "Cześć,\n{{name}}",
+		"greetingGuest": "Cześć",
+		"greetingUser": "Cześć,\n{{name}}",
 		"dbMigrationErr": "Błąd migracji bazy danych: ",
 		"dbInit": "Inicjalizacja bazy danych...",
 		"myProsthetics": "MOJE PROTEZY",
@@ -41,14 +42,41 @@
 		"showFullHistory": "Pokaż całą historię",
 		"switchToHighContrast": "Zmień na wysoki kontrast 🌙",
 		"switchToLightTheme": "Zmień na jasny motyw ☀️",
-		"addProsthesis": "Dodaj protezę"
+		"addProsthesis": "Dodaj protezę",
+		"greeting": "Cześć,\n{{name}}"
+	},
+	"auth": {
+		"alerts": {
+			"loginFailed": "Logowanie nie powiodło się",
+			"guestLoginFailed": "Nie udało się uruchomić trybu gościa",
+			"logoutFailed": "Wylogowanie nie powiodło się"
+		},
+		"errors": {
+			"apiUnavailable": "Usługa uwierzytelniania jest niedostępna. Spróbuj ponownie później.",
+			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.",
+			"invalidCredentials": "Nieprawidłowy email lub hasło.",
+			"emailTaken": "Konto z tym adresem email już istnieje.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa.",
+			"validationFailed": "Nie udało się zweryfikować danych. Sprawdź formularz.",
+			"requestFailed": "Żądanie nie powiodło się. Spróbuj ponownie.",
+			"unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+			"sessionSetupFailed": "Nie udało się przygotować sesji. Spróbuj ponownie.",
+			"guestSessionSetupFailed": "Nie udało się uruchomić trybu gościa. Spróbuj ponownie.",
+			"logoutCredentialsReadFailed": "Nie udało się odczytać danych sesji. Spróbuj ponownie.",
+			"logoutCleanupFailed": "Nie udało się wyczyścić danych lokalnych. Pozostajesz w bieżącej sesji."
+		}
 	},
 	"common": {
-		"cancel": "ANULUJ",
+		"cancel": "Anuluj",
 		"error": "Błąd",
-		"save": "ZAPISZ",
+		"validationError": "Błąd walidacji",
+		"save": "Zapisz",
 		"delete": "Usuń",
-		"today": "Dzisiaj"
+		"today": "Dzisiaj",
+		"mp": "My Prosthetics",
+		"info": "Informacja"
 	},
 	"funds": {
 		"title": "DOFINANSOWANIA",
@@ -369,6 +397,240 @@
 		"side": "STRONA",
 		"limb": "KOŃCZYNA",
 		"amputationLevel": "POZIOM AMPUTACJI",
-		"notFound": "Nie znaleziono protezy."
+		"notFound": "Nie znaleziono protezy.",
+		"components": "Komponenty",
+		"addComponent": "Dodaj komponent",
+		"loadingComponents": "Ładowanie komponentów...",
+		"noComponents": "Brak komponentów przypisanych do tej protezy.",
+		"noFilterResults": "Brak komponentów spełniających wybrane filtry.",
+		"filters": {
+			"title": "Filtry komponentów",
+			"status": "Status",
+			"all": "Wszystkie",
+			"active": "Aktywne",
+			"historical": "Historyczne",
+			"category": "Kategorie",
+			"types": {
+				"socket": "Lej",
+				"liner": "Liner",
+				"hip": "Biodro",
+				"knee": "Kolano",
+				"foot": "Stopa",
+				"elbow": "Łokieć",
+				"wrist": "Nadgarstek",
+				"hand": "Dłoń",
+				"electrodes": "Elektrody",
+				"mechanical": "Mechaniczny",
+				"adapter": "Adapter",
+				"suspension": "Zawieszenie",
+				"cosmetic": "Kosmetyczny",
+				"other": "Inne"
+			},
+			"assemblyDate": "Data montażu",
+			"assemblyFrom": "Od",
+			"assemblyTo": "Do",
+			"chooseDate": "Wybierz datę",
+			"clearDate": "Wyczyść datę",
+			"warranty": "Gwarancja",
+			"warrantyOptions": {
+				"all": "Dowolny termin",
+				"endingSoon": "Kończy się w 30 dni",
+				"expired": "Wygasła",
+				"noDate": "Brak daty"
+			},
+			"reset": "Wyczyść",
+			"apply": "Zastosuj"
+		},
+		"warranty": "Gwarancja",
+		"componentTypes": {
+			"socket": "Lej",
+			"knee": "Kolano",
+			"foot": "Stopa",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Inny komponent"
+		},
+		"status": "STATUS",
+		"all": "Wszystkie",
+		"active": "Aktywne",
+		"historical": "Historyczne",
+		"category": "KATEGORIA PODZESPOŁU",
+		"installationDate": "DATA MONTAŻU",
+		"warrantyDate": "DATA GWARANCJI",
+		"from": "Od: RRRR-MM-DD",
+		"to": "Do: RRRR-MM-DD",
+		"editProsthesis": "Edytuj protezę",
+		"addIncident": "DODAJ INCYDENT",
+		"photosAndFiles": "ZDJĘCIA I PLIKI",
+		"addFile": "DODAJ NOWY PLIK",
+		"filesHint": "TUTAJ MOŻESZ DODAĆ ZDJĘCIA, DOKUMENTACJĘ, SKANY 3D I INNE PLIKI DOTYCZĄCE PROTEZY",
+		"addComponentQuestion": "Wybierz sposób dodania komponentu",
+		"fromCreator": "Z kreatora",
+		"fromFile": "Z pliku",
+		"location": "Miejsce",
+		"startDate": "Data od",
+		"description": "Opis",
+		"showDescription": "Pokaż opis",
+		"hideDescription": "Ukryj opis",
+		"editSaveError": "Nie udało się zapisać zmian protezy.",
+		"noMatchingComponents": "Brak komponentów pasujących do wybranych filtrów."
+	},
+	"newComponent": {
+		"newComponent": "Nowy komponent",
+		"fields": {
+			"category": "Kategoria podzespołu",
+			"brand": "Marka podzespołu",
+			"model": "Model",
+			"assemblyDate": "Data montażu",
+			"description": "Opis",
+			"warrantyEndDate": "Data końca gwarancji",
+			"expectedExchangeDate": "Przewidywana data wymiany"
+		},
+		"categories": {
+			"socket": "Lej protezowy",
+			"liner": "Liner",
+			"hip": "Biodro",
+			"knee": "Kolano",
+			"foot": "Stopa protezowa",
+			"elbow": "Łokieć",
+			"wrist": "Nadgarstek",
+			"hand": "Dłoń",
+			"electrodes": "Elektrody",
+			"mechanical": "Mechaniczny",
+			"adapter": "Adapter",
+			"suspension": "Zawieszenie",
+			"cosmetic": "Kosmetyczny",
+			"other": "Inny komponent"
+		},
+		"switches": {
+			"socketType": "RODZAJ LEJA:",
+			"test": "testowy",
+			"final": "finalny",
+			"componentType": "TYP KOMPONENTU:",
+			"active": "aktywny",
+			"historical": "historyczny"
+		},
+		"placeholders": {
+			"category": "Wybierz kategorię",
+			"brand": "Wybierz markę",
+			"loadingBrands": "Ładowanie marek...",
+			"searchBrand": "Wyszukaj markę",
+			"model": "Wybierz model",
+			"loadingModels": "Ładowanie modeli...",
+			"searchModel": "Wyszukaj model",
+			"addCustomModel": "Dodaj własny model +",
+			"selectBrandFirst": "Najpierw wybierz markę",
+			"brandName": "Wpisz nazwę marki",
+			"modelName": "Wpisz nazwę modelu",
+			"description": "Wpisz krótki opis, np. nr decyzji..."
+		},
+		"customOption": {
+			"successTitle": "Dodano"
+		},
+		"customBrand": {
+			"add": "Dodaj nową markę",
+			"title": "Dodaj markę",
+			"alreadyExists": "Ta marka już znajduje się w bazie.",
+			"created": "Dodałeś nową markę. W przyszłości możesz już z niej korzystać bez dodawania ponownie."
+		},
+		"customModel": {
+			"add": "Dodaj nowy model",
+			"title": "Dodaj model",
+			"duplicateTitle": "Model już istnieje",
+			"duplicateMessage": "Taki model występuje już w katalogach producentów: {{existingBrands}}. Czy na pewno chcesz tworzyć nowy model dla marki {{selectedBrand}}?",
+			"confirm": "Utwórz nowy",
+			"alreadyExistsForBrand": "Taki model jest już dostępny dla wybranej marki i kategorii.",
+			"created": "Dodałeś nowy model. W przyszłości możesz już z niego korzystać bez dodawania ponownie."
+		},
+		"hints": {
+			"selectBrandForModel": "Aby wybrać model, najpierw wybierz markę podzespołu."
+		},
+		"modelsUnavailable": "Brak modeli w tej kategorii dla wybranego producenta",
+		"sections": {
+			"warrantyAndUsage": "GWARANCJA I ZUŻYCIE"
+		},
+		"reminders": {
+			"exchangeDate": "PRZYPOMNIJ O\nDACIE WYMIANY",
+			"warrantyEnd": "PRZYPOMNIJ O\nUPŁYWIE GWARANCJI"
+		},
+		"reminderChannels": {
+			"email": "e-mail",
+			"app": "w\naplikacji",
+			"push": "powiadomienie\npush"
+		},
+		"addFiles": "DODAJ PLIKI",
+		"filesDescription": "tutaj możesz dodać zdjęcia,\ndokumentację i skany 3D\noraz inne pliki dotyczące protezy",
+		"save": "Zapisz komponent",
+		"saving": "Zapisywanie...",
+		"errors": {
+			"loadBrands": "Nie udało się pobrać listy marek.",
+			"loadModels": "Nie udało się pobrać listy modeli.",
+			"createBrand": "Nie udało się zapisać nowej marki.",
+			"createModel": "Nie udało się zapisać nowego modelu.",
+			"saveComponent": "Nie udało się zapisać komponentu."
+		},
+		"validation": {
+			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}",
+			"warrantyBeforeAssembly": "Koniec gwarancji nie może być wcześniejszy niż data montażu.",
+			"exchangeBeforeAssembly": "Przewidywana wymiana nie może być wcześniejsza niż data montażu."
+		}
+	},
+	"login": {
+		"logIn": "Zaloguj",
+		"createAccount": "Stwórz konto",
+		"useWithoutAccount": "Korzystaj bez konta",
+		"areYouSure": "Czy na pewno chcesz korzystać bez konta?",
+		"onlyLocal": "Korzystając z aplikacji bez konta Twoje dane są przetwarzane i przechowywane wyłącznie w pamięci lokalnej urządzenia.",
+		"itResultsIn": "Powoduje to:",
+		"noCopy": "Brak kopii zapasowej",
+		"constraints": "Ograniczenia w udostępnianiu historii medycznej specjalistom.",
+		"alreadyHaveAccount": "Masz już konto?",
+		"noAccount": "Nie masz konta?",
+		"email": "Email",
+		"password": "Hasło",
+		"validation": {
+			"required": "Wpisz email i hasło.",
+			"invalidEmail": "Podaj prawidłowy adres email."
+		},
+		"forgotPassword": "Nie pamiętasz hasła?",
+		"reset": "Resetuj",
+		"continueGoogle": "Kontynuuj z Google",
+		"continueFacebook": "Kontynuuj z Facebook"
+	},
+	"signup": {
+		"firstName": "Imię",
+		"lastName": "Nazwisko",
+		"emailPlaceholder": "adres@email.com",
+		"repeatPassword": "Powtórz hasło",
+		"register": "Zarejestruj",
+		"passwordRequirements": "Wymagania hasła",
+		"passwordRules": {
+			"minLength": "Min. 8 znaków",
+			"uppercase": "Co najmniej 1 wielka litera",
+			"lowercase": "Co najmniej 1 mała litera",
+			"number": "Co najmniej 1 cyfra",
+			"symbol": "Co najmniej 1 znak specjalny",
+			"match": "Hasła są takie same"
+		},
+		"validation": {
+			"required": "Uzupełnij wszystkie wymagane pola.",
+			"nameTooLong": "Imię i nazwisko mogą mieć maksymalnie 255 znaków.",
+			"invalidEmail": "Podaj prawidłowy adres email.",
+			"passwordMismatch": "Hasła muszą być zgodne.",
+			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
+		}
+	},
+	"componentEdit": {
+		"title": "EDYTUJ KOMPONENT",
+		"name": "Nazwa",
+		"manufacturer": "Producent",
+		"model": "Model",
+		"warrantyUntil": "Gwarancja do",
+		"save": "Zapisz",
+		"notFound": "Nie znaleziono komponentu.",
+		"saveError": "Nie udało się zapisać komponentu.",
+		"loadError": "Nie udało się wczytać danych komponentu.",
+		"selectDate": "Wybierz datę",
+		"clearDate": "Usuń datę"
 	}
 }

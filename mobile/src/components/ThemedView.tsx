@@ -19,7 +19,7 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	borderColor?: keyof ThemeColors
 	variant?: ThemedViewSize
 	shadow?: boolean
-	onPress?: () => void
+	onPress?: () => void | Promise<unknown>
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
 }
@@ -59,19 +59,24 @@ export const ThemedView = ({
 }: ThemedViewProps) => {
 	const { colors } = useTheme()
 
-	// Zamiast timera przechowujemy tylko znacznik czasu ostatniego kliknięcia w ms
+	const isProcessingRef = useRef(false)
 	const lastPressRef = useRef(0)
 
-	const handlePress = () => {
+	const handlePress = async () => {
 		const now = Date.now()
 
-		// Jeśli od poprzedniego kliknięcia minęło mniej niż 500 ms – ignorujemy
-		if (now - lastPressRef.current < PRESS_GUARD_MS) {
+		if (isProcessingRef.current || now - lastPressRef.current < PRESS_GUARD_MS) {
 			return
 		}
 
 		lastPressRef.current = now
-		onPress?.()
+		isProcessingRef.current = true
+
+		try {
+			await onPress?.()
+		} finally {
+			isProcessingRef.current = false
+		}
 	}
 
 	const getElementStyle = (pressed = false): StyleProp<ViewStyle> => [
@@ -125,7 +130,7 @@ const sizes = StyleSheet.create({
 		paddingHorizontal: 14,
 		height: 60,
 		width: "70%",
-		borderRadius: 12,
+		borderRadius: 20,
 		flexDirection: "row",
 		alignItems: "center",
 		alignSelf: "center",
@@ -135,7 +140,7 @@ const sizes = StyleSheet.create({
 		paddingVertical: 14,
 		paddingHorizontal: 16,
 		minHeight: 60,
-		borderRadius: 16,
+		borderRadius: 20,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
@@ -144,7 +149,6 @@ const sizes = StyleSheet.create({
 	background: {
 		flex: 1,
 		paddingHorizontal: 32,
-		paddingVertical: 0,
 		margin: 0,
 	},
 	divider: {

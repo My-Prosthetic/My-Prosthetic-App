@@ -44,7 +44,8 @@
 					"photosPermission": "Pozwól aplikacji MyProsthetics na dostęp do zdjęć dołączanych do incydentu.",
 					"cameraPermission": "Pozwól aplikacji MyProsthetics na użycie aparatu do dokumentacji incydentu."
 				}
-			]
+			],
+			"expo-secure-store"
 		],
 		"extra": {
 			"router": {},

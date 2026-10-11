@@ -258,7 +258,9 @@ class WalletEntryTest extends TestCase
         $this->seed(DatabaseSeeder::class);
         $this->seed(DatabaseSeeder::class);
 
-        $this->assertDatabaseCount('users', 2);
+        $this->assertDatabaseCount('users', 3);
         $this->assertDatabaseCount('wallet_entries', 3);
+        $this->assertDatabaseCount('prostheses', 1);
+        $this->assertDatabaseCount('components', 3);
     }
 }
