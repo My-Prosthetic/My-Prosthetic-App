@@ -81,7 +81,7 @@ export async function getComponentById(id: string) {
 }
 
 export async function getComponentsByProsthesisId(prosthesisId: string) {
-	const component = await db.query.components.findMany({
+	const components = await db.query.components.findMany({
 		where: (fields, { eq, and, isNull }) =>
 			and(eq(fields.prosthesisId, prosthesisId), isNull(fields.deletedAt)),
 		with: {
@@ -93,7 +93,7 @@ export async function getComponentsByProsthesisId(prosthesisId: string) {
 		},
 	})
 
-	return component ?? null
+	return components
 }
 
 export async function updateComponent(id: string, input: UpdateComponentInput) {
