@@ -18,7 +18,7 @@ export const components = sqliteTable(
 
 		isFinal: integer("is_final", {
 			mode: "boolean",
-		}).default(true),
+		}),
 
 		isHistorical: integer("is_historical", {
 			mode: "boolean",

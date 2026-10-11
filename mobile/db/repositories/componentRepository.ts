@@ -4,6 +4,7 @@ import { and, eq, isNull } from "drizzle-orm"
 import { db } from "../client"
 import { prostheses } from "@/db/schema/prostheses/prostheses"
 import { components } from "@/db/schema/prostheses/components"
+import { getModelById } from "./modelRepository"
 
 export type Component = typeof components.$inferSelect
 export type ComponentWithRelations = NonNullable<Awaited<ReturnType<typeof getComponentById>>>
@@ -30,6 +31,12 @@ export type UpdateComponentInput = Partial<Omit<CreateComponentInput, "prosthesi
 export async function createComponent(input: CreateComponentInput) {
 	const now = new Date().toISOString()
 
+	const model = await getModelById(input.modelId)
+	if (!model) {
+		throw new Error(`Model with id "${input.modelId}" not found`)
+	}
+	const valueIsFinal = model.type === "socket" ? input.isFinal : null
+
 	const [prosthesis] = await db
 		.select({ id: prostheses.id })
 		.from(prostheses)
@@ -44,6 +51,7 @@ export async function createComponent(input: CreateComponentInput) {
 		.values({
 			id: Crypto.randomUUID(),
 			...input,
+			isFinal: valueIsFinal,
 			createdAt: now,
 			updatedAt: now,
 			isDirty: true,
@@ -89,10 +97,36 @@ export async function getComponentsByProsthesisId(prosthesisId: string) {
 }
 
 export async function updateComponent(id: string, input: UpdateComponentInput) {
+	const tempComponent = await getComponentById(id)
+
+	if (!tempComponent) {
+		throw new Error(`Component with id "${id}" not found`)
+	}
+
+	let modelType = tempComponent.model.type
+
+	if (input.modelId && input.modelId !== tempComponent.modelId) {
+		const newModel = await getModelById(input.modelId)
+		if (!newModel) {
+			throw new Error(`Model with id "${input.modelId}" not found`)
+		}
+		if (
+			newModel.type === "socket" &&
+			tempComponent.model.type !== "socket" &&
+			input.isFinal === undefined
+		) {
+			throw new Error(`Socket type isFinal was not provided`)
+		}
+		modelType = newModel.type
+	}
+
+	const valueOfIsFinal = modelType === "socket" ? (input.isFinal ?? undefined) : null
+
 	const [component] = await db
 		.update(components)
 		.set({
 			...input,
+			isFinal: valueOfIsFinal,
 			updatedAt: new Date().toISOString(),
 			isDirty: true,
 		})
