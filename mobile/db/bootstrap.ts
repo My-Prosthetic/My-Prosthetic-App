@@ -65,7 +65,7 @@ export async function seedCatalogIfNotInitialized(): Promise<void> {
 						name: brand.name,
 						isCustom: false,
 					})
-					.onConflictDoNothing()
+					.onConflictDoNothing() //TODO add onConflictDoUpdate for errors
 					.run()
 
 				const seededBrand = tx
@@ -92,7 +92,7 @@ export async function seedCatalogIfNotInitialized(): Promise<void> {
 							type: model.type,
 							isCustom: false,
 						})
-						.onConflictDoNothing()
+						.onConflictDoNothing() //TODO add onConflictDoUpdate for errors
 						.run()
 				}
 			}
