@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm"
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 export const brands = sqliteTable(
@@ -13,5 +14,5 @@ export const brands = sqliteTable(
 			.notNull()
 			.default(false),
 	},
-	(table) => [uniqueIndex("brands_name_unique_idx").on(table.name)]
+	(table) => [uniqueIndex("brands_name_unique_idx").on(sql`${table.name} COLLATE NOCASE`)]
 )
