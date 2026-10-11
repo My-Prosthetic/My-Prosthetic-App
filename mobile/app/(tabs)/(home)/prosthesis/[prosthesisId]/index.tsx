@@ -18,6 +18,7 @@ import {
 	DEFAULT_COMPONENT_FILTERS,
 	type ComponentFilters,
 } from "@/src/components/ComponentFiltersModal"
+import { ParseKeys } from "i18next"
 
 const AMPUTATION_LEVEL_KEYS: Record<string, string> = {
 	hemipelvectomy: "newProsthesis.amputationLevels.lower.hemipelvectomy",
@@ -186,7 +187,7 @@ export default function ProsthesisDetailsScreen() {
 
 	const amputationLevelLabel = prosthesis
 		? amputationLevelKey
-			? t(amputationLevelKey as any)
+			? t(amputationLevelKey as ParseKeys)
 			: prosthesis.amputationLevel
 		: ""
 
