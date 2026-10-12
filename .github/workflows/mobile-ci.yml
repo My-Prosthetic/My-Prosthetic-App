@@ -3,19 +3,19 @@ name: Mobile CI
 on:
   pull_request:
     paths:
-      - 'mobile/**'
-      - '.github/workflows/mobile-ci.yml'
+      - "mobile/**"
+      - ".github/workflows/mobile-ci.yml"
 
   push:
     branches:
-      - '**'
-      - '!dependabot/**'
+      - "**"
+      - "!dependabot/**"
     paths:
-      - 'mobile/**'
+      - "mobile/**"
 
 permissions:
   contents: read
-  
+
 jobs:
   quality:
     name: Mobile Quality Checks
@@ -32,8 +32,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '20.19.4'
-          cache: 'npm'
+          node-version: "20.19.4"
+          cache: "npm"
           cache-dependency-path: mobile/package-lock.json
 
       - name: Install dependencies

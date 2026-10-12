@@ -42,7 +42,8 @@
 		"showFullHistory": "Pokaż całą historię",
 		"switchToHighContrast": "Zmień na wysoki kontrast 🌙",
 		"switchToLightTheme": "Zmień na jasny motyw ☀️",
-		"addProsthesis": "Dodaj protezę"
+		"addProsthesis": "Dodaj protezę",
+		"greeting": "Cześć,\n{{name}}"
 	},
 	"auth": {
 		"alerts": {
@@ -366,7 +367,40 @@
 			},
 			"reset": "Wyczyść",
 			"apply": "Zastosuj"
-		}
+		},
+		"warranty": "Gwarancja",
+		"componentTypes": {
+			"socket": "Lej",
+			"knee": "Kolano",
+			"foot": "Stopa",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Inny komponent"
+		},
+		"status": "STATUS",
+		"all": "Wszystkie",
+		"active": "Aktywne",
+		"historical": "Historyczne",
+		"category": "KATEGORIA PODZESPOŁU",
+		"installationDate": "DATA MONTAŻU",
+		"warrantyDate": "DATA GWARANCJI",
+		"from": "Od: RRRR-MM-DD",
+		"to": "Do: RRRR-MM-DD",
+		"editProsthesis": "Edytuj protezę",
+		"addIncident": "DODAJ INCYDENT",
+		"photosAndFiles": "ZDJĘCIA I PLIKI",
+		"addFile": "DODAJ NOWY PLIK",
+		"filesHint": "TUTAJ MOŻESZ DODAĆ ZDJĘCIA, DOKUMENTACJĘ, SKANY 3D I INNE PLIKI DOTYCZĄCE PROTEZY",
+		"addComponentQuestion": "Wybierz sposób dodania komponentu",
+		"fromCreator": "Z kreatora",
+		"fromFile": "Z pliku",
+		"location": "Miejsce",
+		"startDate": "Data od",
+		"description": "Opis",
+		"showDescription": "Pokaż opis",
+		"hideDescription": "Ukryj opis",
+		"editSaveError": "Nie udało się zapisać zmian protezy.",
+		"noMatchingComponents": "Brak komponentów pasujących do wybranych filtrów."
 	},
 	"newComponent": {
 		"newComponent": "Nowy komponent",
@@ -512,5 +546,18 @@
 			"passwordMismatch": "Hasła muszą być zgodne.",
 			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
 		}
+	},
+	"componentEdit": {
+		"title": "EDYTUJ KOMPONENT",
+		"name": "Nazwa",
+		"manufacturer": "Producent",
+		"model": "Model",
+		"warrantyUntil": "Gwarancja do",
+		"save": "Zapisz",
+		"notFound": "Nie znaleziono komponentu.",
+		"saveError": "Nie udało się zapisać komponentu.",
+		"loadError": "Nie udało się wczytać danych komponentu.",
+		"selectDate": "Wybierz datę",
+		"clearDate": "Usuń datę"
 	}
 }

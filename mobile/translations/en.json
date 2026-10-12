@@ -42,7 +42,8 @@
 		"showFullHistory": "Show full history",
 		"switchToHighContrast": "Switch to high contrast 🌙",
 		"switchToLightTheme": "Switch to light theme ☀️",
-		"addProsthesis": "Add prosthesis"
+		"addProsthesis": "Add prosthesis",
+		"greeting": "Hello,\n{{name}}"
 	},
 	"auth": {
 		"alerts": {
@@ -366,7 +367,40 @@
 			},
 			"reset": "Reset",
 			"apply": "Apply"
-		}
+		},
+		"warranty": "Warranty",
+		"componentTypes": {
+			"socket": "Socket",
+			"knee": "Knee",
+			"foot": "Foot",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Other component"
+		},
+		"status": "STATUS",
+		"all": "All",
+		"active": "Active",
+		"historical": "Historical",
+		"category": "COMPONENT CATEGORY",
+		"installationDate": "INSTALLATION DATE",
+		"warrantyDate": "WARRANTY DATE",
+		"from": "From: YYYY-MM-DD",
+		"to": "To: YYYY-MM-DD",
+		"editProsthesis": "Edit prosthesis",
+		"addIncident": "ADD INCIDENT",
+		"photosAndFiles": "PHOTOS AND FILES",
+		"addFile": "ADD NEW FILE",
+		"filesHint": "ADD PHOTOS, DOCUMENTATION, 3D SCANS AND OTHER FILES RELATED TO THE PROSTHESIS HERE",
+		"addComponentQuestion": "Choose how to add a component",
+		"fromCreator": "From creator",
+		"fromFile": "From file",
+		"location": "Location",
+		"startDate": "Since",
+		"description": "Description",
+		"showDescription": "Show description",
+		"hideDescription": "Hide description",
+		"editSaveError": "Could not save prosthesis changes.",
+		"noMatchingComponents": "No components match the selected filters."
 	},
 	"newComponent": {
 		"newComponent": "New component",
@@ -512,5 +546,18 @@
 			"passwordMismatch": "Passwords must match.",
 			"passwordInvalid": "Password does not meet the security requirements."
 		}
+	},
+	"componentEdit": {
+		"title": "EDIT COMPONENT",
+		"name": "Name",
+		"manufacturer": "Manufacturer",
+		"model": "Model",
+		"warrantyUntil": "Warranty until",
+		"save": "Save",
+		"notFound": "Component not found.",
+		"saveError": "Could not save the component.",
+		"loadError": "Failed to load component data.",
+		"selectDate": "Select date",
+		"clearDate": "Clear date"
 	}
 }
