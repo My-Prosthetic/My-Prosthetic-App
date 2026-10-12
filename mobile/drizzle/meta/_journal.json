@@ -57,6 +57,13 @@
 			"when": 1791731345990,
 			"tag": "0007_known_pete_wisdom",
 			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "6",
+			"when": 1791801169850,
+			"tag": "0008_awesome_black_tarantula",
+			"breakpoints": true
 		}
 	]
 }

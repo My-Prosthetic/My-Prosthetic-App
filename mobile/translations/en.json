@@ -361,7 +361,8 @@
 		"schemaViews": {
 			"side": "Side view",
 			"topInside": "Top view (inside)",
-			"frontBack": "Front / Back"
+			"frontBack": "Front / Back",
+			"topOutside": "Top view (outside)"
 		},
 		"loadError": "Could not load incident form data.",
 		"microphonePermission": "Allow microphone access to record a voice note.",
@@ -389,6 +390,7 @@
 			"type": "Select the incident type.",
 			"description": "Enter an incident description.",
 			"intensity": "Set the problem intensity from 1 to 10.",
+			"point": "Mark the affected area on the diagram.",
 			"time": "Enter time in HH:MM format."
 		}
 	},

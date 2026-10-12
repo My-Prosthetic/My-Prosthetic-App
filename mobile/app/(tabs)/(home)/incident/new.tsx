@@ -19,7 +19,9 @@ import {
 	getIncidentCustomValues,
 	type IncidentCoordinates,
 } from "@/db/repositories/incidentRepository"
-import { getComponentsByProsthesisId, type Component } from "@/db/repositories/componentRepository"
+import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
+
+type IncidentComponent = Awaited<ReturnType<typeof getComponentsByProsthesisId>>[number]
 import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { IncidentBodyMap, type IncidentBodyView } from "@/src/components/incidents/IncidentBodyMap"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
@@ -133,7 +135,7 @@ export default function NewIncidentScreen() {
 	const [intensity, setIntensity] = useState(0)
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const [selectedProsthesisId, setSelectedProsthesisId] = useState<string>()
-	const [components, setComponents] = useState<Component[]>([])
+	const [components, setComponents] = useState<IncidentComponent[]>([])
 	const [selectedComponentId, setSelectedComponentId] = useState<string>()
 	const [coordinates, setCoordinates] = useState<IncidentCoordinates>()
 	const [bodyViewIndex, setBodyViewIndex] = useState(0)
@@ -224,7 +226,7 @@ export default function NewIncidentScreen() {
 	const selectedComponent = components.find((component) => component.id === selectedComponentId)
 	const hideIntensity = incidentType === "mechanical_failure"
 	const hideMapForType = incidentType === "phantom_pain" || incidentType === "mechanical_failure"
-	const showMap = selectedComponent?.type === "socket" && !hideMapForType
+	const showMap = selectedComponent?.model.type === "socket" && !hideMapForType
 	const currentBodyView = BODY_VIEWS[bodyViewIndex]
 	const typeOptions = useMemo<SelectOption[]>(() => {
 		const builtIn: SelectOption[] = [
@@ -261,22 +263,12 @@ export default function NewIncidentScreen() {
 			{ label: t("newIncident.customValuePlaceholder"), value: CUSTOM_VALUE },
 		]
 	}, [customActivities, t])
-	const getComponentLabel = (component: Component) => {
-		if (component.name?.trim()) return component.name
-		switch (component.type) {
-			case "socket":
-				return t("newIncident.componentTypes.socket")
-			case "knee":
-				return t("newIncident.componentTypes.knee")
-			case "foot":
-				return t("newIncident.componentTypes.foot")
-			case "liner":
-				return t("newIncident.componentTypes.liner")
-			case "adapter":
-				return t("newIncident.componentTypes.adapter")
-			default:
-				return t("newIncident.componentTypes.other")
-		}
+	const getComponentLabel = (component: IncidentComponent) => {
+		const description = component.description?.trim()
+
+		if (description) return description
+
+		return `${component.model.brand.name} | ${component.model.name}`
 	}
 	const componentOptions = useMemo<SelectOption[]>(
 		() => [

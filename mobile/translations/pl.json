@@ -361,7 +361,8 @@
 		"schemaViews": {
 			"side": "Widok boczny",
 			"topInside": "Rzut z góry (Wnętrze)",
-			"frontBack": "Przód / Tył"
+			"frontBack": "Przód / Tył",
+			"topOutside": "Rzut z góry (Zewnątrz)"
 		},
 		"loadError": "Nie udało się pobrać danych formularza incydentu.",
 		"microphonePermission": "Aby nagrać notatkę głosową, zezwól aplikacji na dostęp do mikrofonu.",
@@ -389,6 +390,7 @@
 			"type": "Wybierz typ incydentu.",
 			"description": "Wpisz opis incydentu.",
 			"intensity": "Określ natężenie problemu w skali od 1 do 10.",
+			"point": "Zaznacz miejsce dolegliwości na schemacie.",
 			"time": "Podaj godzinę w formacie GG:MM."
 		}
 	},
