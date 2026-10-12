@@ -9,7 +9,6 @@ import {
 	StyleProp,
 	Platform,
 } from "react-native"
-import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
 export type ThemedViewSize =
@@ -59,8 +58,6 @@ export const ThemedView = ({
 	...props
 }: ThemedViewProps) => {
 	const { colors } = useTheme()
-	const insets = useSafeAreaInsets()
-	const sizes = getSizes(insets)
 
 	const isProcessingRef = useRef(false)
 	const lastPressRef = useRef(0)
@@ -119,59 +116,56 @@ const styles = StyleSheet.create({
 	},
 })
 
-const getSizes = (insets: EdgeInsets) =>
-	StyleSheet.create({
-		none: {
-			flex: 1,
-		},
-		tag: {
-			alignSelf: "flex-start",
-			borderRadius: 9999,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		narrow: {
-			paddingVertical: 10,
-			paddingHorizontal: 14,
-			height: 60,
-			width: "70%",
-			borderRadius: 12,
-			flexDirection: "row",
-			alignItems: "center",
-			alignSelf: "center",
-			justifyContent: "center",
-		},
-		wide: {
-			paddingVertical: 14,
-			paddingHorizontal: 16,
-			minHeight: 60,
-			borderRadius: 16,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
-			width: "100%",
-		},
-		background: {
-			flex: 1,
-			paddingHorizontal: 32,
-			paddingBottom: insets.bottom,
-			paddingTop: insets.top,
-			margin: 0,
-		},
-		divider: {
-			height: 1,
-			width: "100%",
-			alignSelf: "stretch",
-		},
-		header: {
-			width: "100%",
-			minHeight: 54,
-			paddingVertical: 12,
-			paddingHorizontal: 16,
-			borderRadius: 0,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between",
-		},
-	})
+const sizes = StyleSheet.create({
+	none: {
+		flex: 1,
+	},
+	tag: {
+		alignSelf: "flex-start",
+		borderRadius: 9999,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	narrow: {
+		paddingVertical: 10,
+		paddingHorizontal: 14,
+		height: 60,
+		width: "70%",
+		borderRadius: 20,
+		flexDirection: "row",
+		alignItems: "center",
+		alignSelf: "center",
+		justifyContent: "center",
+	},
+	wide: {
+		paddingVertical: 14,
+		paddingHorizontal: 16,
+		minHeight: 60,
+		borderRadius: 20,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		width: "100%",
+	},
+	background: {
+		flex: 1,
+		paddingHorizontal: 32,
+		margin: 0,
+	},
+	divider: {
+		height: 1,
+		width: "100%",
+		alignSelf: "stretch",
+	},
+	header: {
+		width: "100%",
+		minHeight: 54,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		borderRadius: 0,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+})
