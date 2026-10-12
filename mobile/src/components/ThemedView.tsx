@@ -215,6 +215,7 @@ const getSizes = (insets: EdgeInsets) =>
 			paddingHorizontal: "8%",
 			flexDirection: "column",
 			alignItems: "center",
+			borderRadius: 0,
 		},
 		divider: {
 			height: 1,

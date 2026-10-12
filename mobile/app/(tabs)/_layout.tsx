@@ -1,74 +1,118 @@
-import { View } from "react-native"
-import { Redirect, Tabs } from "expo-router"
-import { Ionicons } from "@expo/vector-icons"
-import { useTranslation } from "react-i18next"
+import { Pressable, View } from "react-native"
+import { Redirect, Tabs, useSegments } from "expo-router"
+import { ParseKeys } from "i18next"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
 
 import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import { GuestBanner } from "@/src/components/GuestBanner"
+import { ThemedText } from "@/src/components/ThemedText"
+
+import IconHome from "@/assets/icons/home.svg"
+import IconCalendar from "@/assets/icons/calendar.svg"
+import IconTorso from "@/assets/icons/torso.svg"
+import IconSettings from "@/assets/icons/settings.svg"
 
 export default function TabsLayout() {
-	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const { status } = useAuth()
+	const insets = useSafeAreaInsets()
+	const segments = useSegments()
+	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
+
+	const ICONS = {
+		home: IconHome,
+		journal: IconCalendar,
+		profile: IconTorso,
+		settings: IconSettings,
+	}
+	const LABELS = {
+		home: "tabs.home",
+		journal: "tabs.journal",
+		profile: "tabs.profile",
+		settings: "tabs.settings",
+	}
 
 	if (status === "UNAUTHENTICATED") {
 		return <Redirect href="/" />
 	}
 
+	const provideRenderButton = (variant: "home" | "journal" | "profile" | "settings") => {
+		return function renderButton(props: BottomTabBarButtonProps) {
+			let isFocused = currentTab === variant
+			const Icon = ICONS[variant]
+			const label = LABELS[variant]
+			if (variant === "home") {
+				isFocused = segments[2] === "home" //TODO logika obejmująca wszystkie ekrany albo wynikająca z routingu
+			}
+
+			const { ref, children, style, ...restProps } = props
+			return (
+				<Pressable {...restProps} style={[props.style, { justifyContent: "center" }]}>
+					<View
+						style={{
+							backgroundColor: isFocused ? colors.blue2 : colors.bg_0,
+							justifyContent: "center",
+							alignItems: "center",
+							width: 40,
+							height: 40,
+							borderRadius: 10,
+							marginBottom: 5,
+						}}
+					>
+						{<Icon color={isFocused ? colors.bg_0 : colors.blue2} height={27} />}
+					</View>
+					<ThemedText tx={label as ParseKeys} variant="H4" colorName="blue2" />
+				</Pressable>
+			)
+		}
+	}
+
 	return (
-		<View style={{ flex: 1 }}>
+		<View
+			style={{
+				flex: 1,
+				backgroundColor: colors.bg_1,
+			}}
+		>
 			{status === "GUEST" && <GuestBanner />}
 			<Tabs
 				screenOptions={{
 					headerShown: false,
-					tabBarActiveTintColor: colors.accent_base,
-					tabBarInactiveTintColor: colors.secondary_base_0c,
 					tabBarStyle: {
-						backgroundColor: colors.primary_base,
-						borderTopWidth: 1,
-						borderTopColor: colors.tertiary_base_1,
+						height: 80,
+						paddingBottom: 0,
+						marginBottom: insets.bottom - 1,
+						borderTopLeftRadius: 15,
+						borderTopRightRadius: 15,
+						backgroundColor: colors.bg_0,
 					},
+					tabBarItemStyle: { flex: 1 },
 				}}
 			>
 				<Tabs.Screen
 					name="(home)"
 					options={{
-						title: t("tabs.homeTitle"),
-						tabBarLabel: t("tabs.home"),
-						tabBarIcon: ({ color, focused }) => (
-							<Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
-						),
+						tabBarButton: provideRenderButton("home"),
 					}}
 				/>
 				<Tabs.Screen
 					name="journal"
 					options={{
-						title: t("tabs.journalTitle"),
-						tabBarLabel: t("tabs.journal"),
-						tabBarIcon: ({ color, focused }) => (
-							<Ionicons name={focused ? "book" : "book-outline"} size={24} color={color} />
-						),
+						tabBarButton: provideRenderButton("journal"),
 					}}
 				/>
 				<Tabs.Screen
 					name="profile"
 					options={{
-						title: t("tabs.profileTitle"),
-						tabBarLabel: t("tabs.profile"),
-						tabBarIcon: ({ color, focused }) => (
-							<Ionicons name={focused ? "person" : "person-outline"} size={24} color={color} />
-						),
+						tabBarButton: provideRenderButton("profile"),
 					}}
 				/>
 				<Tabs.Screen
 					name="settings"
 					options={{
-						title: t("tabs.settingsTitle"),
-						tabBarLabel: t("tabs.settings"),
-						tabBarIcon: ({ color, focused }) => (
-							<Ionicons name={focused ? "settings" : "settings-outline"} size={24} color={color} />
-						),
+						tabBarButton: provideRenderButton("settings"),
 					}}
 				/>
 			</Tabs>
