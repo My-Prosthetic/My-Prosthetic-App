@@ -28,6 +28,7 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	variant?: ThemedViewSize
 	shadow?: boolean
 	onPress?: () => void | Promise<unknown>
+	hitslop?: {}
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
 	leftChild?: React.ReactNode
@@ -65,6 +66,7 @@ export const ThemedView = ({
 	variant: size = "none",
 	shadow = false,
 	onPress,
+	hitslop,
 	style,
 	children,
 	leftChild,
@@ -135,6 +137,7 @@ export const ThemedView = ({
 				onPress={handlePress}
 				style={({ pressed }) => getElementStyle(pressed)}
 				accessibilityRole="button"
+				hitSlop={hitslop}
 				{...props}
 			>
 				{renderContent()}
@@ -151,9 +154,7 @@ export const ThemedView = ({
 
 const styles = StyleSheet.create({
 	base: {
-		flexDirection: "row",
 		justifyContent: "center",
-		alignItems: "center",
 		borderRadius: 20,
 	},
 	pressed: {
@@ -214,8 +215,8 @@ const getSizes = (insets: EdgeInsets) =>
 			width: "100%",
 			paddingHorizontal: "8%",
 			flexDirection: "column",
-			alignItems: "center",
 			borderRadius: 0,
+			justifyContent: "flex-start",
 		},
 		divider: {
 			height: 1,
@@ -228,6 +229,8 @@ const getSizes = (insets: EdgeInsets) =>
 		narrow: {
 			width: "73%",
 			minHeight: 50,
+			alignSelf: "center",
+			alignItems: "center"
 		},
 		tag: {
 			height: 22,
