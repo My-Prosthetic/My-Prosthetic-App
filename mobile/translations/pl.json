@@ -319,6 +319,81 @@
 			}
 		}
 	},
+	"newIncident": {
+		"title": "NOWY INCYDENT",
+		"time": "GODZINA",
+		"type": "TYP INCYDENTU:",
+		"selectType": "Wybierz typ incydentu",
+		"circumstances": "OKOLICZNOŚCI:",
+		"description": "OPIS:",
+		"descriptionPlaceholder": "Opisz krótko przebieg incydentu...",
+		"intensity": "SKALA NATĘŻENIA BÓLU:",
+		"relatedProsthesis": "POWIĄZANA PROTEZA:",
+		"component": "KOMPONENT:",
+		"schema": "SCHEMAT",
+		"addFile": "DODAJ PLIK",
+		"fileDescription": "DODAJ ZDJĘCIA, DOKUMENTACJĘ I INNE PLIKI DOTYCZĄCE INCYDENTU",
+		"save": "ZAPISZ INCYDENT",
+		"saving": "ZAPISYWANIE...",
+		"none": "-",
+		"types": {
+			"pain": "Ból",
+			"abrasion": "Otarcie",
+			"poorFit": "Luz lub złe dopasowanie",
+			"phantomPain": "Ból fantomowy",
+			"mechanicalFailure": "Awaria mechaniczna"
+		},
+		"activities": {
+			"walking": "Chód",
+			"running": "Bieg",
+			"sitting": "Siedzenie",
+			"standing": "Stanie",
+			"sport": "Sport"
+		},
+		"componentTypes": {
+			"socket": "Lej",
+			"knee": "Kolano",
+			"foot": "Stopa",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Inny komponent"
+		},
+		"schemaViews": {
+			"side": "Widok boczny",
+			"topInside": "Rzut z góry (Wnętrze)",
+			"frontBack": "Przód / Tył",
+			"topOutside": "Rzut z góry (Zewnątrz)"
+		},
+		"loadError": "Nie udało się pobrać danych formularza incydentu.",
+		"microphonePermission": "Aby nagrać notatkę głosową, zezwól aplikacji na dostęp do mikrofonu.",
+		"recordingError": "Nie udało się nagrać notatki głosowej.",
+		"recording": "Nagrywanie: {{seconds}} s",
+		"voiceNoteAdded": "Notatka głosowa została dodana",
+		"remove": "Usuń",
+		"photoLimitTitle": "Limit zdjęć",
+		"photoLimit": "Do jednego incydentu możesz dodać maksymalnie 3 zdjęcia.",
+		"fileError": "Nie udało się zapisać pliku w pamięci urządzenia.",
+		"cameraPermission": "Aby zrobić zdjęcie, zezwól aplikacji na dostęp do aparatu.",
+		"galleryPermission": "Aby wybrać zdjęcie, zezwól aplikacji na dostęp do biblioteki zdjęć.",
+		"choosePhotoSource": "Wybierz źródło zdjęcia",
+		"camera": "Aparat",
+		"gallery": "Galeria",
+		"removePhoto": "Usuń zdjęcie {{number}}",
+		"customValuePlaceholder": "Dodaj własną wartość",
+		"duplicateValue": "Ta wartość już znajduje się na liście.",
+		"noProsthesis": "Najpierw dodaj protezę, aby zapisać incydent.",
+		"savedTitle": "Zapisano",
+		"savedMessage": "Incydent został zapisany.",
+		"saveError": "Nie udało się zapisać incydentu w bazie danych.",
+		"validation": {
+			"prosthesis": "Wybierz protezę powiązaną z incydentem.",
+			"type": "Wybierz typ incydentu.",
+			"description": "Wpisz opis incydentu.",
+			"intensity": "Określ natężenie problemu w skali od 1 do 10.",
+			"point": "Zaznacz miejsce dolegliwości na schemacie.",
+			"time": "Podaj godzinę w formacie GG:MM."
+		}
+	},
 	"prosthesisDetails": {
 		"title": "MOJA PROTEZA",
 		"side": "STRONA",

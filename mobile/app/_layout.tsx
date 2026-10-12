@@ -126,7 +126,7 @@ export default function RootLayout() {
 
 		"Inter-Regular": require("@/assets/fonts/Inter/Inter_18pt-Regular.ttf"),
 		"Inter-SemiBold": require("@/assets/fonts/Inter/Inter_18pt-SemiBold.ttf"),
-
+		"Inter-Bold": require("@/assets/fonts/Inter/Inter_18pt-Bold.ttf"),
 		Roboto_500Medium,
 	})
 
