@@ -75,10 +75,9 @@
 		"today": "Dzisiaj",
 		"mp": "My Prosthetic"
 	},
-	"funds": {
+	"funding": {
 		"title": "DOFINANSOWANIA",
-		"availableProgrammes": "Dostępne programy",
-		"myFunds": "Moje uzyskane",
+		"myFunds": "Moje środki",
 		"addFundsTitle": "DODAJ ŚRODKI",
 		"editFundsTitle": "EDYTUJ ŚRODKI",
 		"addGoalTitle": "DODAJ CEL",
@@ -100,7 +99,6 @@
 		"selectFundingSource": "Wybierz źródło dofinansowania",
 		"select": "WYBIERZ",
 		"notePlaceholder": "Wpisz krótki opis, np. nr decyzji...",
-		"chooseFundingSourceError": "Wybierz źródło dofinansowania",
 		"invalidAmountError": "Podaj poprawną kwotę większą od zera",
 		"saveDepositError": "Nie udało się zapisać wpłaty w bazie danych.",
 		"saveChanges": "ZAPISZ ZMIANY",
@@ -123,24 +121,20 @@
 		"deleteGoalTitle": "Usuń cel",
 		"deleteGoalMessage": "Czy na pewno chcesz usunąć ten cel? Powiązane wpłaty również zostaną usunięte.",
 		"deleteGoalError": "Nie udało się usunąć celu.",
+		"detailsHeader": "SZCZEGÓŁY PROGRAMU",
+		"availableProgrammes": "Dostępne programy",
+		"addFunds": "DODAJ UZYSKANE ŚRODKI",
+		"notFound": "Nie znaleziono programu.",
+		"back": "Wróć",
+		"showProgrammeDetails": "Pokaż szczegóły programu {{programme}}",
+		"openFoundation": "Otwórz stronę {{foundation}}",
 		"sources": {
 			"family": "Rodzina",
 			"fundraiser": "Zbiórka internetowa",
 			"grant": "Dofinansowanie",
 			"savings": "Oszczędności",
 			"other": "Inne źródło"
-		}
-	},
-	"funding": {
-		"header": "DOFINANSOWANIA",
-		"detailsHeader": "SZCZEGÓŁY PROGRAMU",
-		"availableProgrammes": "Dostępne programy",
-		"accumulatedFunds": "Moje uzyskane",
-		"addFunds": "DODAJ UZYSKANE ŚRODKI",
-		"notFound": "Nie znaleziono programu.",
-		"back": "Wróć",
-		"showProgrammeDetails": "Pokaż szczegóły programu {{programme}}",
-		"openFoundation": "Otwórz stronę {{foundation}}",
+		},
 		"sections": {
 			"national": "PROGRAMY NARODOWE",
 			"foundations": "FUNDACJE WSPIERAJĄCE"

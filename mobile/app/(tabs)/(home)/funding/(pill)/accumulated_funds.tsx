@@ -19,11 +19,11 @@ type Deposit = typeof deposits.$inferSelect
 
 const sourceIds = ["family", "fundraiser", "grant", "savings", "other"] as const
 const sourceTranslationKeys = {
-	family: "funds.sources.family",
-	fundraiser: "funds.sources.fundraiser",
-	grant: "funds.sources.grant",
-	savings: "funds.sources.savings",
-	other: "funds.sources.other",
+	family: "funding.sources.family",
+	fundraiser: "funding.sources.fundraiser",
+	grant: "funding.sources.grant",
+	savings: "funding.sources.savings",
+	other: "funding.sources.other",
 } as const
 
 export default function AccumulatedFundsScreen() {
@@ -101,7 +101,7 @@ export default function AccumulatedFundsScreen() {
 			style={styles.carouselOutline}
 			onPress={() => router.push("/funding/new_goal")}
 		>
-			<ThemedText colorName="primary_base" tx="funds.addGoal" />
+			<ThemedText colorName="primary_base" tx="funding.addGoal" />
 		</ThemedView>
 	)
 
@@ -133,7 +133,7 @@ export default function AccumulatedFundsScreen() {
 				<ThemedText
 					variant="tab1Category"
 					colorName="secondary_base_0c"
-					tx="funds.prostheticBudget"
+					tx="funding.prostheticBudget"
 					style={{ marginVertical: 10, textAlign: "center" }}
 				/>
 
@@ -167,7 +167,7 @@ export default function AccumulatedFundsScreen() {
 									<ThemedText
 										variant="body1Regular"
 										colorName="secondary_base_0c"
-										tx="funds.collected"
+										tx="funding.collected"
 									/>
 									<ThemedText
 										variant="main1Button"
@@ -186,7 +186,7 @@ export default function AccumulatedFundsScreen() {
 										variant="main1Button"
 										colorName="primary_base"
 										style={{ fontSize: 10 }}
-										tx="funds.datePlaceholder"
+										tx="funding.datePlaceholder"
 									/>
 								</ThemedView>
 							</View>
@@ -201,7 +201,7 @@ export default function AccumulatedFundsScreen() {
 							variant="tab1Category"
 							colorName="secondary_base_0c"
 							style={{ marginBottom: 6, marginTop: 16 }}
-							tx="funds.savedSources"
+							tx="funding.savedSources"
 						/>
 						<ScrollView showsVerticalScrollIndicator={true}>
 							<View>
@@ -210,7 +210,7 @@ export default function AccumulatedFundsScreen() {
 										variant="body1Regular"
 										colorName="secondary_base_0c"
 										style={{ lineHeight: 20, paddingVertical: 3 }}
-										tx="funds.noDeposits"
+										tx="funding.noDeposits"
 									/>
 								) : (
 									depositsList.map((deposit) => (
@@ -230,7 +230,7 @@ export default function AccumulatedFundsScreen() {
 													colorName="primary_base"
 													style={{ paddingVertical: 10 }}
 												>
-													{deposit.source ? getSourceLabel(deposit.source) : t("funds.deposit")}
+													{deposit.source ? getSourceLabel(deposit.source) : t("funding.deposit")}
 												</ThemedText>
 												<ThemedText variant="body1Regular" colorName="primary_base">
 													{formatCurrency(deposit.amount / 100 || 0, currency)}
@@ -261,7 +261,7 @@ export default function AccumulatedFundsScreen() {
 							</ThemedText>
 							<ThemedText
 								variant="main1Button"
-								tx="funds.addDeposit"
+								tx="funding.addDeposit"
 								colorName="accent_base_2"
 							></ThemedText>
 						</ThemedView>

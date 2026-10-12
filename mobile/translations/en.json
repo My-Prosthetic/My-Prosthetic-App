@@ -75,7 +75,7 @@
 		"today": "Today",
 		"mp": "My Prosthetic"
 	},
-	"funds": {
+	"funding": {
 		"title": "FUNDING",
 		"availableProgrammes": "Available programmes",
 		"myFunds": "My funds",
@@ -129,13 +129,8 @@
 			"grant": "Grant",
 			"savings": "Savings",
 			"other": "Other source"
-		}
-	},
-	"funding": {
-		"header": "FUNDING",
+		},
 		"detailsHeader": "PROGRAMME DETAILS",
-		"availableProgrammes": "Available programmes",
-		"accumulatedFunds": "My funds",
 		"addFunds": "ADD RECEIVED FUNDS",
 		"notFound": "Programme not found.",
 		"back": "Go back",

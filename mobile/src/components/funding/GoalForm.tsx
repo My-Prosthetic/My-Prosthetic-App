@@ -41,7 +41,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 		const fetchGoal = async () => {
 			if (id === null) {
-				Alert.alert(t("common.error"), t("funds.goalNotFound"))
+				Alert.alert(t("common.error"), t("funding.goalNotFound"))
 				setIsLoading(false)
 				router.back()
 				return
@@ -51,7 +51,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 				const result = await db.select().from(goals).where(eq(goals.id, id))
 				const savedGoal = result[0]
 				if (!savedGoal) {
-					Alert.alert(t("common.error"), t("funds.goalNotFound"))
+					Alert.alert(t("common.error"), t("funding.goalNotFound"))
 					router.back()
 					return
 				}
@@ -62,7 +62,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 				setNote(savedGoal.note ?? "")
 			} catch (error) {
 				console.error("Błąd podczas pobierania celu:", error)
-				Alert.alert(t("common.error"), t("funds.loadGoalError"))
+				Alert.alert(t("common.error"), t("funding.loadGoalError"))
 				router.back()
 			} finally {
 				setIsLoading(false)
@@ -78,18 +78,18 @@ export function GoalForm({ mode }: GoalFormProps) {
 		}
 
 		if (mode === "edit" && id === null) {
-			Alert.alert(t("common.error"), t("funds.goalNotFound"))
+			Alert.alert(t("common.error"), t("funding.goalNotFound"))
 			return
 		}
 
 		if (!name.trim()) {
-			Alert.alert(t("common.error"), t("funds.emptyGoalNameError"))
+			Alert.alert(t("common.error"), t("funding.emptyGoalNameError"))
 			return
 		}
 
 		const parsedAmount = parseFloat(amount.replace(",", "."))
 		if (isNaN(parsedAmount) || parsedAmount <= 0) {
-			Alert.alert(t("common.error"), t("funds.invalidGoalAmountError"))
+			Alert.alert(t("common.error"), t("funding.invalidGoalAmountError"))
 			return
 		}
 
@@ -112,7 +112,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 			console.error("Błąd podczas zapisu celu:", error)
 			Alert.alert(
 				t("common.error"),
-				t(mode === "create" ? "funds.saveGoalError" : "funds.updateGoalError")
+				t(mode === "create" ? "funding.saveGoalError" : "funding.updateGoalError")
 			)
 		} finally {
 			setIsSubmitting(false)
@@ -124,7 +124,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 			return
 		}
 
-		Alert.alert(t("funds.deleteGoalTitle"), t("funds.deleteGoalMessage"), [
+		Alert.alert(t("funding.deleteGoalTitle"), t("funding.deleteGoalMessage"), [
 			{ text: t("common.cancel"), style: "cancel" },
 			{
 				text: t("common.delete"),
@@ -136,7 +136,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						router.back()
 					} catch (error) {
 						console.error("Błąd podczas usuwania celu:", error)
-						Alert.alert(t("common.error"), t("funds.deleteGoalError"))
+						Alert.alert(t("common.error"), t("funding.deleteGoalError"))
 					} finally {
 						setIsSubmitting(false)
 					}
@@ -161,7 +161,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.goalName"
+						tx="funding.goalName"
 					/>
 					<ThemedView
 						variant="old_wide"
@@ -172,7 +172,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						<TextInput
 							value={name}
 							onChangeText={setName}
-							placeholder={t("funds.goalNamePlaceholder")}
+							placeholder={t("funding.goalNamePlaceholder")}
 							placeholderTextColor={colors.primary_base}
 							style={styles.textInput}
 						/>
@@ -184,7 +184,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.goalAmount"
+						tx="funding.goalAmount"
 					/>
 					<ThemedView
 						variant="old_wide"
@@ -211,7 +211,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.additionalNote"
+						tx="funding.additionalNote"
 					/>
 					<ThemedView
 						variant="old_wide"
@@ -222,7 +222,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						<TextInput
 							value={note}
 							onChangeText={setNote}
-							placeholder={t("funds.notePlaceholder")}
+							placeholder={t("funding.notePlaceholder")}
 							placeholderTextColor={colors.primary_base}
 							style={styles.noteInput}
 							multiline
@@ -245,7 +245,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 						<ThemedText
 							variant="main1Button"
 							colorName="accent_base_2"
-							tx={mode === "create" ? "funds.addGoalAction" : "common.save"}
+							tx={mode === "create" ? "funding.addGoalAction" : "common.save"}
 						/>
 					)}
 				</ThemedView>

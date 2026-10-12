@@ -57,7 +57,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 
 		const fetchDeposit = async () => {
 			if (depositId === null) {
-				Alert.alert(t("common.error"), t("funds.depositNotFound"))
+				Alert.alert(t("common.error"), t("funding.depositNotFound"))
 				setIsLoading(false)
 				router.back()
 				return
@@ -67,7 +67,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 				const result = await db.select().from(deposits).where(eq(deposits.id, depositId))
 				const savedDeposit = result[0]
 				if (!savedDeposit) {
-					Alert.alert(t("common.error"), t("funds.depositNotFound"))
+					Alert.alert(t("common.error"), t("funding.depositNotFound"))
 					router.back()
 					return
 				}
@@ -83,7 +83,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 				)
 			} catch (error) {
 				console.error("Błąd podczas pobierania wpłaty:", error)
-				Alert.alert(t("common.error"), t("funds.loadDepositError"))
+				Alert.alert(t("common.error"), t("funding.loadDepositError"))
 				router.back()
 			} finally {
 				setIsLoading(false)
@@ -96,21 +96,21 @@ export function DepositForm({ mode }: DepositFormProps) {
 	const handleSave = async () => {
 		if (isSubmitting) return
 		if (mode === "create" && goalId === null) {
-			Alert.alert(t("common.error"), t("funds.goalNotFound"))
+			Alert.alert(t("common.error"), t("funding.goalNotFound"))
 			return
 		}
 		if (mode === "edit" && depositId === null) {
-			Alert.alert(t("common.error"), t("funds.depositNotFound"))
+			Alert.alert(t("common.error"), t("funding.depositNotFound"))
 			return
 		}
 		if (!fundingSource) {
-			Alert.alert(t("common.error"), t("funds.chooseFundingSourceError"))
+			Alert.alert(t("common.error"), t("funding.selectFundingSource"))
 			return
 		}
 
 		const parsedAmount = parseFloat(amount.replace(",", "."))
 		if (isNaN(parsedAmount) || parsedAmount <= 0) {
-			Alert.alert(t("common.error"), t("funds.invalidAmountError"))
+			Alert.alert(t("common.error"), t("funding.invalidAmountError"))
 			return
 		}
 
@@ -134,7 +134,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 			console.error("Błąd podczas zapisu wpłaty:", error)
 			Alert.alert(
 				t("common.error"),
-				t(mode === "create" ? "funds.saveDepositError" : "funds.updateDepositError")
+				t(mode === "create" ? "funding.saveDepositError" : "funding.updateDepositError")
 			)
 		} finally {
 			setIsSubmitting(false)
@@ -144,7 +144,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 	const handleDelete = () => {
 		if (isSubmitting || mode !== "edit" || depositId === null) return
 
-		Alert.alert(t("funds.deleteDepositTitle"), t("funds.deleteDepositMessage"), [
+		Alert.alert(t("funding.deleteDepositTitle"), t("funding.deleteDepositMessage"), [
 			{ text: t("common.cancel"), style: "cancel" },
 			{
 				text: t("common.delete"),
@@ -156,7 +156,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						router.back()
 					} catch (error) {
 						console.error("Błąd podczas usuwania wpłaty:", error)
-						Alert.alert(t("common.error"), t("funds.deleteDepositError"))
+						Alert.alert(t("common.error"), t("funding.deleteDepositError"))
 					} finally {
 						setIsSubmitting(false)
 					}
@@ -181,11 +181,11 @@ export function DepositForm({ mode }: DepositFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.fundingSource"
+						tx="funding.fundingSource"
 					/>
 					<DropdownSelect
-						label={t("funds.fundingSource")}
-						placeholder={t("funds.select")}
+						label={t("funding.fundingSource")}
+						placeholder={t("funding.select")}
 						options={options}
 						value={fundingSource}
 						onChange={setFundingSource}
@@ -196,7 +196,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.grantedAmount"
+						tx="funding.grantedAmount"
 					/>
 					<ThemedView
 						variant="old_wide"
@@ -222,7 +222,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.decisionDate"
+						tx="funding.decisionDate"
 					/>
 					<ThemedView
 						borderColor="primary_base_2"
@@ -242,7 +242,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						variant="tab1Category"
 						colorName="secondary_base_0c"
 						style={styles.fieldLabel}
-						tx="funds.additionalNote"
+						tx="funding.additionalNote"
 					/>
 					<ThemedView
 						variant="old_wide"
@@ -253,7 +253,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 						<TextInput
 							value={note}
 							onChangeText={setNote}
-							placeholder={t("funds.notePlaceholder")}
+							placeholder={t("funding.notePlaceholder")}
 							placeholderTextColor={colors.primary_base}
 							style={styles.noteInput}
 							multiline
@@ -282,7 +282,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 							<ThemedText
 								variant="main1Button"
 								colorName="accent_base"
-								tx={mode === "create" ? "funds.addToWallet" : "common.save"}
+								tx={mode === "create" ? "funding.addToWallet" : "common.save"}
 							/>
 						</>
 					)}

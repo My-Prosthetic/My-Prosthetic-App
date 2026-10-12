@@ -13,10 +13,10 @@ export default function FundingFormsLayout() {
 				header: ({ options }) => <ThemedHeader tx={options.title as ParseKeys} />,
 			}}
 		>
-			<Stack.Screen name="new_goal" options={{ title: "funds.addGoalTitle" }} />
-			<Stack.Screen name="edit_goal" options={{ title: "funds.editGoalTitle" }} />
-			<Stack.Screen name="new_deposit" options={{ title: "funds.addFundsTitle" }} />
-			<Stack.Screen name="edit_deposit" options={{ title: "funds.editFundsTitle" }} />
+			<Stack.Screen name="new_goal" options={{ title: "funding.addGoalTitle" }} />
+			<Stack.Screen name="edit_goal" options={{ title: "funding.editGoalTitle" }} />
+			<Stack.Screen name="new_deposit" options={{ title: "funding.addFundsTitle" }} />
+			<Stack.Screen name="edit_deposit" options={{ title: "funding.editFundsTitle" }} />
 		</Stack>
 	)
 }
