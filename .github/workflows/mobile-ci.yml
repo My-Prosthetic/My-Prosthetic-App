@@ -47,3 +47,15 @@ jobs:
 
       - name: TypeScript check
         run: make typecheck
+        
+      # Fails when Expo-managed packages drift from the installed SDK version.
+      # Fix locally with: npx expo install --fix
+      - name: Expo dependency check
+        run: npx expo install --check
+ 
+      # Project health check (app config, duplicate native modules, etc.).
+      # TODO: remove continue-on-error once the app icon is square
+      # (expo-doctor currently fails on mp_logo_accent.png being 188x313).
+      - name: Expo doctor
+        continue-on-error: true
+        run: npx expo-doctor
