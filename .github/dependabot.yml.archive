@@ -1,0 +1,137 @@
+#  Dependabot - automatic PRs with dependencies updates
+
+#  Rules:
+#  - Version update run MONTHLY in one grouped PR per ecosystem
+#  - Major versions are not proposed by the bot - they are planned
+#    manually as seperate tickets (they usually need refactoring).
+#  - Security updates get their own group -> one PR per ecosystem
+#    instead of one PR per vulnerability
+#  - cooldown: don't propose versions younger than N days (avoid
+#    churn of x.y.1, x.y.2, x.y.3 in one week; does not delay security updates).
+#  Security PRs: opened only for critical alerts. Others are visible
+#  in security tab in repository.
+
+# version: 2
+# 
+# updates:
+#   # ----- FRONTEND + Laravel's JS (npm) -----
+#   - package-ecosystem: 'npm'
+#     directories:
+#       - '/frontend'
+#       - '/backend'
+#     schedule:
+#       interval: 'monthly'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 0
+#     cooldown:
+#       default-days: 7
+#     labels: ['dependency', 'Frontend', 'Backend']
+#     commit-message:
+#       prefix: 'chore(deps-web)'
+#     groups:
+#       web-security:
+#         applies-to: security-updates
+#         patterns: ['*']
+#       eslint:
+#         applies-to: version-updates
+#         patterns:
+#           - 'eslint'
+#           - '@eslint/*'
+#           - 'eslint-*'
+#           - '@microsoft/eslint-formatter-sarif'
+#       web-minor-patch:
+#         applies-to: 'version-updates'
+#         update-types: ['minor', 'patch']
+#     ignore:
+#       - dependency-name: '*'
+#         update-types: ['version-update:semver-major']
+# 
+#     # ----- MOBILE (npm, Expo) -----
+#   - package-ecosystem: 'npm'
+#     directory: '/mobile'
+#     schedule:
+#       interval: 'monthly'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 0
+#     cooldown:
+#       default-days: 7
+#     labels: ['dependency', 'Mobile']
+#     commit-message:
+#       prefix: 'chore(deps-mobile)'
+#     groups:
+#       mobile-security:
+#         applies-to: security-updates
+#         patterns: ['*']
+#       eslint:
+#         applies-to: 'version-updates'
+#         patterns:
+#           - 'eslint'
+#           - '@eslint/*'
+#           - 'eslint-*'
+#           - '@microsoft/eslint-formatter-sarif'
+#         exclude-patterns:
+#           - 'eslint-config-expo'
+#       mobile-minor-patch:
+#         applies-to: 'version-updates'
+#         update-types: ['minor', 'patch']
+#     ignore:
+#       # These are ignored completely (patches too) - upgrade via
+#       # "npx expo install --fix" or an SDK upgrade.
+#       - dependency-name: 'react'
+#       - dependency-name: 'react-dom'
+#       - dependency-name: 'react-native'
+#       - dependency-name: 'react-native-*'
+#       # expo / expo-*: patches allowed, minor/major only through SDK upgrade
+#       - dependency-name: '@types/react'
+#         update-types:
+#           ['version-update:semver-minor', 'version-update:semver-major']
+#       - dependency-name: 'expo'
+#         update-types:
+#           ['version-update:semver-minor', 'version-update:semver-major']
+#       - dependency-name: 'expo-*'
+#         update-types:
+#           ['version-update:semver-minor', 'version-update:semver-major']
+#       # All other majors are planned manually
+#       - dependency-name: '*'
+#         update-types: ['version-update:semver-major']
+# 
+#     # ----- BACKEND: PHP's packages (composer) -----
+#   - package-ecosystem: 'composer'
+#     directory: '/backend'
+#     schedule:
+#       interval: 'monthly'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 0
+#     cooldown:
+#       default-days: 7
+#     labels: ['dependency', 'Backend']
+#     commit-message:
+#       prefix: 'chore(deps-backend)'
+#     groups:
+#       backend-security:
+#         applies-to: security-updates
+#         patterns: ['*']
+#       backend-minor-patch:
+#         applies-to: version-updates
+#         update-types: ['minor', 'patch']
+#     ignore:
+#       - dependency-name: '*'
+#         update-types: ['version-update:semver-major']
+# 
+#     # ---------- GITHUB ACTIONS ----------
+#   - package-ecosystem: 'github-actions'
+#     directory: '/'
+#     schedule:
+#       interval: 'monthly'
+#       time: '06:00'
+#       timezone: 'Europe/Warsaw'
+#     open-pull-requests-limit: 0
+#     labels: ['dependency', 'DevOps']
+#     commit-message:
+#       prefix: 'chore(deps-ci)'
+#     groups:
+#       actions-all:
+#         patterns: ['*']
