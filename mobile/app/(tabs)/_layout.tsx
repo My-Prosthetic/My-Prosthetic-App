@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, useSegments } from "expo-router"
+import { Redirect, Tabs, usePathname, useSegments } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
@@ -19,6 +19,7 @@ export default function TabsLayout() {
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
 	const segments = useSegments()
+	const pathname = usePathname()
 	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
 
 	const ICONS = {
@@ -69,6 +70,8 @@ export default function TabsLayout() {
 		}
 	}
 
+	const isSettingsRoute = pathname.startsWith("/settings")
+
 	return (
 		<View
 			style={{
@@ -76,7 +79,7 @@ export default function TabsLayout() {
 				backgroundColor: colors.bg_1,
 			}}
 		>
-			{status === "GUEST" && <GuestBanner />}
+			{status === "GUEST" && !isSettingsRoute && <GuestBanner />}
 			<Tabs
 				screenOptions={{
 					headerShown: false,
