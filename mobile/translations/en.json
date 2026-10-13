@@ -141,11 +141,8 @@
 			"foundations": "SUPPORTING FOUNDATIONS"
 		},
 		"nfz": {
-			"badge": "NFZ",
-			"title": "MEDICAL DEVICE ORDER",
+			"title": "NFZ commission",
 			"shortDescription": "Basic funding (3-year cycle).",
-			"detailsTitle": "NFZ ORDER",
-			"subtitle": "Basic national funding",
 			"limitLabel": "Time limit",
 			"limitValue": "Depends on the medical device code",
 			"contributionLabel": "Own contribution",
@@ -160,11 +157,8 @@
 			"button": "GO TO THE NFZ WEBSITE"
 		},
 		"pfron": {
-			"badge": "PFRON",
-			"title": "\"ACTIVE LOCAL GOVERNMENT\" PROGRAMME",
+			"title": "Active local government PFRON",
 			"shortDescription": "Funding for advanced prostheses (K3/K4).",
-			"detailsTitle": "ACTIVE LOCAL GOVERNMENT",
-			"subtitle": "PFRON funds (Module C)",
 			"recruitmentLabel": "Application dates:",
 			"recruitmentValue": "Check with your local PCPR",
 			"eligibilityTitle": "WHO CAN APPLY?",
@@ -172,14 +166,12 @@
 			"eligibility2": "People who are professionally active (or studying)",
 			"eligibility3": "Patients with K3 or K4 mobility profile",
 			"sowTitle": "SUPPORT SERVICE SYSTEM (SOW)",
-			"button": "APPLY AND CHECK DATES",
-			"buttonDescription": "Log in to the PFRON government system"
+			"button": "Go to the PFRON website",
+			"buttonDescription": "Log in to the PFRON government system in order to file an application"
 		},
 		"collections": {
-			"badge": "FUNDRAISING",
-			"title": "FUNDRAISING AND OWN CONTRIBUTION",
+			"title": "Foundations and fundraising",
 			"shortDescription": "A list of trusted supporting foundations.",
-			"detailsTitle": "FOUNDATIONS AND FUNDRAISING",
 			"subtitle": "Funds from 1.5% tax donations and public fundraising",
 			"sectionTitle": "POPULAR FOUNDATIONS"
 		},

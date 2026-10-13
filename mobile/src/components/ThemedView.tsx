@@ -7,6 +7,7 @@ import {
 	ViewStyle,
 	StyleProp,
 	Platform,
+	Insets,
 } from "react-native"
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
@@ -28,7 +29,7 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	variant?: ThemedViewSize
 	shadow?: boolean
 	onPress?: () => void | Promise<unknown>
-	hitslop?: {}
+	hitslop?: Insets | number
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
 	leftChild?: React.ReactNode
@@ -230,7 +231,7 @@ const getSizes = (insets: EdgeInsets) =>
 			width: "73%",
 			minHeight: 50,
 			alignSelf: "center",
-			alignItems: "center"
+			alignItems: "center",
 		},
 		tag: {
 			height: 22,

@@ -140,11 +140,8 @@
 			"foundations": "FUNDACJE WSPIERAJĄCE"
 		},
 		"nfz": {
-			"badge": "NFZ",
-			"title": "ZLECENIE NA WYRÓB MEDYCZNY",
+			"title": "Zlecenie NFZ",
 			"shortDescription": "Podstawowe dofinansowanie (cykl 3 lata).",
-			"detailsTitle": "ZLECENIE NFZ",
-			"subtitle": "Podstawowe dofinansowanie krajowe",
 			"limitLabel": "Limit czasowy",
 			"limitValue": "Zależny od kodu wyrobu",
 			"contributionLabel": "Wkład własny",
@@ -159,11 +156,8 @@
 			"button": "PRZEJDŹ DO STRONY NFZ"
 		},
 		"pfron": {
-			"badge": "PFRON",
-			"title": "PROGRAM \"AKTYWNY SAMORZĄD\"",
-			"shortDescription": "Dopłata do zaawansowanych protez (K3/K4).",
-			"detailsTitle": "AKTYWNY SAMORZĄD",
-			"subtitle": "Środki PFRON (Moduł C)",
+			"title": "Aktywny samorząd PFRON",
+			"shortDescription": "Dofinansowanie do zaawansowanych protez (K3/K4).",
 			"recruitmentLabel": "Terminy naboru:",
 			"recruitmentValue": "Sprawdź w swoim PCPR",
 			"eligibilityTitle": "KTO MOŻE SKORZYSTAĆ?",
@@ -171,14 +165,12 @@
 			"eligibility2": "Osoby aktywne zawodowo (lub uczące się)",
 			"eligibility3": "Pacjenci z profilem ruchowym K3 lub K4",
 			"sowTitle": "SYSTEM OBSŁUGI WSPARCIA (SOW)",
-			"button": "Złóż wniosek i sprawdź terminy",
-			"buttonDescription": "Zaloguj się do państwowego systemu PFRON"
+			"button": "Przejdź do strony PFRON",
+			"buttonDescription": "Zaloguj się do państwowego systemu PFRON, żeby złożyć wniosek i sprawdzić terminy."
 		},
 		"collections": {
-			"badge": "ZBIÓRKI",
-			"title": "ZBIÓRKI I WKŁAD WŁASNY",
+			"title": "Fundacje i zbiórki",
 			"shortDescription": "Lista zaufanych fundacji wspierających.",
-			"detailsTitle": "FUNDACJE I ZBIÓRKI",
 			"subtitle": "Środki z 1,5% podatku i zbiórek publicznych",
 			"sectionTitle": "POPULARNE FUNDACJE"
 		},

@@ -1,10 +1,10 @@
-import { View, TouchableOpacity, StyleSheet } from "react-native"
+import { View, StyleSheet } from "react-native"
 import { Slot, useRouter, usePathname } from "expo-router"
 
 import { useTheme } from "@/context/ThemeContext"
-
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
+import { ThemedView } from "@/src/components/ThemedView"
 
 export default function FundingTabsLayout() {
 	const { colors } = useTheme()
@@ -17,27 +17,18 @@ export default function FundingTabsLayout() {
 		!pathname.includes("programmes") && !pathname.includes("accumulated_funds")
 
 	return (
-		<View style={{ flex: 1, backgroundColor: colors.tertiary_base_2 }}>
-			<ThemedHeader tx={isProgrammeDetails ? "funding.detailsHeader" : "funding.header"} />
-
-			{!isProgrammeDetails && (
-				<View style={styles.toggleWrapper}>
-					<View
-						style={[
-							styles.toggleContainer,
-							{
-								borderColor: colors.secondary_base_0c,
-								backgroundColor: colors.tertiary_base_3,
-							},
-						]}
-					>
-						<TouchableOpacity
-							activeOpacity={0.8}
+		<>
+			<ThemedHeader tx={isProgrammeDetails ? "funding.detailsHeader" : "funding.title"} />
+			<ThemedView variant="background" colorName="bg_1">
+				{!isProgrammeDetails && (
+					<ThemedView colorName="bg_0" borderColor="blue2" style={styles.toggleWrapper}>
+						<ThemedView
 							onPress={() => router.replace("/funding/programmes")}
+							hitslop={{ top: 2, bottom: 2 }}
 							style={[
 								styles.toggleButton,
 								!isAccumulated && {
-									backgroundColor: colors.primary_base,
+									backgroundColor: colors.blue2,
 								},
 							]}
 							accessibilityRole="tab"
@@ -47,18 +38,18 @@ export default function FundingTabsLayout() {
 						>
 							<ThemedText
 								tx="funding.availableProgrammes"
-								variant="body1Regular"
-								colorName={!isAccumulated ? "accent_base_1" : "secondary_base_0c"}
+								variant="H5"
+								colorName={!isAccumulated ? "bg_0" : "blue2"}
+								style={{ textAlign: "center" }}
 							/>
-						</TouchableOpacity>
+						</ThemedView>
 
-						<TouchableOpacity
-							activeOpacity={0.8}
+						<ThemedView
 							onPress={() => router.replace("/funding/accumulated_funds")}
 							style={[
 								styles.toggleButton,
 								isAccumulated && {
-									backgroundColor: colors.primary_base,
+									backgroundColor: colors.blue2,
 								},
 							]}
 							accessibilityRole="tab"
@@ -67,41 +58,40 @@ export default function FundingTabsLayout() {
 							}}
 						>
 							<ThemedText
-								tx="funding.accumulatedFunds"
-								variant="body1Regular"
-								colorName={isAccumulated ? "accent_base_1" : "secondary_base_0c"}
+								tx="funding.myFunds"
+								variant="H5"
+								colorName={isAccumulated ? "bg_0" : "blue2"}
+								style={{ textAlign: "center" }}
 							/>
-						</TouchableOpacity>
-					</View>
-				</View>
-			)}
+						</ThemedView>
+					</ThemedView>
+				)}
 
-			<View style={{ flex: 1 }}>
-				<Slot />
-			</View>
-		</View>
+				<View style={{ flex: 1 }}>
+					<Slot />
+				</View>
+			</ThemedView>
+		</>
 	)
 }
 
 const styles = StyleSheet.create({
 	toggleWrapper: {
-		paddingHorizontal: 29,
-		marginTop: 16,
-		marginBottom: 8,
-	},
-	toggleContainer: {
-		flexDirection: "row",
-		borderRadius: 25,
+		height: 44,
+		alignItems: "center",
 		borderWidth: 2,
-		padding: 3,
-		minHeight: 44,
+		flexDirection: "row",
+		marginTop: 15,
+		marginBottom: 8,
+		paddingVertical: 2,
+		paddingHorizontal: 3,
+		gap: 10,
 	},
 	toggleButton: {
 		flex: 1,
-		minHeight: 38,
+		height: 34,
 		paddingHorizontal: 6,
-		paddingVertical: 7,
-		borderRadius: 22,
+		borderRadius: 15,
 		alignItems: "center",
 		justifyContent: "center",
 	},
