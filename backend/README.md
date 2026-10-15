@@ -182,14 +182,70 @@ cannot share with themselves: the model rejects it on every driver, and
 PostgreSQL also enforces it with the `user_shares_distinct_participants` CHECK
 constraint.
 
-This is storage only. Specialist search, sharing endpoints, role/resource
-validation, component visibility, and effective authorization remain out of
-scope; a stored share never authorizes a request on its own.
+The model itself does not check roles or record ownership; the sharing
+endpoints below validate both. Component visibility and effective authorization
+remain out of scope; a stored share never authorizes a request on its own.
 
 Run the focused persistence checks from this directory:
 
 ```bash
 php vendor/bin/phpunit tests/Feature/UserShareTest.php tests/Unit/SharePermissionsTest.php
+```
+
+## Sharing API
+
+Authenticated patients find prosthetists and manage which information each one
+may see through the mobile API. Every endpoint requires `auth:sanctum` and is
+available to patients only; prosthetists and administrators receive `403`.
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/specialists/search?q=…` | `GET` | Lists matching prosthetists as `{ id, name }` |
+| `/api/shares` | `GET` | Lists the patient's current grants, ordered by specialist name |
+| `/api/shares` | `POST` | Creates a grant from a prosthetist's UUID `specialist_id` and `permissions`; `201`, or `409` if one already exists |
+| `/api/shares/{specialist}` | `PUT` | Replaces the `permissions` of the grant for that prosthetist; `404` if there is none |
+| `/api/shares/{specialist}` | `DELETE` | Revokes (permanently deletes) the grant for that prosthetist; `204`, or `404` if there is none |
+
+A grant is addressed by the prosthetist's user id; a patient has at most one
+grant per prosthetist. Grants are responses like:
+
+```json
+{
+	"specialist": { "id": "<uuid>", "name": "Jan Kowalski" },
+	"permissions": { "medical_history": true, "prostheses": ["<uuid>"], "incidents": [] },
+	"created_at": "<ISO-8601>",
+	"updated_at": "<ISO-8601>"
+}
+```
+
+`permissions` is required and is an object; missing keys mean "not selected",
+so `{}` is a valid grant that shares nothing. `medical_history` is a boolean,
+`prostheses` is a list of UUIDs of the patient's own, non-deleted prostheses,
+and `incidents` must be absent or empty until incident sharing is supported.
+Unknown keys or malformed values return `422`. `PUT` replaces the whole
+selection; narrowing it to nothing keeps the grant, and only `DELETE` revokes it.
+A stored grant does not yet authorize a prosthetist to read anything.
+
+### Specialist search
+
+`q` is required, 3 to 100 characters after trimming, with at most 5 words. A
+prosthetist matches when every word appears in their name, in any order,
+ignoring letter case and Polish diacritics (`pawelka`, `Pawełka` and `PAWEŁKA`
+are equivalent). `%` and `_` are matched literally. The whole query also
+matches a prosthetist's **Specialist Code** exactly, ignoring case, spaces,
+hyphens, and `O`/`I`/`L` typed for `0`/`1`. Results never include patients,
+emails or codes, are ordered by name, are capped at 20, and the endpoint allows
+30 requests per minute per user.
+
+Every prosthetist gets a unique 8-character Specialist Code (Crockford base32,
+without `I`, `L`, `O` and `U`) when the account is created. It appears as
+`specialist_code` in the prosthetist's own profile, login and registration
+responses, and is `null` for other roles.
+
+Run the focused sharing API tests from this directory:
+
+```bash
+php vendor/bin/phpunit tests/Feature/SpecialistSearchTest.php tests/Feature/SpecialistCodeTest.php tests/Feature/ShareApiTest.php tests/Unit/SpecialistCodeTest.php
 ```
 
 ## About Laravel

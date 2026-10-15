@@ -29,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute((int) config('auth.login_rate_limit', 5))
                 ->by($email.'|'.$request->ip());
         });
+
+        RateLimiter::for('specialist-search', function (Request $request): Limit {
+            return Limit::perMinute(30)->by($request->user()?->getAuthIdentifier() ?? $request->ip());
+        });
     }
 }
