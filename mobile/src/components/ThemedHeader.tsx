@@ -70,6 +70,7 @@ export const ThemedHeader = ({ tx, onBack, style }: ThemedHeaderProps) => {
 						numberOfLines={1}
 						adjustsFontSizeToFit
 						minimumFontScale={0.7}
+						style={{ textTransform: "uppercase" }}
 					/>
 				</View>
 			</View>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
 		borderBottomRightRadius: 15,
 		paddingBottom: 20,
 		width: "100%",
-		marginBottom: 5
+		marginBottom: 5,
 	},
 	container: {
 		flexDirection: "row",
