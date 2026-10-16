@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { router } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useAuth } from "@/context/AuthContext"
@@ -9,6 +10,18 @@ export default function SettingsScreen() {
 	return (
 		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
 			<ThemedText tx="screens.settingsTitle" />
+
+			<ThemedView
+				variant="narrow"
+				colorName="false"
+				shadow
+				onPress={() => router.push("/settings/about")}
+				style={styles.devLogoutButton}
+			>
+				<ThemedText colorName="accent_base_1" variant="main1Button">
+					O nas i Regulaminy
+				</ThemedText>
+			</ThemedView>
 			{__DEV__ ? (
 				<ThemedView
 					variant="narrow"
