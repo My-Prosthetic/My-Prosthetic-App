@@ -2,6 +2,8 @@ import { StyleSheet } from "react-native"
 import { router } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
+import aboutConfig from "@/src/constants/aboutConfig.json"
+import legalDocs from "@/src/constants/legalDocsConfig.json"
 
 // Temporary list — will be replaced by legalDocsConfig.json
 const documents = [
