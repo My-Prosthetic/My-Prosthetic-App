@@ -520,6 +520,11 @@
 		"team": "ENGINEERING TEAM & CREATORS",
 		"documents": "DOCUMENTS & TERMS",
 		"documentNotFound": "Document not found.",
-		"openDocument": "Open document {{title}}"
+		"openDocument": "Open document {{title}}",
+		"docs": {
+			"rodo": "Privacy Policy (GDPR)",
+			"statute": "Terms of Service",
+			"license": "Open-Source Licenses"
+		}
 	}
 }

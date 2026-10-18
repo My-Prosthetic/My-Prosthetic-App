@@ -520,6 +520,11 @@
 		"team": "ZESPÓŁ INŻYNIERSKI I TWÓRCY",
 		"documents": "DOKUMENTY I REGULAMINY",
 		"documentNotFound": "Nie znaleziono dokumentu.",
-		"openDocument": "Otwórz dokument {{title}}"
+		"openDocument": "Otwórz dokument {{title}}",
+		"docs": {
+			"rodo": "Polityka prywatności (RODO)",
+			"statute": "Regulamin świadczenia usług",
+			"license": "Licencje Open-Source"
+		}
 	}
 }

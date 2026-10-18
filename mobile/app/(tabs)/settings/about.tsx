@@ -1,3 +1,4 @@
+import { ParseKeys } from "i18next"
 import { ScrollView, StyleSheet } from "react-native"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -6,65 +7,94 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import aboutConfig from "@/src/constants/aboutConfig.json"
 import legalDocs from "@/src/constants/legalDocsConfig.json"
+import { Fragment } from "react"
+import Logo from "@/assets/MP_text_logo_recolored.svg"
+import { useTheme } from "@/context/ThemeContext"
 
 export default function AboutScreen() {
 	const { t } = useTranslation()
+	const { colors } = useTheme()
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_2">
-			<ThemedHeader tx="about.header" variant="prominent" />
-			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-				<ThemedView style={styles.appCard}>
+		<>
+			<ThemedHeader tx="about.header" />
+			<ThemedView variant="background" colorName="tertiary_base_2">
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+					<ThemedView style={styles.appCard}>
+						<ThemedView style={styles.appRow}>
+							<Logo width={80} height={44.26} color={colors.primary_base} />
+							<ThemedView style={styles.appInfo}>
+								<ThemedText variant="H0">{aboutConfig.appName}</ThemedText>
+								<ThemedText
+									variant="H4"
+									tx="about.versionLabel"
+									txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
+								/>
+							</ThemedView>
+						</ThemedView>
 
-					<ThemedText variant="H0">{aboutConfig.appName}</ThemedText>
-					<ThemedText
-						variant="subTitle2"
-						tx="about.versionLabel"
-						txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
-					/>
-					<ThemedText variant="subTitle2" tx="about.partnerIntro" />
-					<ThemedText variant="H2">{aboutConfig.partner}</ThemedText>
-				</ThemedView>
+						<ThemedText variant="subTitle2" tx="about.partnerIntro" />
+						<ThemedText variant="H5">{aboutConfig.partner}</ThemedText>
+					</ThemedView>
 
-				{/* Team */}
-				<ThemedText variant="tab1Category" tx="about.team" style={styles.sectionTitle}/>
+					{/* Team */}
+					<ThemedText variant="H1" tx="about.team" style={styles.sectionTitle} />
 					{aboutConfig.team.map((member) => (
 						<ThemedView key={member.name} style={styles.teamRow}>
-							<ThemedText variant="subTitle1">{member.name}</ThemedText>
-							<ThemedText variant="subTitle2">{member.role}</ThemedText>
+							<ThemedText variant="H4">{member.name}</ThemedText>
+							<ThemedText variant="H5">{member.role}</ThemedText>
+							<ThemedView variant="divider" colorName="primary_base" style={{ opacity: 0.2 }} />
 						</ThemedView>
 					))}
-
-				{/* Documents */}
-				<ThemedText variant="tab1Category" tx="about.documents" style={styles.sectionTitle}/>
-				{legalDocs.documents.map((doc) => (
-					<ThemedView
-						key={doc.id}
-						variant="wide"
-						onPress={() =>
-							router.push({
-								pathname: "/seettings/legal/[docId]",
-								params: {docId: doc.id},
-						})
-					}
-					accessibilityLabel={t("about.openDocument", { title: doc.title })}
-					centerChild={<ThemedText variant="H2">{doc.title}</ThemedText>}
-					rightChild={<ThemedText variant="H2">›</ThemedText>}
-					childrenContainerStyle={styles.docRow}
-					/>
-				))}
-			</ScrollView>
-		</ThemedView>
+					{/* Documents */}
+					<ThemedText variant="H1" tx="about.documents" style={styles.sectionTitle} />
+					{legalDocs.documents.map((doc) => (
+						<Fragment key={doc.id}>
+							<ThemedView
+								variant="wide"
+								onPress={() =>
+									router.push({
+										pathname: "/settings/legal/[docId]",
+										params: { docId: doc.id },
+									})
+								}
+								accessibilityLabel={t("about.openDocument", {
+									title: t(doc.titleKey as ParseKeys),
+								})}
+								centerChild={<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} />}
+								rightChild={
+									<ThemedText variant="main1Button" colorName="primary_base">
+										{">"}
+									</ThemedText>
+								}
+								childrenContainerStyle={styles.docRow}
+							/>
+							<ThemedView variant="divider" colorName="primary_base" style={{ opacity: 0.2 }} />
+						</Fragment>
+					))}
+				</ScrollView>
+			</ThemedView>
+		</>
 	)
 }
 
 const styles = StyleSheet.create({
 	content: {
 		paddingVertical: 24,
-		gap: 8,
 	},
 	appCard: {
 		gap: 4,
 		paddingVertical: 16,
+		borderRadius: 0,
+	},
+	appRow: {
+		flexDirection: "row",
+		justifyContent: "flex-start",
+		gap: 16,
+		marginBottom: 16,
+		borderRadius: 0,
+	},
+	appInfo: {
+		gap: 2,
 		borderRadius: 0,
 	},
 	sectionTitle: {
@@ -77,5 +107,6 @@ const styles = StyleSheet.create({
 	},
 	docRow: {
 		paddingHorizontal: 0,
+		gap: 0,
 	},
 })
