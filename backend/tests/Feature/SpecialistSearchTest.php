@@ -186,9 +186,10 @@ class SpecialistSearchTest extends TestCase
 
     public function test_search_is_rate_limited_per_user(): void
     {
+        config(['sharing.specialist_search_rate_limit' => 3]);
         $patient = User::factory()->create();
 
-        for ($attempt = 0; $attempt < 30; $attempt++) {
+        for ($attempt = 0; $attempt < 3; $attempt++) {
             $this->search('kowalski', $patient)->assertOk();
         }
 

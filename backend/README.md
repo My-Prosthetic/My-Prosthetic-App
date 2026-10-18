@@ -235,7 +235,7 @@ are equivalent). `%` and `_` are matched literally. The whole query also
 matches a prosthetist's **Specialist Code** exactly, ignoring case, spaces,
 hyphens, and `O`/`I`/`L` typed for `0`/`1`. Results never include patients,
 emails or codes, are ordered by name, are capped at 20, and the endpoint allows
-30 requests per minute per user.
+`SPECIALIST_SEARCH_RATE_LIMIT` requests per minute per user (30 by default).
 
 Every prosthetist gets a unique 8-character Specialist Code (Crockford base32,
 without `I`, `L`, `O` and `U`) when the account is created. It appears as

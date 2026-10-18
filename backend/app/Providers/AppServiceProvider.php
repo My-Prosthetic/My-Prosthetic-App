@@ -31,7 +31,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('specialist-search', function (Request $request): Limit {
-            return Limit::perMinute(30)->by($request->user()?->getAuthIdentifier() ?? $request->ip());
+            return Limit::perMinute((int) config('sharing.specialist_search_rate_limit', 30))
+                ->by($request->user()?->getAuthIdentifier() ?? $request->ip());
         });
     }
 }

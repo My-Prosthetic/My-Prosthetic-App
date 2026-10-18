@@ -32,6 +32,7 @@ services:
       - SESSION_SAME_SITE=lax
       - SESSION_HTTP_ONLY=true
       - AUTH_LOGIN_RATE_LIMIT=5
+      - SPECIALIST_SEARCH_RATE_LIMIT=30
     depends_on:
       db:
         condition: service_healthy
