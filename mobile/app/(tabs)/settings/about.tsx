@@ -1,53 +1,81 @@
-import { StyleSheet } from "react-native"
+import { ScrollView, StyleSheet } from "react-native"
 import { router } from "expo-router"
+import { useTranslation } from "react-i18next"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import aboutConfig from "@/src/constants/aboutConfig.json"
 import legalDocs from "@/src/constants/legalDocsConfig.json"
 
-// Temporary list — will be replaced by legalDocsConfig.json
-const documents = [
-	{ id: "statute", title: "Regulamin" },
-	{ id: "rodo", title: "RODO" },
-	{ id: "license", title: "Licencje" },
-]
-
 export default function AboutScreen() {
+	const { t } = useTranslation()
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
-			<ThemedText>O nas i Regulaminy</ThemedText>
+		<ThemedView variant="background" colorName="tertiary_base_2">
+			<ThemedHeader tx="about.header" variant="prominent" />
+			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+				<ThemedView style={styles.appCard}>
 
-			{documents.map((doc) => (
-				<ThemedView
-					key={doc.id}
-					variant="narrow"
-					colorName="false"
-					shadow
-					onPress={() =>
-						router.push({
-							pathname: "/settings/legal/[docId]",
-							params: { docId: doc.id },
+					<ThemedText variant="H0">{aboutConfig.appName}</ThemedText>
+					<ThemedText
+						variant="subTitle2"
+						tx="about.versionLabel"
+						txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
+					/>
+					<ThemedText variant="subTitle2" tx="about.partnerIntro" />
+					<ThemedText variant="H2">{aboutConfig.partner}</ThemedText>
+				</ThemedView>
+
+				{/* Team */}
+				<ThemedText variant="tab1Category" tx="about.team" style={styles.sectionTitle}/>
+					{aboutConfig.team.map((member) => (
+						<ThemedView key={member.name} style={styles.teamRow}>
+							<ThemedText variant="subTitle1">{member.name}</ThemedText>
+							<ThemedText variant="subTitle2">{member.role}</ThemedText>
+						</ThemedView>
+					))}
+
+				{/* Documents */}
+				<ThemedText variant="tab1Category" tx="about.documents" style={styles.sectionTitle}/>
+				{legalDocs.documents.map((doc) => (
+					<ThemedView
+						key={doc.id}
+						variant="wide"
+						onPress={() =>
+							router.push({
+								pathname: "/seettings/legal/[docId]",
+								params: {docId: doc.id},
 						})
 					}
-					style={styles.button}
-				>
-					<ThemedText colorName="accent_base_1" variant="main1Button">
-						{doc.title}
-					</ThemedText>
-				</ThemedView>
-			))}
+					accessibilityLabel={t("about.openDocument", { title: doc.title })}
+					centerChild={<ThemedText variant="H2">{doc.title}</ThemedText>}
+					rightChild={<ThemedText variant="H2">›</ThemedText>}
+					childrenContainerStyle={styles.docRow}
+					/>
+				))}
+			</ScrollView>
 		</ThemedView>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		gap: 16,
+	content: {
+		paddingVertical: 24,
+		gap: 8,
 	},
-	button: {
-		minHeight: 44,
+	appCard: {
+		gap: 4,
+		paddingVertical: 16,
+		borderRadius: 0,
+	},
+	sectionTitle: {
+		marginTop: 24,
+		marginBottom: 8,
+	},
+	teamRow: {
+		paddingVertical: 6,
+		borderRadius: 0,
+	},
+	docRow: {
+		paddingHorizontal: 0,
 	},
 })
