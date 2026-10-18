@@ -1,25 +1,33 @@
 import React, { useEffect, useState, useMemo } from "react"
-import { ActivityIndicator, Alert, StyleSheet, TextInput, View } from "react-native"
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
-import { eq } from "drizzle-orm"
-import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedInput } from "../ThemedInput"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { formatDate } from "@/src/utils/dateFormatter"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
-import { db } from "@/db/client"
-import { deposits } from "@/db/schema/funding/deposits"
 import {
 	FUNDING_SOURCE_IDS,
 	FundingSource,
 	getFundingSourceOptions,
 } from "@/src/constants/fundingSources"
 
-type Deposit = typeof deposits.$inferSelect
+import {
+	createDeposit,
+	deleteDeposit,
+	Deposit,
+	getDepositById,
+	updateDeposit,
+} from "@/db/repositories/depositRepository"
+
+import IconHand from "@/assets/icons/save-money-dollar.svg"
+import IconPlus from "@/assets/icons/plus.svg"
+import IconChevronDown from "@/assets/icons/chevron-down.svg"
+import IconTrash from "@/assets/icons/trash-bin.svg"
 
 interface DepositFormProps {
 	mode: "create" | "edit"
@@ -30,18 +38,24 @@ export function DepositForm({ mode }: DepositFormProps) {
 	const styles = getStyles(colors)
 	const { t } = useTranslation()
 	const params = useLocalSearchParams<{ goalId?: string; depositId?: string }>()
+
+	//TODO dynamic currency value from user settings
+	const currency = "PLN"
+
 	const goalId =
 		mode === "create"
 			? Number.isSafeInteger(Number(params.goalId)) && Number(params.goalId) > 0
 				? Number(params.goalId)
 				: null
 			: null
+
 	const depositId =
 		mode === "edit"
 			? Number.isSafeInteger(Number(params.depositId)) && Number(params.depositId) > 0
 				? Number(params.depositId)
 				: null
 			: null
+
 	const [deposit, setDeposit] = useState<Deposit>()
 	const [amount, setAmount] = useState("")
 	const [note, setNote] = useState("")
@@ -64,8 +78,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 			}
 
 			try {
-				const result = await db.select().from(deposits).where(eq(deposits.id, depositId))
-				const savedDeposit = result[0]
+				const savedDeposit = await getDepositById(depositId)
 				if (!savedDeposit) {
 					Alert.alert(t("common.error"), t("funding.depositNotFound"))
 					router.back()
@@ -124,9 +137,9 @@ export function DepositForm({ mode }: DepositFormProps) {
 			}
 
 			if (mode === "create") {
-				await db.insert(deposits).values({ goalId: goalId!, ...values })
+				await createDeposit({ goalId: goalId!, ...values })
 			} else {
-				await db.update(deposits).set(values).where(eq(deposits.id, depositId!))
+				await updateDeposit(depositId!, values)
 			}
 
 			router.back()
@@ -152,7 +165,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 				onPress: async () => {
 					try {
 						setIsSubmitting(true)
-						await db.delete(deposits).where(eq(deposits.id, depositId))
+						await deleteDeposit(depositId)
 						router.back()
 					} catch (error) {
 						console.error("Błąd podczas usuwania wpłaty:", error)
@@ -174,177 +187,141 @@ export function DepositForm({ mode }: DepositFormProps) {
 	}
 
 	return (
-		<ThemedView colorName="tertiary_base_2" variant="background" style={styles.screen}>
-			<View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funding.fundingSource"
-					/>
-					<DropdownSelect
-						label={t("funding.fundingSource")}
-						placeholder={t("funding.select")}
-						options={options}
-						value={fundingSource}
-						onChange={setFundingSource}
-					/>
-				</View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funding.grantedAmount"
-					/>
-					<ThemedView
-						variant="old_wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_2"
-						style={styles.amountField}
-					>
-						<TextInput
+		<ScrollView>
+			<ThemedView colorName="bg_1" variant="background" style={styles.screen}>
+				<View style={{ paddingBottom: 40 }}>
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.fundingSource"
+						/>
+						<DropdownSelect
+							label={t("funding.fundingSource")}
+							placeholder={t("funding.select")}
+							options={options}
+							value={fundingSource}
+							onChange={setFundingSource}
+						/>
+					</View>
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.grantedAmount"
+						/>
+						<ThemedInput
+							variant="money"
+							currency={currency}
 							value={amount}
 							onChangeText={setAmount}
-							keyboardType="decimal-pad"
 							placeholder="0"
-							placeholderTextColor={colors.primary_base}
-							style={styles.amountInput}
+							viewStyle={{ backgroundColor: colors.bg_0 }}
 						/>
-						<ThemedText variant="subTitle1" colorName="primary_base_2">
-							PLN
-						</ThemedText>
-					</ThemedView>
-				</View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funding.decisionDate"
-					/>
-					<ThemedView
-						borderColor="primary_base_2"
-						colorName="tertiary_base_3"
-						variant="old_wide"
-						onPress={() => setDateModalVisible(true)}
-						style={styles.dateField}
-					>
-						<ThemedText variant="main1Button" colorName="primary_base">
-							{formatDate(selectedDate, "numeric")}
-						</ThemedText>
-						<Ionicons name="chevron-down" size={32} color={colors.primary_base} />
-					</ThemedView>
-				</View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funding.additionalNote"
-					/>
-					<ThemedView
-						variant="old_wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_2"
-						style={styles.noteField}
-					>
-						<TextInput
+					</View>
+
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.decisionDate"
+						/>
+						<ThemedView
+							borderColor="blue1"
+							colorName="bg_0"
+							variant="wide"
+							onPress={() => setDateModalVisible(true)}
+							leftChild={
+								<ThemedText variant="H3" colorName="graphite0">
+									{formatDate(selectedDate, "numeric")}
+								</ThemedText>
+							}
+							rightChild={<IconChevronDown color={colors.blue1} />}
+						/>
+					</View>
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.additionalNote"
+						/>
+						<ThemedInput
+							variant="note"
 							value={note}
 							onChangeText={setNote}
 							placeholder={t("funding.notePlaceholder")}
-							placeholderTextColor={colors.primary_base}
-							style={styles.noteInput}
 							multiline
+							viewStyle={{ backgroundColor: colors.bg_0 }}
+						/>
+					</View>
+				</View>
+
+				<View style={styles.actions}>
+					{mode === "create" ? (
+						<ThemedView
+							variant={"wide"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							leftChild={<IconHand color={colors.bg_0} />}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"funding.addToWallet"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+							rightChild={<IconPlus color={colors.bg_0} />}
+						/>
+					) : (
+						<ThemedView
+							variant={"narrow"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"common.save"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+						/>
+					)}
+					<ThemedView
+						onPress={mode === "edit" ? handleDelete : () => router.back()}
+						style={{ flexDirection: "row", gap: 10 }}
+					>
+						<IconTrash color={colors.false} />
+						<ThemedText
+							tx={mode === "edit" ? "common.delete" : "common.cancel"}
+							variant="H1"
+							colorName="false"
 						/>
 					</ThemedView>
 				</View>
-			</View>
-
-			<View style={styles.actions}>
-				<ThemedView
-					variant={mode === "create" ? "old_wide" : "old_narrow"}
-					style={{ flexDirection: "column" }}
-					colorName="primary_base"
-					borderColor="accent_base"
-					onPress={isSubmitting ? undefined : handleSave}
-				>
-					{isSubmitting ? (
-						<ActivityIndicator color={colors.accent_base} />
-					) : (
-						<>
-							{mode === "create" && (
-								<ThemedText colorName="accent_base_2" style={{ paddingHorizontal: 10 }}>
-									+
-								</ThemedText>
-							)}
-							<ThemedText
-								variant="main1Button"
-								colorName="accent_base"
-								tx={mode === "create" ? "funding.addToWallet" : "common.save"}
-							/>
-						</>
-					)}
-				</ThemedView>
-				<ThemedText
-					variant="main1Button"
-					colorName={mode === "edit" ? "false" : "primary_base"}
-					style={styles.cancelAction}
-					onPress={mode === "edit" ? handleDelete : () => router.back()}
-					tx={mode === "edit" ? "common.delete" : "common.cancel"}
+				<DatePickerModal
+					visible={dateModalVisible}
+					initialDate={selectedDate}
+					onClose={() => setDateModalVisible(false)}
+					onSave={setSelectedDate}
 				/>
-			</View>
-			<DatePickerModal
-				visible={dateModalVisible}
-				initialDate={selectedDate}
-				onClose={() => setDateModalVisible(false)}
-				onSave={setSelectedDate}
-			/>
-		</ThemedView>
+			</ThemedView>
+		</ScrollView>
 	)
 }
 
 const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
-		screen: { justifyContent: "space-between" },
+		screen: { justifyContent: "flex-start" },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },
-		amountField: {
-			borderWidth: 1,
-			justifyContent: "space-between",
-			flexDirection: "row",
-			height: 50,
-			paddingVertical: 0,
-		},
-		dateField: {
-			borderWidth: 1,
-			justifyContent: "space-between",
-			paddingVertical: 0,
-			paddingHorizontal: 10,
-		},
-		noteField: {
-			borderWidth: 1,
-			justifyContent: "space-between",
-			paddingVertical: 0,
-			paddingHorizontal: 10,
-		},
-		amountInput: {
-			flex: 1,
-			padding: 0,
-			color: colors.primary_base,
-			fontFamily: "Inter-SemiBold",
-			fontSize: 22,
-		},
-		noteInput: {
-			minHeight: 80,
-			textAlignVertical: "top",
-			width: "100%",
-			color: colors.primary_base_1,
-			fontFamily: "Afacad-Medium",
-			fontSize: 16,
-		},
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
-		cancelAction: { padding: 8 },
 	})
