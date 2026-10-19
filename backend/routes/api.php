@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistSearchController;
 use App\Http\Controllers\WalletEntryController;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class);
@@ -38,4 +40,20 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::delete('/shares/{specialist}', [ShareController::class, 'destroy'])
         ->whereUuid('specialist')
         ->name('shares.destroy');
+
+    // A missing patient or record is refused exactly like a forbidden one, so the
+    // responses never reveal which records exist.
+    Route::prefix('/patients/{patient}')
+        ->whereUuid(['patient', 'prosthesis'])
+        ->scopeBindings()
+        ->missing(fn () => throw new AuthorizationException)
+        ->can('viewRecords', 'patient')
+        ->name('patients.')
+        ->group(function (): void {
+            Route::get('/prostheses', [PatientProsthesisController::class, 'index'])
+                ->name('prostheses.index');
+            Route::get('/prostheses/{prosthesis}', [PatientProsthesisController::class, 'show'])
+                ->can('view', 'prosthesis')
+                ->name('prostheses.show');
+        });
 });

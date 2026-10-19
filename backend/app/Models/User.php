@@ -121,10 +121,21 @@ class User extends Authenticatable
 
     /**
      * Get the shares this specialist has received.
+     *
+     * @return HasMany<UserShare, $this>
      */
     public function receivedShares(): HasMany
     {
         return $this->hasMany(UserShare::class, 'specialist_id');
+    }
+
+    /**
+     * Get the patient's current grant to this user. It is read from the database on
+     * every call, so a narrowed or revoked grant takes effect on the next request.
+     */
+    public function receivedShareFrom(User $patient): ?UserShare
+    {
+        return $this->receivedShares()->where('patient_id', $patient->id)->first();
     }
 
     /**
