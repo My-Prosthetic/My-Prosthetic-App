@@ -1,0 +1,16 @@
+{
+	"appName": "MyProsthetic",
+	"version": "1.0.0",
+	"releaseLabel": "Stabilna",
+	"partner": "Wilda Software sp. z o.o.",
+	"team": [
+		{ "name": "Paweł Kelar", "role": "Product Owner & Business Analyst" },
+		{ "name": "Wojciech Szott", "role": "Technical Lead & Architect" },
+		{ "name": "Filip Urbański", "role": "Scrum Master & QA Lead" },
+		{ "name": "Joanna Niewolna", "role": "UI/UX Designer" },
+		{ "name": "Tymon Czarnecki", "role": "Full Stack & Lead Mobile Developer" },
+		{ "name": "Adam Pawełka", "role": "Full Stack & Lead Backend Developer" },
+		{ "name": "Ola Loret", "role": "Full Stack & Lead Frontend Developer" },
+		{ "name": "Jan Jończyk", "role": "DevOps & Integration Engineer" }
+	]
+}
