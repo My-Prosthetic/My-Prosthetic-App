@@ -15,6 +15,10 @@ export const prostheses = sqliteTable("prostheses", {
 
 	amputationLevel: text("amputation_level").notNull(),
 
+	startOfUsageDate: text("start_of_usage_date"),
+
+	replacementDate: text("replacement_date"),
+
 	createdAt: text("created_at").notNull(),
 
 	updatedAt: text("updated_at").notNull(),

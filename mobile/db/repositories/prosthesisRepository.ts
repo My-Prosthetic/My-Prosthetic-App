@@ -12,6 +12,8 @@ export type CreateProsthesisInput = {
 	side: "left" | "right"
 	limbType: "upper" | "lower"
 	amputationLevel: string
+	startOfUsageDate: string | null
+	replacementDate: string | null
 }
 
 export type UpdateProsthesisInput = Partial<CreateProsthesisInput>

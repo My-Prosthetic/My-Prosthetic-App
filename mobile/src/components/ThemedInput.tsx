@@ -40,6 +40,7 @@ export const ThemedInput = ({
 		},
 		note: {
 			textAlignVertical: "top",
+			multiline: true,
 		},
 		search: {},
 		money: {
