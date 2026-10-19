@@ -230,7 +230,7 @@ const getSizes = (insets: EdgeInsets) =>
 			width: "73%",
 			minHeight: 50,
 			alignSelf: "center",
-			alignItems: "center"
+			alignItems: "center",
 		},
 		tag: {
 			height: 22,
