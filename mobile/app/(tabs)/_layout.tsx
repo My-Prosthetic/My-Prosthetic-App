@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, usePathname, useSegments } from "expo-router"
+import { Redirect, Tabs, usePathname } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
@@ -18,9 +18,7 @@ export default function TabsLayout() {
 	const { colors } = useTheme()
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
-	const segments = useSegments()
 	const pathname = usePathname()
-	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
 
 	const ICONS = {
 		home: IconHome,
@@ -41,12 +39,15 @@ export default function TabsLayout() {
 
 	const provideRenderButton = (variant: "home" | "journal" | "profile" | "settings") => {
 		return function renderButton(props: BottomTabBarButtonProps) {
-			let isFocused = currentTab === variant
+			const isFocused =
+				variant === "home"
+					? pathname.startsWith("/home") ||
+						pathname.startsWith("/funding") ||
+						pathname.startsWith("/prosthesis")
+					: pathname.startsWith(`/${variant}`)
+
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
-			if (variant === "home") {
-				isFocused = segments[2] === "home" //TODO logika obejmująca wszystkie ekrany albo wynikająca z routingu
-			}
 
 			const { ref, children, style, ...restProps } = props
 			return (
