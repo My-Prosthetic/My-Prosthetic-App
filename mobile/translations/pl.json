@@ -391,7 +391,8 @@
 			"description": "Wpisz opis incydentu.",
 			"intensity": "Określ natężenie problemu w skali od 1 do 10.",
 			"point": "Zaznacz miejsce dolegliwości na schemacie.",
-			"time": "Podaj godzinę w formacie GG:MM."
+			"time": "Podaj godzinę w formacie GG:MM.",
+			"futureDate": "Data i godzina incydentu nie mogą być ustawione w przyszłości."
 		}
 	},
 	"prosthesisDetails": {

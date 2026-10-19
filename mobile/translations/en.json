@@ -391,7 +391,8 @@
 			"description": "Enter an incident description.",
 			"intensity": "Set the problem intensity from 1 to 10.",
 			"point": "Mark the affected area on the diagram.",
-			"time": "Enter time in HH:MM format."
+			"time": "Enter time in HH:MM format.",
+			"futureDate": "The incident date and time cannot be set in the future."
 		}
 	},
 	"prosthesisDetails": {

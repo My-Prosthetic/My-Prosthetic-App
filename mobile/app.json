@@ -35,14 +35,14 @@
 			[
 				"expo-audio",
 				{
-					"microphonePermission": "Pozwól aplikacji MyProsthetics na nagrywanie notatek głosowych."
+					"microphonePermission": "Allow MyProsthetics to record voice notes."
 				}
 			],
 			[
 				"expo-image-picker",
 				{
-					"photosPermission": "Pozwól aplikacji MyProsthetics na dostęp do zdjęć dołączanych do incydentu.",
-					"cameraPermission": "Pozwól aplikacji MyProsthetics na użycie aparatu do dokumentacji incydentu."
+					"photosPermission": "Allow MyProsthetics to access photos attached to incidents.",
+					"cameraPermission": "Allow MyProsthetics to use the camera for incident documentation."
 				}
 			],
 			"expo-secure-store"

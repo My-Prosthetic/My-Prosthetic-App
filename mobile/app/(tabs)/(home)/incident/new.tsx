@@ -20,13 +20,13 @@ import {
 	type IncidentCoordinates,
 } from "@/db/repositories/incidentRepository"
 import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
-
-type IncidentComponent = Awaited<ReturnType<typeof getComponentsByProsthesisId>>[number]
 import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { IncidentBodyMap, type IncidentBodyView } from "@/src/components/incidents/IncidentBodyMap"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+
+type IncidentComponent = Awaited<ReturnType<typeof getComponentsByProsthesisId>>[number]
 
 type SelectOption = {
 	label: string
@@ -278,8 +278,6 @@ export default function NewIncidentScreen() {
 				value: component.id,
 			})),
 		],
-		// getComponentLabel only depends on translations and the current component list.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[components, t]
 	)
 	const startRecording = async () => {
@@ -395,6 +393,10 @@ export default function NewIncidentScreen() {
 		const occurredAt = buildOccurredAt(selectedDate, timeText)
 		if (!occurredAt) {
 			Alert.alert(t("common.error"), t("newIncident.validation.time"))
+			return
+		}
+		if (new Date(occurredAt).getTime() > Date.now()) {
+			Alert.alert(t("common.error"), t("newIncident.validation.futureDate"))
 			return
 		}
 		try {

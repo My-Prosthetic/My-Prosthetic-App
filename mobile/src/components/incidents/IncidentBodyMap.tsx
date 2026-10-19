@@ -24,6 +24,14 @@ type Props = {
 const DIAGRAM_WIDTH = 210
 const DIAGRAM_HEIGHT = 190
 
+const VIEWBOX_OFFSET_X = 14
+const VIEWBOX_OFFSET_Y = 14
+const VIEWBOX_HEIGHT_PADDING = 4
+
+const VIEWBOX = `${VIEWBOX_OFFSET_X} ${VIEWBOX_OFFSET_Y} ${DIAGRAM_WIDTH} ${
+	DIAGRAM_HEIGHT + VIEWBOX_HEIGHT_PADDING
+}`
+
 const MARKER_OUTER_SIZE = 23
 const MARKER_INNER_SIZE = 6
 
@@ -47,7 +55,7 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 	return (
 		<ThemedView colorName="secondary_base_2" style={styles.card}>
 			<View style={styles.diagram}>
-				<Svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} viewBox="14 14 210 194">
+				<Svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} viewBox={VIEWBOX}>
 					{view === "side" ? (
 						<>
 							{/* Główny obszar klikalny */}
@@ -129,7 +137,6 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 						]}
 					>
 						<ThemedView colorName="false_2" style={styles.markerOuter} />
-
 						<ThemedView colorName="false_1" style={styles.markerInner} />
 					</View>
 				)}
