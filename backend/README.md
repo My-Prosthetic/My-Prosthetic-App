@@ -200,7 +200,7 @@ available to patients only; prosthetists and administrators receive `403`.
 
 | Endpoint | Method | Payload/result |
 | --- | --- | --- |
-| `/api/specialists/search?q=…` | `GET` | Lists matching prosthetists as `{ id, name }` |
+| `/api/specialists/search?q=…&page=…` | `GET` | Lists matching prosthetists as `{ id, name }`, 20 per page |
 | `/api/shares` | `GET` | Lists the patient's current grants, ordered by specialist name |
 | `/api/shares` | `POST` | Creates a grant from a prosthetist's UUID `specialist_id` and `permissions`; `201`, or `409` if one already exists |
 | `/api/shares/{specialist}` | `PUT` | Replaces the `permissions` of the grant for that prosthetist; `404` if there is none |
@@ -234,8 +234,10 @@ ignoring letter case and Polish diacritics (`pawelka`, `Pawełka` and `PAWEŁKA`
 are equivalent). `%` and `_` are matched literally. The whole query also
 matches a prosthetist's **Specialist Code** exactly, ignoring case, spaces,
 hyphens, and `O`/`I`/`L` typed for `0`/`1`. Results never include patients,
-emails or codes, are ordered by name, are capped at 20, and the endpoint allows
-`SPECIALIST_SEARCH_RATE_LIMIT` requests per minute per user (30 by default).
+emails or codes, and are ordered by name, 20 per page. `page` is optional and
+starts at 1; `links.next` is the URL of the next page, or `null` on the last
+one. The endpoint allows `SPECIALIST_SEARCH_RATE_LIMIT` requests per minute per
+user (30 by default).
 
 Every prosthetist gets a unique 8-character Specialist Code (Crockford base32,
 without `I`, `L`, `O` and `U`) when the account is created. It appears as

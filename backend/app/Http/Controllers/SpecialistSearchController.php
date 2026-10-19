@@ -8,14 +8,15 @@ use App\Http\Resources\SpecialistResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\Paginator;
 
 class SpecialistSearchController extends Controller
 {
-    private const RESULT_LIMIT = 20;
+    private const PER_PAGE = 20;
 
     /**
      * Find prosthetists whose search name contains every query word, in any order,
-     * or whose Specialist Code equals the whole query.
+     * or whose Specialist Code equals the whole query, one page of results at a time.
      */
     public function __invoke(SearchSpecialistsRequest $request): AnonymousResourceCollection
     {
@@ -24,7 +25,9 @@ class SpecialistSearchController extends Controller
 
         // Without a word or a code the query would be unconstrained and list everyone.
         if ($words === [] && $code === null) {
-            return SpecialistResource::collection([]);
+            return SpecialistResource::collection(
+                new Paginator([], self::PER_PAGE, options: ['path' => Paginator::resolveCurrentPath()]),
+            );
         }
 
         $specialists = User::query()
@@ -42,8 +45,8 @@ class SpecialistSearchController extends Controller
             })
             ->orderBy('name')
             ->orderBy('id')
-            ->limit(self::RESULT_LIMIT)
-            ->get(['id', 'name']);
+            ->simplePaginate(self::PER_PAGE, ['id', 'name'])
+            ->withQueryString();
 
         return SpecialistResource::collection($specialists);
     }

@@ -19,7 +19,7 @@ class SpecialistSearchTest extends TestCase
 
         $this->search('Kowalski')
             ->assertOk()
-            ->assertExactJson(['data' => [['id' => $prosthetist->id, 'name' => 'Jan Kowalski']]]);
+            ->assertJsonPath('data', [['id' => $prosthetist->id, 'name' => 'Jan Kowalski']]);
     }
 
     #[DataProvider('matchingQueries')]
@@ -30,7 +30,7 @@ class SpecialistSearchTest extends TestCase
 
         $this->search($query)
             ->assertOk()
-            ->assertExactJson(['data' => [['id' => $prosthetist->id, 'name' => $name]]]);
+            ->assertJsonPath('data', [['id' => $prosthetist->id, 'name' => $name]]);
     }
 
     public static function matchingQueries(): iterable
@@ -62,7 +62,7 @@ class SpecialistSearchTest extends TestCase
 
         $this->search('kowalski anna')
             ->assertOk()
-            ->assertExactJson(['data' => []]);
+            ->assertJsonPath('data', []);
     }
 
     public function test_only_prosthetists_are_returned(): void
@@ -76,7 +76,7 @@ class SpecialistSearchTest extends TestCase
             ->assertJsonPath('data.*.id', [$prosthetist->id]);
     }
 
-    public function test_results_are_ordered_by_name_and_limited_to_twenty(): void
+    public function test_results_are_ordered_by_name_and_paginated_by_twenty(): void
     {
         $names = collect(range(1, 25))->map(fn (int $number): string => sprintf('Kowalski %02d', $number));
         foreach ($names->shuffle() as $name) {
@@ -85,7 +85,30 @@ class SpecialistSearchTest extends TestCase
 
         $this->search('kowalski')
             ->assertOk()
-            ->assertJsonPath('data.*.name', $names->take(20)->values()->all());
+            ->assertJsonPath('data.*.name', $names->take(20)->values()->all())
+            ->assertJsonPath('meta.per_page', 20)
+            ->assertJsonPath('links.next', route('specialists.search', ['q' => 'kowalski', 'page' => 2]));
+
+        $this->search('kowalski', parameters: ['page' => 2])
+            ->assertOk()
+            ->assertJsonPath('data.*.name', $names->skip(20)->values()->all())
+            ->assertJsonPath('links.next', null);
+    }
+
+    #[DataProvider('invalidPages')]
+    public function test_invalid_pages_are_rejected(string $page): void
+    {
+        $this->search('kowalski', parameters: ['page' => $page])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['page']);
+    }
+
+    public static function invalidPages(): iterable
+    {
+        yield 'zero' => ['0'];
+        yield 'negative' => ['-1'];
+        yield 'fraction' => ['1.5'];
+        yield 'not a number' => ['two'];
     }
 
     public function test_like_wildcards_in_the_query_match_literally(): void
@@ -93,14 +116,14 @@ class SpecialistSearchTest extends TestCase
         User::factory()->prosthetist()->create(['name' => 'Jan Kowalski']);
         $literal = User::factory()->prosthetist()->create(['name' => 'Jan Kowal_ski 100%']);
 
-        $this->search('%%%')->assertOk()->assertExactJson(['data' => []]);
-        $this->search('___')->assertOk()->assertExactJson(['data' => []]);
+        $this->search('%%%')->assertOk()->assertJsonPath('data', []);
+        $this->search('___')->assertOk()->assertJsonPath('data', []);
         $this->search('l_s')->assertOk()->assertJsonPath('data.*.id', [$literal->id]);
         $this->search('00%')->assertOk()->assertJsonPath('data.*.id', [$literal->id]);
 
         $bang = User::factory()->prosthetist()->create(['name' => 'Ewa Hop!Hop']);
 
-        $this->search('!!!')->assertOk()->assertExactJson(['data' => []]);
+        $this->search('!!!')->assertOk()->assertJsonPath('data', []);
         $this->search('p!h')->assertOk()->assertJsonPath('data.*.id', [$bang->id]);
     }
 
@@ -115,7 +138,7 @@ class SpecialistSearchTest extends TestCase
 
         $this->search($query)
             ->assertOk()
-            ->assertExactJson(['data' => [['id' => $prosthetist->id, 'name' => 'Jan Kowalski']]]);
+            ->assertJsonPath('data', [['id' => $prosthetist->id, 'name' => 'Jan Kowalski']]);
     }
 
     public static function typedCodes(): iterable
@@ -132,8 +155,8 @@ class SpecialistSearchTest extends TestCase
     {
         User::factory()->prosthetist()->create(['name' => 'Jan Kowalski', 'specialist_code' => '7K3Q0X1B']);
 
-        $this->search('7K3Q0X1')->assertOk()->assertExactJson(['data' => []]);
-        $this->search('7K3Q')->assertOk()->assertExactJson(['data' => []]);
+        $this->search('7K3Q0X1')->assertOk()->assertJsonPath('data', []);
+        $this->search('7K3Q')->assertOk()->assertJsonPath('data', []);
     }
 
     #[DataProvider('invalidQueries')]
@@ -203,7 +226,7 @@ class SpecialistSearchTest extends TestCase
 
         $prosthetist->update(['name' => 'Jan Łęcki']);
 
-        $this->search('kowalski')->assertOk()->assertExactJson(['data' => []]);
+        $this->search('kowalski')->assertOk()->assertJsonPath('data', []);
         $this->search('lecki')->assertOk()->assertJsonPath('data.*.id', [$prosthetist->id]);
     }
 
@@ -216,12 +239,15 @@ class SpecialistSearchTest extends TestCase
         $this->search('zolkiewska')->assertOk()->assertJsonPath('data.*.id', [$prosthetist->id]);
     }
 
-    private function search(string $query, ?User $as = null): TestResponse
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    private function search(string $query, ?User $as = null, array $parameters = []): TestResponse
     {
         $user = $as ?? User::factory()->create();
         $this->forgetAuthenticatedUser();
 
         return $this->withToken($user->createToken('search-test')->plainTextToken)
-            ->getJson('/api/specialists/search?'.http_build_query(['q' => $query]));
+            ->getJson('/api/specialists/search?'.http_build_query(['q' => $query, ...$parameters]));
     }
 }

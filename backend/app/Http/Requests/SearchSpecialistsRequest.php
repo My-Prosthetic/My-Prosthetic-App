@@ -37,6 +37,8 @@ class SearchSpecialistsRequest extends PatientRequest
                     }
                 },
             ],
+            // The paginator would quietly serve page 1 for anything it cannot read.
+            'page' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 
