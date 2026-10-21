@@ -57,4 +57,5 @@ jobs:
           fi
 
           echo "EXPO_PUBLIC_API_URL=$URL" > .env
+          cp .env .env.production
           echo "Created .env for $ENVIRONMENT (API URL: $URL)"
