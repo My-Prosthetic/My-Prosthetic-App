@@ -67,6 +67,15 @@ jobs:
           cache: 'npm'
           cache-dependency-path: mobile/package-lock.json
       
+      - name: Set app version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+            jq -e '.expo' app.json > /dev/null || { echo "::error::app.json has no 'expo' key"; exit 1; }
+          jq --arg v "$VERSION" '.expo.version = $v' app.json > app.json.tmp
+          mv app.json.tmp app.json
+          echo "App version set to $(jq -r '.expo.version' app.json)"
+
       - name: Setup EAS
         uses: expo/expo-github-action@v9
         with:
@@ -75,3 +84,17 @@ jobs:
     
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Build with EAS
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          if ["$ENVIRONMENT" = "production" ]; then
+            PROFILE="production-apk"
+          else
+            PROFILE="preview"
+          fi
+
+          echo "Building with EAS profile: $PROFILE"
+          eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > build-result.json
+          cat build-result.json 
