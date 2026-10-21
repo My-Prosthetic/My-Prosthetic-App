@@ -61,7 +61,7 @@ jobs:
           echo "Created .env for $ENVIRONMENT (API URL: $URL)"
     
       - name: Setup node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #7.1.0
         with: 
           node-version: '20.19.4'
           cache: 'npm'
@@ -77,7 +77,7 @@ jobs:
           echo "App version set to $(jq -r '.expo.version' app.json)"
 
       - name: Setup EAS
-        uses: expo/expo-github-action@v9
+        uses: expo/expo-github-action@eab7a230208c952974db8c3245cfd78402c7b385 #9.0.0
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
@@ -125,7 +125,7 @@ jobs:
           ls -lh "$FILE"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         with: 
           tag_name: ${{ steps.apk.outputs.tag }}
           name: Mobile ${{ steps.apk.outputs.tag }}
