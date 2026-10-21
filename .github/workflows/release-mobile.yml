@@ -38,3 +38,23 @@ jobs:
             echo "::error::Version must look like 1.0.0 (got '$VERSION')"
             exit 1
           fi
+      
+      - name: Create .env for selected environment
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          API_URL_PREVIEW: ${{ vars.API_URL_PREVIEW }}
+          API_URL_PRODUCTION: ${{ vars.API_URL_PRODUCTION }}
+        run: |
+          if [ "$ENVIRONMENT" = "production" ]; then
+            URL="$API_URL_PRODUCTION"
+          else
+            URL="$API_URL_PREVIEW"
+          fi
+
+          if [ -z "$URL" ]; then 
+            echo "::error::API URL variable for '$ENVIRONMENT' is empty or missing"
+            exit 1
+          fi
+
+          echo "EXPO_PUBLIC_API_URL=$URL" > .env
+          echo "Created .env for $ENVIRONMENT (API URL: $URL)"
