@@ -1,0 +1,40 @@
+name: Release Mobile
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (SemVer), e.g. 1.0.0'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
+        default: preview
+jobs:
+  release:
+    name: Build and release (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    defaults:
+      run:
+        working-directory: mobile
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+    
+      - name: Validate version format
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must look like 1.0.0 (got '$VERSION')"
+            exit 1
+          fi
