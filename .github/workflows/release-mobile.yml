@@ -71,7 +71,7 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         run: |
-            jq -e '.expo' app.json > /dev/null || { echo "::error::app.json has no 'expo' key"; exit 1; }
+          jq -e '.expo' app.json > /dev/null || { echo "::error::app.json has no 'expo' key"; exit 1; }
           jq --arg v "$VERSION" '.expo.version = $v' app.json > app.json.tmp
           mv app.json.tmp app.json
           echo "App version set to $(jq -r '.expo.version' app.json)"
@@ -98,3 +98,37 @@ jobs:
           echo "Building with EAS profile: $PROFILE"
           eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > build-result.json
           cat build-result.json 
+
+      - name: Download APK from EAS
+        id: apk
+        env:
+            VERSION: ${{ inputs.version }}
+            ENVIRONMENT: ${{ inputs.environment }}
+        run: 
+          URL=$(jq -r '.[0].artifacts.buildUrl' build-result.json)
+          if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+            echo "::error::No build URL in build-result.json (did the EAS build fail?)"
+            exit 1
+          fi
+
+          FILE="my-prosthetic-app-v${VERSION}-${ENVIRONMENT}.apk"
+          curl -fL "$URL" -o "$FILE"
+
+          if [ "$ENVIRONMENT" = "production" ]; then
+            TAG="v${VERSION}"
+          else
+            TAG="v${VERSION}-preview.${GITHUB_RUN_NUMBER}"
+          fi
+
+          echo "file=mobile/$FILE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          ls -lh "$FILE"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with: 
+          tag_name: ${{ steps.apk.outputs.tag }}
+          name: Mobile ${{ steps.apk.outputs.tag }}
+          files: ${{ steps.apk.outputs.file }}
+          prerelease: ${{ inputs.environment != 'production' }}
+          generate_release_notes: true
