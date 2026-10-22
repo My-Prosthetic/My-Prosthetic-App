@@ -105,7 +105,7 @@ jobs:
         env:
             VERSION: ${{ inputs.version }}
             ENVIRONMENT: ${{ inputs.environment }}
-        run: 
+        run: |
           URL=$(jq -r '.[0].artifacts.buildUrl' build-result.json)
           if [ -z "$URL" ] || [ "$URL" = "null" ]; then
             echo "::error::No build URL in build-result.json (did the EAS build fail?)"
