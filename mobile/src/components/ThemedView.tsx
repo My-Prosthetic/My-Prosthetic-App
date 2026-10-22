@@ -234,6 +234,8 @@ const getSizes = (insets: EdgeInsets) =>
 			alignItems: "center",
 		},
 		tag: {
-			height: 22,
+			height: 24,
+			flexDirection: "row",
+			alignItems: "center",
 		},
 	})
