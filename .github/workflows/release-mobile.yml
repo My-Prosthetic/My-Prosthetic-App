@@ -89,7 +89,7 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          if ["$ENVIRONMENT" = "production" ]; then
+          if [ "$ENVIRONMENT" = "production" ]; then
             PROFILE="production-apk"
           else
             PROFILE="preview"
