@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ProgrammeSummary } from "@/src/components/programmes/ProgrammeSummary"
 
 import fundingConfig from "@/config/fundingConfig.json"
-import IconChevronRigth from "@/assets/icons/chevron-right.svg"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
 
 export default function ProgrammesScreen() {
 	const { colors } = useTheme()
@@ -44,7 +44,7 @@ export default function ProgrammesScreen() {
 				<View style={{ flex: 1 }}>
 					<ProgrammeSummary programme={programme} />
 				</View>
-				<IconChevronRigth height={20} color={colors.blue1} />
+				<IconChevronRight height={20} color={colors.blue1} />
 			</ThemedView>
 		)
 	}
