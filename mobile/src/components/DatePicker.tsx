@@ -8,7 +8,6 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useTheme } from "@/context/ThemeContext"
@@ -16,6 +15,9 @@ import i18n from "@/translations/i18n"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { formatDate } from "@/src/utils/dateFormatter"
+
+import IconChevronLeft from "@/assets/icons/chevron-left.svg"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
 
 const ITEM_HEIGHT = 44
 const VISIBLE_ITEMS = 5
@@ -118,7 +120,11 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 		onPress: () => void
 	) => (
 		<Pressable onPress={onPress} style={styles.navigationButton} hitSlop={6}>
-			<Ionicons name={icon} size={20} color={colors.primary_base} />
+			{icon === "chevron-back" ? (
+				<IconChevronLeft color={colors.blue2} width={20} height={20} />
+			) : (
+				<IconChevronRight color={colors.blue2} width={20} height={20} />
+			)}
 		</Pressable>
 	)
 
