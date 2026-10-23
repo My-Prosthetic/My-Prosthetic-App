@@ -1,9 +1,9 @@
 import * as Crypto from "expo-crypto"
-import { and, eq, isNull, desc } from "drizzle-orm"
+import { and, desc, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
-import { prostheses } from "@/db/schema/prostheses/prostheses"
 import { components } from "@/db/schema/prostheses/components"
+import { prostheses } from "@/db/schema/prostheses/prostheses"
 
 export type Prosthesis = typeof prostheses.$inferSelect
 
@@ -12,6 +12,9 @@ export type CreateProsthesisInput = {
 	side: "left" | "right"
 	limbType: "upper" | "lower"
 	amputationLevel: string
+	description?: string | null
+	startedAt?: string | null
+	replacementDate?: string | null
 }
 
 export type UpdateProsthesisInput = Partial<CreateProsthesisInput>
@@ -24,6 +27,9 @@ export async function createProsthesis(input: CreateProsthesisInput) {
 		.values({
 			id: Crypto.randomUUID(),
 			...input,
+			description: input.description ?? null,
+			startedAt: input.startedAt ?? now,
+			replacementDate: input.replacementDate ?? null,
 			createdAt: now,
 			updatedAt: now,
 			isDirty: true,

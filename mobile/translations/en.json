@@ -42,7 +42,8 @@
 		"showFullHistory": "Show full history",
 		"switchToHighContrast": "Switch to high contrast 🌙",
 		"switchToLightTheme": "Switch to light theme ☀️",
-		"addProsthesis": "Add prosthesis"
+		"addProsthesis": "Add prosthesis",
+		"greeting": "Hello,\n{{name}}"
 	},
 	"auth": {
 		"alerts": {
@@ -318,6 +319,82 @@
 			}
 		}
 	},
+	"newIncident": {
+		"title": "NEW INCIDENT",
+		"time": "TIME",
+		"type": "INCIDENT TYPE:",
+		"selectType": "Select incident type",
+		"circumstances": "CIRCUMSTANCES:",
+		"description": "DESCRIPTION:",
+		"descriptionPlaceholder": "Briefly describe the incident...",
+		"intensity": "PAIN INTENSITY:",
+		"relatedProsthesis": "RELATED PROSTHESIS:",
+		"component": "COMPONENT:",
+		"schema": "DIAGRAM",
+		"addFile": "ADD FILE",
+		"fileDescription": "ADD PHOTOS, DOCUMENTATION AND OTHER FILES RELATED TO THE INCIDENT",
+		"save": "SAVE INCIDENT",
+		"saving": "SAVING...",
+		"none": "-",
+		"types": {
+			"pain": "Pain",
+			"abrasion": "Abrasion",
+			"poorFit": "Loose or poor fit",
+			"phantomPain": "Phantom pain",
+			"mechanicalFailure": "Mechanical failure"
+		},
+		"activities": {
+			"walking": "Walking",
+			"running": "Running",
+			"sitting": "Sitting",
+			"standing": "Standing",
+			"sport": "Sport"
+		},
+		"componentTypes": {
+			"socket": "Socket",
+			"knee": "Knee",
+			"foot": "Foot",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Other component"
+		},
+		"schemaViews": {
+			"side": "Side view",
+			"topInside": "Top view (inside)",
+			"frontBack": "Front / Back",
+			"topOutside": "Top view (outside)"
+		},
+		"loadError": "Could not load incident form data.",
+		"microphonePermission": "Allow microphone access to record a voice note.",
+		"recordingError": "Could not record the voice note.",
+		"recording": "Recording: {{seconds}} s",
+		"voiceNoteAdded": "Voice note added",
+		"remove": "Remove",
+		"photoLimitTitle": "Photo limit",
+		"photoLimit": "You can add up to 3 photos to one incident.",
+		"fileError": "Could not save the file to device storage.",
+		"cameraPermission": "Allow camera access to take a photo.",
+		"galleryPermission": "Allow photo library access to select a photo.",
+		"choosePhotoSource": "Choose photo source",
+		"camera": "Camera",
+		"gallery": "Gallery",
+		"removePhoto": "Remove photo {{number}}",
+		"customValuePlaceholder": "Add custom value",
+		"duplicateValue": "This value is already on the list.",
+		"noProsthesis": "Add a prosthesis before saving an incident.",
+		"savedTitle": "Saved",
+		"savedMessage": "The incident has been saved.",
+		"saveError": "Could not save the incident to the database.",
+		"validation": {
+			"prosthesis": "Select the prosthesis related to the incident.",
+			"type": "Select the incident type.",
+			"description": "Enter an incident description.",
+			"intensity": "Set the problem intensity from 1 to 10.",
+			"point": "Mark the affected area on the diagram.",
+			"time": "Enter time in HH:MM format.",
+			"futureDate": "The incident date and time cannot be set in the future."
+		}
+	},
 	"prosthesisDetails": {
 		"title": "MY PROSTHESIS",
 		"side": "SIDE",
@@ -366,7 +443,40 @@
 			},
 			"reset": "Reset",
 			"apply": "Apply"
-		}
+		},
+		"warranty": "Warranty",
+		"componentTypes": {
+			"socket": "Socket",
+			"knee": "Knee",
+			"foot": "Foot",
+			"liner": "Liner",
+			"adapter": "Adapter",
+			"other": "Other component"
+		},
+		"status": "STATUS",
+		"all": "All",
+		"active": "Active",
+		"historical": "Historical",
+		"category": "COMPONENT CATEGORY",
+		"installationDate": "INSTALLATION DATE",
+		"warrantyDate": "WARRANTY DATE",
+		"from": "From: YYYY-MM-DD",
+		"to": "To: YYYY-MM-DD",
+		"editProsthesis": "Edit prosthesis",
+		"addIncident": "ADD INCIDENT",
+		"photosAndFiles": "PHOTOS AND FILES",
+		"addFile": "ADD NEW FILE",
+		"filesHint": "ADD PHOTOS, DOCUMENTATION, 3D SCANS AND OTHER FILES RELATED TO THE PROSTHESIS HERE",
+		"addComponentQuestion": "Choose how to add a component",
+		"fromCreator": "From creator",
+		"fromFile": "From file",
+		"location": "Location",
+		"startDate": "Since",
+		"description": "Description",
+		"showDescription": "Show description",
+		"hideDescription": "Hide description",
+		"editSaveError": "Could not save prosthesis changes.",
+		"noMatchingComponents": "No components match the selected filters."
 	},
 	"newComponent": {
 		"newComponent": "New component",
@@ -512,5 +622,18 @@
 			"passwordMismatch": "Passwords must match.",
 			"passwordInvalid": "Password does not meet the security requirements."
 		}
+	},
+	"componentEdit": {
+		"title": "EDIT COMPONENT",
+		"name": "Name",
+		"manufacturer": "Manufacturer",
+		"model": "Model",
+		"warrantyUntil": "Warranty until",
+		"save": "Save",
+		"notFound": "Component not found.",
+		"saveError": "Could not save the component.",
+		"loadError": "Failed to load component data.",
+		"selectDate": "Select date",
+		"clearDate": "Clear date"
 	}
 }

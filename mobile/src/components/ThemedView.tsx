@@ -117,9 +117,7 @@ const styles = StyleSheet.create({
 })
 
 const sizes = StyleSheet.create({
-	none: {
-		flex: 1,
-	},
+	none: {},
 	tag: {
 		alignSelf: "flex-start",
 		borderRadius: 9999,

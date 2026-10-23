@@ -26,7 +26,12 @@ export type CreateComponentInput = {
 	remindWarrantyPush?: boolean
 }
 
-export type UpdateComponentInput = Partial<Omit<CreateComponentInput, "prosthesisId">>
+export type UpdateComponentInput = Partial<
+	Omit<CreateComponentInput, "prosthesisId" | "description" | "warrantyEndDate">
+> & {
+	description?: string | null
+	warrantyEndDate?: string | null
+}
 
 export async function createComponent(input: CreateComponentInput) {
 	const now = new Date().toISOString()

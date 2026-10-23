@@ -21,15 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     defaults:
       run:
         working-directory: mobile
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-    
+
       - name: Validate version format
         env:
           VERSION: ${{ inputs.version }}
@@ -38,7 +38,7 @@ jobs:
             echo "::error::Version must look like 1.0.0 (got '$VERSION')"
             exit 1
           fi
-      
+
       - name: Create .env for selected environment
         env:
           ENVIRONMENT: ${{ inputs.environment }}
@@ -51,7 +51,7 @@ jobs:
             URL="$API_URL_PREVIEW"
           fi
 
-          if [ -z "$URL" ]; then 
+          if [ -z "$URL" ]; then
             echo "::error::API URL variable for '$ENVIRONMENT' is empty or missing"
             exit 1
           fi
@@ -59,14 +59,14 @@ jobs:
           echo "EXPO_PUBLIC_API_URL=$URL" > .env
           cp .env .env.production
           echo "Created .env for $ENVIRONMENT (API URL: $URL)"
-    
+
       - name: Setup node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #7.1.0
-        with: 
+        with:
           node-version: '20.19.4'
           cache: 'npm'
           cache-dependency-path: mobile/package-lock.json
-      
+
       - name: Set app version
         env:
           VERSION: ${{ inputs.version }}
@@ -82,7 +82,7 @@ jobs:
           eas-version: latest
           packager: npm
           token: ${{ secrets.EXPO_TOKEN }}
-    
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
@@ -98,7 +98,7 @@ jobs:
 
           echo "Building with EAS profile: $PROFILE"
           eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > build-result.json
-          cat build-result.json 
+          cat build-result.json
 
       - name: Download APK from EAS
         id: apk
@@ -127,7 +127,7 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
-        with: 
+        with:
           tag_name: ${{ steps.apk.outputs.tag }}
           name: Mobile ${{ steps.apk.outputs.tag }}
           files: ${{ steps.apk.outputs.file }}
