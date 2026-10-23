@@ -288,11 +288,7 @@ export default function AccumulatedFundsScreen() {
 								leftChild={<IconHandCoin color={colors.bg_0} width={30} height={30} />}
 								centerChild={<ThemedText variant="H1" tx="funding.addDeposit" colorName="bg_0" />}
 								rightChild={<IconPlus color={colors.bg_0} width={18} height={18} />}
-							>
-								<ThemedText colorName="accent_base_2" style={{ paddingHorizontal: 10 }}>
-									+
-								</ThemedText>
-							</ThemedView>
+							/>
 						</View>
 					)}
 				</View>
@@ -308,15 +304,6 @@ const getStyles = (colors: ThemeColors) =>
 			flexDirection: "column",
 			marginVertical: 15,
 			height: 130,
-		},
-		carouselCard: {
-			width: "100%",
-		},
-		summaryHeader: {
-			flexDirection: "row",
-			width: "100%",
-			justifyContent: "space-between",
-			alignItems: "flex-start",
 		},
 		progressBarBackground: {
 			height: 8,

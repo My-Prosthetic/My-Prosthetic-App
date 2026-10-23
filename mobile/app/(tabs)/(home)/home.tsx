@@ -287,46 +287,10 @@ const getStyles = (colors: ThemeColors) => {
 			paddingRight: 40,
 			marginBottom: 15,
 		},
-		logoImage: {
-			width: 120,
-			height: 120,
-			marginBottom: 10,
-		},
-		addProsthesisCircle: {
-			width: 82,
-			height: 82,
-			borderRadius: 41,
-			backgroundColor: colors.accent_base,
-			justifyContent: "center",
-			alignItems: "center",
-			marginBottom: 24,
-		},
-		cardContainer: {
-			flexDirection: "column",
-			borderRadius: 16,
-			marginTop: 20,
-			width: "100%",
-			paddingVertical: 18,
-			alignItems: "center",
-		},
-		headerText: {
-			textAlign: "center",
-			marginBottom: 12,
-		},
-		listContainer: {
-			width: "100%",
-		},
 		activityRow: {
 			width: "100%",
 			minHeight: 44,
 			backgroundColor: "transparent",
-		},
-		timelineContainer: {
-			width: 16,
-			height: 25,
-			alignItems: "center",
-			justifyContent: "center",
-			position: "relative",
 		},
 		timelineDot: {
 			width: 12,
