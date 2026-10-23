@@ -81,9 +81,7 @@ export default function TabsLayout() {
 				screenOptions={{
 					headerShown: false,
 					tabBarStyle: {
-						height: 80,
-						paddingBottom: 0,
-						marginBottom: insets.bottom - 1,
+						height: 80 + insets.bottom,
 						borderTopLeftRadius: 15,
 						borderTopRightRadius: 15,
 						backgroundColor: colors.bg_0,
