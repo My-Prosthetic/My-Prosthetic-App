@@ -116,7 +116,8 @@ export default function NewProsthesisScreen() {
 				side,
 				limbType: limb,
 				amputationLevel,
-				startOfUsageDate: startOfUsageDate ? formatDateForStorage(startOfUsageDate) : null,
+				description: notes,
+				startedAt: startOfUsageDate ? formatDateForStorage(startOfUsageDate) : null,
 				replacementDate: replacementDate ? formatDateForStorage(replacementDate) : null,
 			})
 

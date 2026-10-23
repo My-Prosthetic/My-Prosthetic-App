@@ -108,7 +108,6 @@ export default function HomeScreen() {
 	//TODO
 	const onHandleShowFullHistory = () => {}
 	const onHandleAddMeasurement = () => {}
-	const onHandleAddIncident = () => {}
 	const onHandleMyFiles = () => {}
 
 	//MOCKS
@@ -206,7 +205,7 @@ export default function HomeScreen() {
 					<ThemedView
 						variant="wide"
 						colorName="blue2"
-						onPress={onHandleAddIncident}
+						onPress={() => router.push("./incident/new")}
 						leftChild={<IconEventLive color={colors.bg_0} />}
 						centerChild={<ThemedText tx="home.addIncident" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} />}

@@ -32,6 +32,19 @@
 			"expo-sqlite",
 			"expo-font",
 			"expo-splash-screen",
+			[
+				"expo-audio",
+				{
+					"microphonePermission": "Allow MyProsthetics to record voice notes."
+				}
+			],
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "Allow MyProsthetics to access photos attached to incidents.",
+					"cameraPermission": "Allow MyProsthetics to use the camera for incident documentation."
+				}
+			],
 			"expo-secure-store"
 		],
 		"extra": {

@@ -8,6 +8,7 @@ export interface ThemeColors {
 	primary_base_4: string
 	secondary_base_0c: string
 	secondary_base: string
+	secondary_base_2: string
 	secondary_base_3: string
 	tertiary_base_1: string
 	tertiary_base_2: string
@@ -17,6 +18,10 @@ export interface ThemeColors {
 	accent_base_2: string
 	warning: string
 	false: string
+	false_1: string
+	false_2: string
+	neutral_text: string
+	neutral_gray: string
 	true: string
 	bg_0: string
 	bg_1: string
@@ -36,6 +41,7 @@ export const lightTheme: ThemeColors = {
 	primary_base_4: "#CDD5E9",
 	secondary_base_0c: "#1967C8",
 	secondary_base: "#4990E8",
+	secondary_base_2: "#92BCF1",
 	secondary_base_3: "#B6D3F6",
 	tertiary_base_1: "#C1E5FB",
 	tertiary_base_2: "#D6EEFC",
@@ -45,6 +51,10 @@ export const lightTheme: ThemeColors = {
 	accent_base_2: "#FAF9EE",
 	warning: "#ED9D1D",
 	false: "#B51932",
+	false_1: "#C0392B",
+	false_2: "#FF6B6B",
+	neutral_text: "#000000",
+	neutral_gray: "#A4A4A4",
 	true: "#15A959",
 	bg_0: "#FAFCFF",
 	bg_1: "#F1F6FB",
@@ -65,6 +75,7 @@ export const highContrastTheme: ThemeColors = {
 	primary_base_4: "#E6EDF8",
 	secondary_base_0c: "#0047AB",
 	secondary_base: "#0C68E9",
+	secondary_base_2: "#7AB0F3",
 	secondary_base_3: "#CCE4FF",
 	tertiary_base_1: "#A3D9FF",
 	tertiary_base_2: "#E0F2FE",
@@ -74,6 +85,10 @@ export const highContrastTheme: ThemeColors = {
 	accent_base_2: "#FFFFFF",
 	warning: "#FF8C00",
 	false: "#B51932",
+	false_1: "#C0392B",
+	false_2: "#FF6B6B",
+	neutral_text: "#000000",
+	neutral_gray: "#7A7A7A",
 	true: "#15A959",
 	bg_0: "#FAFCFF",
 	bg_1: "#F1F6FB",

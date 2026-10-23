@@ -4,6 +4,7 @@ import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
+import { Roboto_500Medium } from "@expo-google-fonts/roboto"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
@@ -47,7 +48,7 @@ function RootNavigationLayout({
 			.catch((error: unknown) => {
 				if (isMounted) {
 					setCatalogueError(
-						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
+						error instanceof Error ? error : new Error("Nieznany b┼é─ůd seedowania katalogu")
 					)
 				}
 			})
@@ -79,7 +80,7 @@ function RootNavigationLayout({
 	if (migrationError) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
+				<Text>B┼é─ůd migracji bazy danych: {migrationError.message}</Text>
 			</View>
 		)
 	}
@@ -87,7 +88,7 @@ function RootNavigationLayout({
 	if (catalogueError) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>Błąd inicjalizacji katalogu producentów: {catalogueError.message}</Text>
+				<Text>B┼é─ůd inicjalizacji katalogu producent├│w: {catalogueError.message}</Text>
 			</View>
 		)
 	}
@@ -132,6 +133,8 @@ export default function RootLayout() {
 		"Montserrat-Bold": require("@/assets/fonts/Montserrat/Montserrat-Bold.ttf"),
 		"Montserrat-Regular": require("@/assets/fonts/Montserrat/Montserrat-Regular.ttf"),
 		"Montserrat-SemiBold": require("@/assets/fonts/Montserrat/Montserrat-SemiBold.ttf"),
+		"Inter-Bold": require("@/assets/fonts/Inter/Inter_18pt-Bold.ttf"),
+		Roboto_500Medium,
 	})
 
 	return (

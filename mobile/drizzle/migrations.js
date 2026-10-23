@@ -8,7 +8,8 @@ import m0003 from "./0003_tidy_pepper_potts.sql"
 import m0004 from "./0004_brave_mad_thinker.sql"
 import m0005 from "./0005_tiny_mockingbird.sql"
 import m0006 from "./0006_long_spot.sql"
-import m0007 from "./0007_freezing_corsair.sql"
+import m0007 from "./0007_known_pete_wisdom.sql"
+import m0008 from "./0008_awesome_black_tarantula.sql"
 
 export default {
 	journal,
@@ -21,5 +22,6 @@ export default {
 		m0005,
 		m0006,
 		m0007,
+		m0008,
 	},
 }

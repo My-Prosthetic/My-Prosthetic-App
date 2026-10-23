@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "90f19c4e-08ae-435d-8e1a-c2dc66700872",
+	"id": "3fdce870-3765-4824-9999-3b877522af29",
 	"prevId": "84bdd57b-1b78-4c03-a5ed-1e80f8717ef9",
 	"tables": {
 		"prostheses": {
@@ -42,8 +42,15 @@
 					"notNull": true,
 					"autoincrement": false
 				},
-				"start_of_usage_date": {
-					"name": "start_of_usage_date",
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"started_at": {
+					"name": "started_at",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": false,
