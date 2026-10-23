@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { View, StyleSheet, ScrollView, Dimensions } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
-import { useRouter } from "expo-router"
-
+import { useFocusEffect, useRouter } from "expo-router"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-import { getLatestUser } from "@/db/repositories/userRepository"
 import { useAuth } from "@/context/AuthContext"
 import { Carousel } from "@/src/components/Carousel"
 import { formatDateBadge } from "@/src/utils/dateFormatter"
@@ -20,12 +18,16 @@ import IconMagnifyingGlass from "@/assets/icons/magnifying_glass_dolar.svg"
 import IconFile from "@/assets/icons/file.svg"
 import IconLegLogo from "@/assets/icons/leg_logo.svg"
 
-//TODO widok protezy jako component, generowany na podstawie aktualnie zaznaczonej protezy, z możliwością przesuwania między nimi
-//TODO zdefiniowaćtype User do userList i userName -> userLogged typu <User>
+import { getLatestUser } from "@/db/repositories/userRepository"
+
+import { getAllProstheses, Prosthesis } from "@/db/repositories/prosthesisRepository"
+
+//TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
 
 export default function HomeScreen() {
 	const [currentDate, setCurrentDate] = useState(() => new Date())
 	const [userName, setUserName] = useState<string>("")
+	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const router = useRouter()
 
 	const { i18n } = useTranslation()
@@ -33,6 +35,22 @@ export default function HomeScreen() {
 	const { status } = useAuth()
 
 	const styles = getStyles(colors)
+
+	useFocusEffect(
+		useCallback(() => {
+			let isActive = true
+
+			void getAllProstheses()
+				.then((data) => {
+					if (isActive) setProstheses(data)
+				})
+				.catch((error) => console.error("Błąd odczytu protez:", error))
+
+			return () => {
+				isActive = false
+			}
+		}, [])
+	)
 
 	useEffect(() => {
 		const timer = setInterval(() => setCurrentDate(new Date()), 60_000)
@@ -59,33 +77,33 @@ export default function HomeScreen() {
 		}
 	}, [])
 
-	const renderAddProsthesis = () => {
-		return (
-			<ThemedView
-				colorName="blue2"
-				style={styles.prostheticCard}
-				onPress={() => router.push("/prosthesis/new")}
-			>
-				<View style={styles.cardIcon}>
-					<IconPlus color={colors.blue0} width={70} height={70} />
-				</View>
-				<ThemedText tx="home.addProsthesis" variant="H2" colorName="bg_0" />
-			</ThemedView>
-		)
-	}
+	const renderAddProsthesis = () => (
+		<ThemedView
+			colorName="blue2"
+			style={styles.prostheticCard}
+			onPress={() => router.push("/prosthesis/new")}
+		>
+			<View style={styles.cardIcon}>
+				<IconPlus color={colors.blue0} width={70} height={70} />
+			</View>
+			<ThemedText tx="home.addProsthesis" variant="H2" colorName="bg_0" />
+		</ThemedView>
+	)
 
-	const renderProsthesisCard = (name: string) => {
-		return (
-			<ThemedView colorName="blue2" style={styles.prostheticCard}>
-				<View style={styles.cardIcon}>
-					<IconLegLogo color={colors.blue0} />
-				</View>
-				<ThemedText variant="H2" colorName="bg_0">
-					{name}
-				</ThemedText>
-			</ThemedView>
-		)
-	}
+	const renderProsthesisCard = (prosthesis: Prosthesis) => (
+		<ThemedView
+			colorName="blue2"
+			style={styles.prostheticCard}
+			onPress={() => router.push(`/prosthesis/${prosthesis.id}/`)}
+		>
+			<View style={styles.cardIcon}>
+				<IconLegLogo color={colors.blue0} />
+			</View>
+			<ThemedText variant="H2" colorName="bg_0">
+				{prosthesis.name}
+			</ThemedText>
+		</ThemedView>
+	)
 
 	//TODO
 	const onHandleShowFullHistory = () => {}
@@ -160,9 +178,8 @@ export default function HomeScreen() {
 					</ThemedView>
 
 					{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
-					{/* TODO real data */}
 					<Carousel
-						items={["Codzienna"]}
+						items={prostheses}
 						renderItem={renderProsthesisCard}
 						renderPlus={renderAddProsthesis}
 					/>

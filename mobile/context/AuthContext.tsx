@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 		if (token) {
 			try {
-				await authService.logout(token)
+				await authService.logout()
 			} catch (error) {
 				console.warn("[Auth] Remote logout failed; continuing with local logout.", error)
 			}

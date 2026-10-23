@@ -1,0 +1,135 @@
+name: Release Mobile
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (SemVer), e.g. 1.0.0'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
+        default: preview
+jobs:
+  release:
+    name: Build and release (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    defaults:
+      run:
+        working-directory: mobile
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+    
+      - name: Validate version format
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must look like 1.0.0 (got '$VERSION')"
+            exit 1
+          fi
+      
+      - name: Create .env for selected environment
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          API_URL_PREVIEW: ${{ vars.API_URL_PREVIEW }}
+          API_URL_PRODUCTION: ${{ vars.API_URL_PRODUCTION }}
+        run: |
+          if [ "$ENVIRONMENT" = "production" ]; then
+            URL="$API_URL_PRODUCTION"
+          else
+            URL="$API_URL_PREVIEW"
+          fi
+
+          if [ -z "$URL" ]; then 
+            echo "::error::API URL variable for '$ENVIRONMENT' is empty or missing"
+            exit 1
+          fi
+
+          echo "EXPO_PUBLIC_API_URL=$URL" > .env
+          cp .env .env.production
+          echo "Created .env for $ENVIRONMENT (API URL: $URL)"
+    
+      - name: Setup node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #7.1.0
+        with: 
+          node-version: '20.19.4'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+      
+      - name: Set app version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          jq -e '.expo' app.json > /dev/null || { echo "::error::app.json has no 'expo' key"; exit 1; }
+          jq --arg v "$VERSION" '.expo.version = $v' app.json > app.json.tmp
+          mv app.json.tmp app.json
+          echo "App version set to $(jq -r '.expo.version' app.json)"
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@eab7a230208c952974db8c3245cfd78402c7b385 #9.0.0
+        with:
+          eas-version: latest
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+    
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build with EAS
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          if [ "$ENVIRONMENT" = "production" ]; then
+            PROFILE="production-apk"
+          else
+            PROFILE="preview"
+          fi
+
+          echo "Building with EAS profile: $PROFILE"
+          eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > build-result.json
+          cat build-result.json 
+
+      - name: Download APK from EAS
+        id: apk
+        env:
+            VERSION: ${{ inputs.version }}
+            ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          URL=$(jq -r '.[0].artifacts.buildUrl' build-result.json)
+          if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+            echo "::error::No build URL in build-result.json (did the EAS build fail?)"
+            exit 1
+          fi
+
+          FILE="my-prosthetic-app-v${VERSION}-${ENVIRONMENT}.apk"
+          curl -fL "$URL" -o "$FILE"
+
+          if [ "$ENVIRONMENT" = "production" ]; then
+            TAG="v${VERSION}"
+          else
+            TAG="v${VERSION}-preview.${GITHUB_RUN_NUMBER}"
+          fi
+
+          echo "file=mobile/$FILE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          ls -lh "$FILE"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
+        with: 
+          tag_name: ${{ steps.apk.outputs.tag }}
+          name: Mobile ${{ steps.apk.outputs.tag }}
+          files: ${{ steps.apk.outputs.file }}
+          prerelease: ${{ inputs.environment != 'production' }}
+          generate_release_notes: true
