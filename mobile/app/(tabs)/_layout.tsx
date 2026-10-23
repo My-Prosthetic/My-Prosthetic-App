@@ -18,7 +18,7 @@ export default function TabsLayout() {
 	const { colors } = useTheme()
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
-	const segments = useSegments()
+	const segments = useSegments() as string[]
 	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
 
 	const ICONS = {
