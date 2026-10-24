@@ -149,8 +149,9 @@ export function DropdownSelect<T>({
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+
+	const styles = StyleSheet.create({
 		wrapper: {
 			gap: 8,
 			zIndex: 2,
@@ -211,3 +212,5 @@ const getStyles = (colors: ThemeColors) =>
 			justifyContent: "center",
 		},
 	})
+    return styles 
+}

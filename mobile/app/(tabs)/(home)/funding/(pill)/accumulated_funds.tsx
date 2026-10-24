@@ -257,8 +257,8 @@ export default function AccumulatedFundsScreen() {
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
 			paddingTop: 10,
@@ -308,3 +308,6 @@ const getStyles = (colors: ThemeColors) =>
 			borderBottomColor: colors.primary_base_3,
 		},
 	})
+
+	return styles
+}

@@ -88,8 +88,8 @@ export function WaveFormLayout({
 	)
 }
 
-const getStyles = (colors: ThemeColors, insets: EdgeInsets) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors, insets: EdgeInsets) => {
+	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
 			backgroundColor: colors.primary_base,
@@ -119,3 +119,5 @@ const getStyles = (colors: ThemeColors, insets: EdgeInsets) =>
 			overflow: "hidden",
 		},
 	})
+	return styles
+}

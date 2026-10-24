@@ -229,7 +229,7 @@ export default function HomeScreen() {
 }
 
 const getStyles = (colors: ThemeColors) => {
-	return StyleSheet.create({
+	const styles = StyleSheet.create({
 		scrollView: {
 			flex: 1,
 			backgroundColor: colors.tertiary_base_2,
@@ -333,4 +333,5 @@ const getStyles = (colors: ThemeColors) => {
 			color: colors.primary_base,
 		},
 	})
+	return styles
 }
