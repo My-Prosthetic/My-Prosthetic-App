@@ -49,6 +49,7 @@ export const ThemedText = ({
 	)
 }
 
+/* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
 const typography = StyleSheet.create({
 	title: {
 		fontFamily: "Afacad-Medium",
@@ -110,3 +111,4 @@ const typography = StyleSheet.create({
 		textAlignVertical: "center",
 	},
 })
+/* eslint-enable react-native/no-unused-styles */
