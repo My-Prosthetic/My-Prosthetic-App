@@ -118,9 +118,7 @@ const styles = StyleSheet.create({
 
 /* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
 const sizes = StyleSheet.create({
-	none: {
-		flex: 1,
-	},
+	none: {},
 	tag: {
 		alignSelf: "flex-start",
 		borderRadius: 9999,
