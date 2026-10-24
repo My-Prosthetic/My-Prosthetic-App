@@ -28,6 +28,7 @@ import IconHand from "@/assets/icons/save-money-dollar.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronDown from "@/assets/icons/chevron-down.svg"
 import IconTrash from "@/assets/icons/trash-bin.svg"
+import { ThemedHeader } from "../ThemedHeader"
 
 interface DepositFormProps {
 	mode: "create" | "edit"
@@ -180,8 +181,8 @@ export function DepositForm({ mode }: DepositFormProps) {
 
 	if (isLoading || (mode === "edit" && !deposit)) {
 		return (
-			<ThemedView colorName="tertiary_base_2" variant="background" style={styles.loading}>
-				<ActivityIndicator color={colors.primary_base} />
+			<ThemedView colorName="bg_0" variant="background" style={styles.loading}>
+				<ActivityIndicator color={colors.blue2} />
 			</ThemedView>
 		)
 	}
@@ -189,6 +190,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 	return (
 		<ScrollView>
 			<ThemedView colorName="bg_1" variant="background" style={styles.screen}>
+				<ThemedHeader tx={mode === "create" ? "funding.addFundsTitle" : "funding.editFundsTitle"} />
 				<View style={{ paddingBottom: 40 }}>
 					<View style={styles.formSection}>
 						<ThemedText
@@ -319,7 +321,7 @@ export function DepositForm({ mode }: DepositFormProps) {
 
 const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
-		screen: { justifyContent: "flex-start" },
+		screen: { justifyContent: "flex-start", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },

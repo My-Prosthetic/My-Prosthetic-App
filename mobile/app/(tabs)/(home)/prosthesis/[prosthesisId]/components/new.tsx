@@ -195,9 +195,9 @@ export default function NewComponentScreen() {
 	}, [prosthesis?.limbType, t])
 
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_1">
-			<ThemedHeader tx="newComponent.newComponent" onBack={router.back} />
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+			<ThemedView variant="background" colorName="tertiary_base_1">
+				<ThemedHeader tx="newComponent.newComponent" onBack={router.back} />
 				{/* Kategoria podzespołu */}
 				<View style={[styles.fieldGroup, { paddingTop: 0, paddingBottom: 10 }]}>
 					<ThemedText
@@ -512,8 +512,7 @@ export default function NewComponentScreen() {
 						{isSaving ? t("newComponent.saving") : t("newComponent.save")}
 					</ThemedText>
 				</ThemedView>
-			</ScrollView>
-
+			</ThemedView>
 			<CustomOptionDialogModal
 				visible={customOptionType !== null}
 				type={customOptionType}
@@ -544,7 +543,7 @@ export default function NewComponentScreen() {
 				onSave={setExpectedExchangeDate}
 				variant="calendar"
 			/>
-		</ThemedView>
+		</ScrollView>
 	)
 }
 

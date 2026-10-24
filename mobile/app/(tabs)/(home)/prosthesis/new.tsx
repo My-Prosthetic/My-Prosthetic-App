@@ -145,12 +145,12 @@ export default function NewProsthesisScreen() {
 	}
 
 	return (
-		<ThemedView colorName="bg_1" style={styles.screen}>
-			<ScrollView
-				contentContainerStyle={styles.content}
-				showsVerticalScrollIndicator={false}
-				keyboardShouldPersistTaps="handled"
-			>
+		<ScrollView
+			contentContainerStyle={styles.content}
+			showsVerticalScrollIndicator={false}
+			keyboardShouldPersistTaps="handled"
+		>
+			<ThemedView colorName="bg_1" variant="background">
 				{/* HEADER */}
 				<ThemedHeader tx="newProsthesis.title" />
 
@@ -343,21 +343,17 @@ export default function NewProsthesisScreen() {
 							: (replacementDate ?? new Date())
 					}
 				/>
-			</ScrollView>
-		</ThemedView>
+			</ThemedView>
+		</ScrollView>
 	)
 }
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-	},
 	content: {
 		paddingBottom: 28,
 	},
 	section: {
 		width: "100%",
-		paddingHorizontal: 24,
 		marginTop: 18,
 	},
 	sectionLabel: {

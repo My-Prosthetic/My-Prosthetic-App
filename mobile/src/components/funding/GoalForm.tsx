@@ -16,6 +16,7 @@ import {
 } from "@/db/repositories/goalRepository"
 
 import IconTrash from "@/assets/icons/trash-bin.svg"
+import { ThemedHeader } from "../ThemedHeader"
 
 interface GoalFormProps {
 	mode: "create" | "edit"
@@ -155,110 +156,113 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 	if (isLoading || (mode === "edit" && !goal)) {
 		return (
-			<ThemedView colorName="tertiary_base_2" variant="background" style={styles.loading}>
-				<ActivityIndicator color={colors.primary_base} />
+			<ThemedView colorName="bg_0" variant="background" style={styles.loading}>
+				<ActivityIndicator color={colors.blue2} />
 			</ThemedView>
 		)
 	}
 
 	return (
-		<ThemedView colorName="bg_1" variant="background" style={styles.screen}>
-			<View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="H1"
-						colorName="blue2"
-						style={styles.fieldLabel}
-						tx="funding.goalName"
-					/>
-					<ThemedInput
-						variant="regular"
-						value={name}
-						onChangeText={setName}
-						placeholder={t("funding.goalNamePlaceholder")}
-						viewStyle={styles.input}
-					/>
+		<ThemedView colorName="bg_1" variant="background">
+			<ThemedHeader tx={mode === "create" ? "funding.addGoalTitle" : "funding.editGoalTitle"} />
+			<View style={styles.screen}>
+				<View>
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.goalName"
+						/>
+						<ThemedInput
+							variant="regular"
+							value={name}
+							onChangeText={setName}
+							placeholder={t("funding.goalNamePlaceholder")}
+							viewStyle={styles.input}
+						/>
+					</View>
+
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.goalAmount"
+						/>
+						<ThemedInput
+							variant="money"
+							currency={currency}
+							value={amount}
+							onChangeText={setAmount}
+							keyboardType="decimal-pad"
+							placeholder="0"
+							viewStyle={styles.input}
+						/>
+					</View>
+
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.additionalNote"
+						/>
+						<ThemedInput
+							variant="note"
+							value={note}
+							onChangeText={setNote}
+							placeholder={t("funding.notePlaceholder")}
+							multiline
+							viewStyle={styles.input}
+						/>
+					</View>
 				</View>
 
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="H1"
-						colorName="blue2"
-						style={styles.fieldLabel}
-						tx="funding.goalAmount"
-					/>
-					<ThemedInput
-						variant="money"
-						currency={currency}
-						value={amount}
-						onChangeText={setAmount}
-						keyboardType="decimal-pad"
-						placeholder="0"
-						viewStyle={styles.input}
-					/>
-				</View>
-
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="H1"
-						colorName="blue2"
-						style={styles.fieldLabel}
-						tx="funding.additionalNote"
-					/>
-					<ThemedInput
-						variant="note"
-						value={note}
-						onChangeText={setNote}
-						placeholder={t("funding.notePlaceholder")}
-						multiline
-						viewStyle={styles.input}
-					/>
-				</View>
-			</View>
-
-			<View style={styles.actions}>
-				{mode === "create" ? (
+				<View style={styles.actions}>
+					{mode === "create" ? (
+						<ThemedView
+							variant={"narrow"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"funding.addGoalAction"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+						/>
+					) : (
+						<ThemedView
+							variant={"narrow"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"common.save"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+						/>
+					)}
 					<ThemedView
-						variant={"narrow"}
-						colorName="blue2"
-						onPress={isSubmitting ? undefined : handleSave}
-						centerChild={
-							<ThemedText
-								variant="H1"
-								colorName="bg_0"
-								tx={"funding.addGoalAction"}
-								numberOfLines={1}
-								adjustsFontSizeToFit
-							/>
-						}
-					/>
-				) : (
-					<ThemedView
-						variant={"narrow"}
-						colorName="blue2"
-						onPress={isSubmitting ? undefined : handleSave}
-						centerChild={
-							<ThemedText
-								variant="H1"
-								colorName="bg_0"
-								tx={"common.save"}
-								numberOfLines={1}
-								adjustsFontSizeToFit
-							/>
-						}
-					/>
-				)}
-				<ThemedView
-					onPress={mode === "edit" ? handleDelete : () => router.back()}
-					style={{ flexDirection: "row", gap: 10 }}
-				>
-					<IconTrash color={colors.false} />
-					<ThemedText
-						tx={mode === "edit" ? "common.delete" : "common.cancel"}
-						variant="H1"
-						colorName="false"
-					/>
-				</ThemedView>
+						onPress={mode === "edit" ? handleDelete : () => router.back()}
+						style={{ flexDirection: "row", gap: 10 }}
+					>
+						<IconTrash color={colors.false} />
+						<ThemedText
+							tx={mode === "edit" ? "common.delete" : "common.cancel"}
+							variant="H1"
+							colorName="false"
+						/>
+					</ThemedView>
+				</View>
 			</View>
 		</ThemedView>
 	)
@@ -266,7 +270,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
-		screen: { justifyContent: "space-between" },
+		screen: { justifyContent: "space-between", flexDirection: "column", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },

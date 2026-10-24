@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 15,
 		borderBottomRightRadius: 15,
 		paddingBottom: 20,
-		width: "100%",
+		width: "119%",
 		marginBottom: 5,
 	},
 	container: {

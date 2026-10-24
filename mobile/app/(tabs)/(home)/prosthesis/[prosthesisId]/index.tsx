@@ -78,51 +78,34 @@ export default function ProsthesisDetailsScreen() {
 	}
 
 	return (
-		<ThemedView colorName="tertiary_base_1" variant="background">
-			{isLoading ? (
-				<View style={styles.centered}>
-					<ActivityIndicator size="large" color={colors.primary_base} />
-				</View>
-			) : !prosthesis ? (
-				<View style={styles.centered}>
-					<ThemedText
-						tx="prosthesisDetails.notFound"
-						variant="subTitle2"
-						colorName="primary_base"
-					/>
-				</View>
-			) : (
-				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<ThemedHeader tx="prosthesisDetails.title" onBack={() => router.back()} />
-					<ThemedView colorName="primary_base">
-						<Ionicons name="body-outline" size={64} color={colors.accent_base} />
-					</ThemedView>
+		<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+			<ThemedView variant="background" colorName="bg_1">
+				<ThemedHeader tx="prosthesisDetails.title" />
+				<ThemedView colorName="primary_base">
+					<Ionicons name="body-outline" size={64} color={colors.accent_base} />
+				</ThemedView>
 
-					<ProsthesisSummary prosthesis={prosthesis} onEdit={() => setEditVisible(true)} />
+				<ProsthesisSummary prosthesis={prosthesis} onEdit={() => setEditVisible(true)} />
 
-					<PrimaryActionRow tx="prosthesisDetails.addIncident" iconName="add" />
+				<PrimaryActionRow tx="prosthesisDetails.addIncident" iconName="add" />
 
-					<ComponentsPanel
-						components={components}
-						onAddComponent={() =>
-							router.push(`/prosthesis/${prosthesisId}/components/newComponent` as any)
-						}
-						onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
-					/>
-
-					<ProsthesisFilesSection />
-				</ScrollView>
-			)}
-
-			{editVisible && (
-				<EditProsthesisModal
-					visible
-					prosthesis={prosthesis}
-					onClose={() => setEditVisible(false)}
-					onSaved={setProsthesis}
+				<ComponentsPanel
+					components={components}
+					onAddComponent={() => router.push(`/prosthesis/${prosthesisId}/components/new` as any)}
+					onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
 				/>
-			)}
-		</ThemedView>
+
+				<ProsthesisFilesSection />
+				{editVisible && (
+					<EditProsthesisModal
+						visible
+						prosthesis={prosthesis}
+						onClose={() => setEditVisible(false)}
+						onSaved={setProsthesis}
+					/>
+				)}
+			</ThemedView>
+		</ScrollView>
 	)
 }
 
@@ -195,9 +178,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	content: {
-		paddingHorizontal: 18,
-		paddingTop: 10,
-		paddingBottom: 110,
+		paddingBottom: 10,
 	},
 	topBar: {
 		flexDirection: "row",

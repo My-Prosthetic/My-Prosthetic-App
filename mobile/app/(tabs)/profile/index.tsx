@@ -132,15 +132,15 @@ export default function ProfileScreen() {
 	const numberOfNewEntries = 1
 
 	return (
-		<ThemedView colorName="bg_1" style={styles.container}>
-			<ScrollView
-				style={styles.scrollView}
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-				nestedScrollEnabled
-				onTouchStart={() => setSelectedConditionId(null)}
-				onScrollBeginDrag={closeExpandableSections}
-			>
+		<ScrollView
+			style={styles.scrollView}
+			contentContainerStyle={styles.scrollContent}
+			showsVerticalScrollIndicator={false}
+			nestedScrollEnabled
+			onTouchStart={() => setSelectedConditionId(null)}
+			onScrollBeginDrag={closeExpandableSections}
+		>
+			<ThemedView colorName="bg_1" variant="background">
 				<View>
 					<ThemedHeader tx="profile.title" />
 					{/* K-Levels */}
@@ -258,8 +258,7 @@ export default function ProfileScreen() {
 						)}
 					</View>
 				</View>
-			</ScrollView>
-
+			</ThemedView>
 			<MedicalProfileModal
 				mode={addMode}
 				conditions={conditions}
@@ -268,14 +267,11 @@ export default function ProfileScreen() {
 				onAddCondition={handleAddCondition}
 				onAddMedication={handleAddMedication}
 			/>
-		</ThemedView>
+		</ScrollView>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
@@ -285,7 +281,6 @@ const styles = StyleSheet.create({
 	},
 	section: {
 		width: "100%",
-		paddingHorizontal: 28,
 		marginBottom: 14,
 	},
 	firstSection: {
@@ -296,7 +291,6 @@ const styles = StyleSheet.create({
 	},
 	utilitiesContainer: {
 		width: "100%",
-		paddingHorizontal: 24,
 		flexDirection: "column",
 		justifyContent: "flex-start",
 	},

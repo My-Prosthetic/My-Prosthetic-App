@@ -17,61 +17,59 @@ export default function FundingTabsLayout() {
 		!pathname.includes("programmes") && !pathname.includes("accumulated_funds")
 
 	return (
-		<>
+		<ThemedView variant="background" colorName="bg_1">
 			<ThemedHeader tx={isProgrammeDetails ? "funding.detailsHeader" : "funding.title"} />
-			<ThemedView variant="background" colorName="bg_1">
-				{!isProgrammeDetails && (
-					<ThemedView colorName="bg_0" borderColor="blue2" style={styles.toggleWrapper}>
-						<ThemedView
-							onPress={() => router.replace("/funding/programmes")}
-							hitslop={{ top: 2, bottom: 2 }}
-							style={[
-								styles.toggleButton,
-								!isAccumulated && {
-									backgroundColor: colors.blue2,
-								},
-							]}
-							accessibilityRole="tab"
-							accessibilityState={{
-								selected: !isAccumulated,
-							}}
-						>
-							<ThemedText
-								tx="funding.availableProgrammes"
-								variant="H5"
-								colorName={!isAccumulated ? "bg_0" : "blue2"}
-								style={{ textAlign: "center" }}
-							/>
-						</ThemedView>
-
-						<ThemedView
-							onPress={() => router.replace("/funding/accumulated_funds")}
-							style={[
-								styles.toggleButton,
-								isAccumulated && {
-									backgroundColor: colors.blue2,
-								},
-							]}
-							accessibilityRole="tab"
-							accessibilityState={{
-								selected: isAccumulated,
-							}}
-						>
-							<ThemedText
-								tx="funding.myFunds"
-								variant="H5"
-								colorName={isAccumulated ? "bg_0" : "blue2"}
-								style={{ textAlign: "center" }}
-							/>
-						</ThemedView>
+			{!isProgrammeDetails && (
+				<ThemedView colorName="bg_0" borderColor="blue2" style={styles.toggleWrapper}>
+					<ThemedView
+						onPress={() => router.replace("/funding/programmes")}
+						hitslop={{ top: 2, bottom: 2 }}
+						style={[
+							styles.toggleButton,
+							!isAccumulated && {
+								backgroundColor: colors.blue2,
+							},
+						]}
+						accessibilityRole="tab"
+						accessibilityState={{
+							selected: !isAccumulated,
+						}}
+					>
+						<ThemedText
+							tx="funding.availableProgrammes"
+							variant="H5"
+							colorName={!isAccumulated ? "bg_0" : "blue2"}
+							style={{ textAlign: "center" }}
+						/>
 					</ThemedView>
-				)}
 
-				<View style={{ flex: 1 }}>
-					<Slot />
-				</View>
-			</ThemedView>
-		</>
+					<ThemedView
+						onPress={() => router.replace("/funding/accumulated_funds")}
+						style={[
+							styles.toggleButton,
+							isAccumulated && {
+								backgroundColor: colors.blue2,
+							},
+						]}
+						accessibilityRole="tab"
+						accessibilityState={{
+							selected: isAccumulated,
+						}}
+					>
+						<ThemedText
+							tx="funding.myFunds"
+							variant="H5"
+							colorName={isAccumulated ? "bg_0" : "blue2"}
+							style={{ textAlign: "center" }}
+						/>
+					</ThemedView>
+				</ThemedView>
+			)}
+
+			<View style={{ flex: 1 }}>
+				<Slot />
+			</View>
+		</ThemedView>
 	)
 }
 
