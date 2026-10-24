@@ -142,14 +142,14 @@ export function KLevelSelector({
 										<ThemedText
 											tx={level.labelKey}
 											variant="H1"
-											colorName="primary_base"
+											colorName="blue2"
 											style={styles.dropdownOptionLabel}
 										/>
 
 										<ThemedText
 											tx={level.descriptionKey}
 											variant="H4"
-											colorName="secondary_base_0c"
+											colorName="blue2"
 											style={styles.dropdownOptionDescription}
 											numberOfLines={2}
 										/>

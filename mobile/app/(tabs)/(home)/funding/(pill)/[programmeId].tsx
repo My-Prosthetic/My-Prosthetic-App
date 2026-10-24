@@ -33,8 +33,8 @@ export default function ProgrammeDetailsScreen() {
 
 	if (!programme) {
 		return (
-			<ThemedView variant="old_wide" colorName="secondary_base" style={styles.notFoundContainer}>
-				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="primary_base" />
+			<ThemedView variant="wide" colorName="bg_1" style={styles.notFoundContainer}>
+				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="blue2" />
 			</ThemedView>
 		)
 	}
