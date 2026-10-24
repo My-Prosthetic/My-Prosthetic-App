@@ -8,11 +8,13 @@ import {
 	StyleProp,
 	ViewStyle,
 } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { ParseKeys } from "i18next"
 import { ThemedText } from "@/src/components/ThemedText"
-import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedView, ThemedViewProps } from "@/src/components/ThemedView"
 import { ThemeColors, useTheme } from "@/context/ThemeContext"
+
+import IconChevronDown from "@/assets/icons/chevron-down.svg"
+import IconSearch from "@/assets/icons/search.svg"
 
 export interface DropdownOption<T> {
 	label: string
@@ -32,6 +34,7 @@ interface DropdownSelectProps<T> {
 	value?: T
 	onChange: (value: T) => void
 	getOptionKey?: (value: T) => string
+	headerStyleProps?: ThemedViewProps
 	search?: string
 	customLast?: CustomLastConfig
 }
@@ -42,6 +45,7 @@ export function DropdownSelect<T>({
 	value,
 	onChange,
 	getOptionKey = (option) => String(option),
+	headerStyleProps,
 	search,
 	customLast,
 }: DropdownSelectProps<T>) {
@@ -62,29 +66,22 @@ export function DropdownSelect<T>({
 		)
 	}, [options, search, query])
 
-	const handleToggleOpen = () => {
-		setIsOpen((prev) => {
-			if (prev) {
-				setQuery("")
-			}
-			return !prev
-		})
-	}
-
 	return (
 		<View style={styles.wrapper}>
-			<Pressable onPress={handleToggleOpen} style={styles.trigger}>
-				<ThemedText variant="main1Button" colorName="primary_base">
+			<ThemedView
+				variant="wide"
+				colorName="bg_0"
+				borderColor="blue1"
+				onPress={() => setIsOpen((open) => !open)}
+				style={[styles.trigger, headerStyleProps]}
+			>
+				<ThemedText variant="H3" colorName="graphite0">
 					{selectedOption?.label ?? placeholder}
 				</ThemedText>
-				<Ionicons
-					name={isOpen ? "chevron-up" : "chevron-down"}
-					size={20}
-					color={colors.primary_base}
-				/>
-			</Pressable>
+				<IconChevronDown color={colors.blue1} />
+			</ThemedView>
 			{isOpen && (
-				<ThemedView colorName="tertiary_base_3" style={styles.menu}>
+				<ThemedView colorName="bg_0" style={styles.menu} borderColor="blue1">
 					<ScrollView
 						nestedScrollEnabled
 						showsVerticalScrollIndicator
@@ -92,12 +89,7 @@ export function DropdownSelect<T>({
 					>
 						{search !== undefined && (
 							<View style={styles.searchContainer}>
-								<Ionicons
-									name="search"
-									size={18}
-									color={colors.primary_base}
-									style={styles.searchIcon}
-								/>
+								<IconSearch color={colors.blue1} width={18} height={18} style={styles.searchIcon} />
 								<TextInput
 									style={styles.searchInput}
 									placeholder={search}
@@ -120,12 +112,9 @@ export function DropdownSelect<T>({
 									}}
 									style={[styles.option, isSelected && styles.selectedOption]}
 								>
-									<ThemedText variant="body1Regular" colorName="primary_base">
+									<ThemedText variant="H3" colorName="graphite0">
 										{option.label}
 									</ThemedText>
-									{isSelected && (
-										<Ionicons name="checkmark" size={18} color={colors.primary_base} />
-									)}
 								</Pressable>
 							)
 						})}
@@ -156,11 +145,8 @@ const getStyles = (colors: ThemeColors) =>
 			zIndex: 2,
 		},
 		trigger: {
-			height: 50,
-			borderWidth: 1,
-			borderColor: colors.primary_base_2,
-			backgroundColor: colors.tertiary_base_3,
-			borderRadius: 16,
+			minHeight: 44,
+			borderRadius: 15,
 			paddingHorizontal: 16,
 			flexDirection: "row",
 			alignItems: "center",
@@ -168,8 +154,6 @@ const getStyles = (colors: ThemeColors) =>
 		},
 		menu: {
 			marginTop: 4,
-			borderWidth: 1,
-			borderColor: colors.primary_base,
 			borderRadius: 16,
 			maxHeight: 220,
 			overflow: "hidden",
@@ -201,7 +185,7 @@ const getStyles = (colors: ThemeColors) =>
 			justifyContent: "space-between",
 		},
 		selectedOption: {
-			backgroundColor: colors.primary_base_4,
+			backgroundColor: colors.blue1,
 		},
 		customLastItem: {
 			minHeight: 48,

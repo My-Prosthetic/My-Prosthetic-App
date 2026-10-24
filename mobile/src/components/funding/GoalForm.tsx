@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react"
-import { ActivityIndicator, Alert, StyleSheet, TextInput, View } from "react-native"
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
-import { eq } from "drizzle-orm"
 import { useTranslation } from "react-i18next"
 
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import { ThemedInput } from "../ThemedInput"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
-import { db } from "@/db/client"
-import { goals } from "@/db/schema/funding/goals"
+import {
+	createGoal,
+	deleteGoal,
+	Goal,
+	getGoalById,
+	updateGoal,
+} from "@/db/repositories/goalRepository"
 
-type Goal = typeof goals.$inferSelect
+import IconTrash from "@/assets/icons/trash-bin.svg"
+import { ThemedHeader } from "../ThemedHeader"
 
 interface GoalFormProps {
 	mode: "create" | "edit"
@@ -20,6 +26,10 @@ export function GoalForm({ mode }: GoalFormProps) {
 	const { colors } = useTheme()
 	const styles = getStyles(colors)
 	const { t } = useTranslation()
+
+	//TODO dynamic currency value from user settings
+	const currency = "PLN"
+
 	const { goalId } = useLocalSearchParams<{ goalId?: string }>()
 	const id =
 		mode === "edit"
@@ -41,17 +51,16 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 		const fetchGoal = async () => {
 			if (id === null) {
-				Alert.alert(t("common.error"), t("funds.goalNotFound"))
+				Alert.alert(t("common.error"), t("funding.goalNotFound"))
 				setIsLoading(false)
 				router.back()
 				return
 			}
 
 			try {
-				const result = await db.select().from(goals).where(eq(goals.id, id))
-				const savedGoal = result[0]
+				const savedGoal = await getGoalById(id)
 				if (!savedGoal) {
-					Alert.alert(t("common.error"), t("funds.goalNotFound"))
+					Alert.alert(t("common.error"), t("funding.goalNotFound"))
 					router.back()
 					return
 				}
@@ -62,7 +71,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 				setNote(savedGoal.note ?? "")
 			} catch (error) {
 				console.error("Błąd podczas pobierania celu:", error)
-				Alert.alert(t("common.error"), t("funds.loadGoalError"))
+				Alert.alert(t("common.error"), t("funding.loadGoalError"))
 				router.back()
 			} finally {
 				setIsLoading(false)
@@ -78,18 +87,18 @@ export function GoalForm({ mode }: GoalFormProps) {
 		}
 
 		if (mode === "edit" && id === null) {
-			Alert.alert(t("common.error"), t("funds.goalNotFound"))
+			Alert.alert(t("common.error"), t("funding.goalNotFound"))
 			return
 		}
 
 		if (!name.trim()) {
-			Alert.alert(t("common.error"), t("funds.emptyGoalNameError"))
+			Alert.alert(t("common.error"), t("funding.emptyGoalNameError"))
 			return
 		}
 
 		const parsedAmount = parseFloat(amount.replace(",", "."))
 		if (isNaN(parsedAmount) || parsedAmount <= 0) {
-			Alert.alert(t("common.error"), t("funds.invalidGoalAmountError"))
+			Alert.alert(t("common.error"), t("funding.invalidGoalAmountError"))
 			return
 		}
 
@@ -102,9 +111,9 @@ export function GoalForm({ mode }: GoalFormProps) {
 			}
 
 			if (mode === "create") {
-				await db.insert(goals).values(values)
+				await createGoal(values)
 			} else {
-				await db.update(goals).set(values).where(eq(goals.id, id!))
+				await updateGoal(id!, values)
 			}
 
 			router.back()
@@ -112,7 +121,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 			console.error("Błąd podczas zapisu celu:", error)
 			Alert.alert(
 				t("common.error"),
-				t(mode === "create" ? "funds.saveGoalError" : "funds.updateGoalError")
+				t(mode === "create" ? "funding.saveGoalError" : "funding.updateGoalError")
 			)
 		} finally {
 			setIsSubmitting(false)
@@ -124,7 +133,7 @@ export function GoalForm({ mode }: GoalFormProps) {
 			return
 		}
 
-		Alert.alert(t("funds.deleteGoalTitle"), t("funds.deleteGoalMessage"), [
+		Alert.alert(t("funding.deleteGoalTitle"), t("funding.deleteGoalMessage"), [
 			{ text: t("common.cancel"), style: "cancel" },
 			{
 				text: t("common.delete"),
@@ -132,11 +141,11 @@ export function GoalForm({ mode }: GoalFormProps) {
 				onPress: async () => {
 					try {
 						setIsSubmitting(true)
-						await db.delete(goals).where(eq(goals.id, id))
+						await deleteGoal(id)
 						router.back()
 					} catch (error) {
 						console.error("Błąd podczas usuwania celu:", error)
-						Alert.alert(t("common.error"), t("funds.deleteGoalError"))
+						Alert.alert(t("common.error"), t("funding.deleteGoalError"))
 					} finally {
 						setIsSubmitting(false)
 					}
@@ -147,114 +156,113 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 	if (isLoading || (mode === "edit" && !goal)) {
 		return (
-			<ThemedView colorName="tertiary_base_2" variant="background" style={styles.loading}>
-				<ActivityIndicator color={colors.primary_base} />
+			<ThemedView colorName="bg_0" variant="background" style={styles.loading}>
+				<ActivityIndicator color={colors.blue2} />
 			</ThemedView>
 		)
 	}
 
 	return (
-		<ThemedView colorName="tertiary_base_2" variant="background" style={styles.screen}>
-			<View>
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funds.goalName"
-					/>
-					<ThemedView
-						variant="wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_2"
-						style={styles.textField}
-					>
-						<TextInput
+		<ThemedView colorName="bg_1" variant="background">
+			<ThemedHeader tx={mode === "create" ? "funding.addGoalTitle" : "funding.editGoalTitle"} />
+			<View style={styles.screen}>
+				<View>
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.goalName"
+						/>
+						<ThemedInput
+							variant="regular"
 							value={name}
 							onChangeText={setName}
-							placeholder={t("funds.goalNamePlaceholder")}
-							placeholderTextColor={colors.primary_base}
-							style={styles.textInput}
+							placeholder={t("funding.goalNamePlaceholder")}
+							viewStyle={styles.input}
 						/>
-					</ThemedView>
-				</View>
+					</View>
 
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funds.goalAmount"
-					/>
-					<ThemedView
-						variant="wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_2"
-						style={styles.amountField}
-					>
-						<TextInput
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.goalAmount"
+						/>
+						<ThemedInput
+							variant="money"
+							currency={currency}
 							value={amount}
 							onChangeText={setAmount}
 							keyboardType="decimal-pad"
 							placeholder="0"
-							placeholderTextColor={colors.primary_base}
-							style={styles.amountInput}
+							viewStyle={styles.input}
 						/>
-						<ThemedText variant="subTitle1" colorName="primary_base_2">
-							PLN
-						</ThemedText>
-					</ThemedView>
-				</View>
+					</View>
 
-				<View style={styles.formSection}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-						tx="funds.additionalNote"
-					/>
-					<ThemedView
-						variant="wide"
-						colorName="tertiary_base_3"
-						borderColor="primary_base_2"
-						style={styles.noteField}
-					>
-						<TextInput
+					<View style={styles.formSection}>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							style={styles.fieldLabel}
+							tx="funding.additionalNote"
+						/>
+						<ThemedInput
+							variant="note"
 							value={note}
 							onChangeText={setNote}
-							placeholder={t("funds.notePlaceholder")}
-							placeholderTextColor={colors.primary_base}
-							style={styles.noteInput}
+							placeholder={t("funding.notePlaceholder")}
 							multiline
+							viewStyle={styles.input}
+						/>
+					</View>
+				</View>
+
+				<View style={styles.actions}>
+					{mode === "create" ? (
+						<ThemedView
+							variant={"narrow"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"funding.addGoalAction"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+						/>
+					) : (
+						<ThemedView
+							variant={"narrow"}
+							colorName="blue2"
+							onPress={isSubmitting ? undefined : handleSave}
+							centerChild={
+								<ThemedText
+									variant="H1"
+									colorName="bg_0"
+									tx={"common.save"}
+									numberOfLines={1}
+									adjustsFontSizeToFit
+								/>
+							}
+						/>
+					)}
+					<ThemedView
+						onPress={mode === "edit" ? handleDelete : () => router.back()}
+						style={{ flexDirection: "row", gap: 10 }}
+					>
+						<IconTrash color={colors.false} />
+						<ThemedText
+							tx={mode === "edit" ? "common.delete" : "common.cancel"}
+							variant="H1"
+							colorName="false"
 						/>
 					</ThemedView>
 				</View>
-			</View>
-
-			<View style={styles.actions}>
-				<ThemedView
-					variant="narrow"
-					colorName="primary_base"
-					borderColor="accent_base"
-					onPress={isSubmitting ? undefined : handleSave}
-				>
-					{isSubmitting ? (
-						<ActivityIndicator color={colors.accent_base_2} />
-					) : (
-						<ThemedText
-							variant="main1Button"
-							colorName="accent_base_2"
-							tx={mode === "create" ? "funds.addGoalAction" : "common.save"}
-						/>
-					)}
-				</ThemedView>
-				<ThemedText
-					variant="main1Button"
-					colorName={mode === "edit" ? "false" : "primary_base"}
-					style={styles.cancelAction}
-					onPress={mode === "edit" ? handleDelete : () => router.back()}
-					tx={mode === "edit" ? "common.delete" : "common.cancel"}
-				/>
 			</View>
 		</ThemedView>
 	)
@@ -262,46 +270,11 @@ export function GoalForm({ mode }: GoalFormProps) {
 
 const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
-		screen: { justifyContent: "space-between" },
+		screen: { justifyContent: "space-between", flexDirection: "column", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },
-		textField: { borderWidth: 1, paddingVertical: 0 },
-		amountField: {
-			borderWidth: 1,
-			justifyContent: "space-between",
-			flexDirection: "row",
-			height: 50,
-			paddingVertical: 0,
-		},
-		noteField: {
-			borderWidth: 1,
-			justifyContent: "space-between",
-			paddingVertical: 0,
-			paddingHorizontal: 10,
-		},
-		textInput: {
-			width: "100%",
-			padding: 0,
-			color: colors.primary_base,
-			fontFamily: "Inter-SemiBold",
-			fontSize: 18,
-		},
-		amountInput: {
-			flex: 1,
-			padding: 0,
-			color: colors.primary_base,
-			fontFamily: "Inter-SemiBold",
-			fontSize: 22,
-		},
-		noteInput: {
-			minHeight: 80,
-			textAlignVertical: "top",
-			width: "100%",
-			color: colors.primary_base_1,
-			fontFamily: "Afacad-Medium",
-			fontSize: 16,
-		},
+		input: { backgroundColor: colors.bg_0 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
 		cancelAction: { padding: 8 },
 	})

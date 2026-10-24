@@ -195,9 +195,9 @@ export default function NewComponentScreen() {
 	}, [prosthesis?.limbType, t])
 
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_1">
-			<ThemedHeader tx="newComponent.newComponent" variant="transparent" onBack={router.back} />
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+			<ThemedView variant="background" colorName="tertiary_base_1">
+				<ThemedHeader tx="newComponent.newComponent" onBack={router.back} />
 				{/* Kategoria podzespołu */}
 				<View style={[styles.fieldGroup, { paddingTop: 0, paddingBottom: 10 }]}>
 					<ThemedText
@@ -359,7 +359,7 @@ export default function NewComponentScreen() {
 					<ThemedView
 						borderColor="primary_base_2"
 						colorName="tertiary_base_3"
-						variant="wide"
+						variant="old_wide"
 						onPress={() => setAssemblyDateModalVisible(true)}
 						style={styles.dateField}
 					>
@@ -419,7 +419,7 @@ export default function NewComponentScreen() {
 					<ThemedView
 						borderColor="primary_base_2"
 						colorName="tertiary_base_3"
-						variant="wide"
+						variant="old_wide"
 						onPress={() => setWarrantyEndDateModalVisible(true)}
 						style={styles.dateField}
 					>
@@ -444,7 +444,7 @@ export default function NewComponentScreen() {
 					<ThemedView
 						borderColor="primary_base_2"
 						colorName="tertiary_base_3"
-						variant="wide"
+						variant="old_wide"
 						onPress={() => setExpectedExchangeDateModalVisible(true)}
 						style={styles.dateField}
 					>
@@ -482,7 +482,7 @@ export default function NewComponentScreen() {
 
 				{/* Dodaj pliki */}
 				<ThemedView
-					variant="narrow"
+					variant="old_narrow"
 					style={{ backgroundColor: "transparent" }}
 					onPress={handleOnAddFiles}
 				>
@@ -497,7 +497,7 @@ export default function NewComponentScreen() {
 
 				{/* Zapisz komponent */}
 				<ThemedView
-					variant="narrow"
+					variant="old_narrow"
 					borderColor="accent_base"
 					onPress={() => handleSave()}
 					disabled={isSaving}
@@ -512,8 +512,7 @@ export default function NewComponentScreen() {
 						{isSaving ? t("newComponent.saving") : t("newComponent.save")}
 					</ThemedText>
 				</ThemedView>
-			</ScrollView>
-
+			</ThemedView>
 			<CustomOptionDialogModal
 				visible={customOptionType !== null}
 				type={customOptionType}
@@ -535,16 +534,14 @@ export default function NewComponentScreen() {
 				initialDate={warrantyEndDate ?? assemblyDate}
 				onClose={() => setWarrantyEndDateModalVisible(false)}
 				onSave={setWarrantyEndDate}
-				variant="calendar"
 			/>
 			<DatePickerModal
 				visible={expectedExchangeDateModalVisible}
 				initialDate={expectedExchangeDate ?? assemblyDate}
 				onClose={() => setExpectedExchangeDateModalVisible(false)}
 				onSave={setExpectedExchangeDate}
-				variant="calendar"
 			/>
-		</ThemedView>
+		</ScrollView>
 	)
 }
 

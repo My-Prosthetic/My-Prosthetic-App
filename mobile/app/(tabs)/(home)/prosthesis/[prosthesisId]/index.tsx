@@ -14,6 +14,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ComponentsPanel } from "@/src/components/prosthesis/details/ComponentsPanel"
 import { EditProsthesisModal } from "@/src/components/prosthesis/details/EditProsthesisModal"
 import { ProsthesisSummary } from "@/src/components/prosthesis/details/ProsthesisSummary"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 
 export default function ProsthesisDetailsScreen() {
 	const router = useRouter()
@@ -77,9 +78,12 @@ export default function ProsthesisDetailsScreen() {
 	}
 
 	return (
-		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
-			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-				<ScreenHeader onBack={() => router.back()} />
+		<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+			<ThemedView variant="background" colorName="bg_1">
+				<ThemedHeader tx="prosthesisDetails.title" />
+				<ThemedView colorName="primary_base">
+					<Ionicons name="body-outline" size={64} color={colors.accent_base} />
+				</ThemedView>
 
 				<ProsthesisSummary prosthesis={prosthesis} onEdit={() => setEditVisible(true)} />
 
@@ -87,42 +91,21 @@ export default function ProsthesisDetailsScreen() {
 
 				<ComponentsPanel
 					components={components}
-					onAddComponent={() =>
-						router.push(`/prosthesis/${prosthesisId}/components/newComponent` as any)
-					}
+					onAddComponent={() => router.push(`/prosthesis/${prosthesisId}/components/new` as any)}
 					onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
 				/>
 
 				<ProsthesisFilesSection />
-			</ScrollView>
-
-			{editVisible && (
-				<EditProsthesisModal
-					visible
-					prosthesis={prosthesis}
-					onClose={() => setEditVisible(false)}
-					onSaved={setProsthesis}
-				/>
-			)}
-		</ThemedView>
-	)
-}
-
-function ScreenHeader({ onBack }: { onBack: () => void }) {
-	const { colors } = useTheme()
-
-	return (
-		<View style={styles.topBar}>
-			<ThemedView colorName="tertiary_base_1" onPress={onBack} style={styles.backButton}>
-				<Ionicons name="chevron-back" size={20} color={colors.primary_base} />
+				{editVisible && (
+					<EditProsthesisModal
+						visible
+						prosthesis={prosthesis}
+						onClose={() => setEditVisible(false)}
+						onSaved={setProsthesis}
+					/>
+				)}
 			</ThemedView>
-			<ThemedText
-				tx="prosthesisDetails.title"
-				variant="title"
-				colorName="primary_base"
-				style={styles.pageTitle}
-			/>
-		</View>
+		</ScrollView>
 	)
 }
 
@@ -195,9 +178,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	content: {
-		paddingHorizontal: 18,
-		paddingTop: 10,
-		paddingBottom: 110,
+		paddingBottom: 10,
 	},
 	topBar: {
 		flexDirection: "row",

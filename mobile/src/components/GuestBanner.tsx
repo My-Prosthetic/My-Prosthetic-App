@@ -13,7 +13,7 @@ export function GuestBanner() {
 			style={[
 				styles.container,
 				{
-					backgroundColor: colors.accent_base_2,
+					backgroundColor: colors.bg_2,
 					borderLeftColor: colors.warning,
 					paddingTop: insets.top + 6,
 				},
@@ -21,8 +21,7 @@ export function GuestBanner() {
 		>
 			<Ionicons name="warning-outline" size={22} color={colors.warning} />
 			<View style={styles.messages}>
-				<ThemedText tx="login.noCopy" variant="tab1Category" colorName="primary_base" />
-				<ThemedText tx="login.constraints" variant="body1Regular" colorName="primary_base" />
+				<ThemedText tx="login.noCopy" variant="H2" colorName="blue2" />
 			</View>
 		</View>
 	)
@@ -34,11 +33,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 12,
 		paddingHorizontal: 16,
-		paddingBottom: 6,
+		paddingBottom: 10,
 		borderLeftWidth: 6,
 	},
 	messages: {
 		flex: 1,
-		gap: 4,
 	},
 })
