@@ -6,6 +6,7 @@ use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistSearchController;
 use App\Http\Controllers\WalletEntryController;
+use App\Models\WalletEntry;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +28,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
     Route::post('/logout', [AuthController::class, 'mobileLogout'])->name('auth.mobile-logout');
     Route::post('/web/logout', [AuthController::class, 'webLogout'])->name('auth.web-logout');
-    Route::get('/wallet-entries', [WalletEntryController::class, 'index'])->name('wallet-entries.index');
-    Route::post('/wallet-entries', [WalletEntryController::class, 'store'])->name('wallet-entries.store');
+    Route::get('/wallet-entries', [WalletEntryController::class, 'index'])
+        ->can('viewAny', WalletEntry::class)
+        ->name('wallet-entries.index');
+    Route::post('/wallet-entries', [WalletEntryController::class, 'store'])
+        ->can('create', WalletEntry::class)
+        ->name('wallet-entries.store');
     Route::get('/specialists/search', SpecialistSearchController::class)
         ->middleware('throttle:specialist-search')
         ->name('specialists.search');
