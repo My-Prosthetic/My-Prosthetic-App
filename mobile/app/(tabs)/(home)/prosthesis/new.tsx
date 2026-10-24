@@ -145,12 +145,8 @@ export default function NewProsthesisScreen() {
 	}
 
 	return (
-		<ScrollView
-			contentContainerStyle={styles.content}
-			showsVerticalScrollIndicator={false}
-			keyboardShouldPersistTaps="handled"
-		>
-			<ThemedView colorName="bg_1" variant="background">
+		<ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+			<ThemedView colorName="bg_1" variant="background" style={styles.content}>
 				{/* HEADER */}
 				<ThemedHeader tx="newProsthesis.title" />
 

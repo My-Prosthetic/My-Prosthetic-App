@@ -134,13 +134,12 @@ export default function ProfileScreen() {
 	return (
 		<ScrollView
 			style={styles.scrollView}
-			contentContainerStyle={styles.scrollContent}
 			showsVerticalScrollIndicator={false}
 			nestedScrollEnabled
 			onTouchStart={() => setSelectedConditionId(null)}
 			onScrollBeginDrag={closeExpandableSections}
 		>
-			<ThemedView colorName="bg_1" variant="background">
+			<ThemedView colorName="bg_1" variant="background" style={styles.scrollContent}>
 				<View>
 					<ThemedHeader tx="profile.title" />
 					{/* K-Levels */}
