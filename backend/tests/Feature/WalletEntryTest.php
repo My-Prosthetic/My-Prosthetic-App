@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Enums\FundingSource;
 use App\Models\Goal;
+use App\Models\Prosthesis;
 use App\Models\User;
 use App\Models\WalletEntry;
+use App\ValueObjects\SharePermissions;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\WalletEntrySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -153,6 +155,39 @@ class WalletEntryTest extends TestCase
                 'amount' => 125000,
                 'date' => '2026-09-01T12:00:00Z',
             ])
+            ->assertForbidden();
+    }
+
+    public function test_a_prosthetist_with_a_full_access_grant_cannot_access_wallet_entries(): void
+    {
+        $patient = User::factory()->create();
+        $prosthetist = User::factory()->prosthetist()->create();
+        $prosthesis = Prosthesis::factory()->for($patient)->create();
+        WalletEntry::factory()->for($patient, 'patient')->create();
+        $patient->sharedSpecialists()->attach($prosthetist, [
+            'permissions' => new SharePermissions(medicalHistory: true, prostheses: [$prosthesis->id]),
+        ]);
+
+        $this->actingAs($prosthetist)
+            ->getJson('/api/wallet-entries')
+            ->assertForbidden();
+
+        $this->actingAs($prosthetist)
+            ->postJson('/api/wallet-entries', [
+                'goal_id' => Goal::factory()->create()->id,
+                'source' => FundingSource::GRANT->value,
+                'amount' => 125000,
+                'date' => '2026-09-01T12:00:00Z',
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_a_prosthetist_is_refused_before_their_wallet_entry_is_validated(): void
+    {
+        $prosthetist = User::factory()->prosthetist()->create();
+
+        $this->actingAs($prosthetist)
+            ->postJson('/api/wallet-entries', [])
             ->assertForbidden();
     }
 
