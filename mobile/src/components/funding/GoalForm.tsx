@@ -276,5 +276,4 @@ const getStyles = (colors: ThemeColors) =>
 		fieldLabel: { marginBottom: 8 },
 		input: { backgroundColor: colors.bg_0 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
-		cancelAction: { padding: 8 },
 	})

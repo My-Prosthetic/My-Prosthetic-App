@@ -302,10 +302,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
-	navigationRowYear: {
-		justifyContent: "space-between",
-	},
-
 	navigationButton: {
 		width: 32,
 		height: 32,

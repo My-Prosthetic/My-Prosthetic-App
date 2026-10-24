@@ -135,9 +135,4 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 		elevation: 1,
 	},
-	cardText: {
-		fontSize: 18,
-		textAlign: "center",
-		color: "#111",
-	},
 })
