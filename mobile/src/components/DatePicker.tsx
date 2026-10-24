@@ -1,36 +1,17 @@
-import React, { useMemo, useRef, useState } from "react"
-import {
-	FlatList,
-	Modal,
-	Platform,
-	Pressable,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-} from "react-native"
+import React, { useMemo, useState } from "react"
+import { Modal, Platform, Pressable, StyleSheet, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useTheme } from "@/context/ThemeContext"
 import i18n from "@/translations/i18n"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-import { formatDate } from "@/src/utils/dateFormatter"
 
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
-
-const ITEM_HEIGHT = 44
-const VISIBLE_ITEMS = 5
-const DAYS_RANGE = 365 //TODO aktualnie umożliwia przeglądanie tylko +/- rok
-
-interface DateOption {
-	id: string
-	label: string
-	date: Date
-}
+import IconX from "@/assets/icons/x.svg"
 
 interface CalendarWeek {
-	weekNumber: number
 	days: Date[]
 }
 
@@ -40,6 +21,8 @@ interface CalendarViewProps {
 	locale: string
 	onMonthChange: (month: Date) => void
 	onSelect: (date: Date) => void
+	onCancel: () => void
+	onApply: () => void
 }
 
 export interface DatePickerModalProps {
@@ -47,7 +30,6 @@ export interface DatePickerModalProps {
 	onClose: () => void
 	onSave: (selectedDate: Date) => void
 	initialDate?: Date
-	variant?: "list" | "calendar"
 }
 
 function startOfCalendarMonth(date: Date): Date {
@@ -78,20 +60,8 @@ function getCalendarWeeks(month: Date): CalendarWeek[] {
 			return day
 		})
 
-		return {
-			weekNumber: getIsoWeekNumber(days[0]),
-			days,
-		}
+		return { days }
 	})
-}
-
-function getIsoWeekNumber(date: Date): number {
-	const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
-	const isoDay = utcDate.getUTCDay() || 7
-	utcDate.setUTCDate(utcDate.getUTCDate() + 4 - isoDay)
-
-	const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1))
-	return Math.ceil(((utcDate.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7)
 }
 
 function isSameCalendarDay(left: Date, right: Date): boolean {
@@ -102,7 +72,15 @@ function isSameCalendarDay(left: Date, right: Date): boolean {
 	)
 }
 
-function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: CalendarViewProps) {
+function CalendarView({
+	month,
+	selectedDate,
+	locale,
+	onMonthChange,
+	onSelect,
+	onCancel,
+	onApply,
+}: CalendarViewProps) {
 	const { colors } = useTheme()
 	const weeks = useMemo(() => getCalendarWeeks(month), [month])
 	const weekdayLabels = useMemo(() => {
@@ -110,10 +88,14 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 		return Array.from({ length: 7 }, (_, index) => {
 			const monday = new Date(2024, 0, 1)
 			monday.setDate(monday.getDate() + index)
-			return formatter.format(monday)
+			const raw = formatter.format(monday).replace(/\.$/, "")
+			return raw.slice(0, 3)
 		})
 	}, [locale])
 	const monthLabel = new Intl.DateTimeFormat(locale, { month: "long" }).format(month)
+	const selectedDateLabel = `${String(selectedDate.getDate()).padStart(2, "0")}.${String(
+		selectedDate.getMonth() + 1
+	).padStart(2, "0")}.${selectedDate.getFullYear()}`
 
 	const renderNavigationButton = (
 		icon: "chevron-back" | "chevron-forward",
@@ -129,10 +111,10 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 	)
 
 	return (
-		<ThemedView colorName="tertiary_base_3" style={styles.calendarCard}>
+		<ThemedView colorName="bg_1" style={styles.calendarCard}>
 			<View style={styles.navigationRow}>
 				{renderNavigationButton("chevron-back", () => onMonthChange(shiftCalendarYear(month, -1)))}
-				<ThemedText variant="subTitle1" colorName="primary_base">
+				<ThemedText variant="H3" colorName="blue2" style={styles.textDistance}>
 					{month.getFullYear()}
 				</ThemedText>
 				{renderNavigationButton("chevron-forward", () =>
@@ -142,7 +124,7 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 
 			<View style={styles.navigationRow}>
 				{renderNavigationButton("chevron-back", () => onMonthChange(shiftCalendarMonth(month, -1)))}
-				<ThemedText variant="subTitle1" colorName="primary_base" style={styles.monthLabel}>
+				<ThemedText variant="H1" colorName="blue2" style={[styles.monthLabel, styles.textDistance]}>
 					{monthLabel}
 				</ThemedText>
 				{renderNavigationButton("chevron-forward", () =>
@@ -151,10 +133,9 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 			</View>
 
 			<View style={styles.weekRow}>
-				<View style={styles.weekNumberCell} />
 				{weekdayLabels.map((label, index) => (
 					<View key={`${label}-${index}`} style={styles.dayCell}>
-						<ThemedText variant="body1Regular" colorName="secondary_base_0c" numberOfLines={1}>
+						<ThemedText variant="H1" colorName="blue1" numberOfLines={1}>
 							{label}
 						</ThemedText>
 					</View>
@@ -163,11 +144,6 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 
 			{weeks.map((week) => (
 				<View key={week.days[0].toISOString()} style={styles.weekRow}>
-					<View style={styles.weekNumberCell}>
-						<ThemedText variant="body1Regular" colorName="primary_base_2">
-							{week.weekNumber}
-						</ThemedText>
-					</View>
 					{week.days.map((day) => {
 						const isSelected = isSameCalendarDay(day, selectedDate)
 						const isCurrentMonth = day.getMonth() === month.getMonth()
@@ -175,64 +151,57 @@ function CalendarView({ month, selectedDate, locale, onMonthChange, onSelect }: 
 						return (
 							<Pressable
 								key={day.toISOString()}
-								style={[
-									styles.dayCell,
-									styles.dayButton,
-									isSelected && {
-										backgroundColor: colors.accent_base,
-										borderColor: colors.primary_base,
-										borderWidth: 1,
-									},
-									!isCurrentMonth && styles.outsideMonth,
-								]}
+								style={[styles.dayCell, !isCurrentMonth && styles.outsideMonth]}
 								onPress={() => onSelect(day)}
 								accessibilityRole="button"
 								accessibilityState={{ selected: isSelected }}
 							>
-								<ThemedText variant="body1Regular" colorName="primary_base">
-									{day.getDate()}
-								</ThemedText>
+								<View
+									style={[
+										styles.dayButton,
+										isSelected && {
+											backgroundColor: colors.blue2,
+										},
+									]}
+								>
+									<ThemedText variant="H3" colorName={isSelected ? "bg_0" : "blue2"}>
+										{day.getDate()}
+									</ThemedText>
+								</View>
 							</Pressable>
 						)
 					})}
 				</View>
 			))}
+			<View style={styles.actionsContainer}>
+				<ThemedView
+					colorName="bg_0"
+					style={styles.actionButton}
+					borderColor="graphite0"
+					onPress={onCancel}
+				>
+					<View style={styles.cancelButtonContent}>
+						<IconX color={colors.graphite0} />
+						<ThemedText variant="H3" colorName="graphite0" tx="common.cancel" />
+					</View>
+				</ThemedView>
+				<ThemedView colorName="blue2" style={styles.actionButton} onPress={onApply}>
+					<ThemedText
+						variant="H2"
+						colorName="bg_0"
+						tx="common.enterDate"
+						txOptions={{ date: selectedDateLabel }}
+						numberOfLines={1}
+						adjustsFontSizeToFit
+					/>
+				</ThemedView>
+			</View>
 		</ThemedView>
 	)
 }
 
-export function DatePickerModal({
-	visible,
-	onClose,
-	onSave,
-	initialDate,
-	variant = "list",
-}: DatePickerModalProps) {
+export function DatePickerModal({ visible, onClose, onSave, initialDate }: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
-	const { colors } = useTheme()
-	const flatListRef = useRef<FlatList<DateOption>>(null)
-
-	const dateOptions = useMemo<DateOption[]>(() => {
-		const options: DateOption[] = []
-		const today = new Date()
-		today.setHours(0, 0, 0, 0)
-
-		for (let offset = -DAYS_RANGE; offset <= DAYS_RANGE; offset++) {
-			const date = new Date(today)
-			date.setDate(today.getDate() + offset)
-			options.push({
-				id: date.toDateString(),
-				label: formatDate(date, "label", today),
-				date,
-			})
-		}
-
-		return options
-	}, [])
-
-	const [selectedId, setSelectedId] = useState<string>(() =>
-		initialDate ? initialDate.toDateString() : dateOptions[DAYS_RANGE].id
-	)
 	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
 		() => initialDate ?? new Date()
 	)
@@ -242,25 +211,8 @@ export function DatePickerModal({
 
 	const handleOpen = () => {
 		const targetDate = initialDate ?? new Date()
-		const targetIndex = dateOptions.findIndex((option) => option.id === targetDate.toDateString())
-		const safeIndex = targetIndex !== -1 ? targetIndex : DAYS_RANGE
-
-		setSelectedId(dateOptions[safeIndex].id)
 		setCalendarSelectedDate(targetDate)
 		setCalendarMonth(startOfCalendarMonth(targetDate))
-
-		requestAnimationFrame(() => {
-			flatListRef.current?.scrollToIndex({
-				index: Math.max(0, safeIndex - 2),
-				animated: false,
-			})
-		})
-	}
-
-	const handleSave = () => {
-		const selected = dateOptions.find((option) => option.id === selectedId)
-		if (selected) onSave(selected.date)
-		onClose()
 	}
 
 	return (
@@ -276,97 +228,25 @@ export function DatePickerModal({
 			<View
 				style={[
 					styles.overlay,
-					variant === "calendar" && styles.calendarOverlay,
-					variant === "calendar" && {
+					{
 						paddingTop: insets.top,
 						paddingBottom: insets.bottom,
 					},
 				]}
 			>
-				<Pressable
-					style={[styles.backdrop, variant === "calendar" && styles.calendarBackdrop]}
-					onPress={onClose}
+				<Pressable style={styles.backdrop} onPress={onClose} />
+				<CalendarView
+					month={calendarMonth}
+					selectedDate={calendarSelectedDate}
+					locale={i18n.language}
+					onMonthChange={setCalendarMonth}
+					onSelect={setCalendarSelectedDate}
+					onCancel={onClose}
+					onApply={() => {
+						onSave(calendarSelectedDate)
+						onClose()
+					}}
 				/>
-
-				{variant === "calendar" ? (
-					<CalendarView
-						month={calendarMonth}
-						selectedDate={calendarSelectedDate}
-						locale={i18n.language}
-						onMonthChange={setCalendarMonth}
-						onSelect={(date) => {
-							setCalendarSelectedDate(date)
-							onSave(date)
-							onClose()
-						}}
-					/>
-				) : (
-					<ThemedView
-						colorName="tertiary_base_3"
-						style={[
-							styles.sheetContainer,
-							{
-								paddingBottom: insets.bottom + 10,
-								paddingHorizontal: 0,
-							},
-						]}
-					>
-						<View style={styles.listContainer}>
-							<FlatList
-								ref={flatListRef}
-								data={dateOptions}
-								keyExtractor={(item) => item.id}
-								showsVerticalScrollIndicator={false}
-								getItemLayout={(_, index) => ({
-									length: ITEM_HEIGHT,
-									offset: ITEM_HEIGHT * index,
-									index,
-								})}
-								initialScrollIndex={DAYS_RANGE - 2}
-								renderItem={({ item }) => {
-									const isSelected = item.id === selectedId
-									return (
-										<TouchableOpacity
-											activeOpacity={0.7}
-											onPress={() => setSelectedId(item.id)}
-											style={[
-												styles.dateRow,
-												isSelected && {
-													backgroundColor: colors.primary_base_1,
-													opacity: 0.5,
-												},
-											]}
-										>
-											<ThemedText
-												colorName="primary_base"
-												variant="title"
-												style={[styles.dateText, isSelected && styles.selectedDateText]}
-											>
-												{item.label}
-											</ThemedText>
-										</TouchableOpacity>
-									)
-								}}
-							/>
-						</View>
-
-						{/* Przyciski akcji */}
-						<View style={styles.actionsContainer}>
-							<ThemedView
-								variant="old_narrow"
-								colorName="primary_base"
-								borderColor="accent_base"
-								onPress={handleSave}
-							>
-								<ThemedText variant="main1Button" colorName="accent_base" tx="common.save" />
-							</ThemedView>
-
-							<ThemedView variant="old_narrow" colorName="accent_base_1" onPress={onClose}>
-								<ThemedText variant="main1Button" colorName="primary_base" tx="common.cancel" />
-							</ThemedView>
-						</View>
-					</ThemedView>
-				)}
 			</View>
 		</Modal>
 	)
@@ -375,51 +255,17 @@ export function DatePickerModal({
 const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
-		justifyContent: "flex-end",
-		backgroundColor: "rgba(0, 0, 0, 0.4)",
-	},
-	backdrop: {
-		flex: 1,
-	},
-	calendarOverlay: {
 		justifyContent: "center",
 		alignItems: "center",
 		paddingHorizontal: 20,
+		backgroundColor: "rgba(0, 0, 0, 0.4)",
 	},
-	calendarBackdrop: {
+	backdrop: {
 		position: "absolute",
 		top: 0,
 		right: 0,
 		bottom: 0,
 		left: 0,
-	},
-	sheetContainer: {
-		borderTopLeftRadius: 28,
-		borderTopRightRadius: 28,
-		paddingTop: 0,
-		paddingHorizontal: 20,
-		width: "100%",
-	},
-	listContainer: {
-		height: ITEM_HEIGHT * VISIBLE_ITEMS,
-	},
-	dateRow: {
-		height: ITEM_HEIGHT,
-		paddingLeft: 30,
-		alignItems: "flex-start",
-		justifyContent: "center",
-	},
-	dateText: {
-		opacity: 0.8,
-		fontSize: 24,
-	},
-	selectedDateText: {
-		opacity: 1,
-	},
-	actionsContainer: {
-		marginTop: 8,
-		gap: 10,
-		alignItems: "center",
 	},
 	calendarCard: {
 		width: "100%",
@@ -430,12 +276,36 @@ const styles = StyleSheet.create({
 		borderRadius: 24,
 		gap: 6,
 	},
+	actionsContainer: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		alignItems: "center",
+		gap: 16,
+		marginTop: 8,
+		paddingVertical: 8,
+	},
+	actionButton: {
+		minHeight: 38,
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: 14,
+		paddingHorizontal: 12,
+	},
+	cancelButtonContent: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 6,
+	},
 	navigationRow: {
 		minHeight: 32,
 		flexDirection: "row",
 		alignItems: "center",
+		justifyContent: "center",
+	},
+	navigationRowYear: {
 		justifyContent: "space-between",
 	},
+
 	navigationButton: {
 		width: 32,
 		height: 32,
@@ -443,7 +313,11 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	monthLabel: {
-		textTransform: "capitalize",
+		textTransform: "uppercase",
+	},
+	textDistance: {
+		width: 100,
+		textAlign: "center",
 	},
 	weekRow: {
 		width: "100%",
@@ -451,19 +325,18 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 	},
-	weekNumberCell: {
-		width: 28,
-		alignItems: "center",
-		justifyContent: "center",
-	},
 	dayCell: {
-		minHeight: 36,
-		minWidth: 36,
+		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	dayButton: {
-		borderRadius: 1000,
+		borderRadius: 17.5,
+		height: 35,
+		width: 35,
+		alignItems: "center",
+		justifyContent: "center",
+		overflow: "hidden",
 	},
 	outsideMonth: {
 		opacity: 0.4,

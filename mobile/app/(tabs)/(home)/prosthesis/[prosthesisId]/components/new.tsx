@@ -534,14 +534,12 @@ export default function NewComponentScreen() {
 				initialDate={warrantyEndDate ?? assemblyDate}
 				onClose={() => setWarrantyEndDateModalVisible(false)}
 				onSave={setWarrantyEndDate}
-				variant="calendar"
 			/>
 			<DatePickerModal
 				visible={expectedExchangeDateModalVisible}
 				initialDate={expectedExchangeDate ?? assemblyDate}
 				onClose={() => setExpectedExchangeDateModalVisible(false)}
 				onSave={setExpectedExchangeDate}
-				variant="calendar"
 			/>
 		</ScrollView>
 	)

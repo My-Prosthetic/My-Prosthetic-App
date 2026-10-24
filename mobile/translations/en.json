@@ -70,6 +70,7 @@
 	},
 	"common": {
 		"cancel": "Cancel",
+		"enterDate": "Enter {{date}}",
 		"error": "Error",
 		"validationError": "Validation error",
 		"save": "Save",
