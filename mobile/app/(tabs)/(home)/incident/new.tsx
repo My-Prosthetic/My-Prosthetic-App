@@ -917,8 +917,8 @@ const localStyles = StyleSheet.create({
 	},
 })
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 		screen: {
 			flex: 1,
 		},
@@ -1193,3 +1193,5 @@ const getStyles = (colors: ThemeColors) =>
 			marginTop: 28,
 		},
 	})
+	return styles
+}

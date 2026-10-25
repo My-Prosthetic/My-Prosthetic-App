@@ -95,11 +95,13 @@ function RootNavigationLayout({
 
 	return (
 		<Stack screenOptions={{ headerShown: false }}>
-			<Stack.Protected guard={hasActiveSession}>
+			<Stack.Screen name="index" />
+
+			<Stack.Protected guard={hasActiveSession} redirectTo="/">
 				<Stack.Screen name="(tabs)" />
 			</Stack.Protected>
-			<Stack.Protected guard={!hasActiveSession}>
-				<Stack.Screen name="index" />
+
+			<Stack.Protected guard={!hasActiveSession} redirectTo="/">
 				<Stack.Screen name="login" />
 				<Stack.Screen name="signup" />
 				<Stack.Screen name="noAccount" />
