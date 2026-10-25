@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Alert, Image, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, TextInput, TextStyle } from "react-native"
+import {
+	Alert,
+	Image,
+	ScrollView,
+	type ScrollViewInstance,
+	StyleProp,
+	StyleSheet,
+	TextInput,
+	TextStyle,
+} from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import * as Crypto from "expo-crypto"
 import {
