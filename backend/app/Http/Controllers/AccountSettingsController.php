@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AccountSettingsController extends Controller
 {
@@ -42,12 +41,9 @@ class AccountSettingsController extends Controller
             $lockedPatient->password = $validated['password'];
             $lockedPatient->save();
 
-            $otherTokens = $lockedPatient->tokens();
-            $currentToken = $patient->currentAccessToken();
-            if ($currentToken instanceof PersonalAccessToken) {
-                $otherTokens->where('id', '!=', $currentToken->getKey());
-            }
-            $otherTokens->delete();
+            $lockedPatient->tokens()
+                ->where('id', '!=', $patient->currentAccessToken()->getKey())
+                ->delete();
         });
 
         return response()->noContent();
