@@ -627,5 +627,80 @@
 		"loadError": "Nie udało się wczytać danych komponentu.",
 		"selectDate": "Wybierz datę",
 		"clearDate": "Usuń datę"
+	},
+	"settings34": {
+		"common": {
+			"cancel": "Anuluj",
+			"error": "Błąd",
+			"unavailable": "Funkcja niedostępna",
+			"ok": "OK"
+		},
+		"menu": {
+			"notifications": "Powiadomienia",
+			"account": "Konto i synchronizacja"
+		},
+		"notifications": {
+			"title": "Powiadomienia",
+			"sectionNotifications": "POWIADOMIENIA",
+			"push": "Zezwalaj na powiadomienia PUSH",
+			"email": "Zezwalaj na wiadomości e-mail",
+			"sectionHealth": "ZDROWIE I KONTAKT ZE SPECJALISTĄ",
+			"recommendations": "Nowe zalecenia od protetyka",
+			"recommendationsDescription": "Powiadom, gdy lekarz zostawi wpis na twoim profilu",
+			"measurements": "Karta Miarowa Kikuta",
+			"measurementsDescription": "Przypomnienia PUSH o rutynowym pomiarze kikuta",
+			"measurementTime": "Godzina przypomnienia o pomiarze",
+			"chooseTime": "Wybierz godzinę",
+			"everyDay": "codziennie",
+			"info": "Powiadomienia o dacie wymiany oraz końcu gwarancji konfigurowane są indywidualnie w karcie każdego dodanego podzespołu."
+		},
+		"account": {
+			"title": "Konto",
+			"profileUnavailable": "Profil użytkownika",
+			"profileError": "Nie udało się pobrać adresu e-mail",
+			"noEmail": "Adres e-mail niedostępny",
+			"connected": "Połączono z kontem",
+			"notConnected": "Brak połączenia z kontem",
+			"editProfile": "Edytuj profil",
+			"editNotReady": "Edycja profilu nie jest jeszcze podłączona do API.",
+			"syncSettings": "USTAWIENIA SYNCHRONIZACJI",
+			"backgroundSync": "Synchronizacja w tle",
+			"backgroundSyncDescription": "Automatycznie wysyłaj nowe wpisy i pobieraj zalecenia od protetyka",
+			"wifiOnly": "Tylko przez sieć Wi-Fi",
+			"wifiOnlyDescription": "Oszczędza transfer danych komórkowych zgodnie z ustawieniami telefonu",
+			"mediaBackup": "Kopia zapasowa multimediów",
+			"mediaBackupDescription": "Synchronizuj ciężkie pliki wideo oraz zdjęcia z incydentów",
+			"lastSync": "Ostatnia synchronizacja",
+			"neverSynced": "brak danych",
+			"syncNow": "synchronizuj",
+			"syncNotReady": "Przycisk jest przygotowany pod Sync Managera. Synchronizacja danych nie została jeszcze wdrożona.",
+			"accountSettings": "USTAWIENIA KONTA",
+			"changePassword": "Zmień hasło",
+			"deleteAccount": "Usuń konto",
+			"deleteConfirm": "Czy na pewno chcesz trwale usunąć konto i powiązane z nim dane? Tej operacji nie można cofnąć.",
+			"localCleanupError": "Konto zostało usunięte na serwerze, ale nie udało się całkowicie wyczyścić danych na urządzeniu. Wyczyść dane aplikacji przed ponownym użyciem."
+		},
+		"password": {
+			"title": "Zmień hasło",
+			"current": "Stare hasło",
+			"new": "Nowe hasło",
+			"confirm": "Powtórz nowe hasło",
+			"save": "Zmień hasło",
+			"required": "Wypełnij wszystkie pola.",
+			"mismatch": "Nowe hasła muszą być identyczne.",
+			"sameAsCurrent": "Nowe hasło musi różnić się od aktualnego.",
+			"saving": "Zapisywanie...",
+			"successTitle": "Hasło zmienione",
+			"successMessage": "Nowe hasło zostało zapisane. Pozostałe sesje zostały wylogowane."
+		},
+		"api": {
+			"configuration": "Brak konfiguracji serwera API.",
+			"unauthorized": "Sesja wygasła. Zaloguj się ponownie.",
+			"wrongPassword": "Aktualne hasło jest nieprawidłowe.",
+			"validation": "Nie udało się zapisać zmian. Sprawdź wprowadzone dane.",
+			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie.",
+			"unavailable": "Funkcja nie jest jeszcze dostępna na serwerze.",
+			"server": "Nie udało się wykonać operacji. Spróbuj ponownie później."
+		}
 	}
 }
