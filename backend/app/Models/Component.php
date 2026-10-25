@@ -45,6 +45,15 @@ class Component extends Model
         return $this->belongsTo(Prosthesis::class);
     }
 
+    /**
+     * @return array{
+     *     type: 'App\\Enums\\ComponentType',
+     *     is_test_socket: 'boolean',
+     *     installed_at: 'datetime',
+     *     replacement_at: 'datetime',
+     *     warranty_until: 'datetime',
+     * }
+     */
     protected function casts(): array
     {
         return [
