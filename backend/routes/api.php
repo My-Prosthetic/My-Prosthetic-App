@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ShareController;
@@ -23,6 +24,12 @@ Route::post('/web/login', [AuthController::class, 'webLogin'])
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
+    Route::put('/account/password', [AccountSettingsController::class, 'changePassword'])
+        ->middleware('throttle:auth')
+        ->name('account.password');
+    Route::delete('/account', [AccountSettingsController::class, 'destroy'])
+        ->middleware('throttle:auth')
+        ->name('account.destroy');
     Route::post('/logout', [AuthController::class, 'mobileLogout'])->name('auth.mobile-logout');
     Route::post('/web/logout', [AuthController::class, 'webLogout'])->name('auth.web-logout');
     Route::get('/wallet-entries', [WalletEntryController::class, 'index'])->name('wallet-entries.index');

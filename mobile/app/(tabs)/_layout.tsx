@@ -19,6 +19,7 @@ export default function TabsLayout() {
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
 	const segments = useSegments() as string[]
+	const isPasswordScreen = segments.some((segment) => segment === "change-password")
 	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
 
 	const ICONS = {
@@ -85,6 +86,7 @@ export default function TabsLayout() {
 						borderTopLeftRadius: 15,
 						borderTopRightRadius: 15,
 						backgroundColor: colors.bg_0,
+						display: isPasswordScreen ? "none" : "flex",
 					},
 					tabBarItemStyle: { flex: 1 },
 				}}
