@@ -3,14 +3,12 @@
 	"programmes": [
 		{
 			"id": "nfz",
+			"icon": "medical",
 			"sectionKey": "funding.sections.national",
-			"badgeKey": "funding.nfz.badge",
 			"titleKey": "funding.nfz.title",
 			"shortDescriptionKey": "funding.nfz.shortDescription",
 			"details": {
 				"type": "steps",
-				"titleKey": "funding.nfz.detailsTitle",
-				"subtitleKey": "funding.nfz.subtitle",
 				"summaryRows": [
 					{
 						"labelKey": "funding.nfz.limitLabel",
@@ -45,14 +43,12 @@
 		},
 		{
 			"id": "active-local-government",
+			"icon": "social",
 			"sectionKey": "funding.sections.national",
-			"badgeKey": "funding.pfron.badge",
 			"titleKey": "funding.pfron.title",
 			"shortDescriptionKey": "funding.pfron.shortDescription",
 			"details": {
 				"type": "eligibility",
-				"titleKey": "funding.pfron.detailsTitle",
-				"subtitleKey": "funding.pfron.subtitle",
 				"summaryRows": [
 					{
 						"labelKey": "funding.pfron.recruitmentLabel",
@@ -73,15 +69,19 @@
 		},
 		{
 			"id": "collections",
+			"icon": "fundraising",
 			"sectionKey": "funding.sections.foundations",
-			"badgeKey": "funding.collections.badge",
 			"titleKey": "funding.collections.title",
 			"shortDescriptionKey": "funding.collections.shortDescription",
 			"details": {
 				"type": "foundations",
-				"titleKey": "funding.collections.detailsTitle",
-				"subtitleKey": "funding.collections.subtitle",
 				"sectionTitleKey": "funding.collections.sectionTitle",
+				"summaryRows": [
+					{
+						"labelKey": "funding.collections.subtitle",
+						"valueKey": ""
+					}
+				],
 				"foundations": [
 					{
 						"id": "avalon",

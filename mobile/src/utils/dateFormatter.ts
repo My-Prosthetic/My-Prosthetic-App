@@ -4,6 +4,31 @@ export type DateFormatMode =
 	| "numeric" // YYYY-MM-DD
 	| "label" // Today/dayname monthName YYYY
 
+export interface FormattedDateBadge {
+	day: string
+	month: string
+	accessibilityLabel: string
+}
+
+export const formatDateBadge = (
+	date: Date = new Date(),
+	locale: string = "pl"
+): FormattedDateBadge => {
+	const day = date.toLocaleDateString(locale, { day: "2-digit" })
+
+	const month = date.toLocaleDateString(locale, { month: "short" }).replace(".", "").toUpperCase()
+
+	const accessibilityLabel = date.toLocaleDateString(locale, {
+		dateStyle: "full",
+	})
+
+	return {
+		day,
+		month,
+		accessibilityLabel,
+	}
+}
+
 export const formatDate = (
 	date: Date,
 	mode: DateFormatMode = "numeric",

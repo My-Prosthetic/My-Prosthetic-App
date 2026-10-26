@@ -1,7 +1,8 @@
-import { Ionicons } from "@expo/vector-icons"
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { ThemedText } from "./ThemedText"
 import { useTheme } from "@/context/ThemeContext"
+
+import IconCheck from "@/assets/icons/check.svg"
 
 export default function ThemedCheckbox({
 	label,
@@ -20,13 +21,13 @@ export default function ThemedCheckbox({
 				style={[
 					styles.checkboxBox,
 					checked
-						? { backgroundColor: colors.primary_base, borderColor: colors.primary_base }
-						: { backgroundColor: colors.tertiary_base_3, borderColor: colors.primary_base },
+						? { backgroundColor: colors.blue2 }
+						: { backgroundColor: colors.bg_0, borderColor: colors.blue1 },
 				]}
 			>
-				{checked && <Ionicons name="checkmark" size={18} color={colors.tertiary_base_1} />}
+				{checked && <IconCheck color={colors.bg_0} width={14} height={12} />}
 			</View>
-			<ThemedText variant="subTitle2" colorName="primary_base" style={styles.checkboxLabel}>
+			<ThemedText variant="H2" colorName="blue2" style={styles.checkboxLabel}>
 				{label}
 			</ThemedText>
 		</TouchableOpacity>

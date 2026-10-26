@@ -1,14 +1,20 @@
 import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { View, Pressable, StyleSheet, StyleProp, ViewStyle, PanResponder } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "@/context/ThemeContext"
+
+import IconLeftChevron from "@/assets/icons/chevron-left.svg"
+import IconRightChevron from "@/assets/icons/chevron-right.svg"
 
 interface CarouselProps<T> {
 	items: T[]
 	renderItem: (item: T) => React.ReactNode
 	renderPlus?: () => React.ReactNode
 	cardStyle?: StyleProp<ViewStyle>
+	carouselStyle?: StyleProp<ViewStyle>
+	adjustChevronPadding?: number
+	chevronScale?: number
 	setExternalIndex?: (newIndex: number) => void
+	initialIndex?: number
 }
 
 export function Carousel<T>({
@@ -16,9 +22,13 @@ export function Carousel<T>({
 	renderItem,
 	renderPlus,
 	cardStyle,
+	carouselStyle,
+	adjustChevronPadding = 0,
+	chevronScale = 1,
 	setExternalIndex,
+	initialIndex,
 }: CarouselProps<T>): ReactElement | null {
-	const [currentIndex, setCurrentIndex] = useState(0)
+	const [currentIndex, setCurrentIndex] = useState(initialIndex ?? 0)
 	const { colors } = useTheme()
 	const totalLength = renderPlus ? items.length + 1 : items.length
 	const hasPrev = currentIndex > 0
@@ -56,17 +66,26 @@ export function Carousel<T>({
 	}
 
 	return (
-		<View style={styles.container} {...panResponder.panHandlers}>
+		<View style={[styles.container, carouselStyle]} {...panResponder.panHandlers}>
 			{/* Lewa strzałka */}
-			<View style={styles.arrowSlot}>
+			<View style={[styles.arrowSlot, { paddingRight: 15 + adjustChevronPadding }]}>
 				<Pressable
 					disabled={!hasPrev}
 					style={({ pressed }) => [{ opacity: !hasPrev ? 0 : pressed ? 0.6 : 1 }]}
+					hitSlop={{
+						top: 4 + (1 - chevronScale) * 40,
+						bottom: 4 + (1 - chevronScale) * 40,
+						right: 8 * 2 + (1 - chevronScale) * 22 * 2,
+					}}
 					onPress={() => {
 						changeIndex(currentIndex - 1)
 					}}
 				>
-					<Ionicons name="chevron-back" size={30} color={colors.primary_base} />
+					<IconLeftChevron
+						width={chevronScale * 22}
+						height={chevronScale * 40}
+						color={colors.blue2}
+					/>
 				</Pressable>
 			</View>
 
@@ -76,15 +95,24 @@ export function Carousel<T>({
 			</View>
 
 			{/* Prawa strzałka */}
-			<View style={styles.arrowSlot}>
+			<View style={[styles.arrowSlot, { paddingLeft: 15 + adjustChevronPadding }]}>
 				<Pressable
 					disabled={!hasNext}
 					style={({ pressed }) => [{ opacity: !hasNext ? 0 : pressed ? 0.6 : 1 }]}
+					hitSlop={{
+						top: 4 + (1 - chevronScale) * 40,
+						bottom: 4 + (1 - chevronScale) * 40,
+						left: 8 * 2 + (1 - chevronScale) * 22 * 2,
+					}}
 					onPress={() => {
 						changeIndex(currentIndex + 1)
 					}}
 				>
-					<Ionicons name="chevron-forward" size={30} color={colors.primary_base} />
+					<IconRightChevron
+						width={chevronScale * 22}
+						height={chevronScale * 40}
+						color={colors.blue2}
+					/>
 				</Pressable>
 			</View>
 		</View>
@@ -100,11 +128,11 @@ const styles = StyleSheet.create({
 	arrowSlot: {
 		alignItems: "center",
 		padding: 2,
+		zIndex: 10,
+		elevation: 10,
 	},
-	card: {},
-	cardText: {
-		fontSize: 18,
-		textAlign: "center",
-		color: "#111",
+	card: {
+		zIndex: 1,
+		elevation: 1,
 	},
 })

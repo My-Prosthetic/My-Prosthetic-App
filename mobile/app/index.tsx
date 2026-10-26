@@ -5,10 +5,14 @@ import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { useAuth } from "@/context/AuthContext"
 
 import Logo from "@/assets/MP_text_logo.svg"
+import { useTheme } from "@/context/ThemeContext"
+import { Dimensions } from "react-native"
 
 export default function InitialScreen() {
 	const router = useRouter()
 	const { status } = useAuth()
+	const { colors } = useTheme()
+	const windowWidth = Dimensions.get("window").width
 
 	if (status === "AUTHENTICATED" || status === "GUEST") {
 		return <Redirect href="/(tabs)/(home)/home" />
@@ -17,12 +21,17 @@ export default function InitialScreen() {
 	const topSectionRender = () => {
 		return (
 			<>
-				<Logo width={278.8} height={154.82} />
+				<Logo width={0.71 * windowWidth} color={colors.blue0} />
 				<ThemedText
 					tx="common.mp"
-					colorName="accent_base"
-					variant="title"
-					style={{ fontSize: 40, paddingTop: 20 }}
+					colorName="blue0"
+					variant="H0"
+					style={{
+						fontSize: 30,
+						lineHeight: 46,
+						letterSpacing: 1.44,
+						textTransform: "uppercase",
+					}}
 				/>
 			</>
 		)
@@ -32,39 +41,30 @@ export default function InitialScreen() {
 		return (
 			<>
 				<ThemedView
-					colorName="tertiary_base_2"
+					variant="background"
 					style={{
-						borderTopLeftRadius: 10000,
-						justifyContent: "space-around",
-						paddingTop: 20,
-						paddingHorizontal: 32,
-						paddingBottom: 20,
+						flexDirection: "column",
+						flex: 1,
+						justifyContent: "center",
+						paddingBottom: "5%",
+						gap: 20,
 					}}
 				>
-					<ThemedView
-						variant="narrow"
-						colorName="primary_base"
-						onPress={() => router.push("../login")}
-					>
-						<ThemedText tx="login.logIn" colorName="accent_base_1" variant="main1Button" />
+					<ThemedView variant="narrow" colorName="blue2" onPress={() => router.push("../login")}>
+						<ThemedText tx="login.logIn" colorName="bg_0" variant="H1" />
+					</ThemedView>
+					<ThemedView variant="narrow" colorName="blue2" onPress={() => router.push("../signup")}>
+						<ThemedText tx="login.createAccount" colorName="bg_0" variant="H1" />
 					</ThemedView>
 					<ThemedView
 						variant="narrow"
-						colorName="primary_base"
-						onPress={() => router.push("../signup")}
-					>
-						<ThemedText tx="login.createAccount" colorName="accent_base_1" variant="main1Button" />
-					</ThemedView>
-					<ThemedView
-						variant="narrow"
-						colorName="accent_base_2"
-						shadow={true}
+						colorName="blue0"
 						onPress={() => router.push("../noAccount")}
 					>
 						<ThemedText
 							tx="login.useWithoutAccount"
-							colorName="primary_base"
-							variant="main1Button"
+							colorName="graphite0"
+							variant="H1"
 							numberOfLines={1}
 							adjustsFontSizeToFit={true}
 						/>
