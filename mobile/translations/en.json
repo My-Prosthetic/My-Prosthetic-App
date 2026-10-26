@@ -332,6 +332,12 @@
 		"invalidMeasurementValue": "Enter a valid number.",
 		"missingMeasurement": "A measurement is missing.",
 		"invalidMeasurementForLevel": "Measurement L{{level}} has an invalid format.",
+		"futureMomentError": "The measurement time cannot be in the future.",
+		"saveSuccessTitle": "Measurement saved",
+		"saveSuccessMessage": "The measurement has been saved.",
+		"saveError": "Could not save the measurement.",
+		"discardTitle": "Discard measurement",
+		"discardConfirmation": "Are you sure you want to clear the form and leave?",
 		"save": "SAVE MEASUREMENT",
 		"delete": "DELETE"
 	},

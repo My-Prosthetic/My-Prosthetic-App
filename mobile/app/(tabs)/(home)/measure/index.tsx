@@ -1,5 +1,12 @@
 import React, { useState } from "react"
 import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native"
+import * as Crypto from "expo-crypto"
+import { useRouter } from "expo-router"
+import {
+	createMeasure,
+	type CreateMeasureInput,
+	type CreateMeasureLevelInput,
+} from "@/db/repositories/measuresRepository"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -17,17 +24,14 @@ import IconTrash from "@/assets/icons/trash-bin.svg"
 import { ThemedInput } from "@/src/components/ThemedInput"
 import { MeasurementDiagram } from "@/src/components/measure/MeasurementDiagram"
 
-export interface MeasurementLevel {
-	level: string
+export type MeasurementLevel = Omit<CreateMeasureLevelInput, "value"> & {
 	value: string
-	distance: number
 }
 
-// TODO
 const INITIAL_MEASUREMENTS: MeasurementLevel[] = [
-	{ level: "1", value: "", distance: 15 },
-	{ level: "2", value: "", distance: 10 },
-	{ level: "3", value: "", distance: 5 },
+	{ level: 1, value: "", distance: 15 },
+	{ level: 2, value: "", distance: 10 },
+	{ level: 3, value: "", distance: 5 },
 ]
 
 const MAX_MEASUREMENT_LEVELS = 5
@@ -35,7 +39,7 @@ const MAX_MEASUREMENT_LEVELS = 5
 function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]
 		.sort((left, right) => right.distance - left.distance)
-		.map((item, index) => ({ ...item, level: String(index + 1) }))
+		.map((item, index) => ({ ...item, level: index + 1 }))
 }
 
 function isValidMeasurementValue(value: string): boolean {
@@ -43,13 +47,27 @@ function isValidMeasurementValue(value: string): boolean {
 	return /^\d+(?:\.\d+)?$/.test(normalizedValue) && Number.isFinite(Number(normalizedValue))
 }
 
+function formatDateForStorage(date: Date): string {
+	const year = date.getFullYear()
+	const month = String(date.getMonth() + 1).padStart(2, "0")
+	const day = String(date.getDate()).padStart(2, "0")
+	return `${year}-${month}-${day}`
+}
+
+function formatTimeForStorage({ hour, minute }: FormatHourOptions): string {
+	return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+}
+
 export default function AddMeasurementScreen() {
+	const router = useRouter()
 	const { colors } = useTheme()
 	const { t } = useTranslation()
+	const [side, setSide] = useState<"left" | "right">("left")
+	const [limbType, setLimbType] = useState<"upper" | "lower">("lower")
 	const [measurementLevels, setMeasurementLevels] =
 		useState<MeasurementLevel[]>(INITIAL_MEASUREMENTS)
 	const [distanceDialogTarget, setDistanceDialogTarget] = useState<
-		{ type: "add" } | { type: "edit"; level: string } | null
+		{ type: "add" } | { type: "edit"; level: number } | null
 	>(null)
 	const [measurementDate, setMeasurementDate] = useState<Date>(() => new Date())
 	const [measurementTime, setMeasurementTime] = useState<FormatHourOptions>(() => {
@@ -58,6 +76,7 @@ export default function AddMeasurementScreen() {
 	})
 	const [isDateModalVisible, setIsDateModalVisible] = useState(false)
 	const [isHourModalVisible, setIsHourModalVisible] = useState(false)
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const isFutureMoment = (date: Date, hour: number, minute: number) => {
 		const candidate = new Date(date)
@@ -68,27 +87,8 @@ export default function AddMeasurementScreen() {
 	const validateMoment = (date: Date, hour: number, minute: number) => {
 		if (!isFutureMoment(date, hour, minute)) return true
 
-		Alert.alert(
-			t("common.error"),
-			"Moment pomiaru nie może być z przyszłości" //TODO(ai) use translation key
-		)
+		Alert.alert(t("common.error"), t("measurements.futureMomentError"))
 		return false
-	}
-
-	const handleOnSelectSideLeft = () => {
-		// TODO (ai)...
-	}
-
-	const handleOnSelectSideRight = () => {
-		// TODO
-	}
-
-	const handleOnSelectLimbUpper = () => {
-		// TODO
-	}
-
-	const handleOnSelectLimbLower = () => {
-		// TODO ...(ai)
 	}
 
 	const handleOnAddLevel = () => {
@@ -107,7 +107,7 @@ export default function AddMeasurementScreen() {
 		setMeasurementLevels((levels) => {
 			if (target.type === "add") {
 				if (levels.length >= MAX_MEASUREMENT_LEVELS) return levels
-				return sortAndRenumberLevels([...levels, { level: "", value: "", distance }])
+				return sortAndRenumberLevels([...levels, { level: 0, value: "", distance }])
 			}
 
 			return sortAndRenumberLevels(
@@ -117,34 +117,65 @@ export default function AddMeasurementScreen() {
 		setDistanceDialogTarget(null)
 	}
 
-	const mockSaveMeasurement = () => {
+	const handleSaveMeasurement = async () => {
+		if (isSubmitting) return
 		if (!validateMoment(measurementDate, measurementTime.hour, measurementTime.minute)) return
 
-		const missingLevelIndex = measurementLevels.findIndex((item) => !item.value.trim())
-		if (missingLevelIndex !== -1) {
+		if (measurementLevels.some((item) => !item.value.trim())) {
 			Alert.alert(t("common.error"), t("measurements.missingMeasurement"))
 			return
 		}
 
-		const invalidLevelIndex = measurementLevels.findIndex(
-			(item) => !isValidMeasurementValue(item.value)
-		)
-		if (invalidLevelIndex !== -1) {
+		const invalidLevel = measurementLevels.find((item) => !isValidMeasurementValue(item.value))
+		if (invalidLevel) {
 			Alert.alert(
 				t("common.error"),
-				t("measurements.invalidMeasurementForLevel", { level: invalidLevelIndex + 1 })
+				t("measurements.invalidMeasurementForLevel", { level: invalidLevel.level })
 			)
 			return
 		}
 
-		// TODO: Persist measurementLevels to the database.
+		const measureId = Crypto.randomUUID()
+		const levels: CreateMeasureLevelInput[] = measurementLevels.map((item) => ({
+			level: Number(item.level),
+			distance: item.distance,
+			value: Number(item.value.trim().replace(",", ".")),
+		}))
+		const input: CreateMeasureInput = {
+			id: measureId,
+			date: formatDateForStorage(measurementDate),
+			time: formatTimeForStorage(measurementTime),
+			side,
+			limbType,
+			levels,
+		}
+
+		setIsSubmitting(true)
+		try {
+			await createMeasure(input)
+			Alert.alert(t("measurements.saveSuccessTitle"), t("measurements.saveSuccessMessage"), [
+				{ text: t("common.save"), onPress: () => router.back() },
+			])
+		} catch (error) {
+			console.error("Failed to save measurement:", error)
+			Alert.alert(t("common.error"), t("measurements.saveError"))
+		} finally {
+			setIsSubmitting(false)
+		}
 	}
 
 	const handleOnDelete = () => {
-		// TODO
+		Alert.alert(t("measurements.discardTitle"), t("measurements.discardConfirmation"), [
+			{ text: t("common.cancel"), style: "cancel" },
+			{
+				text: t("measurements.delete"),
+				style: "destructive",
+				onPress: () => router.back(),
+			},
+		])
 	}
 
-	const handleRemoveLevel = (level: string) => {
+	const handleRemoveLevel = (level: number) => {
 		if (measurementLevels.length <= 1) return
 		const levelIndex = measurementLevels.findIndex((item) => item.level === level)
 		if (levelIndex === -1) return
@@ -167,7 +198,7 @@ export default function AddMeasurementScreen() {
 		)
 	}
 
-	const handleOpenDistanceDialog = (level: string) => {
+	const handleOpenDistanceDialog = (level: number) => {
 		setDistanceDialogTarget({ type: "edit", level })
 	}
 
@@ -193,7 +224,7 @@ export default function AddMeasurementScreen() {
 				item.distance === Number(value)
 		)
 
-	const handleMeasurementValueChange = (level: string, input: string) => {
+	const handleMeasurementValueChange = (level: number, input: string) => {
 		setMeasurementLevels((levels) =>
 			levels.map((item) => (item.level === level ? { ...item, value: input } : item))
 		)
@@ -222,15 +253,15 @@ export default function AddMeasurementScreen() {
 						<ThemedSelectiveSwitch
 							leftTx="newProsthesis.left"
 							rightTx="newProsthesis.right"
-							selectLeft={handleOnSelectSideLeft}
-							selectRight={handleOnSelectSideRight}
+							selectLeft={() => setSide("left")}
+							selectRight={() => setSide("right")}
 							initialState="left"
 						/>
 						<ThemedSelectiveSwitch
 							leftTx="newProsthesis.upper"
 							rightTx="newProsthesis.lower"
-							selectLeft={handleOnSelectLimbUpper}
-							selectRight={handleOnSelectLimbLower}
+							selectLeft={() => setLimbType("upper")}
+							selectRight={() => setLimbType("lower")}
 							initialState="right"
 						/>
 					</View>
@@ -326,7 +357,8 @@ export default function AddMeasurementScreen() {
 				<ThemedView
 					colorName="blue2"
 					variant="wide"
-					onPress={mockSaveMeasurement}
+					onPress={handleSaveMeasurement}
+					disabled={isSubmitting}
 					style={styles.saveButton}
 					centerChild={<ThemedText tx="measurements.save" variant="H1" colorName="bg_0" />}
 				/>
@@ -384,7 +416,7 @@ function MeasurementCardItem({
 	item: MeasurementLevel
 	levelNumber: number
 	hasInvalidValue: boolean
-	onValueChange: (level: string, value: string) => void
+	onValueChange: (level: number, value: string) => void
 	onDistancePress: () => void
 	onDeletePress: () => void
 	canDelete: boolean
@@ -394,56 +426,55 @@ function MeasurementCardItem({
 	return (
 		<View style={styles.levelRow}>
 			<ThemedView colorName="bg_0" borderColor="blue1" style={styles.cardItem}>
-				<ThemedView style={styles.cardInfoContent} onPress={onDistancePress}>
-					<View style={[styles.badge, { backgroundColor: colors.blue1 }]}>
-						<ThemedText variant="H2" colorName="bg_0">
-							L{levelNumber}
-						</ThemedText>
-					</View>
-					<View style={styles.cardInfo}>
-						<ThemedText tx="measurements.measurementHeight" variant="H4" colorName="blue2" />
+				<View style={styles.cardRow}>
+					<ThemedView style={styles.cardInfoContent} onPress={onDistancePress}>
+						<View style={[styles.badge, { backgroundColor: colors.blue1 }]}>
+							<ThemedText variant="H2" colorName="bg_0">
+								L{levelNumber}
+							</ThemedText>
+						</View>
+						<View style={styles.cardInfo}>
+							<ThemedText tx="measurements.measurementHeight" variant="H4" colorName="blue2" />
+							<ThemedText
+								tx="measurements.distanceFromTip"
+								txOptions={{ distance: item.distance }}
+								variant="H2"
+								colorName="blue2"
+							/>
+						</View>
+					</ThemedView>
+
+					<View style={styles.valueRow}>
+						<View style={styles.valueField}>
+							<ThemedInput
+								variant="float"
+								value={item.value}
+								onChangeText={(value) => onValueChange(item.level, value)}
+								viewStyle={[
+									{
+										backgroundColor: colors.bg_1,
+										borderColor: hasInvalidValue ? colors.false : colors.blue1,
+										borderWidth: 1,
+									},
+								]}
+							/>
+						</View>
 						<ThemedText
-							tx="measurements.distanceFromTip"
-							txOptions={{ distance: item.distance }}
+							tx="measurements.centimeters"
 							variant="H2"
 							colorName="blue2"
+							style={styles.centimetersLabel}
 						/>
 					</View>
-				</ThemedView>
-
-				<View style={styles.valueRow}>
-					<View style={styles.valueField}>
-						<ThemedInput
-							variant="float"
-							value={item.value}
-							onChangeText={(value) => onValueChange(item.level, value)}
-							onPressIn={(event) => event.stopPropagation()}
-							viewStyle={[
-								styles.valueInputBox,
-								{
-									backgroundColor: colors.bg_1,
-									borderColor: hasInvalidValue ? colors.false : colors.blue1,
-									borderWidth: 1,
-								},
-							]}
-							textStyle={styles.valueInputText}
-						/>
-						{hasInvalidValue && (
-							<ThemedText
-								tx="measurements.invalidMeasurementValue"
-								variant="H4"
-								colorName="false"
-								style={styles.measurementValueError}
-							/>
-						)}
-					</View>
-					<ThemedText
-						tx="measurements.centimeters"
-						variant="H2"
-						colorName="blue2"
-						style={styles.centimetersLabel}
-					/>
 				</View>
+				{hasInvalidValue && (
+					<ThemedText
+						tx="measurements.invalidMeasurementValue"
+						variant="H4"
+						colorName="false"
+						style={styles.measurementValueError}
+					/>
+				)}
 			</ThemedView>
 			<Pressable
 				onPress={onDeletePress}
@@ -493,13 +524,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingHorizontal: 12,
 	},
-	inputFieldText: {
-		width: "100%",
-		textAlign: "center",
-		fontFamily: "Cabin-Medium",
-		fontSize: 16,
-		padding: 0,
-	},
 	schemaSection: {
 		gap: 12,
 		marginTop: 8,
@@ -522,12 +546,15 @@ const styles = StyleSheet.create({
 	},
 	cardItem: {
 		flex: 1,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
 		paddingVertical: 12,
 		paddingHorizontal: 12,
 		minHeight: 76,
+		flexDirection: "column",
+	},
+	cardRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 	},
 	cardInfoContent: {
 		flex: 1,
@@ -563,18 +590,6 @@ const styles = StyleSheet.create({
 	measurementValueError: {
 		marginTop: 4,
 		textAlign: "center",
-	},
-	valueInputBox: {
-		width: 60,
-		height: 38,
-		borderRadius: 12,
-	},
-	valueInputText: {
-		width: "100%",
-		textAlign: "center",
-		fontFamily: "Cabin-Medium",
-		fontSize: 15,
-		paddingLeft: 0,
 	},
 	addLevelButton: {
 		borderStyle: "dashed",
