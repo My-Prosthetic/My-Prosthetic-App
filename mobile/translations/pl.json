@@ -310,6 +310,30 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "DODAJ POMIAR",
+		"selectLimb": "WYBIERZ KOŃCZYNĘ",
+		"date": "DATA",
+		"datePlaceholder": "DD-MM-RRRR",
+		"time": "GODZINA",
+		"timePlaceholder": "GG:MM",
+		"schema": "SCHEMAT PUNKTÓW POMIAROWYCH",
+		"circumferenceValues": "WARTOŚCI OBWODÓW",
+		"measurementHeight": "Wysokość pomiaru",
+		"distanceFromTip": "{{distance}} cm od szczyciku",
+		"centimeters": "cm",
+		"addLevel": "Dodaj nowy poziom",
+		"addDistanceTitle": "Podaj odległość nowego miejsca pomiarowego L{{level}} od szczyciku",
+		"editDistanceTitle": "Zmień odległość punktu pomiarowego L{{level}} od szczyciku",
+		"invalidDistance": "Odległość musi być nieujemną liczbą całkowitą i nie może się powtarzać.",
+		"removeLevelTitle": "Usuń poziom pomiaru",
+		"removeLevelConfirmation": "Czy na pewno chcesz usunąć poziom L{{level}}?",
+		"invalidMeasurementValue": "Wprowadź poprawną liczbę.",
+		"missingMeasurement": "Brakuje pomiaru",
+		"invalidMeasurementForLevel": "Pomiar L{{level}} w niepoprawnej formie",
+		"save": "ZAPISZ POMIAR",
+		"delete": "USUŃ"
+	},
 	"newIncident": {
 		"title": "NOWY INCYDENT",
 		"time": "GODZINA",

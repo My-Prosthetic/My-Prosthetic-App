@@ -107,7 +107,6 @@ export default function HomeScreen() {
 
 	//TODO
 	const onHandleShowFullHistory = () => {}
-	const onHandleAddMeasurement = () => {}
 	const onHandleMyFiles = () => {}
 
 	//MOCKS
@@ -214,7 +213,7 @@ export default function HomeScreen() {
 					<ThemedView
 						variant="wide"
 						colorName="blue2"
-						onPress={onHandleAddMeasurement}
+						onPress={() => router.push("./measure/")}
 						leftChild={<IconMeasure color={colors.bg_0} />}
 						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} />}

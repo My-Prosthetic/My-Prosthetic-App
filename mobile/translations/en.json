@@ -311,6 +311,30 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "ADD MEASUREMENT",
+		"selectLimb": "SELECT LIMB",
+		"date": "DATE",
+		"datePlaceholder": "MM-DD-YYYY",
+		"time": "TIME",
+		"timePlaceholder": "HH:MM",
+		"schema": "MEASUREMENT POINT LAYOUT",
+		"circumferenceValues": "CIRCUMFERENCE VALUES",
+		"measurementHeight": "Measurement height",
+		"distanceFromTip": "{{distance}} cm from the tip",
+		"centimeters": "cm",
+		"addLevel": "Add a new level",
+		"addDistanceTitle": "Enter the distance of new measurement point L{{level}} from the stump tip",
+		"editDistanceTitle": "Change the distance of measurement point L{{level}} from the stump tip",
+		"invalidDistance": "Distance must be a non-negative integer and must not duplicate another point.",
+		"removeLevelTitle": "Remove measurement level",
+		"removeLevelConfirmation": "Are you sure you want to remove level L{{level}}?",
+		"invalidMeasurementValue": "Enter a valid number.",
+		"missingMeasurement": "A measurement is missing.",
+		"invalidMeasurementForLevel": "Measurement L{{level}} has an invalid format.",
+		"save": "SAVE MEASUREMENT",
+		"delete": "DELETE"
+	},
 	"newIncident": {
 		"title": "NEW INCIDENT",
 		"time": "TIME",
