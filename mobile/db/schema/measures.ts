@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm"
-import { check, integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
+import { check, integer, primaryKey, real, sqliteTable, text, index } from "drizzle-orm/sqlite-core"
 
 export const measures = sqliteTable(
 	"measures",
@@ -25,6 +25,8 @@ export const measures = sqliteTable(
 	(table) => [
 		check("measures_side_check", sql`${table.side} IN ('left', 'right')`),
 		check("measures_limb_type_check", sql`${table.limbType} IN ('upper', 'lower')`),
+		index("measures_latest_lookup_idx").on(table.side, table.limbType, table.date),
+		index("measures_sync_idx").on(table.isDirty, table.deletedAt),
 	]
 )
 

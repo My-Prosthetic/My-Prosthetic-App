@@ -21,3 +21,6 @@ CREATE TABLE `measures` (
 	CONSTRAINT "measures_side_check" CHECK("measures"."side" IN ('left', 'right')),
 	CONSTRAINT "measures_limb_type_check" CHECK("measures"."limb_type" IN ('upper', 'lower'))
 );
+--> statement-breakpoint
+CREATE INDEX `measures_latest_lookup_idx` ON `measures` (`side`,`limb_type`,`date`);--> statement-breakpoint
+CREATE INDEX `measures_sync_idx` ON `measures` (`is_dirty`,`deleted_at`);

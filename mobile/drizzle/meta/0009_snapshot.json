@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "3a9e8df8-7645-4e36-aabd-fc255c3127ec",
+	"id": "093dbc53-b7aa-4c7f-88d0-611ae6b7e93d",
 	"prevId": "f92d04e9-7d81-4a0a-bed8-03510bd31cb4",
 	"tables": {
 		"prostheses": {
@@ -1005,7 +1005,18 @@
 					"autoincrement": false
 				}
 			},
-			"indexes": {},
+			"indexes": {
+				"measures_latest_lookup_idx": {
+					"name": "measures_latest_lookup_idx",
+					"columns": ["side", "limb_type", "date"],
+					"isUnique": false
+				},
+				"measures_sync_idx": {
+					"name": "measures_sync_idx",
+					"columns": ["is_dirty", "deleted_at"],
+					"isUnique": false
+				}
+			},
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},

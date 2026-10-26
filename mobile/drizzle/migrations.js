@@ -10,7 +10,7 @@ import m0005 from "./0005_tiny_mockingbird.sql"
 import m0006 from "./0006_long_spot.sql"
 import m0007 from "./0007_known_pete_wisdom.sql"
 import m0008 from "./0008_awesome_black_tarantula.sql"
-import m0009 from "./0009_next_doctor_faustus.sql"
+import m0009 from "./0009_wet_mentor.sql"
 
 export default {
 	journal,

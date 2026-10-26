@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
 import { measures, measureLevels } from "@/db/schema/measures"
@@ -82,7 +82,7 @@ export async function getLatestMeasure(filter?: {
 			if (filter?.limbType) conditions.push(eq(fields.limbType, filter.limbType))
 			return and(...conditions)
 		},
-		orderBy: [desc(measures.date), desc(measures.time), desc(measures.updatedAt)],
+		orderBy: (fields, { desc }) => [desc(fields.date), desc(fields.time), desc(fields.updatedAt)],
 		with: {
 			levels: {
 				orderBy: (fields, { asc }) => [asc(fields.level)],
