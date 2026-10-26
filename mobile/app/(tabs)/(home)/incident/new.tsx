@@ -826,10 +826,7 @@ export default function NewIncidentScreen() {
 					colorName="blue2"
 					onPress={() => void saveIncident()}
 					disabled={isSaving || !selectedProsthesisId}
-					style={[
-						styles.saveButton,
-						(isSaving || !selectedProsthesisId) && styles.disabledButton,
-					]}
+					style={[styles.saveButton, (isSaving || !selectedProsthesisId) && styles.disabledButton]}
 				>
 					<ThemedText variant="H1" colorName="bg_0" style={styles.saveButtonText}>
 						{t(isSaving ? "newIncident.saving" : "newIncident.save")}
