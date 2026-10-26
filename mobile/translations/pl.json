@@ -317,7 +317,7 @@
 		"selectType": "Wybierz typ incydentu",
 		"circumstances": "OKOLICZNOŚCI:",
 		"description": "OPIS:",
-		"descriptionPlaceholder": "Opisz krótko przebieg incydentu...",
+		"descriptionPlaceholder": "Wpisz krótki opis incydentu...",
 		"intensity": "SKALA NATĘŻENIA BÓLU:",
 		"relatedProsthesis": "POWIĄZANA PROTEZA:",
 		"component": "KOMPONENT:",
@@ -372,10 +372,10 @@
 		"removePhoto": "Usuń zdjęcie {{number}}",
 		"customValuePlaceholder": "Dodaj własną wartość",
 		"duplicateValue": "Ta wartość już znajduje się na liście.",
-		"noProsthesis": "Najpierw dodaj protezę, aby zapisać incydent.",
 		"savedTitle": "Zapisano",
 		"savedMessage": "Incydent został zapisany.",
 		"saveError": "Nie udało się zapisać incydentu w bazie danych.",
+		"assignProsthesisHint": "Aby zapisać incydent, najpierw dodaj protezę.",
 		"validation": {
 			"prosthesis": "Wybierz protezę powiązaną z incydentem.",
 			"type": "Wybierz typ incydentu.",
@@ -384,7 +384,22 @@
 			"point": "Zaznacz miejsce dolegliwości na schemacie.",
 			"time": "Podaj godzinę w formacie GG:MM.",
 			"futureDate": "Data i godzina incydentu nie mogą być ustawione w przyszłości."
-		}
+		},
+		"weekdays": {
+			"sun": "NIEDZ",
+			"mon": "PON",
+			"tue": "WT",
+			"wed": "ŚR",
+			"thu": "CZW",
+			"fri": "PT",
+			"sat": "SOB"
+		},
+		"chooseTime": "Wybierz godzinę",
+		"confirmTime": "Wprowadź",
+		"recordAudio": "Nagraj notatkę głosową",
+		"stopAudio": "Zatrzymaj nagrywanie",
+		"addImages": "Dodaj zdjęcia i pliki",
+		"photoName": "zdjęcie"
 	},
 	"prosthesisDetails": {
 		"title": "MOJA PROTEZA",
