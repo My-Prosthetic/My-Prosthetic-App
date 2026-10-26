@@ -1,11 +1,13 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native"
 import * as Crypto from "expo-crypto"
 import { useRouter } from "expo-router"
 import {
 	createMeasure,
+	getLatestMeasure,
 	type CreateMeasureInput,
 	type CreateMeasureLevelInput,
+	type MeasureWithLevels,
 } from "@/db/repositories/measuresRepository"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
@@ -36,6 +38,16 @@ const INITIAL_MEASUREMENTS: MeasurementLevel[] = [
 
 const MAX_MEASUREMENT_LEVELS = 5
 
+function getMeasurementLevelsFromHistory(measure: MeasureWithLevels | null): MeasurementLevel[] {
+	if (!measure) return INITIAL_MEASUREMENTS.map((item) => ({ ...item }))
+
+	return measure.levels.map(({ level, distance }) => ({
+		level,
+		distance,
+		value: "",
+	}))
+}
+
 function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]
 		.sort((left, right) => right.distance - left.distance)
@@ -64,8 +76,9 @@ export default function AddMeasurementScreen() {
 	const { t } = useTranslation()
 	const [side, setSide] = useState<"left" | "right">("left")
 	const [limbType, setLimbType] = useState<"upper" | "lower">("lower")
-	const [measurementLevels, setMeasurementLevels] =
-		useState<MeasurementLevel[]>(INITIAL_MEASUREMENTS)
+	const [measurementLevels, setMeasurementLevels] = useState<MeasurementLevel[]>(() =>
+		getMeasurementLevelsFromHistory(null)
+	)
 	const [distanceDialogTarget, setDistanceDialogTarget] = useState<
 		{ type: "add" } | { type: "edit"; level: number } | null
 	>(null)
@@ -77,6 +90,77 @@ export default function AddMeasurementScreen() {
 	const [isDateModalVisible, setIsDateModalVisible] = useState(false)
 	const [isHourModalVisible, setIsHourModalVisible] = useState(false)
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	const [isLoadingConfig, setIsLoadingConfig] = useState(true)
+	const initializationStartedRef = useRef(false)
+	const isInitializedRef = useRef(false)
+	const historyRequestIdRef = useRef(0)
+
+	useEffect(() => {
+		if (initializationStartedRef.current) return
+		initializationStartedRef.current = true
+
+		const initializeFromHistory = async () => {
+			try {
+				const latestMeasure = await getLatestMeasure()
+				if (latestMeasure) {
+					setSide(latestMeasure.side)
+					setLimbType(latestMeasure.limbType)
+				}
+				setMeasurementLevels(getMeasurementLevelsFromHistory(latestMeasure))
+			} catch (error) {
+				console.error("Failed to load latest measurement:", error)
+				setSide("left")
+				setLimbType("lower")
+				setMeasurementLevels(getMeasurementLevelsFromHistory(null))
+			} finally {
+				isInitializedRef.current = true
+				setIsLoadingConfig(false)
+			}
+		}
+
+		void initializeFromHistory()
+	}, [])
+
+	const reloadLevelsForSelection = async (
+		nextSide: "left" | "right",
+		nextLimbType: "upper" | "lower"
+	) => {
+		const requestId = ++historyRequestIdRef.current
+		setIsLoadingConfig(true)
+
+		try {
+			const latestMeasure = await getLatestMeasure({
+				side: nextSide,
+				limbType: nextLimbType,
+			})
+			if (requestId === historyRequestIdRef.current) {
+				setMeasurementLevels(getMeasurementLevelsFromHistory(latestMeasure))
+			}
+		} catch (error) {
+			console.error("Failed to load measurement history for selected limb:", error)
+			if (requestId === historyRequestIdRef.current) {
+				setMeasurementLevels(getMeasurementLevelsFromHistory(null))
+			}
+		} finally {
+			if (requestId === historyRequestIdRef.current) {
+				setIsLoadingConfig(false)
+			}
+		}
+	}
+
+	const handleSideChange = (nextSide: "left" | "right") => {
+		setSide(nextSide)
+		if (isInitializedRef.current) {
+			void reloadLevelsForSelection(nextSide, limbType)
+		}
+	}
+
+	const handleLimbTypeChange = (nextLimbType: "upper" | "lower") => {
+		setLimbType(nextLimbType)
+		if (isInitializedRef.current) {
+			void reloadLevelsForSelection(side, nextLimbType)
+		}
+	}
 
 	const isFutureMoment = (date: Date, hour: number, minute: number) => {
 		const candidate = new Date(date)
@@ -251,18 +335,20 @@ export default function AddMeasurementScreen() {
 
 					<View style={styles.switchesGroup}>
 						<ThemedSelectiveSwitch
+							key={`side-${side}`}
 							leftTx="newProsthesis.left"
 							rightTx="newProsthesis.right"
-							selectLeft={() => setSide("left")}
-							selectRight={() => setSide("right")}
-							initialState="left"
+							selectLeft={() => handleSideChange("left")}
+							selectRight={() => handleSideChange("right")}
+							initialState={side}
 						/>
 						<ThemedSelectiveSwitch
+							key={`limb-${limbType}`}
 							leftTx="newProsthesis.upper"
 							rightTx="newProsthesis.lower"
-							selectLeft={() => setLimbType("upper")}
-							selectRight={() => setLimbType("lower")}
-							initialState="right"
+							selectLeft={() => handleLimbTypeChange("upper")}
+							selectRight={() => handleLimbTypeChange("lower")}
+							initialState={limbType === "upper" ? "left" : "right"}
 						/>
 					</View>
 				</View>
@@ -358,7 +444,7 @@ export default function AddMeasurementScreen() {
 					colorName="blue2"
 					variant="wide"
 					onPress={handleSaveMeasurement}
-					disabled={isSubmitting}
+					disabled={isSubmitting || isLoadingConfig}
 					style={styles.saveButton}
 					centerChild={<ThemedText tx="measurements.save" variant="H1" colorName="bg_0" />}
 				/>

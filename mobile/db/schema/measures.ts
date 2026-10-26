@@ -51,3 +51,10 @@ export const measureLevels = sqliteTable(
 export const measuresRelations = relations(measures, ({ many }) => ({
 	levels: many(measureLevels),
 }))
+
+export const measureLevelsRelations = relations(measureLevels, ({ one }) => ({
+	measure: one(measures, {
+		fields: [measureLevels.measureId],
+		references: [measures.id],
+	}),
+}))
