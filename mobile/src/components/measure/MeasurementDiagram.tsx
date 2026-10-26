@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { StyleProp, ViewStyle } from "react-native"
 import Svg, { Circle, G, Line, Path, Text as SvgText } from "react-native-svg"
 import { useTheme } from "@/context/ThemeContext"
-import { MeasurementLevel } from "@/app/(tabs)/(home)/measure"
+import type { MeasurementLevel } from "@/src/utils/measurementUtils"
 
 interface MeasurementDiagramProps {
 	levels: MeasurementLevel[]
