@@ -1,4 +1,4 @@
-import { type ColorValue, View } from "react-native"
+import { View } from "react-native"
 import { Redirect, Tabs } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
@@ -6,10 +6,6 @@ import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import { GuestBanner } from "@/src/components/GuestBanner"
-
-function iconColor(color: ColorValue | undefined) {
-	return typeof color === "number" ? undefined : (color ?? undefined)
-}
 
 export default function TabsLayout() {
 	const { t } = useTranslation()
@@ -41,11 +37,7 @@ export default function TabsLayout() {
 						title: t("tabs.homeTitle"),
 						tabBarLabel: t("tabs.home"),
 						tabBarIcon: ({ color, focused }) => (
-							<Ionicons
-								name={focused ? "home" : "home-outline"}
-								size={24}
-								color={iconColor(color)}
-							/>
+							<Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
 						),
 					}}
 				/>
@@ -55,11 +47,7 @@ export default function TabsLayout() {
 						title: t("tabs.journalTitle"),
 						tabBarLabel: t("tabs.journal"),
 						tabBarIcon: ({ color, focused }) => (
-							<Ionicons
-								name={focused ? "book" : "book-outline"}
-								size={24}
-								color={iconColor(color)}
-							/>
+							<Ionicons name={focused ? "book" : "book-outline"} size={24} color={color} />
 						),
 					}}
 				/>
@@ -69,11 +57,7 @@ export default function TabsLayout() {
 						title: t("tabs.profileTitle"),
 						tabBarLabel: t("tabs.profile"),
 						tabBarIcon: ({ color, focused }) => (
-							<Ionicons
-								name={focused ? "person" : "person-outline"}
-								size={24}
-								color={iconColor(color)}
-							/>
+							<Ionicons name={focused ? "person" : "person-outline"} size={24} color={color} />
 						),
 					}}
 				/>
@@ -83,11 +67,7 @@ export default function TabsLayout() {
 						title: t("tabs.settingsTitle"),
 						tabBarLabel: t("tabs.settings"),
 						tabBarIcon: ({ color, focused }) => (
-							<Ionicons
-								name={focused ? "settings" : "settings-outline"}
-								size={24}
-								color={iconColor(color)}
-							/>
+							<Ionicons name={focused ? "settings" : "settings-outline"} size={24} color={color} />
 						),
 					}}
 				/>

@@ -1,14 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import {
-	Alert,
-	Image,
-	ScrollView,
-	type ScrollViewInstance,
-	StyleProp,
-	StyleSheet,
-	TextInput,
-	TextStyle,
-} from "react-native"
+import { Alert, Image, ScrollView, StyleProp, StyleSheet, TextInput, TextStyle } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import * as Crypto from "expo-crypto"
 import {
@@ -131,10 +122,10 @@ export default function NewIncidentScreen() {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const styles = useMemo(() => getStyles(colors), [colors])
-	const scrollRef = useRef<ScrollViewInstance>(null)
+	const scrollRef = useRef<ScrollView>(null)
 	const incidentIdRef = useRef(Crypto.randomUUID())
 	const savedRef = useRef(false)
-	const dateScrollRef = useRef<ScrollViewInstance>(null)
+	const dateScrollRef = useRef<ScrollView>(null)
 	const now = useMemo(() => new Date(), [])
 	const [selectedDate, setSelectedDate] = useState(now)
 	const [timeText, setTimeText] = useState(toTimeText(now))
@@ -917,8 +908,8 @@ const localStyles = StyleSheet.create({
 	},
 })
 
-const getStyles = (colors: ThemeColors) => {
-	const styles = StyleSheet.create({
+const getStyles = (colors: ThemeColors) =>
+	StyleSheet.create({
 		screen: {
 			flex: 1,
 		},
@@ -1193,5 +1184,3 @@ const getStyles = (colors: ThemeColors) => {
 			marginTop: 28,
 		},
 	})
-	return styles
-}
