@@ -1,28 +1,37 @@
 import { useState, useEffect, useCallback } from "react"
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native"
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native"
 import { useTranslation } from "react-i18next"
-import { Ionicons } from "@expo/vector-icons"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useFocusEffect, useRouter } from "expo-router"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
 import { useAuth } from "@/context/AuthContext"
+import { Carousel } from "@/src/components/Carousel"
+import { formatDateBadge } from "@/src/utils/dateFormatter"
+
+import IconPlus from "@/assets/icons/plus.svg"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
+import IconEventLive from "@/assets/icons/event-live-outline-thin.svg"
+import IconMeasure from "@/assets/icons/measure-filled.svg"
+import IconMagnifyingGlass from "@/assets/icons/magnifying_glass_dolar.svg"
+import IconFile from "@/assets/icons/file.svg"
+import IconLegLogo from "@/assets/icons/leg_logo.svg"
 
 import { getLatestUser } from "@/db/repositories/userRepository"
 
 import { getAllProstheses, Prosthesis } from "@/db/repositories/prosthesisRepository"
-import { Carousel } from "@/src/components/Carousel"
 
 //TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
 
 export default function HomeScreen() {
+	const [currentDate, setCurrentDate] = useState(() => new Date())
 	const [userName, setUserName] = useState<string>("")
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const router = useRouter()
 
-	const { t, i18n } = useTranslation()
-	const { colors, themeType, setTheme } = useTheme()
+	const { i18n } = useTranslation()
+	const { colors } = useTheme()
 	const { status } = useAuth()
 
 	const styles = getStyles(colors)
@@ -44,6 +53,18 @@ export default function HomeScreen() {
 	)
 
 	useEffect(() => {
+		const timer = setInterval(() => setCurrentDate(new Date()), 60_000)
+		return () => clearInterval(timer)
+	}, [])
+
+	const locale = i18n.resolvedLanguage ?? i18n.language
+	const {
+		day,
+		month,
+		accessibilityLabel: dateAccessibilityLabel,
+	} = formatDateBadge(currentDate, locale)
+
+	useEffect(() => {
 		let isMounted = true
 		void getLatestUser()
 			.then((user) => {
@@ -58,176 +79,171 @@ export default function HomeScreen() {
 
 	const renderAddProsthesis = () => (
 		<ThemedView
+			colorName="blue2"
 			style={styles.prostheticCard}
 			onPress={() => router.push("/prosthesis/new")}
-			accessibilityRole="button"
 		>
-			<View style={styles.addProsthesisCircle}>
-				<Ionicons name="add" size={54} color={colors.primary_base} />
+			<View style={styles.cardIcon}>
+				<IconPlus color={colors.blue0} width={70} height={70} />
 			</View>
-			<ThemedText variant="subTitle1" colorName="accent_base" tx="home.addProsthesis" />
+			<ThemedText tx="home.addProsthesis" variant="H2" colorName="bg_0" />
 		</ThemedView>
 	)
 
 	const renderProsthesisCard = (prosthesis: Prosthesis) => (
 		<ThemedView
+			colorName="blue2"
 			style={styles.prostheticCard}
 			onPress={() => router.push(`/prosthesis/${prosthesis.id}/`)}
 		>
-			<Image
-				source={require("@/assets/mp_logo_accent.png")}
-				style={styles.logoImage}
-				resizeMode="contain"
-			/>
-			<ThemedText variant="subTitle1" colorName="accent_base">
+			<View style={styles.cardIcon}>
+				<IconLegLogo color={colors.blue0} />
+			</View>
+			<ThemedText variant="H2" colorName="bg_0">
 				{prosthesis.name}
 			</ThemedText>
 		</ThemedView>
 	)
 
-	return (
-		<ScrollView
-			style={styles.scrollView}
-			contentContainerStyle={[styles.container, { paddingTop: status === "GUEST" ? 0 : 50 }]}
-			showsVerticalScrollIndicator={false}
-		>
-			{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
-			<ThemedView variant="wide" colorName="tertiary_base_2" style={styles.headerRow}>
-				<ThemedText
-					tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
-					txOptions={{ name: userName.toLocaleUpperCase() }}
-					colorName="primary_base"
-					style={{ textAlign: "left" }}
-				/>
-				<View style={styles.handIconContainer}>
-					<Ionicons name="hand-left" size={48} color={colors.primary_base} />
-				</View>
-			</ThemedView>
+	//TODO
+	const onHandleShowFullHistory = () => {}
+	const onHandleAddMeasurement = () => {}
+	const onHandleMyFiles = () => {}
 
-			{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
-			<ThemedView
-				variant="wide"
-				colorName="tertiary_base_3"
-				shadow={true}
-				style={styles.sectionContainer}
-			>
-				<ThemedText tx="home.myProsthetics" variant="main1Button" style={{ padding: 16 }} />
-				<Carousel
-					items={prostheses}
-					renderItem={renderProsthesisCard}
-					renderPlus={renderAddProsthesis}
-				/>
-			</ThemedView>
+	//MOCKS
+	interface Activity {
+		name: string
+		when: string
+	}
 
-			{/* ----------------- SEKCJA: SZYBKIE PRZYCISKI AKCJI ----------------- */}
-			<View style={styles.actionButtonsRow}>
-				{/* Przycisk: Dodaj Pomiar */}
-				<ThemedView colorName="tertiary_base_3" shadow={true} style={styles.actionButtonCard}>
-					<ThemedText tx="home.addMeasure" variant="main1Button" style={{ textAlign: "center" }} />
-				</ThemedView>
+	const mockActivities: Activity[] = [
+		{ name: "Ostatni pomiar:", when: "Dzisiaj, 08:30" },
+		{ name: "Ostatni incydent:", when: "5 dni temu" },
+	]
+
+	const renderActivity = (activity: Activity, index: number) => {
+		const isLast = index === mockActivities.length - 1
+
+		return (
+			<View key={index}>
 				<ThemedView
-					onPress={() => router.push("./incident/new")}
-					colorName="accent_base_1"
-					shadow={true}
-					style={[styles.actionButtonCard, { borderWidth: 4, borderColor: colors.primary_base }]}
-				>
-					<ThemedText tx="home.addIncident" variant="main1Button" style={{ textAlign: "center" }} />
-				</ThemedView>
+					key={index}
+					style={styles.activityRow}
+					leftChild={<ThemedView colorName="blue1" style={styles.timelineDot} />}
+					centerChild={
+						<ThemedText variant="H2" colorName="blue2">
+							{activity.name}
+						</ThemedText>
+					}
+					rightChild={
+						<ThemedText variant="H2" colorName="blue2">
+							{activity.when}
+						</ThemedText>
+					}
+				/>
+				{!isLast && <View style={styles.timelineLine} />}
 			</View>
+		)
+	}
 
-			{/* ----------------- SEKCJA: OSTATNIA AKTYWNOŚĆ ----------------- */}
-			<ThemedText
-				tx="home.lastActivity"
-				variant="main1Button"
-				colorName="secondary_base_0c"
-				style={{ textAlign: "center", marginBottom: 15 }}
-			/>
+	return (
+		<ScrollView showsVerticalScrollIndicator={false}>
 			<ThemedView
-				colorName="tertiary_base_3"
-				variant="wide"
-				style={{ borderWidth: 1, borderColor: colors.secondary_base_0c }}
+				colorName="bg_1"
+				variant="background"
+				style={{ paddingTop: status === "GUEST" ? 10 : 50, paddingHorizontal: 0 }}
 			>
-				<View style={styles.activityCard}>
-					{/* Element osi czasu 1: Pomiar kikuta */}
-					<View style={styles.activityRow}>
-						<View style={styles.activityContent}>
-							<Text style={styles.activityLabel}>{t("home.lastStumpMeasurement")}</Text>
-							<Text style={styles.activityValue}>{t("home.todayAt", { time: "8:30" })}</Text>
-						</View>
-					</View>
+				<ThemedView variant="background" colorName="bg_1">
+					{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
+					<ThemedView variant="wide" style={styles.headerRow}>
+						<ThemedText
+							tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
+							txOptions={{ name: userName }}
+							colorName="blue2"
+							style={styles.greeting}
+						/>
+						<ThemedView
+							colorName="blue0"
+							style={styles.dateBadge}
+							accessibilityLabel={dateAccessibilityLabel}
+						>
+							<ThemedText variant="H0" colorName="blue2">
+								{day}
+							</ThemedText>
+							<ThemedText variant="H1" colorName="blue2">
+								{month}
+							</ThemedText>
+						</ThemedView>
+					</ThemedView>
 
-					{/* Element osi czasu 2: Ostatni incydent */}
-					<View style={styles.activityRow}>
-						<View style={styles.activityContent}>
-							<Text style={styles.activityLabel}>{t("home.lastIncident")}</Text>
-							<Text style={styles.activityValue}>{t("home.daysAgo", { count: 5 })}</Text>
-						</View>
-					</View>
+					{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
+					<Carousel
+						items={prostheses}
+						renderItem={renderProsthesisCard}
+						renderPlus={renderAddProsthesis}
+					/>
+				</ThemedView>
+
+				{/*TODO shadow jest nierównomierny między górą i dołem*/}
+				<ThemedView variant="background" colorName="bg_0" shadow style={styles.activitySection}>
+					<ThemedText tx="home.lastActivity" variant="H1" colorName="blue2" />
+					<ThemedView variant="divider" style={styles.divider} colorName="blue0" />
+					{mockActivities.map(renderActivity)}
+				</ThemedView>
+
+				<View style={styles.showFullHistory}>
+					<ThemedText
+						tx="home.showFullHistory"
+						variant="H2"
+						colorName="magenta0"
+						onPress={onHandleShowFullHistory}
+						style={{ alignSelf: "flex-end", textAlign: "right" }}
+					/>
 				</View>
+				<ThemedView variant="background" colorName="bg_1" style={styles.bottomSection}>
+					{/* ----------------- SEKCJA: SZYBKIE PRZYCISKI AKCJI ----------------- */}
+					<ThemedView
+						variant="wide"
+						colorName="blue2"
+						onPress={() => router.push("./incident/new")}
+						leftChild={<IconEventLive color={colors.bg_0} />}
+						centerChild={<ThemedText tx="home.addIncident" variant="H1" colorName="bg_0" />}
+						rightChild={<IconPlus color={colors.bg_0} />}
+					/>
+
+					<ThemedView
+						variant="wide"
+						colorName="blue2"
+						onPress={onHandleAddMeasurement}
+						leftChild={<IconMeasure color={colors.bg_0} />}
+						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
+						rightChild={<IconPlus color={colors.bg_0} />}
+					/>
+
+					<ThemedView
+						variant="wide"
+						colorName="blue0"
+						onPress={() => router.push("./funding/accumulated_funds")}
+						leftChild={<IconMagnifyingGlass color={colors.graphite0} />}
+						centerChild={<ThemedText tx="home.funding" variant="H1" colorName="graphite0" />}
+						rightChild={<IconChevronRight color={colors.graphite0} />}
+					/>
+
+					<ThemedView
+						variant="wide"
+						colorName="blue0"
+						onPress={onHandleMyFiles}
+						leftChild={<IconFile color={colors.graphite0} />}
+						centerChild={<ThemedText tx="home.myFiles" variant="H1" colorName="graphite0" />}
+						rightChild={<IconChevronRight color={colors.graphite0} />}
+					/>
+				</ThemedView>
 			</ThemedView>
-
-			<ThemedView
-				variant="wide"
-				colorName="tertiary_base_2"
-				style={{
-					flexDirection: "row",
-					justifyContent: "flex-end",
-					paddingVertical: 0,
-					paddingHorizontal: 8,
-				}}
-			>
-				<ThemedText tx="home.showFullHistory" variant="subTitle1" colorName="secondary_base_0c" />
-			</ThemedView>
-
-			{/* ----------------- SEKCJA: UTILITY BUTTONS (NA DOLE) ----------------- */}
-
-			<ThemedView
-				onPress={() => router.push("./funding/accumulated_funds")}
-				variant="wide"
-				colorName="tertiary_base_3"
-				shadow={true}
-				style={{ justifyContent: "space-between", marginBottom: 32 }}
-			>
-				<Ionicons name="cash-outline" size={24} color={colors.primary_base} />
-				<ThemedText tx="home.funding" variant="main1Button" colorName="primary_base" />
-				<Ionicons name="chevron-forward" size={24} color={colors.primary_base} />
-			</ThemedView>
-			<ThemedView
-				variant="wide"
-				colorName="tertiary_base_3"
-				shadow={true}
-				style={{ justifyContent: "space-between", marginBottom: 60 }}
-			>
-				<Ionicons name="document-text-outline" size={24} color={colors.primary_base} />
-				<ThemedText tx="home.myFiles" variant="main1Button" colorName="primary_base" />
-				<Ionicons name="chevron-forward" size={24} color={colors.primary_base} />
-			</ThemedView>
-
-			{/* ----------------- PRZEŁĄCZNIK MOTYWU DEWELOPERSKI ----------------- */}
-			<ThemedText
-				onPress={() => setTheme(themeType === "light" ? "high-contrast" : "light")}
-				variant="subTitle1"
-				tx={themeType === "light" ? "home.switchToHighContrast" : "home.switchToLightTheme"}
-				style={{ alignSelf: "center" }}
-			/>
-
-			{/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
-
-			<ThemedText
-				onPress={() => {
-					const nextLang = i18n.language.startsWith("pl") ? "en" : "pl"
-					i18n.changeLanguage(nextLang)
-				}}
-				variant="subTitle1"
-				style={{ alignSelf: "center" }}
-			>
-				{i18n.language.startsWith("pl")
-					? "Zmień język: English (EN)"
-					: "Change language: Polski (PL)"}
-			</ThemedText>
 		</ScrollView>
 	)
 }
+
+const windowWidth = Dimensions.get("window").width
 
 const getStyles = (colors: ThemeColors) => {
 	const styles = StyleSheet.create({
@@ -245,93 +261,73 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "center",
 			marginBottom: 24,
 		},
-		handIconContainer: {
-			transform: [{ rotate: "-45deg" }],
+		greeting: {
+			textAlign: "left",
+			fontFamily: "Montserrat-Bold",
+			textTransform: "none",
 		},
-		sectionContainer: {
+		dateBadge: {
+			width: 60,
+			height: 60,
+			borderRadius: 10,
 			flexDirection: "column",
 			alignItems: "center",
-			marginBottom: 32,
-			borderRadius: 40,
-		},
-		carouselRow: {
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between", // Zmieniono na space-between dla lepszego rozkładu
-			width: "100%",
-		},
-		carouselArrow: {
-			padding: 5,
+			justifyContent: "center",
+			gap: 2,
 		},
 		prostheticCard: {
-			width: 200,
-			height: 200,
-			borderRadius: 40,
+			width: windowWidth * 0.6,
+			height: windowWidth * 0.6,
+			borderRadius: 30,
+			flexDirection: "column",
 			justifyContent: "center",
 			alignItems: "center",
-			shadowColor: "#000",
-			shadowOffset: { width: 0, height: 4 },
-			shadowOpacity: 0.15,
-			shadowRadius: 10,
-			elevation: 6,
-			borderColor: colors.primary_base,
-		},
-		logoImage: {
-			width: 120,
-			height: 120,
-			marginBottom: 10,
-		},
-		addProsthesisCircle: {
-			width: 82,
-			height: 82,
-			borderRadius: 41,
-			backgroundColor: colors.accent_base,
-			justifyContent: "center",
-			alignItems: "center",
-			marginBottom: 24,
-		},
-		actionButtonsRow: {
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "stretch",
-			marginBottom: 28,
-			width: "100%",
 			gap: 20,
+			paddingBottom: 15,
 		},
-		actionButtonCard: {
-			width: "45%",
-			minHeight: 100,
-			paddingHorizontal: 18,
-			paddingVertical: 20,
-			borderRadius: 20,
-			alignItems: "center",
+		cardIcon: {
+			flex: 1,
 			justifyContent: "center",
+			marginTop: 50,
 		},
-		activityCard: {
-			width: "100%",
-			backgroundColor: colors.tertiary_base_2,
-			borderRadius: 20,
-			paddingHorizontal: 10,
-			borderColor: colors.primary_base,
+		showFullHistory: {
+			alignSelf: "flex-end",
+			paddingRight: 40,
+			marginBottom: 15,
 		},
 		activityRow: {
-			flexDirection: "row",
-			marginBottom: 10,
+			width: "100%",
+			minHeight: 44,
+			backgroundColor: "transparent",
 		},
-		activityContent: {
-			flex: 1,
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "center",
+		timelineDot: {
+			width: 12,
+			height: 12,
+			borderRadius: 6,
+			zIndex: 2,
 		},
-		activityLabel: {
-			fontSize: 14,
-			color: colors.primary_base,
+		timelineLine: {
+			borderRadius: 1000,
+			width: 2,
+			height: 25,
+			marginLeft: 23,
+			overflow: "visible",
+			marginVertical: -10,
+			backgroundColor: colors.blue1,
 		},
-		activityValue: {
-			fontSize: 14,
-			fontWeight: "bold",
-			color: colors.primary_base,
+		divider: {
+			width: "75%",
+			marginTop: 5,
+		},
+		activitySection: {
+			borderRadius: 0,
+			marginTop: 20,
+			paddingTop: 15,
+			paddingBottom: 10,
+		},
+		bottomSection: {
+			gap: 20,
+			paddingBottom: 30,
 		},
 	})
 	return styles

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
-import { Pressable, ScrollView, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import { useRouter } from "expo-router"
+import { ScrollView, StyleSheet, View } from "react-native"
 
 import { useTheme } from "@/context/ThemeContext"
 import {
@@ -21,16 +19,20 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
+import IconMeasure from "@/assets/icons/measure-filled.svg"
+import IconFile from "@/assets/icons/file.svg"
+import IconMedicalReport from "@/assets/icons/medical-report-clipboard.svg"
+
 export default function ProfileScreen() {
 	const { colors } = useTheme()
-	const router = useRouter()
 
 	const [selectedKLevel, setSelectedKLevel] = useState<KLevelId | null>(null)
 	const [isKLevelOpen, setIsKLevelOpen] = useState(false)
 	const [conditions, setConditions] = useState<Condition[]>([])
+	const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null)
 	const [areConditionsExpanded, setAreConditionsExpanded] = useState(false)
 	const [medications, setMedications] = useState<Medication[]>([])
-	const [areMedicationsExpanded, setAreMedicationsExpanded] = useState(false)
 	const [addMode, setAddMode] = useState<AddMode>(null)
 
 	useEffect(() => {
@@ -121,22 +123,31 @@ export default function ProfileScreen() {
 		}
 	}
 
+	//TODO
+	const onHandleAddMeasurement = () => {}
+	const onHandleMyFiles = () => {}
+	const onHandleRecommendations = () => {}
+
+	//TODO MOCK
+	const numberOfNewEntries = 1
+
 	return (
-		<ThemedView colorName="tertiary_base_2" style={styles.container}>
-			<ScrollView
-				style={styles.scrollView}
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-				onScrollBeginDrag={closeExpandableSections}
-			>
-				<Pressable onPress={closeExpandableSections}>
-					<ThemedHeader tx="profile.title" variant="prominent" />
+		<ScrollView
+			style={styles.scrollView}
+			showsVerticalScrollIndicator={false}
+			nestedScrollEnabled
+			onTouchStart={() => setSelectedConditionId(null)}
+			onScrollBeginDrag={closeExpandableSections}
+		>
+			<ThemedView colorName="bg_1" variant="background" style={styles.scrollContent}>
+				<View>
+					<ThemedHeader tx="profile.title" />
 					{/* K-Levels */}
 					<View style={[styles.section, styles.firstSection]}>
 						<ThemedText
 							tx="profile.activity"
-							variant="tab1Category"
-							colorName="secondary_base_0c"
+							variant="H1"
+							colorName="blue2"
 							accessibilityRole="header"
 							style={styles.sectionTitle}
 						/>
@@ -159,14 +170,16 @@ export default function ProfileScreen() {
 					<View style={styles.section}>
 						<ThemedText
 							tx="profile.diseases"
-							variant="tab1Category"
-							colorName="secondary_base_0c"
+							variant="H1"
+							colorName="blue2"
 							accessibilityRole="header"
-							style={styles.sectionTitle}
+							style={[styles.sectionTitle, { marginBottom: 7 }]}
 						/>
 
 						<ConditionsSection
 							conditions={conditions}
+							selectedConditionId={selectedConditionId}
+							onSelectCondition={setSelectedConditionId}
 							isExpanded={areConditionsExpanded}
 							onExpandedChange={(expanded) => {
 								setAreConditionsExpanded(expanded)
@@ -180,28 +193,21 @@ export default function ProfileScreen() {
 								setAddMode("condition")
 							}}
 							onDelete={handleDeleteCondition}
-							onCopy={() => setIsKLevelOpen(false)}
 						/>
 					</View>
 
 					{/* Stale przyjmowane leki */}
-					<View style={styles.section}>
+					<View style={[styles.section, { marginBottom: 0 }]}>
 						<ThemedText
 							tx="profile.medications"
-							variant="tab1Category"
-							colorName="secondary_base_0c"
+							variant="H1"
+							colorName="blue2"
 							accessibilityRole="header"
 							style={styles.sectionTitle}
 						/>
 
 						<MedicationsSection
 							medications={medications}
-							isExpanded={areMedicationsExpanded}
-							onExpandedChange={(expanded) => {
-								setAreMedicationsExpanded(expanded)
-								setAreConditionsExpanded(false)
-								setIsKLevelOpen(false)
-							}}
 							onAddPress={() => {
 								closeExpandableSections()
 								setAddMode("medication")
@@ -212,83 +218,46 @@ export default function ProfileScreen() {
 
 					{/* Akcje profilu */}
 					<View style={styles.utilitiesContainer}>
-						<ProfileMenuCard
-							label="profile.history"
-							subtitle="profile.historyEntries"
-							colorName="accent_base_1"
-							hasNewEntries={false}
-							onPress={() => {
-								router.push("/profile/measurements")
-							}}
+						<ThemedView
+							style={styles.actionButton}
+							variant="wide"
+							colorName="blue2"
+							onPress={onHandleAddMeasurement}
+							leftChild={<IconMeasure color={colors.bg_0} />}
+							centerChild={<ThemedText tx="profile.addMeasurement" variant="H1" colorName="bg_0" />}
+							rightChild={<IconChevronRight color={colors.bg_0} />}
 						/>
 
 						<ThemedView
-							variant="tag"
-							colorName="accent_base_1"
-							borderColor="primary_base"
-							style={styles.actionTag}
-							onPress={() => {
-								// TODO: dodawanie pomiaru
-							}}
-							accessibilityRole="button"
-						>
-							<ThemedText
-								tx="profile.addMeasurement"
-								variant="subTitle2"
-								colorName="primary_base"
-								style={styles.tagText}
-							/>
-
-							<Ionicons name="add-outline" size={20} color={colors.primary_base} />
-						</ThemedView>
-
-						<ProfileMenuCard
-							label="profile.recommendations"
-							subtitle="profile.recommendationsEntries"
-							colorName="tertiary_base_3"
-							hasNewEntries
-							onPress={() => {
-								router.push("/profile/recommendations")
-							}}
+							style={styles.actionButton}
+							variant="wide"
+							colorName="blue0"
+							onPress={onHandleMyFiles}
+							leftChild={<IconFile color={colors.graphite0} />}
+							centerChild={<ThemedText tx="home.myFiles" variant="H1" colorName="graphite0" />}
+							rightChild={<IconChevronRight color={colors.graphite0} />}
 						/>
 
-						<ProfileMenuCard
-							label="profile.notes"
-							subtitle="profile.notesEntries"
-							colorName="tertiary_base_3"
-							onPress={() => {
-								router.push("/profile/technical-notes")
-							}}
+						<ThemedView
+							style={styles.actionButton}
+							variant="wide"
+							colorName="blue0"
+							onPress={onHandleRecommendations}
+							leftChild={<IconMedicalReport color={colors.graphite0} height={22} />}
+							centerChild={
+								<ThemedText tx="profile.recommendations" variant="H1" colorName="graphite0" />
+							}
+							rightChild={<IconChevronRight color={colors.graphite0} />}
 						/>
-
-						{/* Dodaj plik */}
-						<View style={styles.addFileSection}>
-							<ThemedView
-								colorName="tertiary_base_2"
-								style={styles.addFileRow}
-								onPress={() => {
-									// TODO: dodawanie pliku
-								}}
-								accessibilityRole="button"
-							>
-								<ThemedView colorName="primary_base" style={styles.addFileIcon}>
-									<Ionicons name="add-outline" size={24} color={colors.accent_base_2} />
-								</ThemedView>
-
-								<ThemedText tx="profile.newFile" variant="main1Button" colorName="primary_base" />
-							</ThemedView>
-
-							<ThemedText
-								tx="profile.fileDescription"
-								variant="subTitle1"
-								colorName="secondary_base_0c"
-								style={styles.addFileDescription}
-							/>
-						</View>
+						{numberOfNewEntries > 0 && (
+							<View style={styles.newEntry}>
+								<View style={[styles.newEntryDot, { backgroundColor: colors.true }]} />
+								<ThemedText tx="profile.recommendationsEntries" variant="H4" colorName="blue2" />
+							</View>
+						)}
 					</View>
-				</Pressable>
-			</ScrollView>
-
+				</View>
+			</ThemedView>
 			<MedicalProfileModal
 				mode={addMode}
 				conditions={conditions}
@@ -297,59 +266,11 @@ export default function ProfileScreen() {
 				onAddCondition={handleAddCondition}
 				onAddMedication={handleAddMedication}
 			/>
-		</ThemedView>
-	)
-}
-
-interface ProfileMenuCardProps {
-	label: "profile.history" | "profile.recommendations" | "profile.notes"
-	subtitle: "profile.historyEntries" | "profile.recommendationsEntries" | "profile.notesEntries"
-	colorName: "accent_base_1" | "tertiary_base_3"
-	hasNewEntries?: boolean
-	onPress: () => void
-}
-
-function ProfileMenuCard({
-	label,
-	subtitle,
-	colorName,
-	hasNewEntries = false,
-	onPress,
-}: ProfileMenuCardProps) {
-	const { colors } = useTheme()
-
-	return (
-		<ThemedView
-			variant="wide"
-			colorName={colorName}
-			style={[styles.utilityCard, { shadowColor: colors.primary_base }]}
-			onPress={onPress}
-			accessibilityRole="button"
-		>
-			<View style={styles.utilityTextContainer}>
-				<ThemedText tx={label} variant="subTitle1" colorName="primary_base" />
-
-				<View style={styles.subtitleRow}>
-					{hasNewEntries && <View style={styles.newEntryDot} />}
-
-					<ThemedText
-						tx={subtitle}
-						variant="subTitle2"
-						colorName="primary_base"
-						style={styles.utilitySubtitle}
-					/>
-				</View>
-			</View>
-
-			<Ionicons name="chevron-forward" size={30} color={colors.primary_base} />
-		</ThemedView>
+		</ScrollView>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
@@ -357,30 +278,8 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		paddingBottom: 40,
 	},
-	topHeader: {
-		width: "100%",
-		minHeight: 86,
-		paddingHorizontal: 20,
-		paddingTop: 18,
-		paddingBottom: 16,
-		borderBottomLeftRadius: 30,
-		borderBottomRightRadius: 30,
-		position: "relative",
-		justifyContent: "center",
-		overflow: "hidden",
-	},
-	backButton: {
-		position: "absolute",
-		left: 16,
-		top: 18,
-		bottom: 16,
-		justifyContent: "center",
-		alignItems: "center",
-		zIndex: 2,
-	},
 	section: {
 		width: "100%",
-		paddingHorizontal: 28,
 		marginBottom: 14,
 	},
 	firstSection: {
@@ -391,67 +290,24 @@ const styles = StyleSheet.create({
 	},
 	utilitiesContainer: {
 		width: "100%",
-		paddingHorizontal: 24,
-	},
-	utilityCard: {
-		marginBottom: 12,
-		justifyContent: "space-between",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.15,
-		shadowRadius: 5,
-		elevation: 4,
-	},
-	utilityTextContainer: {
-		flex: 1,
-	},
-	utilitySubtitle: {
-		marginTop: 4,
-	},
-	subtitleRow: {
-		flexDirection: "row",
-		alignItems: "center",
+		flexDirection: "column",
+		justifyContent: "flex-start",
 	},
 	newEntryDot: {
 		width: 7,
 		height: 7,
-		borderRadius: 4,
-		backgroundColor: "#22C55E",
+		borderRadius: 7,
 		marginRight: 6,
 		marginTop: 4,
 	},
-	actionTag: {
-		alignSelf: "flex-end",
-		marginTop: 8,
-		marginBottom: 12,
-		borderWidth: 1,
+	actionButton: {
+		marginVertical: 10,
 	},
-	tagText: {
-		marginRight: 6,
-	},
-	addFileSection: {
-		alignSelf: "center",
-		alignItems: "center",
-		paddingVertical: 18,
-	},
-	addFileRow: {
+	newEntry: {
+		width: "100%",
+		paddingRight: 20,
 		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		marginBottom: 8,
-	},
-	addFileIcon: {
-		width: 28,
-		height: 28,
-		borderRadius: 14,
-		justifyContent: "center",
-		alignItems: "center",
-		marginRight: 12,
-	},
-	addFileDescription: {
-		width: 190,
-		textAlign: "center",
+		alignContent: "center",
+		justifyContent: "flex-end",
 	},
 })
