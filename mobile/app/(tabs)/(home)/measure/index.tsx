@@ -15,18 +15,19 @@ import { useTheme } from "@/context/ThemeContext"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconTrash from "@/assets/icons/trash-bin.svg"
 import { ThemedInput } from "@/src/components/ThemedInput"
+import { MeasurementDiagram } from "@/src/components/measure/MeasurementDiagram"
 
-interface MeasurementLevel {
-	id: string
+export interface MeasurementLevel {
+	level: string
 	value: string
 	distance: number
 }
 
-// TODO MOCK
+// TODO
 const INITIAL_MEASUREMENTS: MeasurementLevel[] = [
-	{ id: "1", value: "", distance: 15 },
-	{ id: "2", value: "", distance: 10 },
-	{ id: "3", value: "", distance: 5 },
+	{ level: "1", value: "", distance: 15 },
+	{ level: "2", value: "", distance: 10 },
+	{ level: "3", value: "", distance: 5 },
 ]
 
 const MAX_MEASUREMENT_LEVELS = 5
@@ -34,7 +35,7 @@ const MAX_MEASUREMENT_LEVELS = 5
 function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]
 		.sort((left, right) => right.distance - left.distance)
-		.map((level, index) => ({ ...level, id: String(index + 1) }))
+		.map((item, index) => ({ ...item, level: String(index + 1) }))
 }
 
 function isValidMeasurementValue(value: string): boolean {
@@ -48,7 +49,7 @@ export default function AddMeasurementScreen() {
 	const [measurementLevels, setMeasurementLevels] =
 		useState<MeasurementLevel[]>(INITIAL_MEASUREMENTS)
 	const [distanceDialogTarget, setDistanceDialogTarget] = useState<
-		{ type: "add" } | { type: "edit"; levelId: string } | null
+		{ type: "add" } | { type: "edit"; level: string } | null
 	>(null)
 	const [measurementDate, setMeasurementDate] = useState<Date>(() => new Date())
 	const [measurementTime, setMeasurementTime] = useState<FormatHourOptions>(() => {
@@ -106,11 +107,11 @@ export default function AddMeasurementScreen() {
 		setMeasurementLevels((levels) => {
 			if (target.type === "add") {
 				if (levels.length >= MAX_MEASUREMENT_LEVELS) return levels
-				return sortAndRenumberLevels([...levels, { id: "", value: "", distance }])
+				return sortAndRenumberLevels([...levels, { level: "", value: "", distance }])
 			}
 
 			return sortAndRenumberLevels(
-				levels.map((level) => (level.id === target.levelId ? { ...level, distance } : level))
+				levels.map((item) => (item.level === target.level ? { ...item, distance } : item))
 			)
 		})
 		setDistanceDialogTarget(null)
@@ -119,14 +120,14 @@ export default function AddMeasurementScreen() {
 	const mockSaveMeasurement = () => {
 		if (!validateMoment(measurementDate, measurementTime.hour, measurementTime.minute)) return
 
-		const missingLevelIndex = measurementLevels.findIndex((level) => !level.value.trim())
+		const missingLevelIndex = measurementLevels.findIndex((item) => !item.value.trim())
 		if (missingLevelIndex !== -1) {
 			Alert.alert(t("common.error"), t("measurements.missingMeasurement"))
 			return
 		}
 
 		const invalidLevelIndex = measurementLevels.findIndex(
-			(level) => !isValidMeasurementValue(level.value)
+			(item) => !isValidMeasurementValue(item.value)
 		)
 		if (invalidLevelIndex !== -1) {
 			Alert.alert(
@@ -143,9 +144,9 @@ export default function AddMeasurementScreen() {
 		// TODO
 	}
 
-	const handleRemoveLevel = (levelId: string) => {
+	const handleRemoveLevel = (level: string) => {
 		if (measurementLevels.length <= 1) return
-		const levelIndex = measurementLevels.findIndex((level) => level.id === levelId)
+		const levelIndex = measurementLevels.findIndex((item) => item.level === level)
 		if (levelIndex === -1) return
 
 		Alert.alert(
@@ -158,7 +159,7 @@ export default function AddMeasurementScreen() {
 					style: "destructive",
 					onPress: () => {
 						setMeasurementLevels((levels) =>
-							sortAndRenumberLevels(levels.filter((level) => level.id !== levelId))
+							sortAndRenumberLevels(levels.filter((item) => item.level !== level))
 						)
 					},
 				},
@@ -166,35 +167,35 @@ export default function AddMeasurementScreen() {
 		)
 	}
 
-	const handleOpenDistanceDialog = (levelId: string) => {
-		setDistanceDialogTarget({ type: "edit", levelId })
+	const handleOpenDistanceDialog = (level: string) => {
+		setDistanceDialogTarget({ type: "edit", level })
 	}
 
-	const distanceDialogLevel =
+	const distanceDialogItem =
 		distanceDialogTarget?.type === "edit"
-			? measurementLevels.find((level) => level.id === distanceDialogTarget.levelId)
+			? measurementLevels.find((item) => item.level === distanceDialogTarget.level)
 			: undefined
 	const distanceDialogInitialValue =
-		distanceDialogTarget?.type === "edit" ? String(distanceDialogLevel?.distance ?? "") : ""
+		distanceDialogTarget?.type === "edit" ? String(distanceDialogItem?.distance ?? "") : ""
 	const distanceDialogTitle =
 		distanceDialogTarget?.type === "edit"
 			? t("measurements.editDistanceTitle", {
 					level:
-						measurementLevels.findIndex((level) => level.id === distanceDialogTarget.levelId) + 1,
+						measurementLevels.findIndex((item) => item.level === distanceDialogTarget.level) + 1,
 				})
 			: t("measurements.addDistanceTitle", { level: measurementLevels.length + 1 })
 	const validateDistance = (value: string) =>
 		isValidDistance(value) &&
 		!measurementLevels.some(
-			(level) =>
-				level.id !==
-					(distanceDialogTarget?.type === "edit" ? distanceDialogTarget.levelId : undefined) &&
-				level.distance === Number(value)
+			(item) =>
+				item.level !==
+					(distanceDialogTarget?.type === "edit" ? distanceDialogTarget.level : undefined) &&
+				item.distance === Number(value)
 		)
 
-	const handleMeasurementValueChange = (id: string, input: string) => {
+	const handleMeasurementValueChange = (level: string, input: string) => {
 		setMeasurementLevels((levels) =>
-			levels.map((level) => (level.id === id ? { ...level, value: input } : level))
+			levels.map((item) => (item.level === level ? { ...item, value: input } : item))
 		)
 	}
 
@@ -280,9 +281,9 @@ export default function AddMeasurementScreen() {
 						tx="measurements.schema"
 						variant="H1"
 						colorName="blue2"
-						style={styles.sectionTitle}
+						style={[styles.sectionTitle, { alignSelf: "flex-start" }]}
 					/>
-					{/* TODO schema component */}
+					<MeasurementDiagram levels={measurementLevels} style={{ width: 100, height: 150 }} />
 				</View>
 
 				<View style={styles.valuesSection}>
@@ -296,13 +297,13 @@ export default function AddMeasurementScreen() {
 					<View style={styles.measurementsList}>
 						{measurementLevels.map((item, index) => (
 							<MeasurementCardItem
-								key={item.id}
+								key={item.level}
 								item={item}
 								levelNumber={index + 1}
 								hasInvalidValue={Boolean(item.value.trim()) && !isValidMeasurementValue(item.value)}
 								onValueChange={handleMeasurementValueChange}
-								onDistancePress={() => handleOpenDistanceDialog(item.id)}
-								onDeletePress={() => handleRemoveLevel(item.id)}
+								onDistancePress={() => handleOpenDistanceDialog(item.level)}
+								onDeletePress={() => handleRemoveLevel(item.level)}
 								canDelete={measurementLevels.length > 1}
 							/>
 						))}
@@ -383,7 +384,7 @@ function MeasurementCardItem({
 	item: MeasurementLevel
 	levelNumber: number
 	hasInvalidValue: boolean
-	onValueChange: (id: string, value: string) => void
+	onValueChange: (level: string, value: string) => void
 	onDistancePress: () => void
 	onDeletePress: () => void
 	canDelete: boolean
@@ -415,7 +416,7 @@ function MeasurementCardItem({
 						<ThemedInput
 							variant="float"
 							value={item.value}
-							onChangeText={(value) => onValueChange(item.id, value)}
+							onChangeText={(value) => onValueChange(item.level, value)}
 							onPressIn={(event) => event.stopPropagation()}
 							viewStyle={[
 								styles.valueInputBox,
@@ -502,6 +503,7 @@ const styles = StyleSheet.create({
 	schemaSection: {
 		gap: 12,
 		marginTop: 8,
+		alignItems: "center",
 	},
 	sectionTitle: {
 		paddingLeft: 4,
@@ -594,6 +596,7 @@ const styles = StyleSheet.create({
 	deleteButton: {
 		alignItems: "center",
 		justifyContent: "center",
+		marginTop: -15,
 	},
 	deleteContent: {
 		flexDirection: "row",
