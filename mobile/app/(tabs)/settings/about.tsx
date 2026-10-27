@@ -25,10 +25,12 @@ export default function AboutScreen() {
 						<ThemedView style={styles.appRow}>
 							<Logo width={80} height={44.26} color={colors.blue2} />
 							<ThemedView style={styles.appInfo}>
-								<ThemedText variant="H0" colorName="blue2">{aboutConfig.appName}</ThemedText>
+								<ThemedText variant="H0" colorName="blue2">
+									{aboutConfig.appName}
+								</ThemedText>
 								<ThemedText
 									variant="H4"
-                                    colorName="blue2"
+									colorName="blue2"
 									tx="about.versionLabel"
 									txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
 								/>
@@ -66,7 +68,7 @@ export default function AboutScreen() {
 								centerChild={<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} />}
 								rightChild={
 									<ThemedText variant="main1Button" colorName="primary_base">
-										{ <IconChevronRight color={colors.secondary_base} /> }
+										{<IconChevronRight color={colors.secondary_base} />}
 									</ThemedText>
 								}
 								childrenContainerStyle={styles.docRow}
