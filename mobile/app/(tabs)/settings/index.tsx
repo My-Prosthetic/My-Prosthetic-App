@@ -16,15 +16,13 @@ export default function SettingsScreen() {
 			<ThemedText tx="screens.settingsTitle" />
 
 			<ThemedView
-				variant="narrow"
+				variant="old_narrow"
 				colorName="false"
 				shadow
 				onPress={() => router.push("/settings/about")}
 				style={styles.devLogoutButton}
 			>
-				<ThemedText colorName="accent_base_1" variant="main1Button">
-					O nas i Regulaminy
-				</ThemedText>
+				<ThemedText tx="about.header" colorName="accent_base_1" variant="main1Button" />
 			</ThemedView>
 			{__DEV__ ? (
 				<>

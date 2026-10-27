@@ -10,22 +10,25 @@ import legalDocs from "@/src/constants/legalDocsConfig.json"
 import { Fragment } from "react"
 import Logo from "@/assets/MP_text_logo_recolored.svg"
 import { useTheme } from "@/context/ThemeContext"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
 
 export default function AboutScreen() {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
+
 	return (
 		<>
 			<ThemedHeader tx="about.header" />
-			<ThemedView variant="background" colorName="tertiary_base_2">
+			<ThemedView variant="background" colorName="bg_1">
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<ThemedView style={styles.appCard}>
+					<ThemedView style={styles.appCard} colorName="bg_0">
 						<ThemedView style={styles.appRow}>
-							<Logo width={80} height={44.26} color={colors.primary_base} />
+							<Logo width={80} height={44.26} color={colors.blue2} />
 							<ThemedView style={styles.appInfo}>
-								<ThemedText variant="H0">{aboutConfig.appName}</ThemedText>
+								<ThemedText variant="H0" colorName="blue2">{aboutConfig.appName}</ThemedText>
 								<ThemedText
 									variant="H4"
+                                    colorName="blue2"
 									tx="about.versionLabel"
 									txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
 								/>
@@ -63,7 +66,7 @@ export default function AboutScreen() {
 								centerChild={<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} />}
 								rightChild={
 									<ThemedText variant="main1Button" colorName="primary_base">
-										{">"}
+										{ <IconChevronRight color={colors.secondary_base} /> }
 									</ThemedText>
 								}
 								childrenContainerStyle={styles.docRow}
