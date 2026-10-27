@@ -26,7 +26,6 @@ export function WaveFormLayout({
 			style={[
 				styles.container,
 				variant === "forms" && {
-					flex: 0,
 					flexGrow: 1,
 					minHeight: viewportHeight,
 				},
@@ -35,7 +34,7 @@ export function WaveFormLayout({
 			<View
 				style={[
 					styles.rightBulge,
-					variant === "index" ? { flex: 2 } : { height: viewportHeight * 0.3, flexShrink: 0 },
+					variant === "index" ? { flex: 1.5 } : { height: viewportHeight * 0.25 },
 				]}
 			>
 				<View
@@ -47,7 +46,7 @@ export function WaveFormLayout({
 									justifyContent: "flex-end",
 									alignItems: "flex-end",
 									paddingBottom: 30,
-									paddingRight: 40,
+									paddingRight: 50,
 								},
 					]}
 				>
@@ -92,28 +91,28 @@ const getStyles = (colors: ThemeColors, insets: EdgeInsets) =>
 	StyleSheet.create({
 		container: {
 			flex: 1,
-			backgroundColor: colors.primary_base,
+			backgroundColor: colors.blue2,
 		},
 		scrollView: {
 			flex: 1,
-			backgroundColor: colors.primary_base,
+			backgroundColor: colors.blue2,
 		},
 		scrollContent: {
 			flexGrow: 1,
 		},
 		rightBulge: {
-			backgroundColor: colors.tertiary_base_2,
+			backgroundColor: colors.bg_0,
 			justifyContent: "flex-end",
 		},
 		topSection: {
 			flex: 1,
 			justifyContent: "center",
 			alignItems: "center",
-			backgroundColor: colors.primary_base,
+			backgroundColor: colors.blue2,
 			borderBottomRightRadius: 70,
 		},
 		bottomSection: {
-			backgroundColor: colors.tertiary_base_2,
+			backgroundColor: colors.bg_0,
 			borderTopLeftRadius: 70,
 			paddingBottom: insets.bottom,
 			overflow: "hidden",

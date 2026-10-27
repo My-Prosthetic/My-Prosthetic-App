@@ -1,32 +1,29 @@
-import { Alert, Pressable, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
+import IconTrash from "@/assets/icons/trash-bin.svg"
+
 import type { Medication } from "./types"
+
+const MEDICATION_LIST_VERTICAL_PADDING = 8
+const MEDICATION_ROW_HEIGHT = 28
+const MEDICATION_LIST_GAP = 8
+const MEDICATION_LIST_MAX_HEIGHT =
+	MEDICATION_ROW_HEIGHT * 4.5 + MEDICATION_LIST_GAP * 4 + MEDICATION_LIST_VERTICAL_PADDING
 
 type MedicationsSectionProps = {
 	medications: Medication[]
-	isExpanded: boolean
-	onExpandedChange: (expanded: boolean) => void
 	onAddPress: () => void
 	onDelete: (id: string) => Promise<void>
 }
 
-export function MedicationsSection({
-	medications,
-	isExpanded,
-	onExpandedChange,
-	onAddPress,
-	onDelete,
-}: MedicationsSectionProps) {
+export function MedicationsSection({ medications, onAddPress, onDelete }: MedicationsSectionProps) {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
-
-	const visibleMedications = isExpanded ? medications : medications.slice(0, 3)
 
 	const confirmDelete = (medication: Medication) => {
 		Alert.alert(
@@ -49,38 +46,17 @@ export function MedicationsSection({
 	return (
 		<>
 			<View style={styles.medicationCardWrapper}>
-				<ThemedView
-					colorName="tertiary_base_3"
-					borderColor="primary_base_3"
-					style={styles.medicationCard}
-				>
-					{medications.length > 3 && (
-						<Pressable
-							onPress={(event) => {
-								event.stopPropagation()
-								onExpandedChange(!isExpanded)
-							}}
-							style={styles.medicationToggle}
-							accessibilityRole="button"
-							accessibilityState={{ expanded: isExpanded }}
-						>
-							<Ionicons
-								name={isExpanded ? "chevron-up" : "chevron-down"}
-								size={18}
-								color={colors.primary_base}
-							/>
-						</Pressable>
-					)}
-
-					<View
-						style={[
-							styles.medicationList,
-							medications.length > 3 && styles.medicationListWithToggle,
-						]}
+				<ThemedView colorName="bg_0" borderColor="blue1" style={styles.medicationCard}>
+					<ScrollView
+						style={[styles.medicationListScroll, { maxHeight: MEDICATION_LIST_MAX_HEIGHT }]}
+						contentContainerStyle={styles.medicationScrollContent}
+						nestedScrollEnabled
+						persistentScrollbar
+						showsVerticalScrollIndicator
 					>
-						{visibleMedications.map((medication) => (
+						{medications.map((medication) => (
 							<View key={medication.id} style={styles.medicationRow}>
-								<View style={[styles.medicationBullet, { backgroundColor: colors.primary_base }]} />
+								<View style={[styles.medicationBullet, { backgroundColor: colors.blue2 }]} />
 
 								<View style={styles.medicationTextRow}>
 									<ThemedText
@@ -91,7 +67,7 @@ export function MedicationsSection({
 										{medication.name}
 									</ThemedText>
 
-									<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+									<ThemedText variant="H2" colorName="blue2">
 										{" "}
 										({medication.usage})
 									</ThemedText>
@@ -109,30 +85,21 @@ export function MedicationsSection({
 									hitSlop={8}
 									style={styles.deleteMedicationButton}
 								>
-									<Ionicons name="trash-outline" size={17} color={colors.primary_base} />
+									<IconTrash color={colors.false} width={20} />
 								</Pressable>
 							</View>
 						))}
-					</View>
+					</ScrollView>
 				</ThemedView>
 			</View>
 
-			<ThemedView
-				variant="tag"
-				colorName="tertiary_base_3"
-				borderColor="primary_base"
-				style={styles.actionTag}
-				onPress={onAddPress}
-				accessibilityRole="button"
-			>
+			<ThemedView style={styles.actionTag} onPress={onAddPress} accessibilityRole="button">
 				<ThemedText
 					tx="profile.addMedication"
-					variant="subTitle2"
-					colorName="primary_base"
+					variant="H5"
+					colorName="blue1"
 					style={styles.tagText}
 				/>
-
-				<Ionicons name="add-outline" size={20} color={colors.primary_base} />
 			</ThemedView>
 		</>
 	)
@@ -148,37 +115,28 @@ const styles = StyleSheet.create({
 		minHeight: 76,
 		borderWidth: 1,
 		borderRadius: 16,
-		paddingHorizontal: 12,
-		paddingVertical: 10,
 		position: "relative",
 	},
-	medicationToggle: {
-		position: "absolute",
-		left: 8,
-		top: 7,
-		width: 24,
-		height: 24,
-		alignItems: "center",
-		justifyContent: "center",
-		zIndex: 2,
+	medicationListScroll: {
+		flexGrow: 0,
+		paddingHorizontal: 12,
 	},
-	medicationList: {
+	medicationScrollContent: {
 		width: "100%",
-		gap: 8,
-	},
-	medicationListWithToggle: {
-		paddingLeft: 20,
+		gap: MEDICATION_LIST_GAP,
+		padding: MEDICATION_LIST_VERTICAL_PADDING,
 	},
 	medicationRow: {
-		minHeight: 22,
+		minHeight: MEDICATION_ROW_HEIGHT,
 		flexDirection: "row",
 		alignItems: "center",
 	},
 	medicationBullet: {
-		width: 5,
-		height: 5,
-		borderRadius: 3,
-		marginRight: 8,
+		width: 8,
+		height: 8,
+		borderRadius: 1000,
+		marginRight: 12,
+		marginLeft: 6,
 	},
 	medicationTextRow: {
 		flex: 1,
@@ -198,11 +156,9 @@ const styles = StyleSheet.create({
 	},
 	actionTag: {
 		alignSelf: "flex-end",
-		marginTop: 8,
 		marginBottom: 12,
-		borderWidth: 1,
 	},
 	tagText: {
-		marginRight: 6,
+		marginRight: 16,
 	},
 })

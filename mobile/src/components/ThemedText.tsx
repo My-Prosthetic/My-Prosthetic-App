@@ -82,7 +82,7 @@ export const ThemedText = ({
 	return (
 		<Text
 			style={[
-				{ color: colors[colorName], textAlignVertical: "center" },
+				{ color: colors[colorName], textAlignVertical: "center", paddingHorizontal: 1 },
 				typography[variant],
 				style,
 			]}

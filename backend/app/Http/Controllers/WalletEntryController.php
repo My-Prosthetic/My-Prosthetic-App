@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\UserRole;
 use App\Http\Requests\StoreWalletEntryRequest;
 use App\Http\Resources\WalletEntryResource;
 use App\Models\User;
@@ -43,14 +42,14 @@ class WalletEntryController extends Controller
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
+    /**
+     * The routes authorize through WalletEntryPolicy, so only patients get here.
+     */
     private function authenticatedPatient(Request $request): User
     {
         $user = $request->user();
 
-        abort_unless(
-            $user instanceof User && $user->role === UserRole::PATIENT,
-            Response::HTTP_FORBIDDEN,
-        );
+        abort_unless($user instanceof User, Response::HTTP_UNAUTHORIZED);
 
         return $user;
     }

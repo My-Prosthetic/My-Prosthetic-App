@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+
+import IconChevronDown from "@/assets/icons/chevron-down.svg"
 
 import type { KLevelId } from "./types"
 
@@ -80,42 +81,36 @@ export function KLevelSelector({
 			>
 				<ThemedView
 					variant="wide"
-					colorName="tertiary_base_3"
-					style={[styles.activityDropdown, { shadowColor: colors.primary_base }]}
+					colorName="bg_0"
+					style={styles.activityDropdown}
+					borderColor="blue1"
 				>
 					<View style={styles.dropdownTextContainer}>
 						<ThemedText
 							tx={selectedKLevelData ? selectedKLevelData.labelKey : "profile.selectActivityLevel"}
-							variant="subTitle1"
-							colorName="primary_base"
+							variant="H0"
+							colorName="blue2"
 							style={styles.kLevelLabel}
 						/>
 
 						{selectedKLevelData && (
 							<ThemedText
 								tx={selectedKLevelData.descriptionKey}
-								variant="subTitle2"
-								colorName="secondary_base_0c"
+								variant="H4"
+								colorName="blue2"
 								style={styles.kLevelDescription}
 								numberOfLines={1}
 							/>
 						)}
 					</View>
 
-					<Ionicons
-						name={isOpen ? "chevron-up" : "chevron-down"}
-						size={22}
-						color={colors.primary_base}
-					/>
+					<IconChevronDown color={colors.blue2} />
 				</ThemedView>
 			</Pressable>
 
 			{isOpen && (
 				<Pressable onPress={(event) => event.stopPropagation()} style={styles.dropdownMenuWrapper}>
-					<ThemedView
-						colorName="tertiary_base_3"
-						style={[styles.dropdownMenu, { shadowColor: colors.primary_base }]}
-					>
+					<ThemedView colorName="bg_0" style={styles.dropdownMenu}>
 						{K_LEVELS.map((level, index) => {
 							const isSelected = level.id === selectedKLevel
 
@@ -138,6 +133,7 @@ export function KLevelSelector({
 											borderBottomWidth: StyleSheet.hairlineWidth,
 											borderBottomColor: colors.primary_base_3,
 										},
+										isSelected && { backgroundColor: colors.blue0 },
 									]}
 									accessibilityRole="button"
 									accessibilityState={{ selected: isSelected }}
@@ -145,23 +141,19 @@ export function KLevelSelector({
 									<View style={styles.dropdownOptionText}>
 										<ThemedText
 											tx={level.labelKey}
-											variant="subTitle1"
-											colorName="primary_base"
-											style={[styles.dropdownOptionLabel, isSelected && styles.selectedOptionText]}
+											variant="H1"
+											colorName="blue2"
+											style={styles.dropdownOptionLabel}
 										/>
 
 										<ThemedText
 											tx={level.descriptionKey}
-											variant="subTitle2"
-											colorName="secondary_base_0c"
+											variant="H4"
+											colorName="blue2"
 											style={styles.dropdownOptionDescription}
 											numberOfLines={2}
 										/>
 									</View>
-
-									{isSelected && (
-										<Ionicons name="checkmark" size={20} color={colors.primary_base} />
-									)}
 								</Pressable>
 							)
 						})}
@@ -174,19 +166,13 @@ export function KLevelSelector({
 
 const styles = StyleSheet.create({
 	activityDropdown: {
-		minHeight: 52,
+		borderRadius: 15,
+		minHeight: 72,
 		paddingVertical: 8,
-		paddingHorizontal: 14,
+		paddingHorizontal: 18,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.15,
-		shadowRadius: 5,
-		elevation: 4,
 	},
 	dropdownTextContainer: {
 		flex: 1,
@@ -209,7 +195,7 @@ const styles = StyleSheet.create({
 	},
 	dropdownMenu: {
 		marginTop: 6,
-		borderRadius: 16,
+		borderRadius: 15,
 		overflow: "hidden",
 		shadowOffset: {
 			width: 0,
@@ -242,8 +228,5 @@ const styles = StyleSheet.create({
 		marginTop: 2,
 		textAlign: "left",
 		alignSelf: "flex-start",
-	},
-	selectedOptionText: {
-		fontWeight: "700",
 	},
 })
