@@ -625,7 +625,7 @@
 		"documentNotFound": "Document not found.",
 		"openDocument": "Open document {{title}}",
 		"docs": {
-			"rodo": "Privacy Policy (GDPR)",
+			"rodo": "Privacy Policy",
 			"statute": "Terms of Service",
 			"license": "Open-Source Licenses"
 		}

@@ -3,17 +3,76 @@
 		{
 			"id": "rodo",
 			"titleKey": "about.docs.rodo",
-			"content": "1. Administrator danych\n\nAdministratorem danych osobowych jest [Nazwa firmy], z siedzibą w [Adres].\n\n2. Zakres przetwarzanych danych\n\nAplikacja może przetwarzać dane podane przez użytkownika, w szczególności adres e-mail, nazwę użytkownika oraz dane niezbędne do korzystania z usług.\n\n3. Cel przetwarzania danych\n\nDane są przetwarzane w celu świadczenia usług, obsługi konta użytkownika oraz zapewnienia bezpieczeństwa aplikacji.\n\n4. Prawa użytkownika\n\nUżytkownik ma prawo do dostępu do swoich danych, ich sprostowania, usunięcia oraz ograniczenia przetwarzania, zgodnie z obowiązującymi przepisami.\n\n5. Kontakt\n\nW sprawach związanych z ochroną danych osobowych skontaktuj się z: [Adres e-mail]."
+			"content": [
+				{
+					"subtitle": "Administrator danych",
+					"content": "Administratorem danych osobowych jest [Nazwa firmy], z siedzibą w [Adres]."
+				},
+				{
+					"subtitle": "Zakres przetwarzanych danych",
+					"content": "Aplikacja może przetwarzać dane podane przez użytkownika, w szczególności adres e-mail, nazwę użytkownika oraz dane niezbędne do korzystania z usług."
+				},
+				{
+					"subtitle": "Cel przetwarzania danych",
+					"content": "Dane są przetwarzane w celu świadczenia usług, obsługi konta użytkownika oraz zapewnienia bezpieczeństwa aplikacji."
+				},
+				{
+					"subtitle": "Prawa użytkownika",
+					"content": "Użytkownik ma prawo do dostępu do swoich danych, ich sprostowania, usunięcia oraz ograniczenia przetwarzania, zgodnie z obowiązującymi przepisami."
+				},
+				{
+					"subtitle": "Kontakt",
+					"content": "W sprawach związanych z ochroną danych osobowych skontaktuj się z: [Adres e-mail]."
+				}
+			]
 		},
 		{
 			"id": "statute",
 			"titleKey": "about.docs.statute",
-			"content": "1. Postanowienia ogólne\n\nNiniejszy regulamin określa zasady korzystania z aplikacji [Nazwa aplikacji]. Każdy użytkownik korzystający z aplikacji zobowiązuje się do przestrzegania jego postanowień.\n\n2. Zasady korzystania\n\nUżytkownik zobowiązuje się do korzystania z aplikacji zgodnie z jej przeznaczeniem, obowiązującymi przepisami prawa oraz dobrymi obyczajami.\n\n3. Konto użytkownika\n\nUżytkownik odpowiada za bezpieczeństwo swoich danych logowania i zobowiązuje się do nieudostępniania ich osobom nieuprawnionym.\n\n4. Odpowiedzialność\n\nOperator dokłada starań, aby aplikacja działała prawidłowo, jednak nie gwarantuje nieprzerwanej dostępności wszystkich funkcji.\n\n5. Reklamacje i kontakt\n\nPytania i reklamacje można zgłaszać na adres: [Adres e-mail]."
+			"content": [
+				{
+					"subtitle": "Postanowienia ogólne",
+					"content": "Niniejszy regulamin określa zasady korzystania z aplikacji [Nazwa aplikacji]. Każdy użytkownik korzystający z aplikacji zobowiązuje się do przestrzegania jego postanowień."
+				},
+				{
+					"subtitle": "Zasady korzystania",
+					"content": "Użytkownik zobowiązuje się do korzystania z aplikacji zgodnie z jej przeznaczeniem, obowiązującymi przepisami prawa oraz dobrymi obyczajami."
+				},
+				{
+					"subtitle": "Konto użytkownika",
+					"content": "Użytkownik odpowiada za bezpieczeństwo swoich danych logowania i zobowiązuje się do nieudostępniania ich osobom nieuprawnionym."
+				},
+				{
+					"subtitle": "Odpowiedzialność",
+					"content": "Operator dokłada starań, aby aplikacja działała prawidłowo, jednak nie gwarantuje nieprzerwanej dostępności wszystkich funkcji."
+				},
+				{
+					"subtitle": "Reklamacje i kontakt",
+					"content": "Pytania i reklamacje można zgłaszać na adres: [Adres e-mail]."
+				}
+			]
 		},
 		{
 			"id": "license",
 			"titleKey": "about.docs.license",
-			"content": "1. Informacje ogólne\n\nAplikacja wykorzystuje biblioteki i narzędzia open-source udostępniane na warunkach licencji ich autorów.\n\n2. React Native\n\nLicencja: MIT\n\nReact Native jest udostępniany na licencji MIT. Szczegółowe warunki można znaleźć w dokumentacji projektu.\n\n3. Pozostałe zależności\n\nLista bibliotek może obejmować narzędzia do nawigacji, obsługi interfejsu użytkownika oraz komunikacji sieciowej. Każda zależność podlega warunkom swojej licencji.\n\n4. Informacje o licencjach\n\nPełne teksty licencji i informacje o autorach powinny być dostępne w dokumentacji projektu lub w plikach poszczególnych pakietów."
+			"content": [
+				{
+					"subtitle": "Informacje ogólne",
+					"content": "Aplikacja wykorzystuje biblioteki i narzędzia open-source udostępniane na warunkach licencji ich autorów."
+				},
+				{
+					"subtitle": "React Native",
+					"content": "Licencja: MIT\n\nReact Native jest udostępniany na licencji MIT. Szczegółowe warunki można znaleźć w dokumentacji projektu."
+				},
+				{
+					"subtitle": "Pozostałe zależności",
+					"content": "Lista bibliotek może obejmować narzędzia do nawigacji, obsługi interfejsu użytkownika oraz komunikacji sieciowej. Każda zależność podlega warunkom swojej licencji."
+				},
+				{
+					"subtitle": "Informacje o licencjach",
+					"content": "Pełne teksty licencji i informacje o autorach powinny być dostępne w dokumentacji projektu lub w plikach poszczególnych pakietów."
+				}
+			]
 		}
 	]
 }

@@ -624,8 +624,8 @@
 		"documentNotFound": "Nie znaleziono dokumentu.",
 		"openDocument": "Otwórz dokument {{title}}",
 		"docs": {
-			"rodo": "Polityka prywatności (RODO)",
-			"statute": "Regulamin świadczenia usług",
+			"rodo": "Polityka prywatności",
+			"statute": "Regulamin usług",
 			"license": "Licencje Open-Source"
 		}
 	},
