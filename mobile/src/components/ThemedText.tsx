@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
 	},
 })
 
+/* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
 const typography = StyleSheet.create({
 	H0: {
 		fontFamily: "Montserrat-Bold",
@@ -197,3 +198,4 @@ const typography = StyleSheet.create({
 		textAlignVertical: "center",
 	},
 })
+/* eslint-enable react-native/no-unused-styles */
