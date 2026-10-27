@@ -46,7 +46,15 @@
 				}
 			],
 			"expo-secure-store",
-			"expo-asset"
+			"expo-asset",
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"usesCleartextTraffic": true
+					}
+				}
+			]
 		],
 		"extra": {
 			"router": {},
