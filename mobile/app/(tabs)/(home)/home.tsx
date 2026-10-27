@@ -246,7 +246,15 @@ export default function HomeScreen() {
 const windowWidth = Dimensions.get("window").width
 
 const getStyles = (colors: ThemeColors) => {
-	return StyleSheet.create({
+	const styles = StyleSheet.create({
+		scrollView: {
+			flex: 1,
+			backgroundColor: colors.tertiary_base_2,
+		},
+		container: {
+			paddingHorizontal: 24,
+			paddingBottom: 40,
+		},
 		headerRow: {
 			flexDirection: "row",
 			justifyContent: "space-between",
@@ -322,4 +330,5 @@ const getStyles = (colors: ThemeColors) => {
 			paddingBottom: 30,
 		},
 	})
+	return styles
 }
