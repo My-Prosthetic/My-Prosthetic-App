@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
 	},
 })
 
+/* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
 const sizes = StyleSheet.create({
 	none: {},
 	old_tag: {
@@ -235,3 +236,4 @@ const sizes = StyleSheet.create({
 		alignItems: "center",
 	},
 })
+/* eslint-enable react-native/no-unused-styles */

@@ -297,8 +297,23 @@ export default function AccumulatedFundsScreen() {
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
+		container: {
+			flex: 1,
+			paddingTop: 10,
+		},
+		carouselCard: {
+			width: "100%",
+			height: 100,
+		},
+		carouselOutline: {
+			borderWidth: 2,
+			borderColor: colors.primary_base,
+			padding: 16,
+			borderRadius: 16,
+			height: "100%",
+		},
 		summaryCard: {
 			padding: 16,
 			flexDirection: "column",
@@ -324,3 +339,6 @@ const getStyles = (colors: ThemeColors) =>
 			alignItems: "center",
 		},
 	})
+
+	return styles
+}
