@@ -18,7 +18,7 @@ export default function AboutScreen() {
 
 	return (
 		<>
-			<ThemedHeader tx="about.header"/>
+			<ThemedHeader tx="about.header" />
 			<ThemedView variant="background" colorName="bg_1">
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<ThemedView style={styles.appCard} colorName="bg_0">
