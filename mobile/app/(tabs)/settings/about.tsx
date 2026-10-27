@@ -7,7 +7,6 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import aboutConfig from "@/src/constants/aboutConfig.json"
 import legalDocs from "@/src/constants/legalDocsConfig.json"
-import { Fragment } from "react"
 import Logo from "@/assets/MP_text_logo_recolored.svg"
 import { useTheme } from "@/context/ThemeContext"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
@@ -19,63 +18,93 @@ export default function AboutScreen() {
 	return (
 		<>
 			<ThemedHeader tx="about.header" />
-			<ThemedView variant="background" colorName="bg_1">
-				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<ThemedView style={styles.appCard} colorName="bg_0">
+
+			<ThemedView variant="background" colorName="bg_0" style={styles.outerBackground}>
+				<ScrollView showsVerticalScrollIndicator={false}>
+					<ThemedView variant="background" colorName="bg_0" style={styles.introSection}>
 						<ThemedView style={styles.appRow}>
 							<Logo width={80} height={44.26} color={colors.blue2} />
+
 							<ThemedView style={styles.appInfo}>
 								<ThemedText variant="H0" colorName="blue2">
 									{aboutConfig.appName}
 								</ThemedText>
+
 								<ThemedText
 									variant="H4"
 									colorName="blue2"
 									tx="about.versionLabel"
-									txOptions={{ version: aboutConfig.version, release: aboutConfig.releaseLabel }}
+									txOptions={{
+										version: aboutConfig.version,
+										release: aboutConfig.releaseLabel,
+									}}
 								/>
 							</ThemedView>
 						</ThemedView>
 
-						<ThemedText variant="subTitle2" tx="about.partnerIntro" />
-						<ThemedText variant="H5">{aboutConfig.partner}</ThemedText>
+						<ThemedText variant="subTitle2" tx="about.partnerIntro" colorName="blue2" />
+
+						<ThemedText variant="H5" colorName="blue2">
+							{aboutConfig.partner}
+						</ThemedText>
 					</ThemedView>
 
-					{/* Team */}
-					<ThemedText variant="H1" tx="about.team" style={styles.sectionTitle} />
-					{aboutConfig.team.map((member) => (
-						<ThemedView key={member.name} style={styles.teamRow}>
-							<ThemedText variant="H4">{member.name}</ThemedText>
-							<ThemedText variant="H5">{member.role}</ThemedText>
-							<ThemedView variant="divider" colorName="primary_base" style={{ opacity: 0.2 }} />
-						</ThemedView>
-					))}
-					{/* Documents */}
-					<ThemedText variant="H1" tx="about.documents" style={styles.sectionTitle} />
-					{legalDocs.documents.map((doc) => (
-						<Fragment key={doc.id}>
-							<ThemedView
-								variant="wide"
-								onPress={() =>
-									router.push({
-										pathname: "/settings/legal/[docId]",
-										params: { docId: doc.id },
-									})
-								}
-								accessibilityLabel={t("about.openDocument", {
-									title: t(doc.titleKey as ParseKeys),
-								})}
-								centerChild={<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} />}
-								rightChild={
-									<ThemedText variant="main1Button" colorName="primary_base">
-										{<IconChevronRight color={colors.secondary_base} />}
-									</ThemedText>
-								}
-								childrenContainerStyle={styles.docRow}
-							/>
-							<ThemedView variant="divider" colorName="primary_base" style={{ opacity: 0.2 }} />
-						</Fragment>
-					))}
+					<ThemedView variant="background" colorName="bg_1" style={styles.content}>
+						{/* Team */}
+						<ThemedText
+							variant="H1"
+							tx="about.team"
+							style={styles.sectionTitle}
+							colorName="blue2"
+						/>
+
+						{aboutConfig.team.map((member) => (
+							<ThemedView key={member.name} style={styles.teamRow}>
+								<ThemedText variant="H3" colorName="blue2">
+									{member.name}
+								</ThemedText>
+
+								<ThemedText variant="H4" colorName="blue1">
+									{member.role}
+								</ThemedText>
+
+								<ThemedView variant="divider" colorName="blue0" />
+							</ThemedView>
+						))}
+
+						{/* Documents */}
+						<ThemedText
+							variant="H1"
+							tx="about.documents"
+							style={styles.sectionTitle}
+							colorName="blue2"
+						/>
+
+						{legalDocs.documents.map((doc) => (
+							<ThemedView key={doc.id} style={styles.docWrapper}>
+								<ThemedView
+									variant="wide"
+									style={styles.docItem}
+									onPress={() =>
+										router.push({
+											pathname: "/settings/legal/[docId]",
+											params: { docId: doc.id },
+										})
+									}
+									accessibilityLabel={t("about.openDocument", {
+										title: t(doc.titleKey as ParseKeys),
+									})}
+									centerChild={
+										<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} colorName="blue2" />
+									}
+									rightChild={<IconChevronRight color={colors.blue1} />}
+									childrenContainerStyle={styles.docRow}
+								/>
+
+								<ThemedView variant="divider" colorName="blue0" />
+							</ThemedView>
+						))}
+					</ThemedView>
 				</ScrollView>
 			</ThemedView>
 		</>
@@ -83,35 +112,63 @@ export default function AboutScreen() {
 }
 
 const styles = StyleSheet.create({
-	content: {
-		paddingVertical: 24,
+	outerBackground: {
+		paddingHorizontal: 0,
 	},
-	appCard: {
-		gap: 4,
-		paddingVertical: 16,
+
+	introSection: {
+		paddingTop: 24,
+		paddingBottom: 16,
 		borderRadius: 0,
 	},
+
+	content: {
+		paddingTop: 0,
+		paddingBottom: 24,
+	},
+
 	appRow: {
+		width: "100%",
 		flexDirection: "row",
+		alignItems: "center",
 		justifyContent: "flex-start",
 		gap: 16,
 		marginBottom: 16,
 		borderRadius: 0,
 	},
+
 	appInfo: {
+		flex: 1,
 		gap: 2,
 		borderRadius: 0,
 	},
+
 	sectionTitle: {
 		marginTop: 24,
-		marginBottom: 8,
+		marginBottom: 16,
 	},
+
 	teamRow: {
-		paddingVertical: 6,
+		paddingTop: 1,
+		paddingBottom: 6,
 		borderRadius: 0,
 	},
+
+	docWrapper: {
+		borderRadius: 0,
+	},
+
+	docItem: {
+		minHeight: 45,
+		borderRadius: 0,
+	},
+
 	docRow: {
+		width: "100%",
+		minHeight: 42,
 		paddingHorizontal: 0,
+		paddingBottom: 8,
+		alignItems: "flex-end",
 		gap: 0,
 	},
 })
