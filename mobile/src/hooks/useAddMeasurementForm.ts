@@ -251,7 +251,7 @@ export function useAddMeasurementForm() {
 		try {
 			await createMeasure(input)
 			Alert.alert(t("measurements.saveSuccessTitle"), t("measurements.saveSuccessMessage"), [
-				{ text: t("common.save"), onPress: () => router.back() },
+				{ onPress: () => router.back() },
 			])
 		} catch (error) {
 			console.error("Failed to save measurement:", error)
