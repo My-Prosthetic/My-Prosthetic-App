@@ -261,17 +261,6 @@ export function useAddMeasurementForm() {
 		}
 	}
 
-	const handleOnDelete = () => {
-		Alert.alert(t("measurements.discardTitle"), t("measurements.discardConfirmation"), [
-			{ text: t("common.cancel"), style: "cancel" },
-			{
-				text: t("measurements.delete"),
-				style: "destructive",
-				onPress: () => router.back(),
-			},
-		])
-	}
-
 	const distanceDialogErrorMessage = t("measurements.invalidDistance")
 
 	return {
@@ -300,7 +289,6 @@ export function useAddMeasurementForm() {
 		handleOnAddLevel,
 		handleOpenDistanceDialog,
 		handleSaveMeasurement,
-		handleOnDelete,
 		setIsDateModalVisible,
 		setIsHourModalVisible,
 		setDistanceDialogTarget,

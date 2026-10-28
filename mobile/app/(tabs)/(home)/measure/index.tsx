@@ -2,7 +2,6 @@ import React from "react"
 import { ScrollView, StyleSheet, View } from "react-native"
 import { useTheme } from "@/context/ThemeContext"
 import IconPlus from "@/assets/icons/plus.svg"
-import IconTrash from "@/assets/icons/trash-bin.svg"
 import { ThemedDialog } from "@/src/components/ThemedDialog"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { HourPickerModal } from "@/src/components/HourPicker"
@@ -145,13 +144,6 @@ export default function AddMeasurementScreen() {
 					style={styles.saveButton}
 					centerChild={<ThemedText tx="measurements.save" variant="H1" colorName="bg_0" />}
 				/>
-
-				<ThemedView onPress={form.handleOnDelete} variant="narrow" style={styles.deleteButton}>
-					<View style={styles.deleteContent}>
-						<IconTrash color={colors.false} width={26} height={26} />
-						<ThemedText tx="measurements.delete" variant="H1" colorName="false" />
-					</View>
-				</ThemedView>
 			</ThemedView>
 			<DatePickerModal
 				visible={form.isDateModalVisible}
@@ -246,15 +238,5 @@ const styles = StyleSheet.create({
 	},
 	saveButton: {
 		marginTop: 10,
-	},
-	deleteButton: {
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: -15,
-	},
-	deleteContent: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
 	},
 })
