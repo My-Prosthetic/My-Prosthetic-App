@@ -326,7 +326,7 @@
 		"addLevel": "Add a new level",
 		"addDistanceTitle": "Enter the distance of new measurement point L{{level}} from the stump tip",
 		"editDistanceTitle": "Change the distance of measurement point L{{level}} from the stump tip",
-		"invalidDistance": "Distance must be a non-negative integer and must not duplicate another point.",
+		"invalidDistance": "Distance must be an integer between 0 and 100 and must not duplicate another point.",
 		"removeLevelTitle": "Remove measurement level",
 		"removeLevelConfirmation": "Are you sure you want to remove level L{{level}}?",
 		"invalidMeasurementValue": "Enter a valid number.",

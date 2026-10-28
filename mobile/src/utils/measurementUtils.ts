@@ -39,7 +39,12 @@ export function isValidMeasurementValue(value: string): boolean {
 }
 
 export function isValidMeasurementDistance(value: string): boolean {
-	return /^\d+$/.test(value.trim()) && Number.isSafeInteger(Number(value)) && Number(value) >= 0
+	return (
+		/^\d+$/.test(value.trim()) &&
+		Number.isSafeInteger(Number(value)) &&
+		Number(value) >= 0 &&
+		Number(value) <= 100
+	)
 }
 
 export function getMeasurementLevelsFromHistory(

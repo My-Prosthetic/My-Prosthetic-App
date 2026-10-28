@@ -325,7 +325,7 @@
 		"addLevel": "Dodaj nowy poziom",
 		"addDistanceTitle": "Podaj odległość nowego miejsca pomiarowego L{{level}} od szczyciku",
 		"editDistanceTitle": "Zmień odległość punktu pomiarowego L{{level}} od szczyciku",
-		"invalidDistance": "Odległość musi być nieujemną liczbą całkowitą i nie może się powtarzać.",
+		"invalidDistance": "Odległość musi być liczbą całkowitą między 0 a 100 i nie może się powtarzać.",
 		"removeLevelTitle": "Usuń poziom pomiaru",
 		"removeLevelConfirmation": "Czy na pewno chcesz usunąć poziom L{{level}}?",
 		"invalidMeasurementValue": "Wprowadź poprawną liczbę.",
