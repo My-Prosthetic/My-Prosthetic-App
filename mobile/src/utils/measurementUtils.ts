@@ -29,7 +29,7 @@ export function formatTimeForStorage({ hour, minute }: FormatHourOptions): strin
 
 export function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]
-		.sort((left, right) => right.distance - left.distance)
+		.sort((left, right) => left.distance - right.distance)
 		.map((item, index) => ({ ...item, level: index + 1 }))
 }
 

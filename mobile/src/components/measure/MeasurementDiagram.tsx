@@ -113,7 +113,7 @@ export function MeasurementDiagram({ levels, style }: MeasurementDiagramProps) {
 			const { left } = edgeX(y)
 			return {
 				id: level.level,
-				label: `L${index + 1}`,
+				label: `L${level.level}`,
 				y,
 				radius,
 				lineStartX: left - LINE_OVERHANG,
