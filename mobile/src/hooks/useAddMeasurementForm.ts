@@ -20,12 +20,14 @@ import {
 } from "@/src/utils/measurementUtils"
 import type { FormatHourOptions } from "@/src/utils/hourFormatter"
 import { useTranslation } from "react-i18next"
+import { useProsthesis } from "@/context/SelectedProsthesisContext"
 
 type DistanceDialogTarget = { type: "add" } | { type: "edit"; level: number }
 
 export function useAddMeasurementForm() {
 	const router = useRouter()
 	const { t } = useTranslation()
+	const { selectedProsthesis } = useProsthesis()
 	const [side, setSide] = useState<"left" | "right">("left")
 	const [limbType, setLimbType] = useState<"upper" | "lower">("lower")
 	const [measurementLevels, setMeasurementLevels] = useState<MeasurementLevel[]>(() =>
@@ -54,15 +56,26 @@ export function useAddMeasurementForm() {
 		const initializeFromHistory = async () => {
 			try {
 				const latestMeasure = await getLatestMeasure()
+
 				if (latestMeasure) {
 					setSide(latestMeasure.side)
 					setLimbType(latestMeasure.limbType)
+				} else if (selectedProsthesis) {
+					setSide(selectedProsthesis.side)
+					setLimbType(selectedProsthesis.limbType)
 				}
+
 				setMeasurementLevels(getMeasurementLevelsFromHistory(latestMeasure))
 			} catch (error) {
 				console.error("Failed to load latest measurement:", error)
-				setSide("left")
-				setLimbType("lower")
+
+				if (selectedProsthesis) {
+					setSide(selectedProsthesis.side)
+					setLimbType(selectedProsthesis.limbType)
+				} else {
+					setSide("left")
+					setLimbType("lower")
+				}
 				setMeasurementLevels(getMeasurementLevelsFromHistory(null))
 			} finally {
 				isInitializedRef.current = true
@@ -71,7 +84,7 @@ export function useAddMeasurementForm() {
 		}
 
 		void initializeFromHistory()
-	}, [])
+	}, [selectedProsthesis])
 
 	const reloadLevelsForSelection = async (
 		nextSide: "left" | "right",
