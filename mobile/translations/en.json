@@ -338,7 +338,12 @@
 		"saveSuccessMessage": "The measurement has been saved.",
 		"saveError": "Could not save the measurement.",
 		"save": "SAVE MEASUREMENT",
-		"delete": "DELETE"
+		"delete": "DELETE",
+		"history": {
+			"title": "Measurements history",
+			"date": "Date",
+			"points": "Measurement points"
+		}
 	},
 	"newIncident": {
 		"title": "NEW INCIDENT",

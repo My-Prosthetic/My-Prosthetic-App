@@ -337,7 +337,12 @@
 		"saveSuccessMessage": "Pomiar został zapisany.",
 		"saveError": "Nie udało się zapisać pomiaru.",
 		"save": "ZAPISZ POMIAR",
-		"delete": "USUŃ"
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty pomiarowe"
+		}
 	},
 	"newIncident": {
 		"title": "NOWY INCYDENT",
