@@ -339,7 +339,12 @@
 		"discardTitle": "Discard measurement",
 		"discardConfirmation": "Are you sure you want to clear the form and leave?",
 		"save": "SAVE MEASUREMENT",
-		"delete": "DELETE"
+		"delete": "DELETE",
+		"history": {
+			"title": "Measurements history",
+			"date": "Date",
+			"points": "Measurement points"
+		}
 	},
 	"newIncident": {
 		"title": "NEW INCIDENT",

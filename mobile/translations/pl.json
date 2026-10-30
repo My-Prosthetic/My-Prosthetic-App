@@ -338,7 +338,12 @@
 		"discardTitle": "Odrzuć pomiar",
 		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
 		"save": "ZAPISZ POMIAR",
-		"delete": "USUŃ"
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty pomiarowe"
+		}
 	},
 	"newIncident": {
 		"title": "NOWY INCYDENT",
