@@ -642,5 +642,23 @@
 		"loadError": "Failed to load component data.",
 		"selectDate": "Select date",
 		"clearDate": "Clear date"
+	},
+	"display": {
+		"title": "App Appearance & Language",
+		"name": "Appearance & Language",
+		"interface": {
+			"title": "Interface Appearance",
+			"darkMode": "Dark Mode",
+			"contrast": "High Contrast Mode"
+		},
+		"accessibility": {
+			"title": "Accessibility",
+			"tts": "Read Screen Aloud (TTS)"
+		},
+		"region": {
+			"title": "Language & Region",
+			"language": "App Language",
+			"date": "Date Format"
+		}
 	}
 }
