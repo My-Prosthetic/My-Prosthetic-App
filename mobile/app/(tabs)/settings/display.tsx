@@ -100,7 +100,8 @@ export default function DisplayScreen() {
 			<ThemedView variant="divider" colorName="blue1" />
 
 			<ThemedText variant="H2" colorName="blue2">
-				Test date - remove after done testing: {formatDate(testDate, "numeric", new Date(), dateFormat)}
+				Test date - remove after done testing:{" "}
+				{formatDate(testDate, "numeric", new Date(), dateFormat)}
 			</ThemedText>
 
 			<SettingsOptionModal

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react"
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export interface ThemeColors {
 	primary_base: string
@@ -66,7 +67,7 @@ export const lightTheme: ThemeColors = {
 	magenta0: "#B74CC5",
 }
 
-//TODO upewnić się że darkTheme dobrze spełnia swoją funkcję, szczególnie w zestawieniu z tekstem
+// TODO: verify dark theme contrast, especially text readability
 export const darkTheme: ThemeColors = {
 	primary_base: "#7A9BEA",
 	primary_base_1: "#5B7DD1",
@@ -107,7 +108,7 @@ export const darkTheme: ThemeColors = {
 	magenta0: "#D177DD",
 }
 
-//TODO upewnić się że wysoki kontrast dobrze spełnia swoją funkcję, szczególnie w zestawieniu z tekstem
+// TODO: verify high contrast theme, especially text readability
 export const highContrastTheme: ThemeColors = {
 	primary_base: "#001A5E",
 	primary_base_1: "#0B3C9E",
@@ -193,6 +194,9 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+const COLOR_MODE_STORAGE_KEY = "colorMode"
+const HIGH_CONTRAST_STORAGE_KEY = "highContrast"
+
 const getThemeColors = (colorMode: ColorMode, highContrast: boolean): ThemeColors => {
 	if (colorMode === "dark" && highContrast) {
 		return highContrastDarkTheme
@@ -208,9 +212,46 @@ const getThemeColors = (colorMode: ColorMode, highContrast: boolean): ThemeColor
 
 	return lightTheme
 }
+
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [colorMode, setColorMode] = useState<ColorMode>("light")
-	const [highContrast, setHighContrast] = useState(false)
+	const [colorMode, setColorModeState] = useState<ColorMode>("light")
+
+	const [highContrast, setHighContrastState] = useState(false)
+
+	useEffect(() => {
+		const loadTheme = async () => {
+			try {
+				const savedColorMode = await AsyncStorage.getItem(COLOR_MODE_STORAGE_KEY)
+
+				const savedHighContrast = await AsyncStorage.getItem(HIGH_CONTRAST_STORAGE_KEY)
+
+				if (savedColorMode === "light" || savedColorMode === "dark") {
+					setColorModeState(savedColorMode)
+				}
+
+				if (savedHighContrast !== null) {
+					setHighContrastState(savedHighContrast === "true")
+				}
+			} catch (error) {
+				console.error("Failed to load theme settings:", error)
+			}
+		}
+
+		void loadTheme()
+	}, [])
+
+	const setColorMode = (mode: ColorMode) => {
+		setColorModeState(mode)
+
+		void AsyncStorage.setItem(COLOR_MODE_STORAGE_KEY, mode)
+	}
+
+	const setHighContrast = (enabled: boolean) => {
+		setHighContrastState(enabled)
+
+		void AsyncStorage.setItem(HIGH_CONTRAST_STORAGE_KEY, String(enabled))
+	}
+
 	const colors = getThemeColors(colorMode, highContrast)
 
 	return (
