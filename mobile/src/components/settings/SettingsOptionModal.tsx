@@ -4,28 +4,28 @@ import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
-type SettingsOption = {
-	value: string
+type SettingsOption<T extends string> = {
+	value: T
 	label: string
 }
 
-interface SettingsOptionModalProps {
+interface SettingsOptionModalProps<T extends string> {
 	visible: boolean
 	title: string
-	options: SettingsOption[]
-	selectedValue: string
-	onSelect: (value: string) => void
+	options: SettingsOption<T>[]
+	selectedValue: T
+	onSelect: (value: T) => void
 	onClose: () => void
 }
 
-export function SettingsOptionModal({
+export function SettingsOptionModal<T extends string>({
 	visible,
 	title,
 	options,
 	selectedValue,
 	onSelect,
 	onClose,
-}: SettingsOptionModalProps) {
+}: SettingsOptionModalProps<T>) {
 	const { colors } = useTheme()
 
 	return (

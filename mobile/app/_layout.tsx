@@ -13,6 +13,7 @@ import { logFullDatabase } from "@/db/debug"
 import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
 import { db } from "@/db/client"
 import migrations from "@/drizzle/migrations"
+import { SettingsProvider } from "@/context/SettingsContext"
 
 //TODO tx
 
@@ -139,9 +140,11 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider>
-			<AuthProvider>
-				<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
-			</AuthProvider>
+			<SettingsProvider>
+				<AuthProvider>
+					<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+				</AuthProvider>
+			</SettingsProvider>
 		</ThemeProvider>
 	)
 }
