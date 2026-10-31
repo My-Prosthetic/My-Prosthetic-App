@@ -324,4 +324,3 @@ const getStyles = (colors: ThemeColors) =>
 			alignItems: "center",
 		},
 	})
-}
