@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next"
 
 export default function SettingsScreen() {
 	const { logout } = useAuth()
-	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	const { i18n } = useTranslation()
 
 	return (
