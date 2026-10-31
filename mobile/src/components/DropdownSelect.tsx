@@ -37,6 +37,9 @@ interface DropdownSelectProps<T> {
 	headerStyleProps?: ThemedViewProps
 	search?: string
 	customLast?: CustomLastConfig
+	variant?: "default" | "incident"
+	renderChevron?: (isOpen: boolean) => React.ReactNode
+	renderCreateIcon?: () => React.ReactNode
 }
 
 export function DropdownSelect<T>({
@@ -48,11 +51,16 @@ export function DropdownSelect<T>({
 	headerStyleProps,
 	search,
 	customLast,
+	variant = "default",
+	renderChevron,
+	renderCreateIcon,
 }: DropdownSelectProps<T>) {
 	const { colors } = useTheme()
 	const styles = getStyles(colors)
 	const [isOpen, setIsOpen] = useState(false)
 	const [query, setQuery] = useState("")
+
+	const isIncident = variant === "incident"
 
 	const selectedOption =
 		value === undefined
@@ -61,10 +69,111 @@ export function DropdownSelect<T>({
 
 	const filteredOptions = useMemo(() => {
 		if (!search || !query.trim()) return options
+
 		return options.filter((option) =>
 			option.label.toLowerCase().includes(query.trim().toLowerCase())
 		)
 	}, [options, search, query])
+
+	if (isIncident) {
+		return (
+			<View style={[styles.incidentShell, !isOpen && styles.incidentShellClosed]}>
+				<Pressable
+					onPress={() => setIsOpen((open) => !open)}
+					style={[
+						styles.incidentTrigger,
+						!isOpen && styles.incidentTriggerClosed,
+						headerStyleProps?.style,
+					]}
+				>
+					<ThemedText variant="H3" colorName="graphite0" style={styles.incidentTriggerText}>
+						{selectedOption?.label ?? placeholder}
+					</ThemedText>
+
+					{renderChevron ? (
+						renderChevron(isOpen)
+					) : (
+						<IconChevronDown color={colors.blue1} width={28} height={28} />
+					)}
+				</Pressable>
+
+				{isOpen && (
+					<View style={styles.incidentMenu}>
+						<ScrollView
+							nestedScrollEnabled
+							showsVerticalScrollIndicator={false}
+							keyboardShouldPersistTaps="handled"
+						>
+							{search !== undefined && (
+								<View style={styles.searchContainer}>
+									<IconSearch
+										color={colors.blue1}
+										width={18}
+										height={18}
+										style={styles.searchIcon}
+									/>
+									<TextInput
+										style={styles.searchInput}
+										placeholder={search}
+										placeholderTextColor={colors.primary_base_2}
+										value={query}
+										onChangeText={setQuery}
+										autoCorrect={false}
+									/>
+								</View>
+							)}
+
+							{filteredOptions.map((option) => {
+								const isSelected =
+									getOptionKey(option.value) ===
+									(value === undefined ? undefined : getOptionKey(value))
+
+								return (
+									<Pressable
+										key={getOptionKey(option.value)}
+										onPress={() => {
+											onChange(option.value)
+											setIsOpen(false)
+											setQuery("")
+										}}
+										style={[styles.incidentOption, isSelected && styles.incidentSelectedOption]}
+									>
+										<ThemedText
+											variant="H3"
+											colorName="graphite0"
+											style={styles.incidentOptionText}
+										>
+											{option.label}
+										</ThemedText>
+									</Pressable>
+								)
+							})}
+
+							{customLast && (
+								<Pressable
+									onPress={async () => {
+										setIsOpen(false)
+										setQuery("")
+										await customLast.onPress()
+									}}
+									style={[styles.incidentCustomLastItem, customLast.style]}
+								>
+									{renderCreateIcon?.()}
+
+									<ThemedText
+										tx={customLast.tx}
+										variant="H3"
+										colorName="graphite0"
+										style={styles.incidentCustomLastText}
+									/>
+								</Pressable>
+							)}
+						</ScrollView>
+					</View>
+				)}
+			</View>
+		)
+	}
 
 	return (
 		<View style={styles.wrapper}>
@@ -78,8 +187,10 @@ export function DropdownSelect<T>({
 				<ThemedText variant="H3" colorName="graphite0">
 					{selectedOption?.label ?? placeholder}
 				</ThemedText>
-				<IconChevronDown color={colors.blue1} />
+
+				{renderChevron ? renderChevron(isOpen) : <IconChevronDown color={colors.blue1} />}
 			</ThemedView>
+
 			{isOpen && (
 				<ThemedView colorName="bg_0" style={styles.menu} borderColor="blue1">
 					<ScrollView
@@ -100,8 +211,12 @@ export function DropdownSelect<T>({
 								/>
 							</View>
 						)}
+
 						{filteredOptions.map((option) => {
-							const isSelected = option.value === value
+							const isSelected =
+								getOptionKey(option.value) ===
+								(value === undefined ? undefined : getOptionKey(value))
+
 							return (
 								<Pressable
 									key={getOptionKey(option.value)}
@@ -118,6 +233,7 @@ export function DropdownSelect<T>({
 								</Pressable>
 							)
 						})}
+
 						{customLast && (
 							<ThemedView
 								colorName="primary_base"
@@ -128,6 +244,7 @@ export function DropdownSelect<T>({
 								}}
 								style={[styles.customLastItem, customLast.style]}
 							>
+								{renderCreateIcon?.()}
 								<ThemedText tx={customLast.tx} variant="body1Regular" colorName="tertiary_base_3" />
 							</ThemedView>
 						)}
@@ -138,8 +255,8 @@ export function DropdownSelect<T>({
 	)
 }
 
-const getStyles = (colors: ThemeColors) => {
-	const styles = StyleSheet.create({
+const getStyles = (colors: ThemeColors) =>
+	StyleSheet.create({
 		wrapper: {
 			gap: 8,
 			zIndex: 2,
@@ -194,6 +311,70 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "center",
 			justifyContent: "center",
 		},
+
+		incidentShell: {
+			zIndex: 2,
+			borderWidth: 1.25,
+			borderColor: colors.blue1,
+			borderRadius: 18,
+			backgroundColor: colors.bg_0,
+			overflow: "hidden",
+		},
+		incidentShellClosed: {
+			borderWidth: 0,
+			backgroundColor: "transparent",
+			overflow: "visible",
+		},
+		incidentTrigger: {
+			minHeight: 48,
+			paddingHorizontal: 20,
+			flexDirection: "row",
+			alignItems: "center",
+			justifyContent: "space-between",
+			backgroundColor: colors.bg_0,
+			borderWidth: 1.25,
+			borderColor: colors.blue1,
+			borderRadius: 18,
+			marginHorizontal: -1.25,
+			marginTop: -1.25,
+		},
+		incidentTriggerClosed: {
+			marginHorizontal: 0,
+			marginTop: 0,
+		},
+		incidentTriggerText: {
+			flexShrink: 1,
+			fontSize: 18,
+			lineHeight: 24,
+		},
+		incidentMenu: {
+			backgroundColor: colors.bg_0,
+			maxHeight: 260,
+			paddingHorizontal: 20,
+		},
+		incidentOption: {
+			minHeight: 43,
+			justifyContent: "center",
+			borderBottomWidth: 1,
+			borderBottomColor: colors.blue0,
+		},
+		incidentSelectedOption: {
+			backgroundColor: colors.bg_0,
+		},
+		incidentOptionText: {
+			fontSize: 18,
+			lineHeight: 24,
+		},
+		incidentCustomLastItem: {
+			minHeight: 56,
+			flexDirection: "row",
+			alignItems: "center",
+			gap: 14,
+			backgroundColor: colors.bg_0,
+		},
+		incidentCustomLastText: {
+			flexShrink: 1,
+			fontSize: 18,
+			lineHeight: 24,
+		},
 	})
-	return styles
-}

@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Alert, Image, ScrollView, StyleProp, StyleSheet, TextInput, TextStyle } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import {
+	Alert,
+	Modal,
+	Pressable,
+	ScrollView,
+	StyleProp,
+	StyleSheet,
+	TextStyle,
+	useWindowDimensions,
+	View,
+} from "react-native"
 import * as Crypto from "expo-crypto"
 import {
 	RecordingPresets,
@@ -22,7 +31,15 @@ import {
 import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
 import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { IncidentBodyMap, type IncidentBodyView } from "@/src/components/incidents/IncidentBodyMap"
+import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
+import { ThemedInput } from "@/src/components/ThemedInput"
+import IconChevronDown from "@/assets/icons/incident/chevron-down.svg"
+import IconSchemaArrow from "@/assets/icons/incident/schema-arrow.svg"
+import IconFile from "@/assets/icons/incident/file.svg"
+import IconPlus from "@/assets/icons/incident/plus.svg"
+import IconClose from "@/assets/icons/incident/close.svg"
+import IconMic from "@/assets/icons/incident/mic.svg"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 
@@ -41,6 +58,15 @@ const INCIDENT_TYPES = [
 	"mechanical_failure",
 ] as const
 const ACTIVITY_VALUES = ["", "walking", "running", "sitting", "standing", "sport"] as const
+const WEEKDAY_KEYS = [
+	"newIncident.weekdays.sun",
+	"newIncident.weekdays.mon",
+	"newIncident.weekdays.tue",
+	"newIncident.weekdays.wed",
+	"newIncident.weekdays.thu",
+	"newIncident.weekdays.fri",
+	"newIncident.weekdays.sat",
+] as const
 const BODY_VIEWS: IncidentBodyView[] = ["side", "top_inside", "front_back"]
 const MAX_PHOTOS = 3
 const DESCRIPTION_MAX_LENGTH = 500
@@ -121,7 +147,8 @@ export default function NewIncidentScreen() {
 	const params = useLocalSearchParams<{ prosthesisId?: string }>()
 	const { t } = useTranslation()
 	const { colors } = useTheme()
-	const styles = useMemo(() => getStyles(colors), [colors])
+	const { width } = useWindowDimensions()
+	const styles = useMemo(() => getStyles(colors, width), [colors, width])
 	const scrollRef = useRef<ScrollView>(null)
 	const incidentIdRef = useRef(Crypto.randomUUID())
 	const savedRef = useRef(false)
@@ -129,6 +156,7 @@ export default function NewIncidentScreen() {
 	const now = useMemo(() => new Date(), [])
 	const [selectedDate, setSelectedDate] = useState(now)
 	const [timeText, setTimeText] = useState(toTimeText(now))
+	const [timePickerOpen, setTimePickerOpen] = useState(false)
 	const [incidentType, setIncidentType] = useState("")
 	const [activity, setActivity] = useState("")
 	const [description, setDescription] = useState("")
@@ -502,84 +530,82 @@ export default function NewIncidentScreen() {
 		setCustomActivityDraft("")
 		setCustomActivityMode(false)
 	}
+
 	return (
-		<ThemedView colorName="tertiary_base_1" style={styles.screen}>
+		<ThemedView colorName="bg_1" style={styles.screen}>
+			<ThemedHeader tx="newIncident.title" style={styles.incidentHeader} />
+
 			<ScrollView
 				ref={scrollRef}
+				style={styles.scroll}
 				contentContainerStyle={styles.content}
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 			>
-				<ThemedView colorName="tertiary_base_1" style={styles.header}>
-					<ThemedView
-						colorName="tertiary_base_1"
-						onPress={() => router.back()}
-						hitSlop={12}
-						accessibilityRole="button"
+				<ThemedView colorName="bg_0" style={styles.dateCard}>
+					<ScrollView
+						horizontal
+						ref={dateScrollRef}
+						contentContainerStyle={styles.dateStrip}
+						showsHorizontalScrollIndicator={false}
+						onContentSizeChange={() => dateScrollRef.current?.scrollToEnd({ animated: false })}
 					>
-						<Ionicons name="chevron-back" size={34} color={colors.primary_base} />
-					</ThemedView>
-					<ThemedText tx="newIncident.title" variant="title" style={styles.title} />
-				</ThemedView>
-				<ScrollView
-					horizontal
-					showsHorizontalScrollIndicator={false}
-					contentContainerStyle={styles.dateStrip}
-					ref={dateScrollRef}
-					onContentSizeChange={() => dateScrollRef.current?.scrollToEnd({ animated: false })}
-				>
-					{dates.map((date) => {
-						const selected = toDateKey(date) === toDateKey(selectedDate)
-						return (
-							<ThemedView
-								key={toDateKey(date)}
-								colorName="tertiary_base_1"
-								onPress={() => setSelectedDate(date)}
-								style={styles.dateItem}
-							>
-								<ThemedText
-									variant="body1Regular"
-									colorName="secondary_base_0c"
-									style={styles.dateWeekday}
-								>
-									{["Su", "Mo", "Tu", "We", "Th", "Fr", "Sat"][date.getDay()]}
-								</ThemedText>
+						{dates.map((date) => {
+							const selected = toDateKey(date) === toDateKey(selectedDate)
+							const weekday = t(WEEKDAY_KEYS[date.getDay()])
+							return (
 								<ThemedView
-									colorName={selected ? "tertiary_base_3" : "tertiary_base_1"}
-									style={[styles.dateDayBox, selected && styles.dateDayBoxSelected]}
+									key={toDateKey(date)}
+									onPress={() => setSelectedDate(date)}
+									style={styles.dateItem}
 								>
-									<ThemedText
-										variant="subTitle1"
-										colorName="secondary_base_0c"
-										style={styles.dateDay}
-									>
-										{date.getDate()}
+									<ThemedText variant="H1" colorName="blue1" style={styles.dateWeekday}>
+										{weekday}
 									</ThemedText>
+									<ThemedView colorName={selected ? "blue2" : "bg_0"} style={styles.dateDayBox}>
+										<ThemedText
+											variant="H3"
+											colorName={selected ? "bg_0" : "blue2"}
+											style={styles.dateDay}
+										>
+											{date.getDate()}
+										</ThemedText>
+									</ThemedView>
 								</ThemedView>
-							</ThemedView>
-						)
-					})}
-				</ScrollView>
-				<ThemedView colorName="tertiary_base_1" style={styles.timeRow}>
-					<FieldLabel text={t("newIncident.time")} />
-					<ThemedView colorName="tertiary_base_3" style={styles.timePill}>
-						<TextInput
-							value={timeText}
-							onChangeText={setTimeText}
-							maxLength={5}
-							keyboardType="numbers-and-punctuation"
-							selectTextOnFocus
-							style={[styles.timeInput, { color: colors.primary_base_1 }]}
-						/>
-					</ThemedView>
+							)
+						})}
+					</ScrollView>
 				</ThemedView>
+
+				<View style={styles.timeRow}>
+					<FieldLabel text={t("newIncident.time")} style={styles.timeLabel} />
+					<ThemedView
+						colorName="bg_0"
+						borderColor="blue1"
+						onPress={() => setTimePickerOpen(true)}
+						style={styles.timeSelect}
+					>
+						<ThemedText variant="H3" colorName="graphite0" style={styles.timeValue}>
+							{timeText}
+						</ThemedText>
+						<Arrow direction="down" size={18} color={colors.blue1} />
+					</ThemedView>
+				</View>
+
 				<FieldLabel text={t("newIncident.type")} />
 				<DropdownSelect
+					variant="incident"
 					label={t("newIncident.type")}
-					placeholder={t("newIncident.selectType")}
-					options={typeOptions}
+					options={typeOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={incidentType || undefined}
+					placeholder={t("newIncident.selectType")}
 					onChange={selectIncidentType}
+					customLast={{
+						tx: "newIncident.customValuePlaceholder",
+						onPress: () => selectIncidentType(CUSTOM_VALUE),
+					}}
+					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
+					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customTypeMode && (
 					<CustomValueInput
@@ -588,13 +614,21 @@ export default function NewIncidentScreen() {
 						onAdd={addCustomType}
 					/>
 				)}
+
 				<FieldLabel text={t("newIncident.circumstances")} />
 				<DropdownSelect
+					variant="incident"
 					label={t("newIncident.circumstances")}
-					placeholder={t("newIncident.none")}
-					options={activityOptions}
+					options={activityOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={activity}
+					placeholder={t("newIncident.none")}
 					onChange={selectActivity}
+					customLast={{
+						tx: "newIncident.customValuePlaceholder",
+						onPress: () => selectActivity(CUSTOM_VALUE),
+					}}
+					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
+					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customActivityMode && (
 					<CustomValueInput
@@ -603,246 +637,247 @@ export default function NewIncidentScreen() {
 						onAdd={addCustomActivity}
 					/>
 				)}
+
 				<FieldLabel text={t("newIncident.description")} />
-				<ThemedView colorName="tertiary_base_3" style={styles.descriptionBox}>
-					<TextInput
-						value={description}
-						onChangeText={setDescription}
-						placeholder={t("newIncident.descriptionPlaceholder")}
-						placeholderTextColor={colors.primary_base_2}
-						multiline
-						maxLength={DESCRIPTION_MAX_LENGTH}
-						textAlignVertical="top"
-						style={[styles.descriptionInput, { color: colors.primary_base }]}
-					/>
-					<ThemedText
-						variant="body1Regular"
-						colorName="secondary_base_0c"
-						style={styles.descriptionCounter}
-					>
-						{description.length}/{DESCRIPTION_MAX_LENGTH}
-					</ThemedText>
+				<ThemedInput
+					variant="note"
+					value={description}
+					onChangeText={setDescription}
+					placeholder={t("newIncident.descriptionPlaceholder")}
+					maxLength={DESCRIPTION_MAX_LENGTH}
+					viewStyle={styles.descriptionBox}
+					textStyle={styles.descriptionInput}
+				/>
+				<View style={styles.audioActionRow}>
 					<ThemedView
-						colorName={recorderState.isRecording ? "primary_base" : "tertiary_base_2"}
 						onPress={() => void (recorderState.isRecording ? stopRecording() : startRecording())}
-						style={styles.microphoneButton}
-						accessibilityRole="button"
+						colorName="bg_1"
+						style={styles.audioButton}
 					>
-						<Ionicons
-							name={recorderState.isRecording ? "stop" : "mic"}
-							size={22}
-							color={recorderState.isRecording ? colors.accent_base : colors.primary_base}
+						<IconMic
+							color={recorderState.isRecording ? colors.false : colors.blue2}
+							width={18}
+							height={18}
 						/>
-					</ThemedView>
-				</ThemedView>
-				{(recorderState.isRecording || audioUri) && (
-					<ThemedView colorName="tertiary_base_1" style={styles.audioStatusRow}>
-						<Ionicons name="mic" size={18} color={colors.secondary_base_0c} />
-						<ThemedText variant="body1Regular" colorName="secondary_base_0c">
-							{recorderState.isRecording
-								? t("newIncident.recording", {
-										seconds: Math.floor(recorderState.durationMillis / 1000),
-									})
-								: t("newIncident.voiceNoteAdded")}
+						<ThemedText variant="H4" colorName={recorderState.isRecording ? "false" : "blue2"}>
+							{t(recorderState.isRecording ? "newIncident.stopAudio" : "newIncident.recordAudio")}
 						</ThemedText>
-						{audioUri && !recorderState.isRecording && (
-							<ThemedText
-								onPress={() => {
-									deleteIncidentMediaFile(audioUri)
-									setAudioUri(undefined)
-								}}
-								variant="body1Regular"
-								colorName="false"
-							>
+					</ThemedView>
+					{audioUri && !recorderState.isRecording && (
+						<ThemedView
+							onPress={() => {
+								deleteIncidentMediaFile(audioUri)
+								setAudioUri(undefined)
+							}}
+							style={styles.audioRemove}
+						>
+							<ThemedText variant="H4" colorName="false">
 								{t("newIncident.remove")}
 							</ThemedText>
-						)}
-					</ThemedView>
+						</ThemedView>
+					)}
+				</View>
+				{(recorderState.isRecording || audioUri) && (
+					<ThemedText variant="body1Regular" colorName="blue2" style={styles.audioStatus}>
+						{recorderState.isRecording
+							? t("newIncident.recording", {
+									seconds: Math.floor(recorderState.durationMillis / 1000),
+								})
+							: t("newIncident.voiceNoteAdded")}
+					</ThemedText>
 				)}
+
 				{!hideIntensity && (
 					<>
-						<FieldLabel text={t("newIncident.intensity")} style={styles.sectionGap} />
-						<ThemedView colorName="tertiary_base_3" style={styles.intensityTrack}>
-							{Array.from({ length: 10 }, (_, index) => {
-								const value = index + 1
-								const selected = intensity === value
-								return (
-									<ThemedView
-										key={value}
-										colorName={selected ? "primary_base_1" : "tertiary_base_3"}
-										onPress={() => setIntensity(value)}
-										style={styles.intensityItem}
-									>
-										<ThemedText
-											variant="subTitle1"
-											colorName={selected ? "accent_base" : "primary_base"}
-											style={styles.intensityText}
+						<FieldLabel text={t("newIncident.intensity")} />
+						<ThemedView colorName="bg_0" borderColor="blue1" style={styles.intensityTrack}>
+							<View style={styles.intensityInner}>
+								{Array.from({ length: 10 }, (_, index) => {
+									const value = index + 1
+									return (
+										<ThemedView
+											key={value}
+											colorName={intensity === value ? "blue2" : "bg_0"}
+											onPress={() => setIntensity(value)}
+											accessibilityLabel={`${t("newIncident.intensity")} ${value}`}
+											accessibilityState={{ selected: intensity === value }}
+											style={styles.intensityItem}
 										>
-											{value}
-										</ThemedText>
-									</ThemedView>
-								)
-							})}
+											<ThemedText
+												variant="H3"
+												colorName={intensity === value ? "bg_0" : "graphite0"}
+												style={styles.intensityText}
+											>
+												{value}
+											</ThemedText>
+										</ThemedView>
+									)
+								})}
+							</View>
 						</ThemedView>
 					</>
 				)}
+
 				{prostheses.length > 1 && (
 					<>
-						<FieldLabel text={t("newIncident.relatedProsthesis")} style={styles.sectionGap} />
-						<ScrollView
-							horizontal
-							showsHorizontalScrollIndicator={false}
-							contentContainerStyle={styles.prosthesisOptions}
-						>
-							{prostheses.map((prosthesis) => {
-								const selected = selectedProsthesisId === prosthesis.id
-								return (
-									<ThemedView
-										key={prosthesis.id}
-										colorName="tertiary_base_1"
-										onPress={() => setSelectedProsthesisId(prosthesis.id)}
-										style={styles.prosthesisOption}
-									>
-										<ThemedView
-											colorName="accent_base_1"
-											style={[styles.radioOuter, selected && styles.radioOuterSelected]}
-										>
-											{selected && (
-												<ThemedView colorName="primary_base" style={styles.radioInner} />
-											)}
-										</ThemedView>
-										<ThemedText
-											variant="body1Regular"
-											colorName="primary_base"
-											style={styles.prosthesisName}
-										>
-											{prosthesis.name}
-										</ThemedText>
-									</ThemedView>
-								)
-							})}
-						</ScrollView>
+						<FieldLabel text={t("newIncident.relatedProsthesis")} />
+						<DropdownSelect
+							variant="incident"
+							label={t("newIncident.relatedProsthesis")}
+							options={prostheses.map((prosthesis) => ({
+								label: prosthesis.name,
+								value: prosthesis.id,
+							}))}
+							value={selectedProsthesisId}
+							placeholder="-"
+							onChange={setSelectedProsthesisId}
+							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
+						/>
 					</>
 				)}
-				{prostheses.length === 0 && (
-					<ThemedText variant="body1Regular" colorName="false" style={styles.noProsthesisText}>
-						{t("newIncident.noProsthesis")}
-					</ThemedText>
-				)}
+
 				{selectedProsthesisId && (
 					<>
-						<FieldLabel text={t("newIncident.component")} style={styles.sectionGap} />
+						<FieldLabel text={t("newIncident.component")} />
 						<DropdownSelect
+							variant="incident"
 							label={t("newIncident.component")}
-							placeholder={t("newIncident.none")}
 							options={componentOptions}
 							value={selectedComponentId ?? ""}
+							placeholder={t("newIncident.none")}
 							onChange={(value) => {
 								setSelectedComponentId(value || undefined)
 								setCoordinates(undefined)
 							}}
+							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
 						/>
 					</>
 				)}
+
 				{showMap && (
-					<ThemedView colorName="tertiary_base_1" style={styles.schemaSection}>
-						<ThemedText tx="newIncident.schema" variant="title" style={styles.schemaTitle} />
-						<ThemedView colorName="tertiary_base_1" style={styles.schemaRow}>
+					<View style={styles.schemaSection}>
+						<FieldLabel text={t("newIncident.schema")} style={styles.schemaTitle} />
+						<View style={styles.schemaRow}>
 							<ThemedView
-								colorName="tertiary_base_1"
 								onPress={() =>
 									setBodyViewIndex(
 										(current) => (current - 1 + BODY_VIEWS.length) % BODY_VIEWS.length
 									)
 								}
-								hitSlop={12}
+								style={styles.schemaArrow}
 							>
-								<Ionicons name="chevron-back" size={58} color={colors.primary_base} />
+								<Arrow direction="left" size={40} color={colors.blue2} />
 							</ThemedView>
-							<IncidentBodyMap
-								view={currentBodyView}
-								value={coordinates}
-								onChange={setCoordinates}
-							/>
+							<View style={styles.bodyMapContainer}>
+								<IncidentBodyMap
+									view={currentBodyView}
+									value={coordinates}
+									onChange={setCoordinates}
+								/>
+							</View>
 							<ThemedView
-								colorName="tertiary_base_1"
 								onPress={() => setBodyViewIndex((current) => (current + 1) % BODY_VIEWS.length)}
-								hitSlop={12}
+								style={styles.schemaArrow}
 							>
-								<Ionicons name="chevron-forward" size={58} color={colors.primary_base} />
+								<Arrow direction="right" size={40} color={colors.blue2} />
 							</ThemedView>
-						</ThemedView>
-					</ThemedView>
+						</View>
+					</View>
 				)}
-				<ThemedView colorName="tertiary_base_1" style={styles.fileSection}>
+
+				<View style={styles.fileSection}>
 					<ThemedView
-						colorName="tertiary_base_1"
+						colorName="blue0"
 						onPress={showAddPhotoActions}
 						style={styles.addFileRow}
-						accessibilityRole="button"
+						accessibilityLabel={t("newIncident.addImages")}
 					>
-						<ThemedView colorName="primary_base" style={styles.addFileCircle}>
-							<Ionicons name="add" size={28} color={colors.accent_base} />
-						</ThemedView>
-						<ThemedText tx="newIncident.addFile" variant="main1Button" style={styles.addFileText} />
+						<IconFile color={colors.blue2} width={23} height={23} />
+						<ThemedText variant="H1" colorName="graphite0" style={styles.addFileText}>
+							{t("newIncident.addImages")}
+						</ThemedText>
+						<IconPlus color={colors.graphite0} width={18} height={18} />
 					</ThemedView>
-					<ThemedText
-						tx="newIncident.fileDescription"
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fileDescription}
-					/>
-					{photoUris.length > 0 && (
-						<ThemedView colorName="tertiary_base_1" style={styles.photoRow}>
-							{photoUris.map((uri, index) => (
-								<ThemedView key={uri} colorName="tertiary_base_1" style={styles.photoWrapper}>
-									<Image source={{ uri }} style={styles.photoPreview} />
-									<ThemedView
-										colorName="primary_base"
-										onPress={() => removePhoto(uri)}
-										style={styles.photoRemove}
-										accessibilityLabel={t("newIncident.removePhoto", { number: index + 1 })}
-									>
-										<Ionicons name="close" size={17} color={colors.accent_base} />
-									</ThemedView>
-								</ThemedView>
-							))}
-						</ThemedView>
-					)}
-				</ThemedView>
+
+					{photoUris.map((uri, index) => (
+						<View key={uri} style={styles.photoRow}>
+							<ThemedText variant="H3" colorName="blue2" style={styles.photoName}>
+								• {t("newIncident.photoName")}_{index + 1}
+								{getMediaExtension(uri, ".jpg")}
+							</ThemedText>
+							<ThemedView
+								onPress={() => removePhoto(uri)}
+								accessibilityLabel={t("newIncident.removePhoto", { number: index + 1 })}
+								style={styles.removePhotoButton}
+							>
+								<IconClose color={colors.false} width={19} height={19} />
+							</ThemedView>
+						</View>
+					))}
+				</View>
+
+				{!selectedProsthesisId && (
+					<ThemedText variant="body1Regular" colorName="false" style={styles.saveHint}>
+						{t("newIncident.assignProsthesisHint")}
+					</ThemedText>
+				)}
+
 				<ThemedView
+					colorName="blue2"
 					onPress={() => void saveIncident()}
-					colorName="primary_base"
-					style={[styles.saveButton, isSaving && styles.disabledButton]}
-					disabled={isSaving || prostheses.length === 0}
+					disabled={isSaving || !selectedProsthesisId}
+					style={[styles.saveButton, (isSaving || !selectedProsthesisId) && styles.disabledButton]}
 				>
-					<ThemedText
-						tx={isSaving ? "newIncident.saving" : "newIncident.save"}
-						variant="main1Button"
-						colorName="accent_base"
-						style={styles.saveButtonText}
-					/>
-				</ThemedView>
-				<ThemedView
-					colorName="primary_base"
-					onPress={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
-					style={styles.scrollTopButton}
-					accessibilityRole="button"
-				>
-					<Ionicons name="chevron-up" size={38} color={colors.accent_base} />
+					<ThemedText variant="H1" colorName="bg_0" style={styles.saveButtonText}>
+						{t(isSaving ? "newIncident.saving" : "newIncident.save")}
+					</ThemedText>
 				</ThemedView>
 			</ScrollView>
+
+			{timePickerOpen && (
+				<IncidentTimePicker
+					visible
+					timeText={timeText}
+					maxTimeText={
+						toDateKey(selectedDate) === toDateKey(new Date()) ? toTimeText(new Date()) : undefined
+					}
+					onClose={() => setTimePickerOpen(false)}
+					onConfirm={(time) => {
+						setTimeText(time)
+						setTimePickerOpen(false)
+					}}
+					cancelLabel={t("common.cancel")}
+				/>
+			)}
 		</ThemedView>
+	)
+}
+
+function Arrow({
+	direction,
+	size,
+	color,
+}: {
+	direction: "left" | "right" | "down"
+	size: number
+	color: string
+}) {
+	return (
+		<View style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}>
+			{direction === "down" ? (
+				<IconChevronDown width={size} height={size * (12 / 20)} color={color} />
+			) : (
+				<View style={direction === "left" ? { transform: [{ scaleX: -1 }] } : undefined}>
+					<IconSchemaArrow width={size * (22 / 40)} height={size} color={color} />
+				</View>
+			)}
+		</View>
 	)
 }
 
 function FieldLabel({ text, style }: { text: string; style?: StyleProp<TextStyle> }) {
 	return (
-		<ThemedText
-			variant="main1Button"
-			colorName="primary_base"
-			style={[localStyles.fieldLabel, style]}
-		>
+		<ThemedText variant="H1" colorName="blue2" style={[localStyles.fieldLabel, style]}>
 			{text}
 		</ThemedText>
 	)
@@ -860,329 +895,408 @@ function CustomValueInput({
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	return (
-		<ThemedView colorName="tertiary_base_1" style={localStyles.customValueRow}>
-			<TextInput
+		<View style={localStyles.customValueRow}>
+			<ThemedInput
+				variant="regular"
 				value={value}
 				onChangeText={onChange}
 				placeholder={t("newIncident.customValuePlaceholder")}
-				placeholderTextColor={colors.primary_base_2}
-				style={[
-					localStyles.customValueInput,
-					{ color: colors.primary_base, borderColor: colors.primary_base_2 },
-				]}
+				viewStyle={localStyles.customValueInput}
 			/>
-			<ThemedView onPress={onAdd} colorName="primary_base" style={localStyles.customValueButton}>
-				<Ionicons name="add" size={24} color={colors.accent_base} />
+			<ThemedView onPress={onAdd} colorName="blue2" style={localStyles.customValueButton}>
+				<IconPlus color={colors.bg_0} width={20} height={20} />
 			</ThemedView>
-		</ThemedView>
+		</View>
+	)
+}
+
+const WHEEL_ROW_HEIGHT = 60
+
+function TimeWheel({
+	value,
+	max,
+	onChange,
+}: {
+	value: number
+	max: number
+	onChange: (value: number) => void
+}) {
+	const ref = useRef<ScrollView>(null)
+	const values = useMemo(() => Array.from({ length: max + 1 }, (_, index) => index), [max])
+	const updateFromScroll = (offset: number) => {
+		onChange(Math.max(0, Math.min(max, Math.round(offset / WHEEL_ROW_HEIGHT))))
+	}
+	useEffect(() => {
+		ref.current?.scrollTo({ y: value * WHEEL_ROW_HEIGHT, animated: false })
+	}, [value])
+	return (
+		<ScrollView
+			ref={ref}
+			style={localStyles.wheel}
+			contentContainerStyle={localStyles.wheelContent}
+			showsVerticalScrollIndicator={false}
+			nestedScrollEnabled
+			snapToInterval={WHEEL_ROW_HEIGHT}
+			decelerationRate="fast"
+			onContentSizeChange={() =>
+				ref.current?.scrollTo({ y: value * WHEEL_ROW_HEIGHT, animated: false })
+			}
+			onMomentumScrollEnd={(event) => updateFromScroll(event.nativeEvent.contentOffset.y)}
+			onScrollEndDrag={(event) => updateFromScroll(event.nativeEvent.contentOffset.y)}
+		>
+			{values.map((option) => (
+				<ThemedView
+					key={option}
+					onPress={() => {
+						ref.current?.scrollTo({ y: option * WHEEL_ROW_HEIGHT, animated: true })
+						onChange(option)
+					}}
+					style={localStyles.wheelItem}
+				>
+					<ThemedText
+						variant="H0"
+						colorName={option === value ? "blue2" : "blue1"}
+						style={option === value ? localStyles.wheelSelectedText : localStyles.wheelText}
+					>
+						{String(option).padStart(2, "0")}
+					</ThemedText>
+				</ThemedView>
+			))}
+		</ScrollView>
+	)
+}
+
+function IncidentTimePicker({
+	visible,
+	timeText,
+	maxTimeText,
+	onConfirm,
+	onClose,
+	cancelLabel,
+}: {
+	visible: boolean
+	timeText: string
+	maxTimeText?: string
+	onConfirm: (time: string) => void
+	onClose: () => void
+	cancelLabel: string
+}) {
+	const { t } = useTranslation()
+	const { colors } = useTheme()
+	const [parsedHours, parsedMinutes] = timeText.split(":").map(Number)
+	const [maxHours, maxMinutes] = maxTimeText?.split(":").map(Number) ?? [23, 59]
+	const initialHours = Math.min(parsedHours || 0, maxHours)
+	const initialMinutes =
+		initialHours === maxHours ? Math.min(parsedMinutes || 0, maxMinutes) : parsedMinutes || 0
+	const [hours, setHours] = useState(initialHours)
+	const [minutes, setMinutes] = useState(initialMinutes)
+	const minuteMax = hours === maxHours ? maxMinutes : 59
+
+	const handleHoursChange = (value: number) => {
+		setHours(value)
+		if (value === maxHours && minutes > maxMinutes) {
+			setMinutes(maxMinutes)
+		}
+	}
+
+	const formatted = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
+	return (
+		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+			<View style={localStyles.modalRoot}>
+				<Pressable
+					onPress={onClose}
+					style={[StyleSheet.absoluteFill, { backgroundColor: colors.graphite0, opacity: 0.35 }]}
+				/>
+				<ThemedView colorName="bg_1" borderColor="blue1" style={localStyles.modalCard}>
+					<ThemedText variant="H3" colorName="blue2" style={localStyles.modalTitle}>
+						{t("newIncident.chooseTime")}
+					</ThemedText>
+					<View style={localStyles.wheelsContainer}>
+						<ThemedView
+							colorName="blue0"
+							style={localStyles.selectedWheelRow}
+							pointerEvents="none"
+						/>
+						<TimeWheel value={hours} max={maxHours} onChange={handleHoursChange} />
+						<ThemedText variant="H0" colorName="blue2" style={localStyles.wheelColon}>
+							:
+						</ThemedText>
+						<TimeWheel value={minutes} max={minuteMax} onChange={setMinutes} />
+					</View>
+					<View style={localStyles.modalActions}>
+						<ThemedView
+							colorName="bg_0"
+							borderColor="graphite0"
+							onPress={onClose}
+							style={localStyles.cancelTimeButton}
+						>
+							<IconClose color={colors.graphite0} width={19} height={19} />
+							<ThemedText variant="H2" colorName="graphite0">
+								{cancelLabel}
+							</ThemedText>
+						</ThemedView>
+						<ThemedView
+							colorName="blue2"
+							onPress={() => onConfirm(formatted)}
+							style={localStyles.confirmTimeButton}
+						>
+							<ThemedText
+								variant="H2"
+								colorName="bg_0"
+								style={localStyles.confirmTimeText}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								minimumFontScale={0.75}
+							>
+								{t("newIncident.confirmTime")} {formatted}
+							</ThemedText>
+						</ThemedView>
+					</View>
+				</ThemedView>
+			</View>
+		</Modal>
 	)
 }
 
 const localStyles = StyleSheet.create({
 	fieldLabel: {
-		textAlign: "left",
-		marginBottom: 8,
 		marginTop: 16,
+		marginBottom: 9,
+		textAlign: "left",
+		textTransform: "uppercase",
 	},
-	customValueRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-		marginTop: 8,
-	},
-	customValueInput: {
-		flex: 1,
-		height: 48,
-		borderWidth: 1,
-		borderRadius: 14,
-		paddingHorizontal: 12,
-		fontFamily: "Inter-Regular",
-		fontSize: 14,
-	},
+	customValueRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 9 },
+	customValueInput: { flex: 1, width: "auto" },
 	customValueButton: {
 		width: 48,
 		height: 48,
-		borderRadius: 14,
+		borderRadius: 15,
 		alignItems: "center",
 		justifyContent: "center",
 	},
+	modalRoot: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 16 },
+	modalCard: {
+		width: "100%",
+		maxWidth: 420,
+		paddingTop: 24,
+		paddingHorizontal: 22,
+		paddingBottom: 20,
+		borderRadius: 22,
+	},
+	modalTitle: { textAlign: "center", fontSize: 23, lineHeight: 30 },
+	wheelsContainer: {
+		position: "relative",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		height: 190,
+		marginTop: 22,
+		marginBottom: 22,
+	},
+	selectedWheelRow: {
+		position: "absolute",
+		height: WHEEL_ROW_HEIGHT,
+		left: 28,
+		right: 28,
+		top: 65,
+		borderRadius: 18,
+	},
+	wheel: { flexGrow: 0, width: 95, height: 180 },
+	wheelContent: { paddingVertical: WHEEL_ROW_HEIGHT },
+	wheelItem: { height: WHEEL_ROW_HEIGHT, alignItems: "center", justifyContent: "center" },
+	wheelText: { fontSize: 28, lineHeight: 36 },
+	wheelSelectedText: { fontSize: 30, lineHeight: 38 },
+	wheelColon: { width: 28, textAlign: "center", fontSize: 30, zIndex: 1 },
+	modalActions: { flexDirection: "row", justifyContent: "space-between", gap: 10 },
+	cancelTimeButton: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		gap: 9,
+		minWidth: 115,
+		height: 48,
+		paddingHorizontal: 11,
+		borderRadius: 17,
+	},
+	confirmTimeButton: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		minHeight: 48,
+		borderRadius: 17,
+	},
+	confirmTimeText: { fontSize: 15 },
 })
 
-const getStyles = (colors: ThemeColors) => {
-	const styles = StyleSheet.create({
-		screen: {
-			flex: 1,
+const getStyles = (colors: ThemeColors, width: number) => {
+	const gutter = width < 360 ? 18 : 32
+	const intensityCellWidth = Math.min(28, Math.floor((width - 2 * gutter - 16) / 10))
+	const dateCellWidth = Math.max(44, (width - 24) / 7)
+	return StyleSheet.create({
+		screen: { flex: 1, borderRadius: 0 },
+		scroll: { flex: 1 },
+		content: { paddingHorizontal: gutter, paddingTop: 0, paddingBottom: 48 },
+		dateCard: {
+			marginHorizontal: -gutter,
+			marginBottom: 24,
+			borderBottomLeftRadius: 16,
+			borderBottomRightRadius: 16,
+			borderTopLeftRadius: 0,
+			borderTopRightRadius: 0,
+			paddingVertical: 15,
+			shadowColor: colors.graphite0,
+			shadowOffset: { width: 0, height: 3 },
+			shadowOpacity: 0.1,
+			shadowRadius: 6,
+			elevation: 3,
 		},
-		content: {
-			paddingHorizontal: 28,
-			paddingTop: 18,
-			paddingBottom: 44,
-		},
-		header: {
-			flexDirection: "row",
-			alignItems: "center",
-			marginBottom: 22,
-		},
-		title: {
-			fontSize: 28,
-			lineHeight: 34,
-			textAlign: "left",
-			marginLeft: 8,
-		},
-		dateStrip: {
-			alignItems: "flex-start",
-			paddingHorizontal: 2,
-			paddingBottom: 18,
-		},
+		dateStrip: { paddingHorizontal: 12, alignItems: "center" },
 		dateItem: {
-			width: 58,
+			width: dateCellWidth,
+			minHeight: 70,
 			alignItems: "center",
-			paddingVertical: 3,
+			justifyContent: "center",
+			borderRadius: 0,
 		},
 		dateWeekday: {
-			fontSize: 18,
-			lineHeight: 24,
+			fontSize: width < 360 ? 11 : 13,
+			lineHeight: 19,
 			textAlign: "center",
+			marginBottom: 7,
 		},
 		dateDayBox: {
-			width: 38,
-			height: 38,
-			marginTop: 7,
-			borderWidth: 1.5,
-			borderColor: colors.tertiary_base_1,
-			borderRadius: 4,
+			width: 32,
+			height: 32,
+			borderRadius: 18,
 			alignItems: "center",
 			justifyContent: "center",
 		},
-		dateDayBoxSelected: {
-			borderColor: colors.primary_base_2,
-		},
-		dateDay: {
-			fontSize: 20,
-			lineHeight: 28,
-			textAlign: "center",
-		},
+		dateDay: { fontSize: 15, lineHeight: 18, textAlign: "center" },
 		timeRow: {
 			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "space-between",
-			marginBottom: 8,
+			marginBottom: -3,
+			gap: 12,
 		},
-		timePill: {
-			width: 120,
-			height: 38,
-			borderRadius: 19,
-			borderWidth: 1.5,
-			borderColor: colors.primary_base_3,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		timeInput: {
-			width: "100%",
-			fontFamily: "Inter-SemiBold",
-			fontSize: 18,
-			textAlign: "center",
-			paddingVertical: 0,
-		},
-		descriptionBox: {
-			width: "100%",
-			height: 140,
-			borderWidth: 1.5,
-			borderColor: colors.primary_base_3,
-			borderRadius: 12,
-			position: "relative",
-		},
-		descriptionInput: {
-			flex: 1,
-			fontFamily: "Inter-Regular",
-			fontSize: 16,
-			lineHeight: 22,
-			paddingHorizontal: 20,
-			paddingTop: 20,
-			paddingRight: 58,
-			paddingBottom: 30,
-		},
-		descriptionCounter: {
-			position: "absolute",
-			right: 14,
-			bottom: 8,
-			fontSize: 11,
-		},
-		microphoneButton: {
-			position: "absolute",
-			right: 12,
-			top: 12,
-			width: 38,
-			height: 38,
-			borderRadius: 19,
-			borderWidth: 1.5,
-			borderColor: colors.primary_base,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		audioStatusRow: {
-			flexDirection: "row",
-			alignItems: "center",
-			gap: 8,
-			marginTop: 8,
-		},
-		sectionGap: {
-			marginTop: 28,
-		},
-		intensityTrack: {
-			width: "98%",
-			alignSelf: "center",
-			height: 40,
+		timeLabel: { marginTop: 0, marginBottom: 0, flexShrink: 1 },
+		timeSelect: {
+			minWidth: width < 360 ? 130 : 156,
+			height: 44,
 			borderRadius: 16,
-			paddingHorizontal: 5,
+			paddingHorizontal: 13,
 			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "space-between",
 		},
+		timeValue: { fontSize: 16 },
+		descriptionBox: {
+			minHeight: 90,
+			borderRadius: 16,
+			justifyContent: "flex-start",
+			backgroundColor: colors.bg_0,
+		},
+		descriptionInput: {
+			paddingTop: 14,
+			paddingLeft: 20,
+			paddingRight: 14,
+			fontSize: 16,
+			lineHeight: 21,
+			minHeight: 90,
+		},
+		audioActionRow: {
+			flexDirection: "row",
+			alignItems: "center",
+			justifyContent: "flex-end",
+			marginTop: 4,
+			gap: 8,
+		},
+		audioButton: {
+			flexDirection: "row",
+			alignItems: "center",
+			gap: 6,
+			minHeight: 44,
+			paddingHorizontal: 6,
+		},
+		audioRemove: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
+		audioStatus: { textAlign: "right", marginTop: 0 },
+		intensityTrack: {
+			borderRadius: 16,
+			height: 45,
+			justifyContent: "center",
+		},
+
+		intensityInner: {
+			width: "100%",
+			flexDirection: "row",
+			alignItems: "center",
+			justifyContent: "space-between",
+			paddingHorizontal: 6,
+		},
+
 		intensityItem: {
-			width: 30,
-			height: 30,
-			borderRadius: 20,
+			width: intensityCellWidth,
+			height: 32,
+			borderRadius: 16,
 			alignItems: "center",
 			justifyContent: "center",
 		},
+
 		intensityText: {
-			textAlign: "center",
-			fontSize: 15,
-		},
-		prosthesisOptions: {
-			paddingVertical: 12,
-			paddingHorizontal: 8,
-			gap: 26,
-		},
-		prosthesisOption: {
-			width: 94,
-			alignItems: "center",
-		},
-		radioOuter: {
-			width: 25,
-			height: 25,
-			borderRadius: 15,
-			borderWidth: 2,
-			borderColor: colors.secondary_base_0c,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		radioOuterSelected: {
-			borderColor: colors.primary_base,
-		},
-		radioInner: {
-			width: 12,
-			height: 12,
-			borderRadius: 8,
-		},
-		prosthesisName: {
-			marginTop: 8,
-			fontSize: 12,
+			fontSize: width < 360 ? 13 : 15,
+			lineHeight: 18,
 			textAlign: "center",
 		},
-		noProsthesisText: {
-			marginTop: 20,
-			textAlign: "center",
-		},
-		schemaSection: {
-			marginTop: 20,
-			alignItems: "center",
-		},
-		schemaTitle: {
-			fontSize: 27,
-			lineHeight: 32,
-			marginBottom: 18,
-		},
+		infoText: { marginTop: 6, textAlign: "center" },
+		saveHint: { marginTop: 24, marginBottom: -18, textAlign: "center" },
+		schemaSection: { marginTop: 18 },
+		schemaTitle: { marginTop: 0, marginBottom: 18 },
 		schemaRow: {
 			width: "100%",
 			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			minHeight: 235,
+		},
+		schemaArrow: {
+			width: 44,
+			height: 60,
+			flexShrink: 0,
+			justifyContent: "center",
+			alignItems: "center",
+		},
+		bodyMapContainer: { flex: 1, alignItems: "center", justifyContent: "center", minWidth: 0 },
+		fileSection: { marginTop: 24 },
+		addFileRow: {
+			width: "100%",
+			minHeight: 54,
+			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "space-between",
+			paddingHorizontal: 19,
+			gap: 13,
+			borderRadius: 20,
 		},
-		fileSection: {
-			alignItems: "center",
-			marginTop: 26,
-		},
-		addFileRow: {
-			flexDirection: "row",
-			alignItems: "center",
-			gap: 16,
-		},
-		addFileCircle: {
-			width: 30,
-			height: 30,
-			borderRadius: 26,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		addFileText: {
-			fontSize: 18,
-		},
-		fileDescription: {
-			maxWidth: 200,
-			fontFamily: "Inter-SemiBold",
-			fontSize: 10,
-			marginTop: 16,
-			textAlign: "center",
-			lineHeight: 14,
-		},
+		addFileText: { flex: 1, fontSize: width < 360 ? 12 : 14, lineHeight: 18 },
 		photoRow: {
 			flexDirection: "row",
-			gap: 10,
-			marginTop: 16,
-		},
-		photoWrapper: {
-			position: "relative",
-		},
-		photoPreview: {
-			width: 82,
-			height: 82,
-			borderRadius: 10,
-			borderWidth: 1,
-			borderColor: colors.primary_base_3,
-		},
-		photoRemove: {
-			position: "absolute",
-			right: -7,
-			top: -7,
-			width: 24,
-			height: 24,
-			borderRadius: 12,
 			alignItems: "center",
 			justifyContent: "center",
+			minHeight: 44,
+			gap: 4,
 		},
+		photoName: { fontSize: 14 },
+		removePhotoButton: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
 		saveButton: {
-			width: "75%",
-			height: 60,
-			alignSelf: "center",
-			borderRadius: 20,
-			borderWidth: 4,
-			borderColor: colors.accent_base,
+			height: 52,
+			width: "100%",
 			alignItems: "center",
 			justifyContent: "center",
+			borderRadius: 19,
 			marginTop: 30,
-			shadowColor: colors.primary_base_3,
-			shadowOffset: { width: 0, height: 4 },
-			shadowOpacity: 0.5,
-			shadowRadius: 9,
-			elevation: 5,
 		},
-		disabledButton: {
-			opacity: 0.55,
-		},
-		saveButtonText: {
-			fontSize: 18,
-		},
-		scrollTopButton: {
-			width: 50,
-			height: 50,
-			borderRadius: 33,
-			alignItems: "center",
-			justifyContent: "center",
-			alignSelf: "flex-end",
-			marginTop: 28,
-		},
+		disabledButton: { opacity: 0.5 },
+		saveButtonText: { fontSize: 14, lineHeight: 19 },
+		incidentHeader: { marginBottom: 0, zIndex: 10, elevation: 5 },
 	})
-	return styles
 }
