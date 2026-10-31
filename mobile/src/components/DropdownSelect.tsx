@@ -378,3 +378,4 @@ const getStyles = (colors: ThemeColors) =>
 			lineHeight: 24,
 		},
 	})
+}

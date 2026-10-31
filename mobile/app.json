@@ -45,7 +45,8 @@
 					"cameraPermission": "Allow MyProsthetics to use the camera for incident documentation."
 				}
 			],
-			"expo-secure-store"
+			"expo-secure-store",
+			"expo-asset"
 		],
 		"extra": {
 			"router": {},

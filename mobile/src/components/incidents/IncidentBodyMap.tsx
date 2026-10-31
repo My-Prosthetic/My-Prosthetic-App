@@ -153,8 +153,8 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 		card: {
 			width: 220,
 			height: 220,
@@ -208,3 +208,5 @@ const getStyles = (colors: ThemeColors) =>
 			fontFamily: "Inter-Bold",
 		},
 	})
+	return styles
+}

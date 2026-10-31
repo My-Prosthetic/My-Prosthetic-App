@@ -630,6 +630,20 @@
 			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
 		}
 	},
+	"about": {
+		"header": "O NAS I REGULAMINY",
+		"versionLabel": "Wersja: {{version}} ({{release}})",
+		"partnerIntro": "Projekt zrealizowany we współpracy z:",
+		"team": "ZESPÓŁ INŻYNIERSKI I TWÓRCY",
+		"documents": "DOKUMENTY I REGULAMINY",
+		"documentNotFound": "Nie znaleziono dokumentu.",
+		"openDocument": "Otwórz dokument {{title}}",
+		"docs": {
+			"rodo": "Polityka prywatności",
+			"statute": "Regulamin usług",
+			"license": "Licencje Open-Source"
+		}
+	},
 	"componentEdit": {
 		"title": "EDYTUJ KOMPONENT",
 		"name": "Nazwa",

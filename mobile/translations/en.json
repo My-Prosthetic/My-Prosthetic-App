@@ -631,6 +631,20 @@
 			"passwordInvalid": "Password does not meet the security requirements."
 		}
 	},
+	"about": {
+		"header": "ABOUT US & TERMS",
+		"versionLabel": "Version: {{version}} ({{release}})",
+		"partnerIntro": "Project developed in cooperation with:",
+		"team": "ENGINEERING TEAM & CREATORS",
+		"documents": "DOCUMENTS & TERMS",
+		"documentNotFound": "Document not found.",
+		"openDocument": "Open document {{title}}",
+		"docs": {
+			"rodo": "Privacy Policy",
+			"statute": "Terms of Service",
+			"license": "Open-Source Licenses"
+		}
+	},
 	"componentEdit": {
 		"title": "EDIT COMPONENT",
 		"name": "Name",

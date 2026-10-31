@@ -122,6 +122,9 @@ The `amount` is stored in the smallest currency unit used by the mobile app (for
 example, PLN grosze: `125000` represents `1250.00 PLN`). Supported sources are
 `family`, `fundraiser`, `grant`, `savings`, and `other`.
 
+Prosthetists receive `403` on both endpoints, whatever their grant covers; the
+wallet is never shared.
+
 Run the focused authentication tests from this directory with:
 
 ```bash
@@ -183,8 +186,7 @@ PostgreSQL also enforces it with the `user_shares_distinct_participants` CHECK
 constraint.
 
 The model itself does not check roles or record ownership; the sharing
-endpoints below validate both. Component visibility and effective authorization
-remain out of scope; a stored share never authorizes a request on its own.
+endpoints below validate both.
 
 Run the focused persistence checks from this directory:
 
@@ -224,7 +226,8 @@ so `{}` is a valid grant that shares nothing. `medical_history` is a boolean,
 and `incidents` must be absent or empty until incident sharing is supported.
 Unknown keys or malformed values return `422`. `PUT` replaces the whole
 selection; narrowing it to nothing keeps the grant, and only `DELETE` revokes it.
-A stored grant does not yet authorize a prosthetist to read anything.
+What a grant lets a prosthetist read is described in
+[Prosthetist access to patient records](#prosthetist-access-to-patient-records).
 
 ### Specialist search
 
@@ -248,6 +251,34 @@ Run the focused sharing API tests from this directory:
 
 ```bash
 php vendor/bin/phpunit tests/Feature/SpecialistSearchTest.php tests/Feature/SpecialistCodeTest.php tests/Feature/ShareApiTest.php tests/Unit/SpecialistCodeTest.php
+```
+
+## Prosthetist access to patient records
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/patients/{patient}/prostheses` | `GET` | Lists the prostheses the caller may see, ordered by name; may be empty |
+| `/api/patients/{patient}/prostheses/{prosthesis}` | `GET` | Returns one prosthesis |
+
+Both require `auth:sanctum`. The patient sees all of their non-deleted
+prostheses; a prosthetist sees only the non-deleted ones selected in the
+patient's current grant. The grant is checked on every request, so narrowing or
+revoking it takes effect on the next read. The list is not paginated.
+
+Each prosthesis has `id`, `name`, `side`, `limb_type`, `amputation_level`,
+`replacement_at`, `created_at`, `updated_at`, and `components`, ordered by
+`installed_at`. Each component has `id`, `type`, `name`, `manufacturer`, `model`,
+`serial_number`, `is_test_socket`, `installed_at`, `replacement_at`, and
+`warranty_until`.
+
+Every refusal is the same `403`, whether the record does not exist, belongs to
+someone else, is deleted, or is not shared, so clients must not expect `404`
+for a missing record. Unauthenticated requests receive `401`.
+
+Run the focused access tests from this directory:
+
+```bash
+php vendor/bin/phpunit tests/Feature/PatientProsthesisAccessTest.php
 ```
 
 ## About Laravel
