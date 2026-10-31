@@ -319,13 +319,11 @@ export function DepositForm({ mode }: DepositFormProps) {
 	)
 }
 
-const getStyles = (colors: ThemeColors) => {
-	const styles = StyleSheet.create({
-		screen: { justifyContent: "space-between" },
+const getStyles = (colors: ThemeColors) =>
+	StyleSheet.create({
+		screen: { justifyContent: "flex-start", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
 	})
-	return styles
-}
