@@ -15,6 +15,9 @@ interface SettingsContextType {
 
 	fontSize: FontSize
 	setFontSize: (fontSize: FontSize) => void
+
+	ttsEnabled: boolean
+	setTtsEnabled: (ttsEnabled: boolean) => void
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
@@ -22,18 +25,21 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 const DATE_FORMAT_STORAGE_KEY = "dateFormat"
 const LANGUAGE_STORAGE_KEY = "language"
 const FONT_SIZE_STORAGE_KEY = "fontSize"
+const TTS_ENABLED_STORAGE_KEY = "ttsEnabled"
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
 	const [language, setLanguageState] = useState<Language>("pl")
 	const [dateFormat, setDateFormatState] = useState<DateFormat>("YYYY-MM-DD")
 	const [fontSize, setFontSizeState] = useState<FontSize>("medium")
+	const [ttsEnabled, setTtsEnabledState] = useState(false)
 
 	useEffect(() => {
 		const loadSettings = async () => {
 			try {
-				const savedDateFormat = await AsyncStorage.getItem("dateFormat")
-				const savedLanguage = await AsyncStorage.getItem("language")
-				const savedFontSize = await AsyncStorage.getItem("fontSize")
+				const savedDateFormat = await AsyncStorage.getItem(DATE_FORMAT_STORAGE_KEY)
+				const savedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
+				const savedFontSize = await AsyncStorage.getItem(FONT_SIZE_STORAGE_KEY)
+				const savedTtsEnabled = await AsyncStorage.getItem(TTS_ENABLED_STORAGE_KEY)
 
 				if (savedLanguage === "pl" || savedLanguage === "en") {
 					setLanguageState(savedLanguage)
@@ -55,6 +61,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 					savedFontSize === "extra-large"
 				) {
 					setFontSizeState(savedFontSize)
+				}
+
+				if (savedTtsEnabled !== null) {
+					setTtsEnabledState(savedTtsEnabled === "true")
 				}
 			} catch (error) {
 				console.error("Failed to load settings:", error)
@@ -83,6 +93,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 		void AsyncStorage.setItem(FONT_SIZE_STORAGE_KEY, fontSize)
 	}
 
+	const setTtsEnabled = (enabled: boolean) => {
+		setTtsEnabledState(enabled)
+		void AsyncStorage.setItem(TTS_ENABLED_STORAGE_KEY, String(enabled))
+	}
+
 	return (
 		<SettingsContext.Provider
 			value={{
@@ -92,6 +107,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 				setLanguage,
 				fontSize,
 				setFontSize,
+				ttsEnabled,
+				setTtsEnabled,
 			}}
 		>
 			{children}

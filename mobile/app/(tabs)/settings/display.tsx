@@ -16,13 +16,22 @@ import { useSettings } from "@/context/SettingsContext"
 import { formatDate } from "@/src/utils/dateFormatter"
 import { useTranslation } from "react-i18next"
 import Slider from "@react-native-community/slider"
+import { useTts } from "@/src/hooks/useTts"
 
 export default function DisplayScreen() {
 	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
-	const [tts, setTts] = useState(false)
 	type SelectionModal = "language" | "date" | "fontSize" | null
 	const [openModal, setOpenModal] = useState<SelectionModal>(null)
-	const { dateFormat, setDateFormat, language, setLanguage, fontSize, setFontSize } = useSettings()
+	const {
+		dateFormat,
+		setDateFormat,
+		language,
+		setLanguage,
+		fontSize,
+		setFontSize,
+		ttsEnabled,
+		setTtsEnabled,
+	} = useSettings()
 	const { t } = useTranslation()
 	const translatedFontSizeOptions = FONT_SIZE_OPTIONS.map((option) => ({
 		value: option.value,
@@ -41,6 +50,8 @@ export default function DisplayScreen() {
 		translatedFontSizeOptions.find((option) => option.value === fontSize)?.label ?? fontSize
 	// remove below after done testing
 	const testDate = new Date(2026, 9, 31)
+
+	const { speak } = useTts()
 
 	return (
 		<ThemedView variant="background" colorName="bg_1">
@@ -106,7 +117,10 @@ export default function DisplayScreen() {
 							setFontSize(option.value)
 						}
 					}}
+					minimumTrackTintColor={colors.blue2}
+					maximumTrackTintColor={colors.blue1}
 					style={styles.fontSizeSlider}
+					thumbTintColor={colors.blue2}
 				/>
 			</ThemedView>
 			<ThemedView variant="divider" colorName="blue1" />
@@ -120,10 +134,21 @@ export default function DisplayScreen() {
 			/>
 			<ThemedView style={styles.subsectionRow}>
 				<ThemedText variant="H2" tx="display.accessibility.tts" colorName="blue2" />
-				<ThemedToggleSwitch value={tts} onValueChange={setTts} />
+				<ThemedToggleSwitch value={ttsEnabled} onValueChange={setTtsEnabled} />
 			</ThemedView>
 
 			<ThemedView variant="divider" colorName="blue1" />
+
+			<ThemedText
+				variant="H1"
+				colorName="false"
+				onPress={() =>
+					speak(language === "pl" ? "Czytanie ekranu jest włączone" : "Screen reading is enabled")
+				}
+			>
+				{" "}
+				PRESS ME TO TEST TTS !!!!!!
+			</ThemedText>
 
 			{/* LANGUAGE & REGION SETTINGS */}
 			<ThemedText
