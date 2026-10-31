@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import { ThemedView } from "./ThemedView"
+import { ThemedView } from "../ThemedView"
 
 interface ThemedToggleSwitchProps {
 	value: boolean

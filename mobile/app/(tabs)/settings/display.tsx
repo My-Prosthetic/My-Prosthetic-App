@@ -3,17 +3,25 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
-import { ScrollView, StyleSheet } from "react-native"
-import { ThemedToggleSwitch } from "@/src/components/ThemedToggleSwitch"
+import { StyleSheet } from "react-native"
+import { ThemedToggleSwitch } from "@/src/components/settings/ThemedToggleSwitch"
 import { useState } from "react"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
+import { SettingsOptionModal } from "@/src/components/settings/SettingsOptionModal"
+import { LANGUAGE_OPTIONS, DATE_FORMAT_OPTIONS } from "@/src/components/settings/SettingsOptions"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function DisplayScreen() {
 	const { t } = useTranslation()
-	const { colors } = useTheme()
-
-	const [darkMode, setDarkMode] = useState(false)
-	const [contrast, setContrast] = useState(false)
+	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	const [tts, setTts] = useState(false)
+
+	type SelectionModal = "language" | "date" | null
+	const [openModal, setOpenModal] = useState<SelectionModal>(null)
+	const [language, setLanguage] = useState("pl")
+	const [dateFormat, setDateFormat] = useState("YYYY-MM-DD")
+	const languageLabel =
+		LANGUAGE_OPTIONS.find((option) => option.value === language)?.label ?? language
 
 	return (
 		<ThemedView variant="background" colorName="bg_1">
@@ -26,16 +34,22 @@ export default function DisplayScreen() {
 				style={styles.sectionTitle}
 				colorName="blue2"
 			/>
+
 			<ThemedView style={styles.subsectionRow}>
-				<ThemedText variant="H3" tx="display.interface.darkMode" colorName="blue2" />
-				<ThemedToggleSwitch value={darkMode} onValueChange={setDarkMode} />
+				<ThemedText variant="H2" tx="display.interface.darkMode" colorName="blue2" />
+				<ThemedToggleSwitch
+					value={colorMode === "dark"}
+					onValueChange={(enabled) => {
+						setColorMode(enabled ? "dark" : "light")
+					}}
+				/>
 			</ThemedView>
 
 			<ThemedView variant="divider" colorName="blue1" />
 
 			<ThemedView style={styles.subsectionRow}>
-				<ThemedText variant="H3" tx="display.interface.contrast" colorName="blue2" />
-				<ThemedToggleSwitch value={contrast} onValueChange={setContrast} />
+				<ThemedText variant="H2" tx="display.interface.contrast" colorName="blue2" />
+				<ThemedToggleSwitch value={highContrast} onValueChange={setHighContrast} />
 			</ThemedView>
 
 			<ThemedView variant="divider" colorName="blue1" />
@@ -48,7 +62,7 @@ export default function DisplayScreen() {
 				colorName="blue2"
 			/>
 			<ThemedView style={styles.subsectionRow}>
-				<ThemedText variant="H3" tx="display.accessibility.tts" colorName="blue2" />
+				<ThemedText variant="H2" tx="display.accessibility.tts" colorName="blue2" />
 				<ThemedToggleSwitch value={tts} onValueChange={setTts} />
 			</ThemedView>
 
@@ -61,17 +75,55 @@ export default function DisplayScreen() {
 				style={styles.sectionTitle}
 				colorName="blue2"
 			/>
-			<ThemedView style={styles.subsectionRow}>
-				<ThemedText variant="H3" tx="display.region.language" colorName="blue2" />
+			<ThemedView style={styles.subsectionRow} onPress={() => setOpenModal("language")}>
+				<ThemedText variant="H2" tx="display.region.language" colorName="blue2" />
+				<ThemedView style={styles.rightBtn}>
+					<ThemedText variant="H4" colorName="blue1">
+						{languageLabel}
+					</ThemedText>
+					<IconChevronRight color={colors.blue2} style={styles.docChevron} />
+				</ThemedView>
 			</ThemedView>
 
 			<ThemedView variant="divider" colorName="blue1" />
 
-			<ThemedView style={styles.subsectionRow}>
-				<ThemedText variant="H3" tx="display.region.date" colorName="blue2" />
+			<ThemedView style={styles.subsectionRow} onPress={() => setOpenModal("date")}>
+				<ThemedText variant="H2" tx="display.region.date" colorName="blue2" />
+				<ThemedView style={styles.rightBtn}>
+					<ThemedText variant="H4" colorName="blue1">
+						{dateFormat}
+					</ThemedText>
+					<IconChevronRight color={colors.blue2} style={styles.docChevron} />
+				</ThemedView>
 			</ThemedView>
 
 			<ThemedView variant="divider" colorName="blue1" />
+
+			<SettingsOptionModal
+				visible={openModal === "language"}
+				title="Wybierz język"
+				options={LANGUAGE_OPTIONS}
+				selectedValue={language}
+				onSelect={async (value) => {
+					setLanguage(value)
+					await AsyncStorage.setItem("language", value)
+					setOpenModal(null)
+				}}
+				onClose={() => setOpenModal(null)}
+			/>
+
+			<SettingsOptionModal
+				visible={openModal === "date"}
+				title="Wybierz format daty"
+				options={DATE_FORMAT_OPTIONS}
+				selectedValue={dateFormat}
+				onSelect={async (value) => {
+					setDateFormat(value)
+					await AsyncStorage.setItem("dateFormat", value)
+					setOpenModal(null)
+				}}
+				onClose={() => setOpenModal(null)}
+			/>
 		</ThemedView>
 	)
 }
@@ -82,12 +134,20 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	subsectionRow: {
-		display: "flex",
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
+		minHeight: 44,
 		paddingTop: 6,
 		paddingBottom: 6,
 		marginTop: 6,
+	},
+	docChevron: {
+		height: 20,
+	},
+	rightBtn: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 15,
 	},
 })
