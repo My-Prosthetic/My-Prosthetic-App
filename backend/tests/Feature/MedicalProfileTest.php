@@ -7,6 +7,7 @@ use App\Models\Condition;
 use App\Models\MedicalProfile;
 use App\Models\Medication;
 use App\Models\User;
+use Database\Seeders\MedicalProfileSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -234,5 +235,25 @@ class MedicalProfileTest extends TestCase
     public function test_medication_profile_column_is_indexed(): void
     {
         $this->assertContains(['medical_profile_id'], array_column(Schema::getIndexes('medications'), 'columns'));
+    }
+
+    public function test_seeder_can_run_twice_without_duplicating_the_demo_profile(): void
+    {
+        $this->seed(MedicalProfileSeeder::class);
+        $this->seed(MedicalProfileSeeder::class);
+
+        $patient = User::query()->where('email', 'prosthesis.patient@example.com')->sole();
+        $profile = $patient->medicalProfile;
+
+        $this->assertSame(1, MedicalProfile::query()->count());
+        $this->assertSame(KLevel::K3, $profile->k_level);
+        $this->assertEqualsCanonicalizing(
+            ['Type 2 diabetes', 'Latex allergy'],
+            $profile->conditions->pluck('name')->all(),
+        );
+        $this->assertEqualsCanonicalizing(
+            ['Metformin 500 mg', 'Gabapentin 300 mg'],
+            $profile->medications->pluck('name')->all(),
+        );
     }
 }
