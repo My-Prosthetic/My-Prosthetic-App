@@ -6,9 +6,7 @@ export const measures = sqliteTable(
 	{
 		id: text("id").primaryKey(),
 
-		date: text("date").notNull(),
-
-		time: text("time").notNull(),
+		measuredAt: text("measured_at").notNull(),
 
 		side: text("side", { enum: ["left", "right"] }).notNull(),
 
@@ -25,7 +23,8 @@ export const measures = sqliteTable(
 	(table) => [
 		check("measures_side_check", sql`${table.side} IN ('left', 'right')`),
 		check("measures_limb_type_check", sql`${table.limbType} IN ('upper', 'lower')`),
-		index("measures_latest_lookup_idx").on(table.side, table.limbType, table.date),
+		check("measures_measured_at_check", sql`${table.measuredAt} GLOB '????-??-??T??:??:??.???Z'`),
+		index("measures_latest_lookup_idx").on(table.side, table.limbType, table.measuredAt),
 		index("measures_sync_idx").on(table.isDirty, table.deletedAt),
 	]
 )

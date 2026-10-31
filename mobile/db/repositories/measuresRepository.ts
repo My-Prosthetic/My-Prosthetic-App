@@ -15,8 +15,7 @@ export type CreateMeasureLevelInput = {
 
 export type CreateMeasureInput = {
 	id: string
-	date: string
-	time: string
+	measuredAt: Date
 	side: "left" | "right"
 	limbType: "upper" | "lower"
 	levels: CreateMeasureLevelInput[]
@@ -30,8 +29,7 @@ export async function createMeasure(input: CreateMeasureInput) {
 			.insert(measures)
 			.values({
 				id: input.id,
-				date: input.date,
-				time: input.time,
+				measuredAt: input.measuredAt.toISOString(),
 				side: input.side,
 				limbType: input.limbType,
 				isDirty: true,
@@ -82,7 +80,7 @@ export async function getLatestMeasure(filter?: {
 			if (filter?.limbType) conditions.push(eq(fields.limbType, filter.limbType))
 			return and(...conditions)
 		},
-		orderBy: (fields, { desc }) => [desc(fields.date), desc(fields.time), desc(fields.updatedAt)],
+		orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.updatedAt)],
 		with: {
 			levels: {
 				orderBy: (fields, { asc }) => [asc(fields.level)],
