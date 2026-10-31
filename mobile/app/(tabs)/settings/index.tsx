@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next"
 
 export default function SettingsScreen() {
 	const { logout } = useAuth()
-	const { themeType, setTheme } = useTheme()
+	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	const { i18n } = useTranslation()
 
 	return (
@@ -49,11 +49,11 @@ export default function SettingsScreen() {
 						</ThemedText>
 					</ThemedView>
 
-					<ThemedText
+					{/* <ThemedText
 						onPress={() => setTheme(themeType === "light" ? "high-contrast" : "light")}
 						variant="subTitle1"
 						tx={themeType === "light" ? "home.switchToHighContrast" : "home.switchToLightTheme"}
-					/>
+					/> */}
 
 					{/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
 
