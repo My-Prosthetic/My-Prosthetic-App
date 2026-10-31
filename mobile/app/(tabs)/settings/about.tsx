@@ -18,93 +18,91 @@ export default function AboutScreen() {
 	return (
 		<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 			<ThemedView variant="background" colorName="bg_1" style={styles.scrollContent}>
-				<View>
-					{/* Header */}
-					<ThemedHeader tx="about.header" />
+				{/* Header */}
+				<ThemedHeader tx="about.header" />
 
-					{/* Introduction */}
-					<ThemedView variant="background" colorName="bg_0" style={styles.introSection}>
-						<ThemedView style={styles.appRow}>
-							<Logo width={80} height={44.26} color={colors.blue2} />
+				{/* Introduction */}
+				<ThemedView variant="background" colorName="bg_0" style={styles.introSection}>
+					<ThemedView style={styles.appRow}>
+						<Logo width={80} height={44.26} color={colors.blue2} />
 
-							<ThemedView style={styles.appInfo}>
-								<ThemedText variant="H0" colorName="blue2">
-									{aboutConfig.appName}
-								</ThemedText>
+						<ThemedView style={styles.appInfo}>
+							<ThemedText variant="H0" colorName="blue2">
+								{aboutConfig.appName}
+							</ThemedText>
 
-								<ThemedText
-									variant="H4"
-									colorName="blue2"
-									tx="about.versionLabel"
-									txOptions={{
-										version: aboutConfig.version,
-										release: aboutConfig.releaseLabel,
-									}}
-								/>
-							</ThemedView>
+							<ThemedText
+								variant="H4"
+								colorName="blue2"
+								tx="about.versionLabel"
+								txOptions={{
+									version: aboutConfig.version,
+									release: aboutConfig.releaseLabel,
+								}}
+							/>
 						</ThemedView>
-
-						<ThemedText variant="subTitle2" tx="about.partnerIntro" colorName="blue2" />
-
-						<ThemedText variant="H5" colorName="blue2">
-							{aboutConfig.partner}
-						</ThemedText>
 					</ThemedView>
 
-					{/* Team */}
-					<ThemedText variant="H1" tx="about.team" style={styles.sectionTitle} colorName="blue2" />
+					<ThemedText variant="subTitle2" tx="about.partnerIntro" colorName="blue2" />
 
-					{aboutConfig.team.map((member) => (
-						<ThemedView key={member.name} style={styles.teamRow}>
-							<ThemedText variant="H3" colorName="blue2">
-								{member.name}
-							</ThemedText>
+					<ThemedText variant="H5" colorName="blue2">
+						{aboutConfig.partner}
+					</ThemedText>
+				</ThemedView>
 
-							<ThemedText variant="H4" colorName="blue1">
-								{member.role}
-							</ThemedText>
+				{/* Team */}
+				<ThemedText variant="H1" tx="about.team" style={styles.sectionTitle} colorName="blue2" />
 
-							<ThemedView variant="divider" colorName="blue0" />
-						</ThemedView>
-					))}
+				{aboutConfig.team.map((member) => (
+					<ThemedView key={member.name} style={styles.teamRow}>
+						<ThemedText variant="H3" colorName="blue2">
+							{member.name}
+						</ThemedText>
 
-					{/* Documents */}
-					<ThemedText
-						variant="H1"
-						tx="about.documents"
-						style={styles.sectionTitle}
-						colorName="blue2"
-					/>
+						<ThemedText variant="H4" colorName="blue1">
+							{member.role}
+						</ThemedText>
 
-					{legalDocs.documents.map((doc) => (
-						<ThemedView key={doc.id} style={styles.docWrapper}>
-							<ThemedView
-								variant="wide"
-								style={styles.docItem}
-								onPress={() =>
-									router.push({
-										pathname: "/settings/legal/[docId]",
-										params: { docId: doc.id },
-									})
-								}
-								accessibilityLabel={t("about.openDocument", {
-									title: t(doc.titleKey as ParseKeys),
-								})}
-								centerChild={
-									<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} colorName="blue2" />
-								}
-								rightChild={
-									<View style={styles.docChevron}>
-										<IconChevronRight color={colors.blue1} />
-									</View>
-								}
-								childrenContainerStyle={styles.docRow}
-							/>
+						<ThemedView variant="divider" colorName="blue0" />
+					</ThemedView>
+				))}
 
-							<ThemedView variant="divider" colorName="blue0" />
-						</ThemedView>
-					))}
-				</View>
+				{/* Documents */}
+				<ThemedText
+					variant="H1"
+					tx="about.documents"
+					style={styles.sectionTitle}
+					colorName="blue2"
+				/>
+
+				{legalDocs.documents.map((doc) => (
+					<ThemedView key={doc.id} style={styles.docWrapper}>
+						<ThemedView
+							variant="wide"
+							style={styles.docItem}
+							onPress={() =>
+								router.push({
+									pathname: "/settings/legal/[docId]",
+									params: { docId: doc.id },
+								})
+							}
+							accessibilityLabel={t("about.openDocument", {
+								title: t(doc.titleKey as ParseKeys),
+							})}
+							centerChild={
+								<ThemedText variant="H2" tx={doc.titleKey as ParseKeys} colorName="blue2" />
+							}
+							rightChild={
+								<View style={styles.docChevron}>
+									<IconChevronRight color={colors.blue1} />
+								</View>
+							}
+							childrenContainerStyle={styles.docRow}
+						/>
+
+						<ThemedView variant="divider" colorName="blue0" />
+					</ThemedView>
+				))}
 			</ThemedView>
 		</ScrollView>
 	)
