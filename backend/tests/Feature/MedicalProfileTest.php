@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\KLevel;
 use App\Models\Condition;
 use App\Models\MedicalProfile;
+use App\Models\Medication;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -158,5 +159,80 @@ class MedicalProfileTest extends TestCase
     public function test_condition_profile_column_is_indexed(): void
     {
         $this->assertContains(['medical_profile_id'], array_column(Schema::getIndexes('conditions'), 'columns'));
+    }
+
+    public function test_medical_profile_has_medications(): void
+    {
+        $profile = MedicalProfile::factory()->create();
+
+        $medication = $profile->medications()->create([
+            'name' => 'Gabapentin 300 mg',
+            'usage' => 'Phantom pain',
+        ]);
+
+        $this->assertTrue(Str::isUuid($medication->id));
+        $this->assertTrue($medication->medicalProfile->is($profile));
+        $this->assertTrue($profile->medications->contains($medication));
+    }
+
+    public function test_medication_name_and_usage_are_encrypted_at_rest(): void
+    {
+        $medication = Medication::factory()->create([
+            'name' => 'Gabapentin 300 mg',
+            'usage' => 'Phantom pain',
+        ]);
+
+        $stored = DB::table('medications')->where('id', $medication->id)->first();
+
+        $this->assertStringNotContainsString('Gabapentin', $stored->name);
+        $this->assertStringNotContainsString('Phantom', $stored->usage);
+
+        $medication->refresh();
+
+        $this->assertSame('Gabapentin 300 mg', $medication->name);
+        $this->assertSame('Phantom pain', $medication->usage);
+    }
+
+    public function test_medication_cannot_be_moved_to_another_profile_by_mass_assignment(): void
+    {
+        $otherProfile = MedicalProfile::factory()->create();
+
+        $medication = new Medication([
+            'medical_profile_id' => $otherProfile->id,
+            'name' => 'Ramipril 5 mg',
+            'usage' => 'Hypertension',
+        ]);
+
+        $this->assertNull($medication->medical_profile_id);
+        $this->assertSame('Ramipril 5 mg', $medication->name);
+        $this->assertSame('Hypertension', $medication->usage);
+    }
+
+    public function test_deleted_medication_leaves_the_profile_but_stays_in_the_database(): void
+    {
+        $medication = Medication::factory()->create();
+
+        $medication->delete();
+
+        $this->assertSame(0, $medication->medicalProfile->medications()->count());
+        $this->assertSoftDeleted($medication);
+    }
+
+    public function test_deleting_the_patient_deletes_their_medications_including_deleted_ones(): void
+    {
+        $profile = MedicalProfile::factory()->create();
+        $activeMedication = Medication::factory()->for($profile)->create();
+        $deletedMedication = Medication::factory()->for($profile)->create();
+        $deletedMedication->delete();
+
+        $profile->patient->delete();
+
+        $this->assertModelMissing($activeMedication);
+        $this->assertModelMissing($deletedMedication);
+    }
+
+    public function test_medication_profile_column_is_indexed(): void
+    {
+        $this->assertContains(['medical_profile_id'], array_column(Schema::getIndexes('medications'), 'columns'));
     }
 }

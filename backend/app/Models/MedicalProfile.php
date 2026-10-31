@@ -41,4 +41,12 @@ class MedicalProfile extends Model
     {
         return $this->hasMany(Condition::class);
     }
+
+    /**
+     * @return HasMany<Medication, $this>
+     */
+    public function medications(): HasMany
+    {
+        return $this->hasMany(Medication::class);
+    }
 }
