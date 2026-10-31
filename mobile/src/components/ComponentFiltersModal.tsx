@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme } from "@/context/ThemeContext"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
-import { formatDate } from "@/src/utils/dateFormatter"
+import { formatDate } from "@/src/utils/date&timeUtils"
 
 import { COMPONENT_TYPES, ComponentType } from "../constants/componentTypes"
 

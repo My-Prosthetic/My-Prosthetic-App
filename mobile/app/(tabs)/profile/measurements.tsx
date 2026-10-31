@@ -13,13 +13,10 @@ import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import { useRouter } from "expo-router"
+import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
 
-/* ────────────────────────────────────────────────────────────────────────────
- * types & constants   (→ później np. measureHistory.constants.ts)
- * ──────────────────────────────────────────────────────────────────────────── */
-
-type Side = MeasureWithLevels["side"] // "left" | "right"
-type LimbType = MeasureWithLevels["limbType"] // "upper" | "lower"
+type Side = MeasureWithLevels["side"]
+type LimbType = MeasureWithLevels["limbType"]
 
 const LEVELS = [1, 2, 3, 4, 5] as const
 type Level = (typeof LEVELS)[number]
@@ -41,15 +38,13 @@ const PAGE_SIZE = 10
 //TODO MOCK
 const mockMeasure = (
 	id: string,
-	date: string,
-	time: string,
+	localDateTime: string,
 	values: number[],
 	side: Side,
 	limbType: LimbType
 ): MeasureWithLevels => ({
 	id,
-	date,
-	time,
+	measuredAt: new Date(localDateTime).toISOString(),
 	side,
 	limbType,
 	isDirty: false,
@@ -65,43 +60,39 @@ const mockMeasure = (
 
 //TODO MOCK
 const MOCK_MEASUREMENTS: MeasureWithLevels[] = [
-	mockMeasure("ll-1", "04.10.2026", "10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
-	mockMeasure("ll-2", "03.10.2026", "12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
-	mockMeasure("ll-3", "02.10.2026", "18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
-	mockMeasure("ll-4", "01.10.2026", "09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
-	mockMeasure("ll-5", "30.09.2026", "11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
-	mockMeasure("ll-6", "29.09.2026", "08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
-	mockMeasure("ll-7", "28.09.2026", "17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
-	mockMeasure("ll-8", "27.09.2026", "14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
-	mockMeasure("ll-9", "04.10.2026", "10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
-	mockMeasure("ll-10", "03.10.2026", "12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
-	mockMeasure("ll-11", "02.10.2026", "18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
-	mockMeasure("ll-12", "01.10.2026", "09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
-	mockMeasure("ll-13", "30.09.2026", "11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
-	mockMeasure("ll-14", "29.09.2026", "08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
-	mockMeasure("ll-15", "28.09.2026", "17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
-	mockMeasure("ll-16", "27.09.2026", "14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
+	mockMeasure("ll-1", "2026-10-04T10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
+	mockMeasure("ll-2", "2026-10-03T12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
+	mockMeasure("ll-3", "2026-10-02T18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
+	mockMeasure("ll-4", "2026-10-01T09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
+	mockMeasure("ll-5", "2026-09-30T11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
+	mockMeasure("ll-6", "2026-09-29T08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
+	mockMeasure("ll-7", "2026-09-28T17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
+	mockMeasure("ll-8", "2026-09-27T14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
+	mockMeasure("ll-9", "2026-10-04T10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
+	mockMeasure("ll-10", "2026-10-03T12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
+	mockMeasure("ll-11", "2026-10-02T18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
+	mockMeasure("ll-12", "2026-10-01T09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
+	mockMeasure("ll-13", "2026-09-30T11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
+	mockMeasure("ll-14", "2026-09-29T08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
+	mockMeasure("ll-15", "2026-09-28T17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
+	mockMeasure("ll-16", "2026-09-27T14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
 
-	mockMeasure("lu-1", "04.10.2026", "09:30", [30.2, 28.6, 26.4, 24.1, 21.8], "left", "upper"),
-	mockMeasure("lu-2", "02.10.2026", "16:10", [30.0, 28.4, 26.1, 23.9, 21.5], "left", "upper"),
-	mockMeasure("lu-3", "29.09.2026", "10:45", [30.5, 28.9, 26.7, 24.4, 22.0], "left", "upper"),
+	mockMeasure("lu-1", "2026-10-04T09:30", [30.2, 28.6, 26.4, 24.1, 21.8], "left", "upper"),
+	mockMeasure("lu-2", "2026-10-02T16:10", [30.0, 28.4, 26.1, 23.9, 21.5], "left", "upper"),
+	mockMeasure("lu-3", "2026-09-29T10:45", [30.5, 28.9, 26.7, 24.4, 22.0], "left", "upper"),
 
-	mockMeasure("rl-1", "04.10.2026", "11:15", [41.0, 38.8, 42.5, 35.4, 28.9], "right", "lower"),
-	mockMeasure("rl-2", "03.10.2026", "13:20", [40.6, 38.4, 42.0, 35.1, 28.5], "right", "lower"),
-	mockMeasure("rl-3", "02.10.2026", "19:00", [41.3, 39.0, 43.0, 35.8, 29.1], "right", "lower"),
-	mockMeasure("rl-4", "01.10.2026", "08:40", [40.4, 38.1, 41.8, 35.0, 28.3], "right", "lower"),
-	mockMeasure("rl-5", "30.09.2026", "12:10", [40.8, 38.5, 42.3, 35.3, 28.7], "right", "lower"),
-	mockMeasure("rl-6", "28.09.2026", "15:50", [40.1, 37.9, 41.7, 34.9, 28.2], "right", "lower"),
+	mockMeasure("rl-1", "2026-10-04T11:15", [41.0, 38.8, 42.5, 35.4, 28.9], "right", "lower"),
+	mockMeasure("rl-2", "2026-10-03T13:20", [40.6, 38.4, 42.0, 35.1, 28.5], "right", "lower"),
+	mockMeasure("rl-3", "2026-10-02T19:00", [41.3, 39.0, 43.0, 35.8, 29.1], "right", "lower"),
+	mockMeasure("rl-4", "2026-10-01T08:40", [40.4, 38.1, 41.8, 35.0, 28.3], "right", "lower"),
+	mockMeasure("rl-5", "2026-09-30T12:10", [40.8, 38.5, 42.3, 35.3, 28.7], "right", "lower"),
+	mockMeasure("rl-6", "2026-09-28T15:50", [40.1, 37.9, 41.7, 34.9, 28.2], "right", "lower"),
 
-	mockMeasure("ru-1", "03.10.2026", "10:20", [31.0, 29.3, 27.0, 24.8, 22.4], "right", "upper"),
-	mockMeasure("ru-2", "01.10.2026", "15:35", [30.7, 29.0, 26.8, 24.5, 22.1], "right", "upper"),
-	mockMeasure("ru-3", "29.09.2026", "09:05", [31.2, 29.5, 27.2, 25.0, 22.6], "right", "upper"),
-	mockMeasure("ru-4", "27.09.2026", "18:30", [30.9, 29.2, 26.9, 24.7, 22.3], "right", "upper"),
+	mockMeasure("ru-1", "2026-10-03T10:20", [31.0, 29.3, 27.0, 24.8, 22.4], "right", "upper"),
+	mockMeasure("ru-2", "2026-10-01T15:35", [30.7, 29.0, 26.8, 24.5, 22.1], "right", "upper"),
+	mockMeasure("ru-3", "2026-09-29T09:05", [31.2, 29.5, 27.2, 25.0, 22.6], "right", "upper"),
+	mockMeasure("ru-4", "2026-09-27T18:30", [30.9, 29.2, 26.9, 24.7, 22.3], "right", "upper"),
 ]
-
-/* ────────────────────────────────────────────────────────────────────────────
- * helpers   (→ measureHistory.utils.ts)
- * ──────────────────────────────────────────────────────────────────────────── */
 
 //TODO sprawdzę czy takiej funkcji gdzieś już nie mamy w utils
 const formatValue = (value?: number) =>
@@ -156,7 +147,12 @@ function MeasurementsTable({ measures, visibleLevels }: MeasurementsTableProps) 
 	return (
 		<>
 			<View style={[tableStyles.row, tableStyles.headerRow, { backgroundColor: colors.blue1 }]}>
-				<ThemedText variant="H5" colorName="bg_0" style={tableStyles.colData} tx="measurements.history.date"/>
+				<ThemedText
+					variant="H5"
+					colorName="bg_0"
+					style={tableStyles.colData}
+					tx="measurements.history.date"
+				/>
 				{visibleLevels.map((level) => (
 					<ThemedText key={level} variant="H5" colorName="bg_0" style={tableStyles.colVal}>
 						{`L${level}`}
@@ -174,10 +170,10 @@ function MeasurementsTable({ measures, visibleLevels }: MeasurementsTableProps) 
 				>
 					<View style={tableStyles.colData}>
 						<ThemedText variant="H5" colorName="blue2" numberOfLines={1}>
-							{measure.date}
+							{formatDate(measure.measuredAt, "dotted")}
 						</ThemedText>
 						<ThemedText variant="H4" colorName="blue2">
-							{measure.time}
+							{formatHour(measure.measuredAt)}
 						</ThemedText>
 					</View>
 					{visibleLevels.map((level) => (
@@ -207,7 +203,6 @@ export default function MeasurementHistoryScreen() {
 	const toggleLevel = (level: Level) =>
 		setSelectedLevels((prev) => ({ ...prev, [level]: !prev[level] }))
 
-	// zmiana filtra = powrót na pierwszą stronę
 	const selectSide = (value: Side) => {
 		setSide(value)
 		pagination.reset()
@@ -250,7 +245,12 @@ export default function MeasurementHistoryScreen() {
 					</View>
 
 					<View style={styles.checkboxesContainer}>
-						<ThemedText variant="H1" colorName="blue2" numberOfLines={2} tx="measurements.history.points"/>
+						<ThemedText
+							variant="H1"
+							colorName="blue2"
+							numberOfLines={2}
+							tx="measurements.history.points"
+						/>
 						<View style={styles.checkboxesList}>
 							{LEVELS.map((level) => (
 								<ThemedCheckbox

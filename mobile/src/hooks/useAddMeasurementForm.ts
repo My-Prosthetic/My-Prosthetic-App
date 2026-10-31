@@ -9,8 +9,6 @@ import {
 	type CreateMeasureLevelInput,
 } from "@/db/repositories/measuresRepository"
 import {
-	formatDateForStorage,
-	formatTimeForStorage,
 	getMeasurementLevelsFromHistory,
 	isValidMeasurementDistance,
 	isValidMeasurementValue,
@@ -18,7 +16,7 @@ import {
 	sortAndRenumberLevels,
 	type MeasurementLevel,
 } from "@/src/utils/measurementUtils"
-import type { FormatHourOptions } from "@/src/utils/hourFormatter"
+import { combineDateAndTime, FormatHourOptions } from "../utils/date&timeUtils"
 import { useTranslation } from "react-i18next"
 import { useProsthesis } from "@/context/SelectedProsthesisContext"
 
@@ -127,11 +125,8 @@ export function useAddMeasurementForm() {
 		}
 	}
 
-	const isFutureMoment = (date: Date, hour: number, minute: number) => {
-		const candidate = new Date(date)
-		candidate.setHours(hour, minute, 0, 0)
-		return candidate.getTime() > Date.now()
-	}
+	const isFutureMoment = (date: Date, hour: number, minute: number) =>
+		combineDateAndTime(date, { hour, minute }).getTime() > Date.now()
 
 	const validateMoment = (date: Date, hour: number, minute: number) => {
 		if (!isFutureMoment(date, hour, minute)) return true
@@ -253,8 +248,7 @@ export function useAddMeasurementForm() {
 		}))
 		const input: CreateMeasureInput = {
 			id: Crypto.randomUUID(),
-			date: formatDateForStorage(measurementDate),
-			time: formatTimeForStorage(measurementTime),
+			measuredAt: combineDateAndTime(measurementDate, measurementTime),
 			side,
 			limbType,
 			levels,

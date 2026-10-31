@@ -13,8 +13,7 @@ import { MeasurementCardItem } from "@/src/components/measure/MeasurementCard"
 import { MeasurementDiagram } from "@/src/components/measure/MeasurementDiagram"
 import { useAddMeasurementForm } from "@/src/hooks/useAddMeasurementForm"
 import { isValidMeasurementValue, MAX_MEASUREMENT_LEVELS } from "@/src/utils/measurementUtils"
-import { formatDate } from "@/src/utils/dateFormatter"
-import { formatHour } from "@/src/utils/hourFormatter"
+import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
 
 export default function AddMeasurementScreen() {
 	const form = useAddMeasurementForm()
