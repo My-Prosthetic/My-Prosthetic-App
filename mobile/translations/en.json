@@ -645,20 +645,37 @@
 	},
 	"display": {
 		"title": "App Appearance & Language",
-		"name": "Appearance & Language",
+		"name": "Display & Language",
 		"interface": {
 			"title": "Interface Appearance",
 			"darkMode": "Dark Mode",
-			"contrast": "High Contrast Mode"
+			"contrast": "High Contrast Mode",
+			"fontSize": "Font size"
 		},
 		"accessibility": {
 			"title": "Accessibility",
-			"tts": "Read Screen Aloud (TTS)"
+			"tts": "Text To Speech"
 		},
 		"region": {
 			"title": "Language & Region",
 			"language": "App Language",
 			"date": "Date Format"
+		},
+		"modals": {
+			"chooseLanguage": "Choose language",
+			"chooseDateFormat": "Choose date format",
+			"chooseFontSize": "Choose text size"
+		},
+
+		"fontSize": {
+			"small": "Small",
+			"medium": "Medium",
+			"large": "Large",
+			"extraLarge": "Extra Large"
+		},
+		"language": {
+			"polish": "Polish",
+			"english": "English"
 		}
 	}
 }

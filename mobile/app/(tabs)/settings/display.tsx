@@ -7,19 +7,38 @@ import { ThemedToggleSwitch } from "@/src/components/settings/ThemedToggleSwitch
 import { useState } from "react"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import { SettingsOptionModal } from "@/src/components/settings/SettingsOptionModal"
-import { LANGUAGE_OPTIONS, DATE_FORMAT_OPTIONS } from "@/src/components/settings/SettingsOptions"
+import {
+	LANGUAGE_OPTIONS,
+	DATE_FORMAT_OPTIONS,
+	FONT_SIZE_OPTIONS,
+} from "@/src/components/settings/SettingsOptions"
 import { useSettings } from "@/context/SettingsContext"
 import { formatDate } from "@/src/utils/dateFormatter"
+import { useTranslation } from "react-i18next"
+import Slider from "@react-native-community/slider"
 
 export default function DisplayScreen() {
 	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	const [tts, setTts] = useState(false)
-	type SelectionModal = "language" | "date" | null
+	type SelectionModal = "language" | "date" | "fontSize" | null
 	const [openModal, setOpenModal] = useState<SelectionModal>(null)
-	const { dateFormat, setDateFormat, language, setLanguage } = useSettings()
+	const { dateFormat, setDateFormat, language, setLanguage, fontSize, setFontSize } = useSettings()
+	const { t } = useTranslation()
+	const translatedFontSizeOptions = FONT_SIZE_OPTIONS.map((option) => ({
+		value: option.value,
+		label: t(option.labelKey),
+	}))
+	const translatedLanguageOptions = LANGUAGE_OPTIONS.map((option) => ({
+		value: option.value,
+		label: t(option.labelKey),
+	}))
+	const fontSizeIndex = FONT_SIZE_OPTIONS.findIndex((option) => option.value === fontSize)
 
 	const languageLabel =
-		LANGUAGE_OPTIONS.find((option) => option.value === language)?.label ?? language
+		translatedLanguageOptions.find((option) => option.value === language)?.label ?? language
+
+	const fontSizeLabel =
+		translatedFontSizeOptions.find((option) => option.value === fontSize)?.label ?? fontSize
 	// remove below after done testing
 	const testDate = new Date(2026, 9, 31)
 
@@ -52,6 +71,44 @@ export default function DisplayScreen() {
 				<ThemedToggleSwitch value={highContrast} onValueChange={setHighContrast} />
 			</ThemedView>
 
+			<ThemedView variant="divider" colorName="blue1" />
+
+			<ThemedView style={styles.subsectionRow} onPress={() => setOpenModal("fontSize")}>
+				<ThemedText variant="H2" tx="display.interface.fontSize" colorName="blue2" />
+				<ThemedView style={styles.rightBtn}>
+					<ThemedText variant="H4" colorName="blue1">
+						{fontSizeLabel}
+					</ThemedText>
+					<IconChevronRight color={colors.blue2} style={styles.docChevron} />
+				</ThemedView>
+			</ThemedView>
+
+			<ThemedView variant="divider" colorName="blue1" />
+
+			<ThemedView>
+				<ThemedView style={styles.subsectionRow}>
+					<ThemedText variant="H2" tx="display.interface.fontSize" colorName="blue2" />
+
+					<ThemedText variant="H4" colorName="blue1">
+						{fontSizeLabel}
+					</ThemedText>
+				</ThemedView>
+
+				<Slider
+					minimumValue={0}
+					maximumValue={FONT_SIZE_OPTIONS.length - 1}
+					step={1}
+					value={fontSizeIndex}
+					onValueChange={(index) => {
+						const option = FONT_SIZE_OPTIONS[index]
+
+						if (option) {
+							setFontSize(option.value)
+						}
+					}}
+					style={styles.fontSizeSlider}
+				/>
+			</ThemedView>
 			<ThemedView variant="divider" colorName="blue1" />
 
 			{/* ACCESSIBILITY SETTINGS */}
@@ -106,8 +163,8 @@ export default function DisplayScreen() {
 
 			<SettingsOptionModal
 				visible={openModal === "language"}
-				title="Wybierz język"
-				options={LANGUAGE_OPTIONS}
+				title={t("display.modals.chooseLanguage")}
+				options={translatedLanguageOptions}
 				selectedValue={language}
 				onSelect={(value) => {
 					setLanguage(value)
@@ -117,11 +174,23 @@ export default function DisplayScreen() {
 			/>
 			<SettingsOptionModal
 				visible={openModal === "date"}
-				title="Wybierz format daty"
+				title={t("display.modals.chooseDateFormat")}
 				options={DATE_FORMAT_OPTIONS}
 				selectedValue={dateFormat}
 				onSelect={(value) => {
 					setDateFormat(value)
+					setOpenModal(null)
+				}}
+				onClose={() => setOpenModal(null)}
+			/>
+
+			<SettingsOptionModal
+				visible={openModal === "fontSize"}
+				title={t("display.modals.chooseFontSize")}
+				options={translatedFontSizeOptions}
+				selectedValue={fontSize}
+				onSelect={(value) => {
+					setFontSize(value)
 					setOpenModal(null)
 				}}
 				onClose={() => setOpenModal(null)}
@@ -151,5 +220,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 15,
+	},
+	fontSizeSlider: {
+		width: "100%",
+		height: 44,
 	},
 })
