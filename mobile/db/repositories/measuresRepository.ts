@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm"
+import { and, count, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
 import { measures, measureLevels } from "@/db/schema/measures"
@@ -19,6 +19,18 @@ export type CreateMeasureInput = {
 	side: "left" | "right"
 	limbType: "upper" | "lower"
 	levels: CreateMeasureLevelInput[]
+}
+
+export type MeasuresPageQuery = {
+	side: Measure["side"]
+	limbType: Measure["limbType"]
+	page: number
+	pageSize: number
+}
+
+export type MeasuresPage = {
+	items: MeasureWithLevels[]
+	total: number
 }
 
 export async function createMeasure(input: CreateMeasureInput) {
@@ -80,7 +92,7 @@ export async function getLatestMeasure(filter?: {
 			if (filter?.limbType) conditions.push(eq(fields.limbType, filter.limbType))
 			return and(...conditions)
 		},
-		orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.updatedAt)],
+		orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
 		with: {
 			levels: {
 				orderBy: (fields, { asc }) => [asc(fields.level)],
@@ -89,6 +101,36 @@ export async function getLatestMeasure(filter?: {
 	})
 
 	return latest ?? null
+}
+
+export async function getMeasuresPage({
+	side,
+	limbType,
+	page,
+	pageSize,
+}: MeasuresPageQuery): Promise<MeasuresPage> {
+	const where = and(
+		eq(measures.side, side),
+		eq(measures.limbType, limbType),
+		isNull(measures.deletedAt)
+	)
+
+	const [items, [totalRow]] = await Promise.all([
+		db.query.measures.findMany({
+			where,
+			orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
+			limit: pageSize,
+			offset: (page - 1) * pageSize,
+			with: {
+				levels: {
+					orderBy: (fields, { asc }) => [asc(fields.level)],
+				},
+			},
+		}),
+		db.select({ total: count() }).from(measures).where(where),
+	])
+
+	return { items, total: totalRow?.total ?? 0 }
 }
 
 export async function deleteMeasure(id: string) {

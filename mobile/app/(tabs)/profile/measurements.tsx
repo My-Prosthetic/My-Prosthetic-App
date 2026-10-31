@@ -1,19 +1,25 @@
-import React, { useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { StyleSheet, View, ScrollView } from "react-native"
+import { useFocusEffect, useRouter } from "expo-router"
+
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { useTheme } from "@/context/ThemeContext"
-import { MeasureWithLevels } from "@/db/repositories/measuresRepository"
+import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
+import {
+	getMeasuresPage,
+	type MeasuresPage,
+	type MeasuresPageQuery,
+	type MeasureWithLevels,
+} from "@/db/repositories/measuresRepository"
 
 import IconRuler from "@/assets/icons/measure-filled.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
-import { useRouter } from "expo-router"
-import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
 
 type Side = MeasureWithLevels["side"]
 type LimbType = MeasureWithLevels["limbType"]
@@ -31,117 +37,83 @@ const INITIAL_SELECTED_LEVELS: Record<Level, boolean> = {
 
 const PAGE_SIZE = 10
 
-/* ────────────────────────────────────────────────────────────────────────────
- * mock   (→ do usunięcia, zastąpi go repozytorium)
- * ──────────────────────────────────────────────────────────────────────────── */
+const EMPTY_PAGE: MeasuresPage = { items: [], total: 0 }
 
-//TODO MOCK
-const mockMeasure = (
-	id: string,
-	localDateTime: string,
-	values: number[],
-	side: Side,
-	limbType: LimbType
-): MeasureWithLevels => ({
-	id,
-	measuredAt: new Date(localDateTime).toISOString(),
-	side,
-	limbType,
-	isDirty: false,
-	deletedAt: null,
-	updatedAt: "2026-10-04T10:00:00.000Z",
-	levels: values.map((value, i) => ({
-		measureId: id,
-		level: i + 1,
-		distance: (i + 1) * 10,
-		value,
-	})),
-})
-
-//TODO MOCK
-const MOCK_MEASUREMENTS: MeasureWithLevels[] = [
-	mockMeasure("ll-1", "2026-10-04T10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
-	mockMeasure("ll-2", "2026-10-03T12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
-	mockMeasure("ll-3", "2026-10-02T18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
-	mockMeasure("ll-4", "2026-10-01T09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
-	mockMeasure("ll-5", "2026-09-30T11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
-	mockMeasure("ll-6", "2026-09-29T08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
-	mockMeasure("ll-7", "2026-09-28T17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
-	mockMeasure("ll-8", "2026-09-27T14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
-	mockMeasure("ll-9", "2026-10-04T10:00", [40.5, 38.2, 42.1, 35.0, 28.4], "left", "lower"),
-	mockMeasure("ll-10", "2026-10-03T12:40", [39.8, 37.9, 41.5, 34.8, 27.9], "left", "lower"),
-	mockMeasure("ll-11", "2026-10-02T18:45", [41.1, 38.6, 42.8, 35.6, 28.8], "left", "lower"),
-	mockMeasure("ll-12", "2026-10-01T09:10", [40.2, 38.0, 41.9, 35.1, 28.1], "left", "lower"),
-	mockMeasure("ll-13", "2026-09-30T11:30", [39.5, 37.4, 41.2, 34.6, 27.5], "left", "lower"),
-	mockMeasure("ll-14", "2026-09-29T08:15", [40.0, 37.8, 41.6, 34.9, 28.0], "left", "lower"),
-	mockMeasure("ll-15", "2026-09-28T17:20", [39.2, 37.1, 40.9, 34.2, 27.3], "left", "lower"),
-	mockMeasure("ll-16", "2026-09-27T14:05", [39.9, 37.6, 41.4, 34.7, 27.8], "left", "lower"),
-
-	mockMeasure("lu-1", "2026-10-04T09:30", [30.2, 28.6, 26.4, 24.1, 21.8], "left", "upper"),
-	mockMeasure("lu-2", "2026-10-02T16:10", [30.0, 28.4, 26.1, 23.9, 21.5], "left", "upper"),
-	mockMeasure("lu-3", "2026-09-29T10:45", [30.5, 28.9, 26.7, 24.4, 22.0], "left", "upper"),
-
-	mockMeasure("rl-1", "2026-10-04T11:15", [41.0, 38.8, 42.5, 35.4, 28.9], "right", "lower"),
-	mockMeasure("rl-2", "2026-10-03T13:20", [40.6, 38.4, 42.0, 35.1, 28.5], "right", "lower"),
-	mockMeasure("rl-3", "2026-10-02T19:00", [41.3, 39.0, 43.0, 35.8, 29.1], "right", "lower"),
-	mockMeasure("rl-4", "2026-10-01T08:40", [40.4, 38.1, 41.8, 35.0, 28.3], "right", "lower"),
-	mockMeasure("rl-5", "2026-09-30T12:10", [40.8, 38.5, 42.3, 35.3, 28.7], "right", "lower"),
-	mockMeasure("rl-6", "2026-09-28T15:50", [40.1, 37.9, 41.7, 34.9, 28.2], "right", "lower"),
-
-	mockMeasure("ru-1", "2026-10-03T10:20", [31.0, 29.3, 27.0, 24.8, 22.4], "right", "upper"),
-	mockMeasure("ru-2", "2026-10-01T15:35", [30.7, 29.0, 26.8, 24.5, 22.1], "right", "upper"),
-	mockMeasure("ru-3", "2026-09-29T09:05", [31.2, 29.5, 27.2, 25.0, 22.6], "right", "upper"),
-	mockMeasure("ru-4", "2026-09-27T18:30", [30.9, 29.2, 26.9, 24.7, 22.3], "right", "upper"),
-]
-
-//TODO sprawdzę czy takiej funkcji gdzieś już nie mamy w utils
+//TODO przerzucić do utils i zaimplementować w addMeasurement
 const formatValue = (value?: number) =>
 	value === undefined ? "–" : value.toFixed(2).replace(".", ",")
 
 const getLevelValue = (measure: MeasureWithLevels, level: number) =>
 	measure.levels.find((l) => l.level === level)?.value
 
-/* ────────────────────────────────────────────────────────────────────────────
- * usePagination   (→ hooks/usePagination.ts)
- *
- * Generyczny, nie zna typu pomiaru. Po podpięciu bazy paginację można
- * przenieść do zapytania (limit/offset + count) i zostawić tylko stan "page".
- * ──────────────────────────────────────────────────────────────────────────── */
+function useMeasuresPage(query: MeasuresPageQuery) {
+	const { side, limbType, page, pageSize } = query
 
-function usePagination<T>(items: T[], pageSize: number) {
-	const [page, setPage] = useState(1)
+	const [data, setData] = useState<MeasuresPage>(EMPTY_PAGE)
+	const [isLoading, setIsLoading] = useState(true)
+	const requestIdRef = useRef(0)
 
-	const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
-	const currentPage = Math.min(page, totalPages) // zabezpieczenie, gdy lista się skróci
-	const pageItems = items.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+	const load = useCallback(async () => {
+		const requestId = ++requestIdRef.current
+		setIsLoading(true)
 
-	return {
-		pageItems,
-		currentPage,
-		totalPages,
-		hasPrev: currentPage > 1,
-		hasNext: currentPage < totalPages,
-		goPrev: () => setPage(Math.max(1, currentPage - 1)),
-		goNext: () => setPage(Math.min(totalPages, currentPage + 1)),
-		reset: () => setPage(1),
-	}
+		try {
+			const result = await getMeasuresPage({ side, limbType, page, pageSize })
+			if (requestId === requestIdRef.current) setData(result)
+		} catch (error) {
+			console.error("Failed to load measures page:", error)
+			if (requestId === requestIdRef.current) setData(EMPTY_PAGE)
+		} finally {
+			if (requestId === requestIdRef.current) setIsLoading(false)
+		}
+	}, [side, limbType, page, pageSize])
+
+	useFocusEffect(
+		useCallback(() => {
+			void load()
+		}, [load])
+	)
+
+	return { ...data, isLoading }
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
- * MeasurementsTable   (→ components/MeasurementsTable.tsx)
- *
- * Tabela jest "głupia": dostaje listę pomiarów, które MA wyświetlić.
- * Filtrowanie po stronie/typie kończyny odbywa się poza nią (ekran → docelowo
- * zapytanie do repozytorium – pod to jest indeks measures_latest_lookup_idx).
- * visibleLevels to wyłącznie parametr prezentacji (które kolumny pokazać).
- * ──────────────────────────────────────────────────────────────────────────── */
+function useMeasureHistory(side: Side, limbType: LimbType) {
+	const filterKey = `${side}:${limbType}`
+	const [pageState, setPageState] = useState({ filterKey, page: 1 })
+	const page = pageState.filterKey === filterKey ? pageState.page : 1
+	const setPage = (next: number) => setPageState({ filterKey, page: next })
+
+	const { items, total, isLoading } = useMeasuresPage({
+		side,
+		limbType,
+		page,
+		pageSize: PAGE_SIZE,
+	})
+	const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+
+	if (!isLoading && page > totalPages) {
+		setPageState({ filterKey, page: totalPages })
+	}
+
+	return {
+		items,
+		isLoading,
+		currentPage: page,
+		totalPages,
+		hasPrev: page > 1,
+		hasNext: page < totalPages,
+		goPrev: () => setPage(Math.max(1, page - 1)),
+		goNext: () => setPage(Math.min(totalPages, page + 1)),
+	}
+}
 
 type MeasurementsTableProps = {
 	measures: MeasureWithLevels[]
 	visibleLevels: readonly Level[]
+	isLoading: boolean
 }
 
-function MeasurementsTable({ measures, visibleLevels }: MeasurementsTableProps) {
+function MeasurementsTable({ measures, visibleLevels, isLoading }: MeasurementsTableProps) {
 	const { colors } = useTheme()
 
 	return (
@@ -159,6 +131,17 @@ function MeasurementsTable({ measures, visibleLevels }: MeasurementsTableProps) 
 					</ThemedText>
 				))}
 			</View>
+
+			{!isLoading && measures.length === 0 && (
+				<View style={tableStyles.emptyRow}>
+					<ThemedText
+						variant="body1Regular"
+						colorName="graphite0"
+						style={tableStyles.emptyText}
+						tx="measurements.history.empty"
+					/>
+				</View>
+			)}
 
 			{measures.map((measure, index) => (
 				<View
@@ -195,25 +178,14 @@ export default function MeasurementHistoryScreen() {
 	const [limbType, setLimbType] = useState<LimbType>("lower")
 	const [selectedLevels, setSelectedLevels] = useState(INITIAL_SELECTED_LEVELS)
 
-	//TODO zastąpić zapytaniem do repozytorium, np. useMeasures(side, limbType)
-	const measures = MOCK_MEASUREMENTS.filter((m) => m.side === side && m.limbType === limbType)
+	const history = useMeasureHistory(side, limbType)
 	const visibleLevels = LEVELS.filter((level) => selectedLevels[level])
-	const pagination = usePagination(measures, PAGE_SIZE)
 
 	const toggleLevel = (level: Level) =>
 		setSelectedLevels((prev) => ({ ...prev, [level]: !prev[level] }))
 
-	const selectSide = (value: Side) => {
-		setSide(value)
-		pagination.reset()
-	}
-	const selectLimbType = (value: LimbType) => {
-		setLimbType(value)
-		pagination.reset()
-	}
-
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
+		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 			<ThemedView colorName="bg_0" variant="background" style={{ paddingBottom: 30 }}>
 				<ThemedHeader tx="measurements.history.title" />
 				<View style={{ gap: 30, paddingTop: 20 }}>
@@ -226,8 +198,8 @@ export default function MeasurementHistoryScreen() {
 							<ThemedSelectiveSwitch
 								leftTx="newProsthesis.left"
 								rightTx="newProsthesis.right"
-								selectLeft={() => selectSide("left")}
-								selectRight={() => selectSide("right")}
+								selectLeft={() => setSide("left")}
+								selectRight={() => setSide("right")}
 								initialState={side}
 								leftLabelWidth={35}
 								rightLabelWidth={45}
@@ -235,8 +207,8 @@ export default function MeasurementHistoryScreen() {
 							<ThemedSelectiveSwitch
 								leftTx="newProsthesis.upper"
 								rightTx="newProsthesis.lower"
-								selectLeft={() => selectLimbType("upper")}
-								selectRight={() => selectLimbType("lower")}
+								selectLeft={() => setLimbType("upper")}
+								selectRight={() => setLimbType("lower")}
 								initialState={limbType === "upper" ? "left" : "right"}
 								leftLabelWidth={45}
 								rightLabelWidth={45}
@@ -245,12 +217,7 @@ export default function MeasurementHistoryScreen() {
 					</View>
 
 					<View style={styles.checkboxesContainer}>
-						<ThemedText
-							variant="H1"
-							colorName="blue2"
-							numberOfLines={2}
-							tx="measurements.history.points"
-						/>
+						<ThemedText variant="H1" colorName="blue2" tx="measurements.history.points" />
 						<View style={styles.checkboxesList}>
 							{LEVELS.map((level) => (
 								<ThemedCheckbox
@@ -273,24 +240,28 @@ export default function MeasurementHistoryScreen() {
 					/>
 				</View>
 			</ThemedView>
-
-			<MeasurementsTable measures={pagination.pageItems} visibleLevels={visibleLevels} />
-
+			<ThemedView colorName="bg_0">
+				<MeasurementsTable
+					measures={history.items}
+					visibleLevels={visibleLevels}
+					isLoading={history.isLoading}
+				/>
+			</ThemedView>
 			<ThemedView colorName="bg_0" variant="background" style={{ paddingBottom: 30 }}>
 				{/* Pagination */}
 				<View style={styles.paginationRow}>
 					<ThemedView
-						onPress={pagination.goPrev}
-						style={[styles.pageButton, !pagination.hasPrev && styles.pageButtonDisabled]}
+						onPress={history.goPrev}
+						style={[styles.pageButton, !history.hasPrev && styles.pageButtonDisabled]}
 					>
 						<IconChevronLeft color={colors.blue1} width={20} height={20} />
 					</ThemedView>
 					<ThemedText variant="H3" colorName="blue2">
-						{`${pagination.currentPage}/${pagination.totalPages}`}
+						{`${history.currentPage}/${history.totalPages}`}
 					</ThemedText>
 					<ThemedView
-						onPress={pagination.goNext}
-						style={[styles.pageButton, !pagination.hasNext && styles.pageButtonDisabled]}
+						onPress={history.goNext}
+						style={[styles.pageButton, !history.hasNext && styles.pageButtonDisabled]}
 					>
 						<IconChevronRight color={colors.blue1} width={20} height={20} />
 					</ThemedView>
@@ -320,6 +291,13 @@ const tableStyles = StyleSheet.create({
 	},
 	colVal: {
 		flex: 1,
+		textAlign: "center",
+	},
+	emptyRow: {
+		paddingVertical: 24,
+		paddingHorizontal: "8%",
+	},
+	emptyText: {
 		textAlign: "center",
 	},
 })

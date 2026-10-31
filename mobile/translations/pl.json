@@ -342,7 +342,8 @@
 		"history": {
 			"title": "Historia pomiarów",
 			"date": "Data",
-			"points": "Punkty pomiarowe"
+			"points": "Punkty\npomiarowe",
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów"
 		}
 	},
 	"newIncident": {

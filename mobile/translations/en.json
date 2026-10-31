@@ -343,7 +343,8 @@
 		"history": {
 			"title": "Measurements history",
 			"date": "Date",
-			"points": "Measurement points"
+			"points": "Measurement\npoints",
+			"empty": "No data to be displayed for current filters"
 		}
 	},
 	"newIncident": {
