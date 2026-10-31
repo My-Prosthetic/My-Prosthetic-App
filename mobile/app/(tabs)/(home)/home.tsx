@@ -246,80 +246,83 @@ export default function HomeScreen() {
 const windowWidth = Dimensions.get("window").width
 
 const getStyles = (colors: ThemeColors) => {
-	return StyleSheet.create({
-		headerRow: {
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "center",
-			marginBottom: 24,
-		},
-		greeting: {
-			textAlign: "left",
-			fontFamily: "Montserrat-Bold",
-			textTransform: "none",
-		},
-		dateBadge: {
-			width: 60,
-			height: 60,
-			borderRadius: 10,
-			flexDirection: "column",
-			alignItems: "center",
-			justifyContent: "center",
-			gap: 2,
-		},
-		prostheticCard: {
-			width: windowWidth * 0.6,
-			height: windowWidth * 0.6,
-			borderRadius: 30,
-			flexDirection: "column",
-			justifyContent: "center",
-			alignItems: "center",
-			gap: 20,
-			paddingBottom: 15,
-		},
-		cardIcon: {
-			flex: 1,
-			justifyContent: "center",
-			marginTop: 50,
-		},
-		showFullHistory: {
-			alignSelf: "flex-end",
-			paddingRight: 40,
-			marginBottom: 15,
-		},
-		activityRow: {
-			width: "100%",
-			minHeight: 44,
-			backgroundColor: "transparent",
-		},
-		timelineDot: {
-			width: 12,
-			height: 12,
-			borderRadius: 6,
-			zIndex: 2,
-		},
-		timelineLine: {
-			borderRadius: 1000,
-			width: 2,
-			height: 25,
-			marginLeft: 23,
-			overflow: "visible",
-			marginVertical: -10,
-			backgroundColor: colors.blue1,
-		},
-		divider: {
-			width: "75%",
-			marginTop: 5,
-		},
-		activitySection: {
-			borderRadius: 0,
-			marginTop: 20,
-			paddingTop: 15,
-			paddingBottom: 10,
-		},
-		bottomSection: {
-			gap: 20,
-			paddingBottom: 30,
-		},
-	})
+	{
+		const styles = StyleSheet.create({
+			headerRow: {
+				flexDirection: "row",
+				justifyContent: "space-between",
+				alignItems: "center",
+				marginBottom: 24,
+			},
+			greeting: {
+				textAlign: "left",
+				fontFamily: "Montserrat-Bold",
+				textTransform: "none",
+			},
+			dateBadge: {
+				width: 60,
+				height: 60,
+				borderRadius: 10,
+				flexDirection: "column",
+				alignItems: "center",
+				justifyContent: "center",
+				gap: 2,
+			},
+			prostheticCard: {
+				width: windowWidth * 0.6,
+				height: windowWidth * 0.6,
+				borderRadius: 30,
+				flexDirection: "column",
+				justifyContent: "center",
+				alignItems: "center",
+				gap: 20,
+				paddingBottom: 15,
+			},
+			cardIcon: {
+				flex: 1,
+				justifyContent: "center",
+				marginTop: 50,
+			},
+			showFullHistory: {
+				alignSelf: "flex-end",
+				paddingRight: 40,
+				marginBottom: 15,
+			},
+			activityRow: {
+				width: "100%",
+				minHeight: 44,
+				backgroundColor: "transparent",
+			},
+			timelineDot: {
+				width: 12,
+				height: 12,
+				borderRadius: 6,
+				zIndex: 2,
+			},
+			timelineLine: {
+				borderRadius: 1000,
+				width: 2,
+				height: 25,
+				marginLeft: 23,
+				overflow: "visible",
+				marginVertical: -10,
+				backgroundColor: colors.blue1,
+			},
+			divider: {
+				width: "75%",
+				marginTop: 5,
+			},
+			activitySection: {
+				borderRadius: 0,
+				marginTop: 20,
+				paddingTop: 15,
+				paddingBottom: 10,
+			},
+			bottomSection: {
+				gap: 20,
+				paddingBottom: 30,
+			},
+		})
+		return styles
+	}
 }

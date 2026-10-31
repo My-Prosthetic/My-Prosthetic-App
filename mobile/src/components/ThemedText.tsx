@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
 	},
 })
 
+/* eslint-disable react-native/no-unused-styles */
 const typography = StyleSheet.create({
 	H0: {
 		fontFamily: "Montserrat-Bold",

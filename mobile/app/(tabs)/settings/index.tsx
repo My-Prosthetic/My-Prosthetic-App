@@ -3,7 +3,6 @@ import { router } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useAuth } from "@/context/AuthContext"
-import { useTheme } from "@/context/ThemeContext"
 import { useTranslation } from "react-i18next"
 
 export default function SettingsScreen() {

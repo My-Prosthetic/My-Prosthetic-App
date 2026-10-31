@@ -147,7 +147,6 @@ export default function DisplayScreen() {
 						speak(language === "pl" ? "Czytanie ekranu jest włączone" : "Screen reading is enabled")
 					}
 				>
-					{" "}
 					PRESS ME TO TEST TTS !!!!!!
 				</ThemedText>
 
@@ -184,7 +183,7 @@ export default function DisplayScreen() {
 
 				<ThemedView variant="divider" colorName="blue1" />
 
-				<ThemedText variant="H2" colorName="blue2">
+				<ThemedText variant="H2" colorName="false">
 					Test date - remove after done testing:{" "}
 					{formatDate(testDate, "numeric", new Date(), dateFormat)}
 				</ThemedText>
