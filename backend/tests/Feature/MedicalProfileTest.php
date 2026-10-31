@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\KLevel;
+use App\Models\Condition;
 use App\Models\MedicalProfile;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -94,5 +95,68 @@ class MedicalProfileTest extends TestCase
     public function test_owner_column_is_indexed(): void
     {
         $this->assertContains(['user_id'], array_column(Schema::getIndexes('medical_profiles'), 'columns'));
+    }
+
+    public function test_medical_profile_has_conditions(): void
+    {
+        $profile = MedicalProfile::factory()->create();
+
+        $condition = $profile->conditions()->create(['name' => 'Latex allergy']);
+
+        $this->assertTrue(Str::isUuid($condition->id));
+        $this->assertTrue($condition->medicalProfile->is($profile));
+        $this->assertTrue($profile->conditions->contains($condition));
+    }
+
+    public function test_condition_name_is_encrypted_at_rest(): void
+    {
+        $condition = Condition::factory()->create(['name' => 'Latex allergy']);
+
+        $storedName = DB::table('conditions')->where('id', $condition->id)->value('name');
+
+        $this->assertNotSame('Latex allergy', $storedName);
+        $this->assertStringNotContainsString('Latex', $storedName);
+        $this->assertSame('Latex allergy', $condition->refresh()->name);
+    }
+
+    public function test_condition_cannot_be_moved_to_another_profile_by_mass_assignment(): void
+    {
+        $otherProfile = MedicalProfile::factory()->create();
+
+        $condition = new Condition([
+            'medical_profile_id' => $otherProfile->id,
+            'name' => 'Hypertension',
+        ]);
+
+        $this->assertNull($condition->medical_profile_id);
+        $this->assertSame('Hypertension', $condition->name);
+    }
+
+    public function test_deleted_condition_leaves_the_profile_but_stays_in_the_database(): void
+    {
+        $condition = Condition::factory()->create();
+
+        $condition->delete();
+
+        $this->assertSame(0, $condition->medicalProfile->conditions()->count());
+        $this->assertSoftDeleted($condition);
+    }
+
+    public function test_deleting_the_patient_deletes_their_conditions_including_deleted_ones(): void
+    {
+        $profile = MedicalProfile::factory()->create();
+        $activeCondition = Condition::factory()->for($profile)->create();
+        $deletedCondition = Condition::factory()->for($profile)->create();
+        $deletedCondition->delete();
+
+        $profile->patient->delete();
+
+        $this->assertModelMissing($activeCondition);
+        $this->assertModelMissing($deletedCondition);
+    }
+
+    public function test_condition_profile_column_is_indexed(): void
+    {
+        $this->assertContains(['medical_profile_id'], array_column(Schema::getIndexes('conditions'), 'columns'));
     }
 }

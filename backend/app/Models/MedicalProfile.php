@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'k_level',
@@ -31,5 +32,13 @@ class MedicalProfile extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return HasMany<Condition, $this>
+     */
+    public function conditions(): HasMany
+    {
+        return $this->hasMany(Condition::class);
     }
 }
