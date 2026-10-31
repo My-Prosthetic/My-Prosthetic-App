@@ -1,6 +1,5 @@
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { StyleSheet } from "react-native"
@@ -10,38 +9,18 @@ import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import { SettingsOptionModal } from "@/src/components/settings/SettingsOptionModal"
 import { LANGUAGE_OPTIONS, DATE_FORMAT_OPTIONS } from "@/src/components/settings/SettingsOptions"
 import { useSettings } from "@/context/SettingsContext"
-import i18n from "@/translations/i18n"
+import { formatDate } from "@/src/utils/dateFormatter"
 
 export default function DisplayScreen() {
-	const { t } = useTranslation()
 	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	const [tts, setTts] = useState(false)
-
 	type SelectionModal = "language" | "date" | null
 	const [openModal, setOpenModal] = useState<SelectionModal>(null)
 	const { dateFormat, setDateFormat, language, setLanguage } = useSettings()
+
 	const languageLabel =
 		LANGUAGE_OPTIONS.find((option) => option.value === language)?.label ?? language
-
-	const formatDate = (date: Date, format: string) => {
-		const year = date.getFullYear()
-		const month = String(date.getMonth() + 1).padStart(2, "0")
-		const day = String(date.getDate()).padStart(2, "0")
-
-		switch (format) {
-			case "DD-MM-YYYY":
-				return `${day}-${month}-${year}`
-
-			case "MM-DD-YYYY":
-				return `${month}-${day}-${year}`
-
-			case "YYYY-MM-DD":
-			default:
-				return `${year}-${month}-${day}`
-		}
-	}
-
-	// remove one
+	// remove below after done testing
 	const testDate = new Date(2026, 9, 31)
 
 	return (
@@ -121,7 +100,7 @@ export default function DisplayScreen() {
 			<ThemedView variant="divider" colorName="blue1" />
 
 			<ThemedText variant="H2" colorName="blue2">
-				Test date: {formatDate(testDate, dateFormat)}
+				Test date - remove after done testing: {formatDate(testDate, "numeric", new Date(), dateFormat)}
 			</ThemedText>
 
 			<SettingsOptionModal
