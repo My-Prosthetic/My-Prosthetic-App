@@ -310,6 +310,42 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "DODAJ POMIAR",
+		"selectLimb": "WYBIERZ KOŃCZYNĘ",
+		"date": "DATA",
+		"datePlaceholder": "DD-MM-RRRR",
+		"time": "GODZINA",
+		"timePlaceholder": "GG:MM",
+		"schema": "SCHEMAT PUNKTÓW POMIAROWYCH",
+		"circumferenceValues": "WARTOŚCI OBWODÓW",
+		"measurementHeight": "Wysokość pomiaru",
+		"distanceFromTip": "{{distance}} cm od szczyciku",
+		"centimeters": "cm",
+		"addLevel": "Dodaj nowy poziom",
+		"addDistanceTitle": "Podaj odległość nowego miejsca pomiarowego L{{level}} od szczyciku",
+		"editDistanceTitle": "Zmień odległość punktu pomiarowego L{{level}} od szczyciku",
+		"invalidDistance": "Odległość musi być liczbą całkowitą między 0 a 100 i nie może się powtarzać.",
+		"removeLevelTitle": "Usuń poziom pomiaru",
+		"removeLevelConfirmation": "Czy na pewno chcesz usunąć poziom L{{level}}?",
+		"invalidMeasurementValue": "Wprowadź poprawną liczbę.",
+		"missingMeasurement": "Brakuje pomiaru",
+		"invalidMeasurementForLevel": "Pomiar L{{level}} w niepoprawnej formie",
+		"futureMomentError": "Moment pomiaru nie może być z przyszłości",
+		"saveSuccessTitle": "Pomiar zapisany",
+		"saveSuccessMessage": "Pomiar został zapisany.",
+		"saveError": "Nie udało się zapisać pomiaru.",
+		"discardTitle": "Odrzuć pomiar",
+		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
+		"save": "ZAPISZ POMIAR",
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty\npomiarowe",
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów"
+		}
+	},
 	"newIncident": {
 		"title": "NOWY INCYDENT",
 		"time": "GODZINA",

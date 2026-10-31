@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { View, StyleSheet, ScrollView, Dimensions } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 
 import { useAuth } from "@/context/AuthContext"
 import { Carousel } from "@/src/components/Carousel"
-import { formatDateBadge } from "@/src/utils/dateFormatter"
+import { formatDateBadge } from "@/src/utils/date&timeUtils"
 
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
@@ -19,38 +19,75 @@ import IconFile from "@/assets/icons/file.svg"
 import IconLegLogo from "@/assets/icons/leg_logo.svg"
 
 import { getLatestUser } from "@/db/repositories/userRepository"
-
 import { getAllProstheses, Prosthesis } from "@/db/repositories/prosthesisRepository"
-
-//TODO pasek ostatniej aktywności: 1. poprawić layout   2. Możliwość generowania dowolnie długiej listy na podstawie danych/json
+import { useProsthesis } from "@/context/SelectedProsthesisContext"
 
 export default function HomeScreen() {
 	const [currentDate, setCurrentDate] = useState(() => new Date())
 	const [userName, setUserName] = useState<string>("")
+	const { selectedProsthesis, setSelectedProsthesis } = useProsthesis()
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
-	const router = useRouter()
-
-	const { i18n } = useTranslation()
-	const { colors } = useTheme()
+	const selectedRef = useRef(selectedProsthesis)
 	const { status } = useAuth()
 
+	const router = useRouter()
+	const { i18n } = useTranslation()
+	const { colors } = useTheme()
 	const styles = getStyles(colors)
+
+	useEffect(() => {
+		selectedRef.current = selectedProsthesis
+	}, [selectedProsthesis])
 
 	useFocusEffect(
 		useCallback(() => {
 			let isActive = true
 
-			void getAllProstheses()
-				.then((data) => {
-					if (isActive) setProstheses(data)
-				})
-				.catch((error) => console.error("Błąd odczytu protez:", error))
+			const fetchProstheses = async () => {
+				try {
+					const data = await getAllProstheses()
+					if (!isActive) return
+
+					setProstheses(data)
+
+					if (data.length === 0) {
+						setSelectedProsthesis(null)
+						return
+					}
+
+					const current = selectedRef.current
+					const exists = current && data.some((p) => p.id === current.id)
+
+					if (!exists) {
+						setSelectedProsthesis(data[0])
+					}
+				} catch (error) {
+					console.error("Błąd odczytu protez:", error)
+				}
+			}
+
+			void fetchProstheses()
 
 			return () => {
 				isActive = false
 			}
-		}, [])
+		}, [setSelectedProsthesis])
 	)
+
+	const handleCarouselChange = useCallback(
+		(index: number) => {
+			if (index < prostheses.length) {
+				setSelectedProsthesis(prostheses[index])
+			}
+		},
+		[prostheses, setSelectedProsthesis]
+	)
+
+	const selectedIndex = useMemo(() => {
+		if (!selectedProsthesis) return 0
+		const index = prostheses.findIndex((p) => p.id === selectedProsthesis.id)
+		return index !== -1 ? index : 0
+	}, [prostheses, selectedProsthesis])
 
 	useEffect(() => {
 		const timer = setInterval(() => setCurrentDate(new Date()), 60_000)
@@ -107,7 +144,6 @@ export default function HomeScreen() {
 
 	//TODO
 	const onHandleShowFullHistory = () => {}
-	const onHandleAddMeasurement = () => {}
 	const onHandleMyFiles = () => {}
 
 	//MOCKS
@@ -178,9 +214,12 @@ export default function HomeScreen() {
 
 					{/* ----------------- SEKCJA: MOJE PROTEZY ----------------- */}
 					<Carousel
+						key={`carousel-${prostheses.length}`}
 						items={prostheses}
+						initialIndex={selectedIndex}
 						renderItem={renderProsthesisCard}
 						renderPlus={renderAddProsthesis}
+						setExternalIndex={handleCarouselChange}
 					/>
 				</ThemedView>
 
@@ -214,7 +253,7 @@ export default function HomeScreen() {
 					<ThemedView
 						variant="wide"
 						colorName="blue2"
-						onPress={onHandleAddMeasurement}
+						onPress={() => router.push("./measure/")}
 						leftChild={<IconMeasure color={colors.bg_0} />}
 						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} />}

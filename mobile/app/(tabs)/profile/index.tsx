@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { ScrollView, StyleSheet, View } from "react-native"
 
 import { useTheme } from "@/context/ThemeContext"
+import { useRouter } from "expo-router"
 import {
 	addMedicalCondition,
 	addMedicalMedication,
@@ -26,6 +27,7 @@ import IconMedicalReport from "@/assets/icons/medical-report-clipboard.svg"
 
 export default function ProfileScreen() {
 	const { colors } = useTheme()
+	const router = useRouter()
 
 	const [selectedKLevel, setSelectedKLevel] = useState<KLevelId | null>(null)
 	const [isKLevelOpen, setIsKLevelOpen] = useState(false)
@@ -124,7 +126,6 @@ export default function ProfileScreen() {
 	}
 
 	//TODO
-	const onHandleAddMeasurement = () => {}
 	const onHandleMyFiles = () => {}
 	const onHandleRecommendations = () => {}
 
@@ -222,7 +223,7 @@ export default function ProfileScreen() {
 							style={styles.actionButton}
 							variant="wide"
 							colorName="blue2"
-							onPress={onHandleAddMeasurement}
+							onPress={() => router.push("/profile/measurements")}
 							leftChild={<IconMeasure color={colors.bg_0} />}
 							centerChild={<ThemedText tx="profile.addMeasurement" variant="H1" colorName="bg_0" />}
 							rightChild={<IconChevronRight color={colors.bg_0} />}
