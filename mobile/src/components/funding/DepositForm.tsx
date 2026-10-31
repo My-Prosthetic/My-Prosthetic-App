@@ -327,5 +327,3 @@ const getStyles = (colors: ThemeColors) =>
 		fieldLabel: { marginBottom: 8 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
 	})
-	return styles
-}
