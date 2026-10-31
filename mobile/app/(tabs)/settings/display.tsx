@@ -18,7 +18,6 @@ import { useTranslation } from "react-i18next"
 import Slider from "@react-native-community/slider"
 import { useTts } from "@/src/hooks/useTts"
 
-
 export default function DisplayScreen() {
 	const { colors, colorMode, highContrast, setColorMode, setHighContrast } = useTheme()
 	type SelectionModal = "language" | "date" | "fontSize" | null
@@ -153,7 +152,6 @@ export default function DisplayScreen() {
 				</ThemedText>
 
 				<ThemedView variant="divider" colorName="blue1" />
-
 
 				{/* LANGUAGE & REGION SETTINGS */}
 				<ThemedText
