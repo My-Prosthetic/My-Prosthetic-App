@@ -2,7 +2,6 @@ import type {
 	CreateMeasureLevelInput,
 	MeasureWithLevels,
 } from "@/db/repositories/measuresRepository"
-import type { FormatHourOptions } from "@/src/utils/hourFormatter"
 
 export type MeasurementLevel = Omit<CreateMeasureLevelInput, "value"> & {
 	value: string
@@ -15,17 +14,6 @@ export const INITIAL_MEASUREMENTS: MeasurementLevel[] = [
 ]
 
 export const MAX_MEASUREMENT_LEVELS = 5
-
-export function formatDateForStorage(date: Date): string {
-	const year = date.getFullYear()
-	const month = String(date.getMonth() + 1).padStart(2, "0")
-	const day = String(date.getDate()).padStart(2, "0")
-	return `${year}-${month}-${day}`
-}
-
-export function formatTimeForStorage({ hour, minute }: FormatHourOptions): string {
-	return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-}
 
 export function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]

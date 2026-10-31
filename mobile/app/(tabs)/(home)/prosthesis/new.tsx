@@ -11,7 +11,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { Carousel } from "@/src/components/Carousel"
-import { formatDate } from "@/src/utils/dateFormatter"
+import { formatDate } from "@/src/utils/date&timeUtils"
 
 import {
 	AmputationLevel,

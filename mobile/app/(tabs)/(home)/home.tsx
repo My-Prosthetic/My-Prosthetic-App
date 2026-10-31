@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 
 import { useAuth } from "@/context/AuthContext"
 import { Carousel } from "@/src/components/Carousel"
-import { formatDateBadge } from "@/src/utils/dateFormatter"
+import { formatDateBadge } from "@/src/utils/date&timeUtils"
 
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
