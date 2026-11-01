@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { Alert, ScrollView, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 import type { ParseKeys } from "i18next"
 
+import IconCheck from "@/assets/icons/check.svg"
 import { useTheme } from "@/context/ThemeContext"
 import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import {
@@ -11,7 +11,7 @@ import {
 	hasExportableData,
 	type ProsthesisExportSelection,
 } from "@/db/repositories/exportRepository"
-import { DateRangePickerModal } from "@/src/components/settings/DateRangePickerModal"
+import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
@@ -94,7 +94,7 @@ function CheckRow({ tx, checked, onPress, indented = false }: CheckRowProps) {
 					},
 				]}
 			>
-				{checked && <Ionicons name="checkmark" size={22} color={colors.bg_0} />}
+				{checked && <IconCheck width={22} height={22} color={colors.bg_0} />}
 			</View>
 		</ThemedView>
 	)
@@ -124,7 +124,7 @@ export default function ExportDataScreen() {
 	>({})
 	const [fromDate, setFromDate] = useState<Date | null>(null)
 	const [toDate, setToDate] = useState<Date | null>(null)
-	const [datePickerVisible, setDatePickerVisible] = useState(false)
+	const [activeDate, setActiveDate] = useState<"from" | "to" | null>(null)
 	const [isGenerating, setIsGenerating] = useState(false)
 	const [isSharing, setIsSharing] = useState(false)
 	const [generatedFile, setGeneratedFile] = useState<GeneratedExportFile | null>(null)
@@ -140,13 +140,10 @@ export default function ExportDataScreen() {
 		[locale]
 	)
 
-	const dateRangeLabel =
-		fromDate && toDate
-			? t("settings.export.selectedDateRange", {
-					from: compactDateFormatter.format(fromDate),
-					to: compactDateFormatter.format(toDate),
-				})
-			: t("settings.export.datePlaceholder")
+	const today = new Date()
+	const defaultFromDate = new Date(today)
+	defaultFromDate.setDate(defaultFromDate.getDate() - 30)
+	const datePickerMaximumDate = activeDate === "from" && toDate && toDate < today ? toDate : today
 
 	useEffect(() => {
 		const loadProstheses = async () => {
@@ -382,24 +379,36 @@ export default function ExportDataScreen() {
 						<View style={styles.dateRow}>
 							<ThemedText tx="settings.export.dateRange" variant="H2" colorName="blue2" />
 
-							<ThemedView
-								onPress={() => setDatePickerVisible(true)}
-								borderColor="blue1"
-								colorName="bg_1"
-								style={styles.dateButton}
-								accessibilityRole="button"
-							>
-								<ThemedText
-									variant="H4"
-									colorName="blue2"
-									numberOfLines={1}
-									adjustsFontSizeToFit
-									minimumFontScale={0.8}
-									style={styles.dateButtonText}
-								>
-									{dateRangeLabel}
-								</ThemedText>
-							</ThemedView>
+							<View style={styles.dateButtons}>
+								{(["from", "to"] as const).map((field) => {
+									const date = field === "from" ? fromDate : toDate
+									const label =
+										field === "from" ? "settings.export.fromDate" : "settings.export.toDate"
+									return (
+										<ThemedView
+											key={field}
+											onPress={() => setActiveDate(field)}
+											borderColor="blue1"
+											colorName="bg_1"
+											style={styles.dateButton}
+											accessibilityRole="button"
+											accessibilityLabel={t(label)}
+										>
+											<ThemedText tx={label} variant="H5" colorName="blue2" />
+											<ThemedText
+												variant="H4"
+												colorName="blue2"
+												numberOfLines={1}
+												adjustsFontSizeToFit
+												minimumFontScale={0.8}
+												style={styles.dateButtonText}
+											>
+												{date ? compactDateFormatter.format(date) : "—"}
+											</ThemedText>
+										</ThemedView>
+									)
+								})}
+							</View>
 						</View>
 
 						<CheckRow
@@ -486,16 +495,18 @@ export default function ExportDataScreen() {
 				</View>
 			</ScrollView>
 
-			<DateRangePickerModal
-				visible={datePickerVisible}
-				initialFromDate={fromDate}
-				initialToDate={toDate}
-				onClose={() => setDatePickerVisible(false)}
-				onSave={(from, to) => {
-					setFromDate(from)
-					setToDate(to)
+			<DatePickerModal
+				key={activeDate ?? "closed"}
+				visible={activeDate !== null}
+				initialDate={activeDate === "from" ? (fromDate ?? defaultFromDate) : (toDate ?? today)}
+				minimumDate={activeDate === "to" ? (fromDate ?? undefined) : undefined}
+				maximumDate={datePickerMaximumDate}
+				onClose={() => setActiveDate(null)}
+				onSave={(date) => {
+					const selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+					if (activeDate === "from") setFromDate(selectedDate)
+					if (activeDate === "to") setToDate(selectedDate)
 					setGeneratedFile(null)
-					setDatePickerVisible(false)
 				}}
 			/>
 		</ThemedView>
@@ -573,12 +584,17 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
+		flexWrap: "wrap",
 		gap: 8,
 	},
+	dateButtons: {
+		flexDirection: "row",
+		gap: 6,
+	},
 	dateButton: {
-		width: 102,
-		minHeight: 30,
-		paddingHorizontal: 8,
+		width: 82,
+		minHeight: 44,
+		paddingHorizontal: 4,
 		borderRadius: 8,
 		flexShrink: 0,
 	},

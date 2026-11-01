@@ -69,6 +69,8 @@
 	},
 	"common": {
 		"cancel": "ANULUJ",
+		"cancelDate": "Anuluj",
+		"enterDate": "Wprowadź {{date}}",
 		"error": "Błąd",
 		"save": "ZAPISZ",
 		"delete": "Usuń",

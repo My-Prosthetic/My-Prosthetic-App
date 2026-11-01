@@ -152,17 +152,16 @@ async function getIncidentsForDateRange(fromIso: string, toIso: string) {
 		}
 	}
 
-	const where = [`${dateColumn} >= ?`, `${dateColumn} <= ?`]
-
-	if (columns.has("deleted_at")) {
-		where.push("deleted_at IS NULL")
-	}
+	const conditions = [
+		`${dateColumn} BETWEEN ? AND ?`,
+		columns.has("deleted_at") && "deleted_at IS NULL",
+	].filter((condition): condition is string => Boolean(condition))
 
 	const rows = await client.getAllAsync<RawExportRow>(
 		`
 			SELECT *
 			FROM incidents
-			WHERE ${where.join(" AND ")}
+			WHERE ${conditions.join(" AND ")}
 			ORDER BY ${dateColumn} ASC
 		`,
 		[fromIso, toIso]

@@ -69,6 +69,8 @@
 	},
 	"common": {
 		"cancel": "CANCEL",
+		"cancelDate": "Cancel",
+		"enterDate": "Enter {{date}}",
 		"error": "Error",
 		"save": "SAVE",
 		"delete": "DELETE",
