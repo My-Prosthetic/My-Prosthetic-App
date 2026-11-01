@@ -3,12 +3,15 @@
 namespace Tests\Feature;
 
 use App\Enums\ComponentType;
+use App\Enums\IncidentMediaKind;
 use App\Enums\SocketView;
 use App\Models\Component;
 use App\Models\Incident;
+use App\Models\IncidentMedia;
 use App\Models\Prosthesis;
 use App\Models\User;
 use App\ValueObjects\PainPoint;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +20,7 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
+use ValueError;
 
 class IncidentTest extends TestCase
 {
@@ -241,5 +245,77 @@ class IncidentTest extends TestCase
         $this->assertContains(['prosthesis_id'], $indexedColumns);
         $this->assertContains(['component_id'], $indexedColumns);
         $this->assertContains(['occurred_at'], $indexedColumns);
+    }
+
+    public function test_incident_has_media(): void
+    {
+        $incident = Incident::factory()->create();
+
+        $media = $incident->media()->create([
+            'kind' => 'photo',
+            'path' => "incidents/{$incident->id}/abrasion.jpg",
+            'mime_type' => 'image/jpeg',
+            'size_bytes' => 245_760,
+        ]);
+
+        $this->assertTrue(Str::isUuid($media->id));
+        $this->assertTrue($media->incident->is($incident));
+        $this->assertTrue($incident->media->contains($media));
+        $this->assertSame(IncidentMediaKind::PHOTO, $media->refresh()->kind);
+        $this->assertSame(245_760, $media->size_bytes);
+    }
+
+    public function test_model_rejects_an_unknown_media_kind(): void
+    {
+        $this->expectException(ValueError::class);
+
+        new IncidentMedia(['kind' => 'video']);
+    }
+
+    public function test_database_rejects_an_unknown_media_kind(): void
+    {
+        $incident = Incident::factory()->create();
+
+        $this->expectException(QueryException::class);
+
+        DB::table('incident_media')->insert([
+            'id' => (string) Str::uuid(),
+            'incident_id' => $incident->id,
+            'kind' => 'video',
+            'path' => "incidents/{$incident->id}/gait.mp4",
+            'mime_type' => 'video/mp4',
+            'size_bytes' => 1_048_576,
+        ]);
+    }
+
+    public function test_media_cannot_be_moved_to_another_incident_by_mass_assignment(): void
+    {
+        $otherIncident = Incident::factory()->create();
+
+        $media = new IncidentMedia([
+            'incident_id' => $otherIncident->id,
+            'kind' => 'voice_note',
+        ]);
+
+        $this->assertNull($media->incident_id);
+        $this->assertSame(IncidentMediaKind::VOICE_NOTE, $media->kind);
+    }
+
+    public function test_deleting_the_patient_deletes_incident_media_including_that_of_deleted_incidents(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+        $activeMedia = IncidentMedia::factory()->for(Incident::factory()->for($prosthesis))->create();
+        $mediaOfDeletedIncident = IncidentMedia::factory()->for(Incident::factory()->for($prosthesis))->create();
+        $mediaOfDeletedIncident->incident->delete();
+
+        $prosthesis->user->delete();
+
+        $this->assertModelMissing($activeMedia);
+        $this->assertModelMissing($mediaOfDeletedIncident);
+    }
+
+    public function test_media_incident_column_is_indexed(): void
+    {
+        $this->assertContains(['incident_id'], array_column(Schema::getIndexes('incident_media'), 'columns'));
     }
 }
