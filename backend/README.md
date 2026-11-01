@@ -281,6 +281,33 @@ Run the focused access tests from this directory:
 php vendor/bin/phpunit tests/Feature/PatientProsthesisAccessTest.php
 ```
 
+## Incident log persistence
+
+An `Incident` belongs to one of the patient's prostheses and may point to one of
+its components. `IncidentMedia` rows reference the incident's photos and voice notes.
+
+| Relation | Returns |
+|---|---|
+| `User::incidents()` | The patient's incidents across all prostheses (`hasManyThrough`) |
+| `Prosthesis::incidents()` / `Component::incidents()` | Incidents of that equipment (`hasMany`) |
+| `Incident::media()` | Photos and voice notes (`hasMany`) |
+
+`type`, `activity`, `intensity`, `description` and `pain_point` are encrypted
+with `APP_KEY`, so they cannot be filtered or sorted in SQL. Losing `APP_KEY`
+loses this data; rotate it only through `APP_PREVIOUS_KEYS`. `pain_point` is
+cast to the `App\ValueObjects\PainPoint` value object (`x` and `y` between 0 and
+1, and a socket `view`). A media `path` is relative to the private `local` disk.
+
+Incidents are soft-deleted and stay hidden while their prosthesis is
+soft-deleted. Permanently deleting a component sets `component_id` to `null`, and
+deleting the patient cascades to incidents and media. Foreign keys are not mass
+assignable. The model does not check that the component belongs to the same
+prosthesis, the intensity range or media limits; the API/sync layer must.
+
+```bash
+php artisan test --filter=IncidentTest
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
