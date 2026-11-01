@@ -9,6 +9,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { WaveFormLayout } from "@/src/components/login/WaveFormLayout"
 import { AccountApiError, changeAccountPassword } from "@/src/services/settingsAccountService"
+import { getPasswordRequirements } from "@/src/utils/passwordRequirements"
 import PasswordInvalidIcon from "@/assets/icons/password-invalid.svg"
 import PasswordValidIcon from "@/assets/icons/password-valid.svg"
 
@@ -22,33 +23,15 @@ export default function ChangePasswordScreen() {
 	const [confirmPassword, setConfirmPassword] = useState("")
 	const [saving, setSaving] = useState(false)
 	const [attemptedSubmit, setAttemptedSubmit] = useState(false)
-	const [showRequirements, setShowRequirements] = useState(false)
 	const [showConfirmError, setShowConfirmError] = useState(false)
 
-	const missingRequirements = [
-		{
-			key: "length",
-			met: Array.from(newPassword).length >= 12,
-			label: t("signup.passwordRules.minLength"),
-		},
-		{ key: "upper", met: /\p{Lu}/u.test(newPassword), label: t("signup.passwordRules.uppercase") },
-		{ key: "lower", met: /\p{Ll}/u.test(newPassword), label: t("signup.passwordRules.lowercase") },
-		{ key: "number", met: /\p{N}/u.test(newPassword), label: t("signup.passwordRules.number") },
-		{
-			key: "symbol",
-			met: /[\p{P}\p{S}]/u.test(newPassword),
-			label: t("signup.passwordRules.symbol"),
-		},
-		{
-			key: "different",
-			met: !currentPassword || newPassword !== currentPassword,
-			label: t("settings34.password.sameAsCurrent"),
-		},
-	].filter((rule) => !rule.met)
+	const passwordRequirements = getPasswordRequirements(newPassword, confirmPassword)
+	const missingRequirements = passwordRequirements.filter((rule) => !rule.valid)
+	const sameAsCurrent = !!currentPassword && newPassword === currentPassword
 
 	const newPasswordChecked = newPassword.length > 0 || attemptedSubmit
-	const newPasswordInvalid = newPasswordChecked && missingRequirements.length > 0
-	const newPasswordValid = newPassword.length > 0 && missingRequirements.length === 0
+	const newPasswordInvalid = newPasswordChecked && (missingRequirements.length > 0 || sameAsCurrent)
+	const newPasswordValid = newPassword.length > 0 && !newPasswordInvalid
 	const confirmChecked = confirmPassword.length > 0 || attemptedSubmit
 	const confirmInvalid =
 		confirmChecked && (confirmPassword.length === 0 || confirmPassword !== newPassword)
@@ -70,10 +53,7 @@ export default function ChangePasswordScreen() {
 			Alert.alert(t("settings34.common.error"), t("settings34.password.sameAsCurrent"))
 			return
 		}
-		if (missingRequirements.length > 0) {
-			setShowRequirements(true)
-			return
-		}
+		if (missingRequirements.length > 0) return
 
 		setSaving(true)
 		try {
@@ -82,7 +62,6 @@ export default function ChangePasswordScreen() {
 			setNewPassword("")
 			setConfirmPassword("")
 			setAttemptedSubmit(false)
-			setShowRequirements(false)
 			setShowConfirmError(false)
 			Alert.alert(t("settings34.password.successTitle"), t("settings34.password.successMessage"), [
 				{ text: t("settings34.common.ok"), onPress: () => router.back() },
@@ -135,10 +114,7 @@ export default function ChangePasswordScreen() {
 								<ThemedInput
 									variant="password"
 									value={newPassword}
-									onChangeText={(value) => {
-										setNewPassword(value)
-										setShowRequirements(false)
-									}}
+									onChangeText={setNewPassword}
 									viewStyle={[styles.input, newPasswordInvalid && { borderColor: colors.false }]}
 									textStyle={styles.inputWithIcon}
 									placeholder=""
@@ -147,37 +123,40 @@ export default function ChangePasswordScreen() {
 									editable={!saving}
 								/>
 								{newPasswordInvalid ? (
-									<Pressable
-										onPress={() => setShowRequirements((opened) => !opened)}
-										accessibilityRole="button"
-										accessibilityLabel={t("signup.passwordRequirements")}
-										accessibilityState={{ expanded: showRequirements }}
-										style={styles.feedbackIcon}
-									>
+									<View style={styles.feedbackIcon} pointerEvents="none">
 										<PasswordInvalidIcon width={26} height={26} color={colors.false} />
-									</Pressable>
+									</View>
 								) : newPasswordValid ? (
 									<View style={styles.feedbackIcon} pointerEvents="none">
 										<PasswordValidIcon width={20} height={17} color={colors.true} />
 									</View>
 								) : null}
 							</View>
-							{newPasswordInvalid && showRequirements && (
+							{(newPassword.length > 0 || confirmPassword.length > 0) && (
 								<ThemedView
 									colorName="bg_0"
-									style={[styles.requirementsBox, { borderColor: colors.false }]}
+									style={[styles.requirementsBox, { borderColor: colors.blue1 }]}
 								>
 									<ThemedText variant="H2" colorName="graphite0" style={styles.requirementsTitle}>
 										{t("signup.passwordRequirements")}
 									</ThemedText>
-									{missingRequirements.map((rule) => (
-										<View key={rule.key} style={styles.requirementRow}>
-											<PasswordInvalidIcon width={15} height={15} color={colors.false} />
+									{passwordRequirements.map((rule) => (
+										<View key={rule.id} style={styles.requirementRow}>
+											{rule.valid ? (
+												<PasswordValidIcon width={15} height={15} color={colors.true} />
+											) : (
+												<PasswordInvalidIcon width={15} height={15} color={colors.false} />
+											)}
 											<ThemedText variant="H4" colorName="graphite0" style={styles.requirementText}>
-												{rule.label}
+												{t(rule.label)}
 											</ThemedText>
 										</View>
 									))}
+									{sameAsCurrent && (
+										<ThemedText variant="H4" colorName="false">
+											{t("settings34.password.sameAsCurrent")}
+										</ThemedText>
+									)}
 								</ThemedView>
 							)}
 						</View>

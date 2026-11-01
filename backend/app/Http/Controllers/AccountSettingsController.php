@@ -53,8 +53,19 @@ class AccountSettingsController extends Controller
     {
         $patient = $this->patient($request);
 
-        DB::transaction(function () use ($patient): void {
+        $validated = $request->validate([
+            'current_password' => ['required', 'string'],
+        ]);
+
+        DB::transaction(function () use ($patient, $validated): void {
             $lockedPatient = User::query()->lockForUpdate()->findOrFail($patient->getKey());
+
+            if (! Hash::check($validated['current_password'], (string) $lockedPatient->getAuthPassword())) {
+                throw ValidationException::withMessages([
+                    'current_password' => ['The current password is incorrect.'],
+                ]);
+            }
+
             $patientId = $lockedPatient->getKey();
 
             DB::table('components')->whereIn('prosthesis_id',

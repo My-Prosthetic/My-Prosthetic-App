@@ -15,13 +15,15 @@ export default function NotificationsScreen() {
 	const { colors, themeType } = useTheme()
 	const { preferences, ready, updatePreference } = useSettingsPreferences()
 	const timeOptions = useMemo(
-		() =>
-			Array.from({ length: 48 }, (_, index) => {
+		() => [
+			{ value: "none", label: t("settings34.notifications.doNotNotify") },
+			...Array.from({ length: 48 }, (_, index) => {
 				const hour = String(Math.floor(index / 2)).padStart(2, "0")
 				const minute = index % 2 === 0 ? "00" : "30"
 				const time = `${hour}:${minute}`
 				return { value: time, label: `${time} (${t("settings34.notifications.everyDay")})` }
 			}),
+		],
 		[t]
 	)
 

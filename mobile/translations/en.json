@@ -653,6 +653,7 @@
 			"measurementTime": "Measurement reminder time",
 			"chooseTime": "Choose a time",
 			"everyDay": "every day",
+			"doNotNotify": "Do not notify",
 			"info": "Replacement dates and warranty expiry notifications are configured individually in each prosthetic component's details."
 		},
 		"account": {
@@ -678,6 +679,9 @@
 			"accountSettings": "ACCOUNT SETTINGS",
 			"changePassword": "Change password",
 			"deleteAccount": "Delete account",
+			"passwordPrompt": "Enter your current password to delete your account.",
+			"passwordRequired": "Enter your current password.",
+			"deleteError": "Could not delete your account. Please try again.",
 			"deleteConfirm": "Do you want to permanently delete your account and its data? This cannot be undone.",
 			"localCleanupError": "Your account was deleted on the server, but some data could not be cleared from this device. Clear the app's data before using it again."
 		},
@@ -697,6 +701,7 @@
 		"api": {
 			"configuration": "API server configuration is missing.",
 			"unauthorized": "Your session has expired. Please sign in again.",
+			"forbidden": "You do not have permission to perform this action.",
 			"wrongPassword": "Your current password is incorrect.",
 			"validation": "Could not save the changes. Check the entered information.",
 			"network": "Could not connect to the server. Check your connection.",

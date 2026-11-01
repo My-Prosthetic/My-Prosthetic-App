@@ -89,6 +89,39 @@ class AccountSettingsTest extends TestCase
         $this->withToken($otherToken)->getJson('/api/profile')->assertUnauthorized();
     }
 
+    public function test_password_change_rejects_same_password_without_revoking_tokens(): void
+    {
+        $patient = User::factory()->create(['password' => 'SamePassword123!']);
+        $originalHash = $patient->getAuthPassword();
+        $this->withToken($patient->createToken('this-device')->plainTextToken);
+        $patient->createToken('other-device');
+
+        $this->putJson('/api/account/password', [
+            'current_password' => 'SamePassword123!',
+            'password' => 'SamePassword123!',
+            'password_confirmation' => 'SamePassword123!',
+        ])->assertUnprocessable()->assertJsonValidationErrors('password');
+
+        $this->assertSame($originalHash, $patient->fresh()->getAuthPassword());
+        $this->assertDatabaseCount('personal_access_tokens', 2);
+    }
+
+    public function test_deleting_account_requires_correct_current_password(): void
+    {
+        $patient = User::factory()->create();
+        $prosthesis = Prosthesis::factory()->for($patient)->create();
+        $this->withToken($patient->createToken('this-device')->plainTextToken);
+
+        $this->deleteJson('/api/account')->assertUnprocessable()
+            ->assertJsonValidationErrors('current_password');
+        $this->deleteJson('/api/account', ['current_password' => 'wrong-password'])
+            ->assertUnprocessable()->assertJsonValidationErrors('current_password');
+
+        $this->assertDatabaseHas('users', ['id' => $patient->id]);
+        $this->assertDatabaseHas('prostheses', ['id' => $prosthesis->id]);
+        $this->assertDatabaseHas('personal_access_tokens', ['tokenable_id' => $patient->id]);
+    }
+
     public function test_deleting_account_erases_patient_data_without_erasing_other_users(): void
     {
         $patient = User::factory()->create(['email' => 'delete-me@example.test']);
@@ -135,7 +168,9 @@ class AccountSettingsTest extends TestCase
         $patient->createToken('other-device');
         $specialist->createToken('specialist-device');
 
-        $this->withToken($token)->deleteJson('/api/account')->assertNoContent();
+        $this->withToken($token)->deleteJson('/api/account', [
+            'current_password' => 'password',
+        ])->assertNoContent();
 
         $this->assertDatabaseMissing('users', ['id' => $patient->id]);
         $this->assertDatabaseMissing('prostheses', ['id' => $prosthesis->id]);

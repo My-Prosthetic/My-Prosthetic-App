@@ -19,7 +19,7 @@ const initialPreferences: SettingsPreferences = {
 	emailEnabled: false,
 	newRecommendations: true,
 	stumpMeasurements: true,
-	measurementTime: "08:00",
+	measurementTime: "none",
 	backgroundSync: true,
 	wifiOnly: true,
 	mediaBackup: false,
@@ -59,7 +59,10 @@ function parsePreferences(raw: string | null): SettingsPreferences {
 	for (const key of Object.keys(initialPreferences) as (keyof SettingsPreferences)[]) {
 		const value = values[key]
 		if (key === "measurementTime") {
-			if (typeof value === "string" && /^(?:[01]\d|2[0-3]):(?:00|30)$/.test(value)) {
+			if (
+				typeof value === "string" &&
+				(value === "none" || /^(?:[01]\d|2[0-3]):(?:00|30)$/.test(value))
+			) {
 				next.measurementTime = value
 			}
 		} else if (typeof value === "boolean") {

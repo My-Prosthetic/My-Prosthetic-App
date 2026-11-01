@@ -5,6 +5,7 @@ import type { AuthenticatedUser } from "@/src/services/authService"
 export type AccountApiErrorKind =
 	| "configuration"
 	| "unauthorized"
+	| "forbidden"
 	| "wrongPassword"
 	| "validation"
 	| "network"
@@ -31,7 +32,8 @@ function mapAccountApiError(error: unknown): AccountApiError {
 	if (!isAxiosError(error)) return new AccountApiError("server")
 
 	const status = error.response?.status
-	if (status === 401 || status === 403) return new AccountApiError("unauthorized", status)
+	if (status === 401) return new AccountApiError("unauthorized", status)
+	if (status === 403) return new AccountApiError("forbidden", status)
 	if (status === 404 || status === 405) return new AccountApiError("unavailable", status)
 	if (status === 422) {
 		return new AccountApiError(
@@ -75,6 +77,6 @@ export async function changeAccountPassword(
 	})
 }
 
-export async function deleteAccount(): Promise<void> {
-	await accountRequest<void>("/account", "DELETE")
+export async function deleteAccount(currentPassword: string): Promise<void> {
+	await accountRequest<void>("/account", "DELETE", { current_password: currentPassword })
 }

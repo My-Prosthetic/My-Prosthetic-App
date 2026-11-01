@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
-import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Alert, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { Redirect, router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
+import { ThemedInput } from "@/src/components/ThemedInput"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { SettingsRow } from "@/src/components/settings/SettingsRow"
@@ -30,6 +31,9 @@ export default function AccountScreen() {
 	const [profile, setProfile] = useState<AuthenticatedUser | null>(null)
 	const [profileError, setProfileError] = useState(false)
 	const [deleting, setDeleting] = useState(false)
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+	const [deletePassword, setDeletePassword] = useState("")
+	const deleteInFlight = useRef(false)
 
 	useEffect(() => {
 		if (status !== "AUTHENTICATED") return
@@ -48,16 +52,32 @@ export default function AccountScreen() {
 	}, [status])
 
 	async function performDelete() {
-		if (deleting) return
-		setDeleting(true)
-		try {
-			await deleteAccount()
-		} catch (error: unknown) {
-			const key = error instanceof AccountApiError ? error.kind : "server"
-			Alert.alert(t("settings34.common.error"), t(`settings34.api.${key}`))
-			setDeleting(false)
+		if (deleteInFlight.current) return
+		if (!deletePassword) {
+			Alert.alert(t("settings34.common.error"), t("settings34.account.passwordRequired"))
 			return
 		}
+		deleteInFlight.current = true
+		setDeleting(true)
+		const password = deletePassword
+		setDeletePassword("")
+		try {
+			await deleteAccount(password)
+		} catch (error: unknown) {
+			const key = error instanceof AccountApiError ? error.kind : "server"
+			Alert.alert(
+				t("settings34.common.error"),
+				key === "wrongPassword"
+					? t("settings34.api.wrongPassword")
+					: key === "server" || key === "validation"
+						? t("settings34.account.deleteError")
+						: t(`settings34.api.${key}`)
+			)
+			setDeleting(false)
+			deleteInFlight.current = false
+			return
+		}
+		setDeleteDialogOpen(false)
 
 		try {
 			await closeDeletedAccountSession()
@@ -70,16 +90,13 @@ export default function AccountScreen() {
 
 	function confirmDelete() {
 		if (deleting) return
-		Alert.alert(t("settings34.account.deleteAccount"), t("settings34.account.deleteConfirm"), [
-			{ text: t("settings34.common.cancel"), style: "cancel" },
-			{
-				text: t("settings34.account.deleteAccount"),
-				style: "destructive",
-				onPress: () => {
-					void performDelete()
-				},
-			},
-		])
+		setDeleteDialogOpen(true)
+	}
+
+	function cancelDelete() {
+		if (deleting) return
+		setDeletePassword("")
+		setDeleteDialogOpen(false)
 	}
 
 	function manualSync() {
@@ -98,6 +115,61 @@ export default function AccountScreen() {
 
 	return (
 		<View style={[styles.screen, { backgroundColor: colors.bg_1 }]}>
+			<Modal
+				transparent
+				visible={deleteDialogOpen}
+				animationType="fade"
+				onRequestClose={cancelDelete}
+			>
+				<View style={styles.dialogBackdrop}>
+					<View
+						pointerEvents="none"
+						style={[styles.dialogScrim, { backgroundColor: colors.blue2 }]}
+					/>
+					<ThemedView colorName="bg_0" style={styles.dialog}>
+						<ThemedText variant="H2" colorName="blue2">
+							{t("settings34.account.deleteAccount")}
+						</ThemedText>
+						<ThemedText variant="H4" colorName="blue2">
+							{t("settings34.account.deleteConfirm")}
+						</ThemedText>
+						<ThemedText variant="H4" colorName="blue2">
+							{t("settings34.account.passwordPrompt")}
+						</ThemedText>
+						<ThemedInput
+							variant="password"
+							value={deletePassword}
+							onChangeText={setDeletePassword}
+							placeholder=""
+							autoComplete="current-password"
+							accessibilityLabel={t("settings34.account.passwordPrompt")}
+							editable={!deleting}
+						/>
+						<View style={styles.dialogActions}>
+							<Pressable
+								accessibilityRole="button"
+								disabled={deleting}
+								onPress={cancelDelete}
+								style={styles.dialogButton}
+							>
+								<ThemedText variant="H4" colorName="blue2">
+									{t("settings34.common.cancel")}
+								</ThemedText>
+							</Pressable>
+							<Pressable
+								accessibilityRole="button"
+								disabled={deleting}
+								onPress={() => void performDelete()}
+								style={styles.dialogButton}
+							>
+								<ThemedText variant="H4" colorName="false">
+									{t("settings34.account.deleteAccount")}
+								</ThemedText>
+							</Pressable>
+						</View>
+					</ThemedView>
+				</View>
+			</Modal>
 			<View style={styles.headerContainer}>
 				<ThemedHeader tx="settings34.account.title" />
 			</View>
@@ -242,6 +314,17 @@ export default function AccountScreen() {
 
 const styles = StyleSheet.create({
 	screen: { flex: 1 },
+	dialogBackdrop: { flex: 1, justifyContent: "center", paddingHorizontal: "8%" },
+	dialogScrim: { position: "absolute", top: 0, right: 0, bottom: 0, left: 0, opacity: 0.65 },
+	dialog: { borderRadius: 16, padding: 20, gap: 16 },
+	dialogActions: { flexDirection: "row", justifyContent: "flex-end", gap: 12 },
+	dialogButton: {
+		minHeight: 44,
+		minWidth: 44,
+		paddingHorizontal: 12,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	headerContainer: { paddingHorizontal: "8%" },
 	scrollContent: { paddingBottom: 48 },
 	profileCard: {

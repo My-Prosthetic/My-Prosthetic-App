@@ -652,6 +652,7 @@
 			"measurementTime": "Godzina przypomnienia o pomiarze",
 			"chooseTime": "Wybierz godzinę",
 			"everyDay": "codziennie",
+			"doNotNotify": "Nie powiadamiaj",
 			"info": "Powiadomienia o dacie wymiany oraz końcu gwarancji konfigurowane są indywidualnie w karcie każdego dodanego podzespołu."
 		},
 		"account": {
@@ -677,6 +678,9 @@
 			"accountSettings": "USTAWIENIA KONTA",
 			"changePassword": "Zmień hasło",
 			"deleteAccount": "Usuń konto",
+			"passwordPrompt": "Podaj aktualne hasło, aby usunąć konto.",
+			"passwordRequired": "Podaj aktualne hasło.",
+			"deleteError": "Nie udało się usunąć konta. Spróbuj ponownie.",
 			"deleteConfirm": "Czy na pewno chcesz trwale usunąć konto i powiązane z nim dane? Tej operacji nie można cofnąć.",
 			"localCleanupError": "Konto zostało usunięte na serwerze, ale nie udało się całkowicie wyczyścić danych na urządzeniu. Wyczyść dane aplikacji przed ponownym użyciem."
 		},
@@ -696,6 +700,7 @@
 		"api": {
 			"configuration": "Brak konfiguracji serwera API.",
 			"unauthorized": "Sesja wygasła. Zaloguj się ponownie.",
+			"forbidden": "Nie masz uprawnień do wykonania tej operacji.",
 			"wrongPassword": "Aktualne hasło jest nieprawidłowe.",
 			"validation": "Nie udało się zapisać zmian. Sprawdź wprowadzone dane.",
 			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie.",
