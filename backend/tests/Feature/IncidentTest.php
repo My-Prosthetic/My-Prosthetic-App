@@ -2,16 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ComponentType;
+use App\Enums\SocketView;
 use App\Models\Component;
 use App\Models\Incident;
 use App\Models\Prosthesis;
 use App\Models\User;
+use App\ValueObjects\PainPoint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class IncidentTest extends TestCase
@@ -104,6 +108,65 @@ class IncidentTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new Incident(['intensity' => 'severe']);
+    }
+
+    public function test_pain_point_is_encrypted_at_rest_and_read_as_a_value_object(): void
+    {
+        $incident = Incident::factory()->create([
+            'pain_point' => ['x' => 0.42, 'y' => 0.8, 'view' => 'top_inside'],
+        ]);
+
+        $storedPainPoint = DB::table('incidents')->where('id', $incident->id)->value('pain_point');
+
+        $this->assertStringNotContainsString('top_inside', $storedPainPoint);
+
+        $painPoint = $incident->refresh()->pain_point;
+
+        $this->assertInstanceOf(PainPoint::class, $painPoint);
+        $this->assertSame(0.42, $painPoint->x);
+        $this->assertSame(0.8, $painPoint->y);
+        $this->assertSame(SocketView::TOP_INSIDE, $painPoint->view);
+    }
+
+    public function test_pain_point_may_be_empty(): void
+    {
+        $incident = Incident::factory()->create(['pain_point' => null]);
+
+        $this->assertNull(DB::table('incidents')->where('id', $incident->id)->value('pain_point'));
+        $this->assertNull($incident->refresh()->pain_point);
+    }
+
+    /**
+     * @param  array<string, mixed>  $painPoint
+     */
+    #[DataProvider('painPointsOffTheSocketDiagram')]
+    public function test_pain_point_must_lie_on_the_socket_diagram(array $painPoint): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Incident(['pain_point' => $painPoint]);
+    }
+
+    public static function painPointsOffTheSocketDiagram(): iterable
+    {
+        yield 'x beyond the right edge' => [['x' => 1.2, 'y' => 0.5, 'view' => 'side']];
+        yield 'y above the top edge' => [['x' => 0.5, 'y' => -0.1, 'view' => 'side']];
+        yield 'coordinate not a number' => [['x' => '0.5', 'y' => 0.5, 'view' => 'side']];
+        yield 'coordinate missing' => [['y' => 0.5, 'view' => 'side']];
+        yield 'unknown view' => [['x' => 0.5, 'y' => 0.5, 'view' => 'back']];
+        yield 'view missing' => [['x' => 0.5, 'y' => 0.5]];
+    }
+
+    public function test_socket_incident_points_at_a_socket_of_its_own_prosthesis(): void
+    {
+        $prosthesis = Prosthesis::factory()->create();
+
+        $incident = Incident::factory()->for($prosthesis)->onSocket()->create()->refresh();
+
+        $this->assertTrue($incident->component->prosthesis->is($prosthesis));
+        $this->assertSame(ComponentType::SOCKET, $incident->component->type);
+        $this->assertInstanceOf(PainPoint::class, $incident->pain_point);
+        $this->assertContains($incident->type, ['pain', 'abrasion', 'poor_fit']);
     }
 
     public function test_id_and_owners_are_not_mass_assignable(): void

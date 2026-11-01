@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\AsEncryptedInteger;
+use App\Casts\AsPainPoint;
 use Database\Factories\IncidentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'activity',
     'intensity',
     'description',
+    'pain_point',
     'occurred_at',
 ])]
 class Incident extends Model
@@ -54,6 +56,7 @@ class Incident extends Model
             'activity' => 'encrypted',
             'intensity' => AsEncryptedInteger::class,
             'description' => 'encrypted',
+            'pain_point' => AsPainPoint::class,
             'occurred_at' => 'datetime',
         ];
     }
