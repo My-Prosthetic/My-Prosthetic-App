@@ -15,6 +15,7 @@ use Database\Seeders\IncidentSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -96,7 +97,7 @@ class IncidentTest extends TestCase
 
         $storedIntensity = DB::table('incidents')->where('id', $incident->id)->value('intensity');
 
-        $this->assertNotSame('7', $storedIntensity);
+        $this->assertSame('7', Crypt::decryptString($storedIntensity));
         $this->assertSame(7, $incident->refresh()->intensity);
     }
 
@@ -254,7 +255,7 @@ class IncidentTest extends TestCase
 
         $media = $incident->media()->create([
             'kind' => 'photo',
-            'path' => "incidents/{$incident->id}/abrasion.jpg",
+            'path' => "incidents/{$incident->id}/".Str::uuid().'.jpg',
             'mime_type' => 'image/jpeg',
             'size_bytes' => 245_760,
         ]);
@@ -339,5 +340,16 @@ class IncidentTest extends TestCase
 
         $this->assertSame(ComponentType::FOOT, $incidents['mechanical_failure']->component->type);
         $this->assertNull($incidents['mechanical_failure']->intensity);
+    }
+
+    public function test_incident_seeder_does_not_recreate_deleted_demo_incidents(): void
+    {
+        $this->seed(IncidentSeeder::class);
+        Incident::query()->get()->each->delete();
+
+        $this->seed(IncidentSeeder::class);
+
+        $this->assertSame(0, Incident::query()->count());
+        $this->assertSame(3, Incident::withTrashed()->count());
     }
 }

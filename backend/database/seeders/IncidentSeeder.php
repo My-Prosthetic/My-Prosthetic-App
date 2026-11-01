@@ -19,7 +19,7 @@ class IncidentSeeder extends Seeder
         $patient = User::query()->where('email', 'prosthesis.patient@example.com')->firstOrFail();
         $prosthesis = $patient->prostheses()->where('name', 'Demo lower-limb prosthesis')->firstOrFail();
 
-        if ($prosthesis->incidents()->exists()) {
+        if ($prosthesis->incidents()->withTrashed()->exists()) {
             return;
         }
 
