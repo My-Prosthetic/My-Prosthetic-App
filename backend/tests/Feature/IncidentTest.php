@@ -11,6 +11,7 @@ use App\Models\IncidentMedia;
 use App\Models\Prosthesis;
 use App\Models\User;
 use App\ValueObjects\PainPoint;
+use Database\Seeders\IncidentSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -317,5 +318,26 @@ class IncidentTest extends TestCase
     public function test_media_incident_column_is_indexed(): void
     {
         $this->assertContains(['incident_id'], array_column(Schema::getIndexes('incident_media'), 'columns'));
+    }
+
+    public function test_incident_seeder_can_run_twice_without_duplicating_demo_incidents(): void
+    {
+        $this->seed(IncidentSeeder::class);
+        $this->seed(IncidentSeeder::class);
+
+        $patient = User::query()->where('email', 'prosthesis.patient@example.com')->sole();
+        $incidents = $patient->incidents()->with('component')->get()->keyBy('type');
+
+        $this->assertSame(3, Incident::query()->count());
+        $this->assertEqualsCanonicalizing(['pain', 'phantom_pain', 'mechanical_failure'], $incidents->keys()->all());
+
+        $this->assertSame(ComponentType::SOCKET, $incidents['pain']->component->type);
+        $this->assertInstanceOf(PainPoint::class, $incidents['pain']->pain_point);
+
+        $this->assertNull($incidents['phantom_pain']->component);
+        $this->assertNull($incidents['phantom_pain']->pain_point);
+
+        $this->assertSame(ComponentType::FOOT, $incidents['mechanical_failure']->component->type);
+        $this->assertNull($incidents['mechanical_failure']->intensity);
     }
 }
