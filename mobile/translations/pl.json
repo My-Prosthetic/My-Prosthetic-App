@@ -656,5 +656,39 @@
 		"loadError": "Nie udało się wczytać danych komponentu.",
 		"selectDate": "Wybierz datę",
 		"clearDate": "Usuń datę"
+	},
+	"display": {
+		"title": "Wygląd i język aplikacji",
+		"name": "Wygląd i język",
+		"interface": {
+			"title": "Wygląd interfejsu",
+			"darkMode": "Tryb ciemny (Dark Mode)",
+			"contrast": "Tryb wysokiego kontrastu",
+			"fontSize": "Rozmiar tekstu"
+		},
+		"accessibility": {
+			"title": "Ułatwienia dostępu",
+			"tts": "Czytaj ekran na głos (TTS)"
+		},
+		"region": {
+			"title": "Język i region",
+			"language": "Język aplikacji",
+			"date": "Format daty"
+		},
+		"modals": {
+			"chooseLanguage": "Wybierz język",
+			"chooseDateFormat": "Wybierz format daty",
+			"chooseFontSize": "Wybierz rozmiar tekstu"
+		},
+		"fontSize": {
+			"small": "Mały",
+			"medium": "Średni",
+			"large": "Duży",
+			"extraLarge": "Bardzo duży"
+		},
+		"language": {
+			"polish": "Polski",
+			"english": "Angielski"
+		}
 	}
 }
