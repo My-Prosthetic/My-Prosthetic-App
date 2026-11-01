@@ -30,6 +30,7 @@ class IncidentFactory extends Factory
             'prosthesis_id' => Prosthesis::factory(),
             'type' => $incident['type'],
             'activity' => fake()->optional()->randomElement(['walking', 'running', 'sitting', 'standing', 'sport']),
+            'intensity' => $incident['type'] === 'mechanical_failure' ? null : fake()->numberBetween(1, 10),
             'description' => $incident['description'],
             'occurred_at' => fake()->dateTimeBetween('-6 months', 'now'),
         ];

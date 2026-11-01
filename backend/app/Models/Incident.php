@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsEncryptedInteger;
 use Database\Factories\IncidentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'type',
     'activity',
+    'intensity',
     'description',
     'occurred_at',
 ])]
@@ -50,6 +52,7 @@ class Incident extends Model
         return [
             'type' => 'encrypted',
             'activity' => 'encrypted',
+            'intensity' => AsEncryptedInteger::class,
             'description' => 'encrypted',
             'occurred_at' => 'datetime',
         ];

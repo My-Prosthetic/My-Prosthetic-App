@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class IncidentTest extends TestCase
@@ -78,6 +79,31 @@ class IncidentTest extends TestCase
         $this->assertSame('phantom_pain', $incident->type);
         $this->assertSame('sitting', $incident->activity);
         $this->assertSame('Burning sensation in the missing foot.', $incident->description);
+    }
+
+    public function test_intensity_is_encrypted_at_rest_and_read_as_an_integer(): void
+    {
+        $incident = Incident::factory()->create(['intensity' => 7]);
+
+        $storedIntensity = DB::table('incidents')->where('id', $incident->id)->value('intensity');
+
+        $this->assertNotSame('7', $storedIntensity);
+        $this->assertSame(7, $incident->refresh()->intensity);
+    }
+
+    public function test_intensity_may_be_empty(): void
+    {
+        $incident = Incident::factory()->create(['intensity' => null]);
+
+        $this->assertNull(DB::table('incidents')->where('id', $incident->id)->value('intensity'));
+        $this->assertNull($incident->refresh()->intensity);
+    }
+
+    public function test_intensity_must_be_a_whole_number(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Incident(['intensity' => 'severe']);
     }
 
     public function test_id_and_owners_are_not_mass_assignable(): void
