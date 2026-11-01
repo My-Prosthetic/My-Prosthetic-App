@@ -311,6 +311,42 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "ADD MEASUREMENT",
+		"selectLimb": "SELECT LIMB",
+		"date": "DATE",
+		"datePlaceholder": "MM-DD-YYYY",
+		"time": "TIME",
+		"timePlaceholder": "HH:MM",
+		"schema": "MEASUREMENT POINT LAYOUT",
+		"circumferenceValues": "CIRCUMFERENCE VALUES",
+		"measurementHeight": "Measurement height",
+		"distanceFromTip": "{{distance}} cm from the tip",
+		"centimeters": "cm",
+		"addLevel": "Add a new level",
+		"addDistanceTitle": "Enter the distance of new measurement point L{{level}} from the stump tip",
+		"editDistanceTitle": "Change the distance of measurement point L{{level}} from the stump tip",
+		"invalidDistance": "Distance must be an integer between 0 and 100 and must not duplicate another point.",
+		"removeLevelTitle": "Remove measurement level",
+		"removeLevelConfirmation": "Are you sure you want to remove level L{{level}}?",
+		"invalidMeasurementValue": "Enter a valid number.",
+		"missingMeasurement": "A measurement is missing.",
+		"invalidMeasurementForLevel": "Measurement L{{level}} has an invalid format.",
+		"futureMomentError": "The measurement time cannot be in the future.",
+		"saveSuccessTitle": "Measurement saved",
+		"saveSuccessMessage": "The measurement has been saved.",
+		"saveError": "Could not save the measurement.",
+		"discardTitle": "Discard measurement",
+		"discardConfirmation": "Are you sure you want to clear the form and leave?",
+		"save": "SAVE MEASUREMENT",
+		"delete": "DELETE",
+		"history": {
+			"title": "Measurements history",
+			"date": "Date",
+			"points": "Measurement\npoints",
+			"empty": "No data to be displayed for current filters"
+		}
+	},
 	"newIncident": {
 		"title": "NEW INCIDENT",
 		"time": "TIME",
