@@ -287,7 +287,7 @@ export default function JournalScreen() {
 							accessibilityState={{ selected: Boolean(prosthesisId) }}
 						>
 							<ThemedText tx="journal.filter" variant="H2" colorName="blue1" />
-							<FilterIcon color={colors.blue1} width={27} height={27} />
+							<FilterIcon color={colors.blue1} width={25} height={25} />
 						</ThemedView>
 					</View>
 				</ThemedView>
@@ -297,9 +297,9 @@ export default function JournalScreen() {
 					style={styles.addButton}
 					accessibilityLabel={t("home.addIncident")}
 				>
-					<EventIcon color={colors.bg_0} width={27} height={27} />
+					<EventIcon color={colors.bg_0} width={30} height={30} />
 					<ThemedText tx="home.addIncident" variant="H1" colorName="bg_0" style={styles.addText} />
-					<Plus color={colors.bg_0} width={24} height={24} />
+					<Plus color={colors.bg_0} width={20} height={20} />
 				</ThemedView>
 				<View style={[styles.calendar, width < 360 && styles.smallCalendar]}>
 					<View style={styles.monthRow}>
