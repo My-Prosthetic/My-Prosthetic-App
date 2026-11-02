@@ -4,7 +4,10 @@ import * as Crypto from "expo-crypto"
 import { useRouter } from "expo-router"
 import {
 	createMeasure,
+	deleteMeasure,
 	getLatestMeasure,
+	getMeasureById,
+	updateMeasure,
 	type CreateMeasureInput,
 	type CreateMeasureLevelInput,
 } from "@/db/repositories/measuresRepository"
@@ -16,13 +19,14 @@ import {
 	sortAndRenumberLevels,
 	type MeasurementLevel,
 } from "@/src/utils/measurementUtils"
-import { combineDateAndTime, FormatHourOptions } from "../utils/date&timeUtils"
+import { combineDateAndTime, FormatHourOptions, splitMeasuredAt } from "../utils/date&timeUtils"
 import { useTranslation } from "react-i18next"
 import { useProsthesis } from "@/context/SelectedProsthesisContext"
 
 type DistanceDialogTarget = { type: "add" } | { type: "edit"; level: number }
 
-export function useAddMeasurementForm() {
+export function useMeasurementForm(measureId?: string) {
+	const isEditing = measureId !== undefined
 	const router = useRouter()
 	const { t } = useTranslation()
 	const { selectedProsthesis } = useProsthesis()
@@ -53,6 +57,23 @@ export function useAddMeasurementForm() {
 
 		const initializeFromHistory = async () => {
 			try {
+				if (isEditing) {
+					const measure = await getMeasureById(measureId)
+					if (!measure) {
+						Alert.alert(t("common.error"), t("measurements.measureNotFound"))
+						router.back()
+						return
+					}
+
+					const { date, time } = splitMeasuredAt(measure.measuredAt)
+					setSide(measure.side)
+					setLimbType(measure.limbType)
+					setMeasurementLevels(getMeasurementLevelsFromHistory(measure, { keepValues: true }))
+					setMeasurementDate(date)
+					setMeasurementTime(time)
+					return
+				}
+
 				const latestMeasure = await getLatestMeasure()
 
 				if (latestMeasure) {
@@ -65,7 +86,18 @@ export function useAddMeasurementForm() {
 
 				setMeasurementLevels(getMeasurementLevelsFromHistory(latestMeasure))
 			} catch (error) {
-				console.error("Failed to load latest measurement:", error)
+				console.error(
+					isEditing
+						? "Failed to load measurement for editing:"
+						: "Failed to load latest measurement:",
+					error
+				)
+
+				if (isEditing) {
+					Alert.alert(t("common.error"), t("measurements.saveError"))
+					router.back()
+					return
+				}
 
 				if (selectedProsthesis) {
 					setSide(selectedProsthesis.side)
@@ -82,7 +114,7 @@ export function useAddMeasurementForm() {
 		}
 
 		void initializeFromHistory()
-	}, [selectedProsthesis])
+	}, [isEditing, measureId, router, selectedProsthesis, t])
 
 	const reloadLevelsForSelection = async (
 		nextSide: "left" | "right",
@@ -113,14 +145,14 @@ export function useAddMeasurementForm() {
 
 	const handleSideChange = (nextSide: "left" | "right") => {
 		setSide(nextSide)
-		if (isInitializedRef.current) {
+		if (!isEditing && isInitializedRef.current) {
 			void reloadLevelsForSelection(nextSide, limbType)
 		}
 	}
 
 	const handleLimbTypeChange = (nextLimbType: "upper" | "lower") => {
 		setLimbType(nextLimbType)
-		if (isInitializedRef.current) {
+		if (!isEditing && isInitializedRef.current) {
 			void reloadLevelsForSelection(side, nextLimbType)
 		}
 	}
@@ -246,17 +278,22 @@ export function useAddMeasurementForm() {
 			distance: item.distance,
 			value: Number(item.value.trim().replace(",", ".")),
 		}))
-		const input: CreateMeasureInput = {
-			id: Crypto.randomUUID(),
-			measuredAt: combineDateAndTime(measurementDate, measurementTime),
-			side,
-			limbType,
-			levels,
-		}
+		const measuredAt = combineDateAndTime(measurementDate, measurementTime)
 
 		setIsSubmitting(true)
 		try {
-			await createMeasure(input)
+			if (isEditing) {
+				await updateMeasure(measureId, { measuredAt, side, limbType, levels })
+			} else {
+				const input: CreateMeasureInput = {
+					id: Crypto.randomUUID(),
+					measuredAt,
+					side,
+					limbType,
+					levels,
+				}
+				await createMeasure(input)
+			}
 			Alert.alert(t("measurements.saveSuccessTitle"), t("measurements.saveSuccessMessage"), [
 				{ onPress: () => router.back() },
 			])
@@ -268,9 +305,40 @@ export function useAddMeasurementForm() {
 		}
 	}
 
+	const handleDeleteMeasurement = () => {
+		if (!isEditing || isSubmitting || isLoadingConfig) return
+
+		Alert.alert(t("measurements.deleteTitle"), t("measurements.deleteConfirmation"), [
+			{ text: t("common.cancel"), style: "cancel" },
+			{
+				text: t("common.delete"),
+				style: "destructive",
+				onPress: async () => {
+					setIsSubmitting(true)
+					try {
+						const deletedMeasure = await deleteMeasure(measureId)
+						if (!deletedMeasure) {
+							Alert.alert(t("common.error"), t("measurements.measureNotFound"))
+							router.back()
+							return
+						}
+
+						router.back()
+					} catch (error) {
+						console.error("Failed to delete measurement:", error)
+						Alert.alert(t("common.error"), t("measurements.deleteError"))
+					} finally {
+						setIsSubmitting(false)
+					}
+				},
+			},
+		])
+	}
+
 	const distanceDialogErrorMessage = t("measurements.invalidDistance")
 
 	return {
+		isEditing,
 		side,
 		limbType,
 		measurementLevels,
@@ -296,6 +364,7 @@ export function useAddMeasurementForm() {
 		handleOnAddLevel,
 		handleOpenDistanceDialog,
 		handleSaveMeasurement,
+		handleDeleteMeasurement,
 		setIsDateModalVisible,
 		setIsHourModalVisible,
 		setDistanceDialogTarget,

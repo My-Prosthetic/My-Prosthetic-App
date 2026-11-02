@@ -314,6 +314,9 @@
 	},
 	"measurements": {
 		"title": "ADD MEASUREMENT",
+		"editTitle": "EDIT MEASUREMENT",
+		"saveChanges": "SAVE CHANGES",
+		"measureNotFound": "This measurement no longer exists.",
 		"selectLimb": "SELECT LIMB",
 		"date": "DATE",
 		"datePlaceholder": "MM-DD-YYYY",
@@ -337,6 +340,11 @@
 		"saveSuccessTitle": "Measurement saved",
 		"saveSuccessMessage": "The measurement has been saved.",
 		"saveError": "Could not save the measurement.",
+		"deleteTitle": "Delete measurement",
+		"deleteConfirmation": "Are you sure you want to delete this measurement?",
+		"deleteError": "Could not delete the measurement.",
+		"discardTitle": "Discard measurement",
+		"discardConfirmation": "Are you sure you want to clear the form and leave?",
 		"save": "SAVE MEASUREMENT",
 		"delete": "DELETE",
 		"history": {

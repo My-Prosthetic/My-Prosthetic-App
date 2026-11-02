@@ -1,7 +1,7 @@
 import React from "react"
 import { ScrollView, StyleSheet, useWindowDimensions, View } from "react-native"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTheme } from "@/context/ThemeContext"
-import IconPlus from "@/assets/icons/plus.svg"
 import { ThemedDialog } from "@/src/components/ThemedDialog"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { HourPickerModal } from "@/src/components/HourPicker"
@@ -11,19 +11,25 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { MeasurementCardItem } from "@/src/components/measure/MeasurementCard"
 import { MeasurementDiagram } from "@/src/components/measure/MeasurementDiagram"
-import { useAddMeasurementForm } from "@/src/hooks/useAddMeasurementForm"
+import { useMeasurementForm } from "@/src/hooks/useMeasurementForm"
 import { isValidMeasurementValue, MAX_MEASUREMENT_LEVELS } from "@/src/utils/measurementUtils"
 import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
 
+import IconPlus from "@/assets/icons/plus.svg"
+import IconTrash from "@/assets/icons/trash-bin.svg"
+
 export default function AddMeasurementScreen() {
-	const form = useAddMeasurementForm()
+	const { id: measureIdParam } = useLocalSearchParams<{ id?: string | string[] }>()
+	const measureId = Array.isArray(measureIdParam) ? measureIdParam[0] : measureIdParam
+	const form = useMeasurementForm(measureId)
 	const { colors } = useTheme()
 	const { width: windowWidth } = useWindowDimensions()
+	const router = useRouter()
 
 	return (
 		<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 			<ThemedView variant="background" colorName="bg_1" style={styles.scrollContent}>
-				<ThemedHeader tx="measurements.title" />
+				<ThemedHeader tx={form.isEditing ? "measurements.editTitle" : "measurements.title"} />
 				<View style={styles.selectorsSection}>
 					<View>
 						<ThemedText tx="measurements.selectLimb" variant="H1" colorName="blue2" />
@@ -145,7 +151,21 @@ export default function AddMeasurementScreen() {
 					onPress={form.handleSaveMeasurement}
 					disabled={form.isSubmitting || form.isLoadingConfig}
 					style={styles.saveButton}
-					centerChild={<ThemedText tx="measurements.save" variant="H1" colorName="bg_0" />}
+					centerChild={
+						<ThemedText
+							tx={form.isEditing ? "measurements.saveChanges" : "measurements.save"}
+							variant="H1"
+							colorName="bg_0"
+						/>
+					}
+				/>
+				<ThemedView onPress={form.isEditing ? form.handleDeleteMeasurement : () =>  router.back()} variant="narrow" style={styles.delete}
+					centerChild={
+						<View style={{flexDirection: "row", gap: 10}}>
+							<IconTrash color={colors.false} width={26} height={26} />
+							<ThemedText variant="H1" colorName="false" tx={form.isEditing ? "common.delete" : "common.cancel"}/>
+						</View>
+					}
 				/>
 			</ThemedView>
 			<DatePickerModal
@@ -190,6 +210,7 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		paddingBottom: 10,
 		gap: 20,
+		alignItems: "center"
 	},
 	selectorsSection: {
 		flexDirection: "row",
@@ -242,4 +263,8 @@ const styles = StyleSheet.create({
 	saveButton: {
 		marginTop: 10,
 	},
+	delete: {
+		marginTop: -10,
+		width: 150
+	}
 })

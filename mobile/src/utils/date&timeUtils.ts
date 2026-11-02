@@ -93,3 +93,11 @@ export const combineDateAndTime = (date: Date, { hour, minute }: FormatHourOptio
 	result.setHours(hour, minute, 0, 0)
 	return result
 }
+
+export const splitMeasuredAt = (value: DateInput): { date: Date; time: FormatHourOptions } => {
+	const date = toDate(value)
+	return {
+		date,
+		time: { hour: date.getHours(), minute: date.getMinutes() },
+	}
+}

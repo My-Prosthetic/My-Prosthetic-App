@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import { Pressable, StyleSheet, View, ScrollView } from "react-native"
 import { useFocusEffect, useRouter } from "expo-router"
 
 import { ThemedView } from "@/src/components/ThemedView"
@@ -20,6 +20,7 @@ import IconRuler from "@/assets/icons/measure-filled.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
+import IconPencil from "@/assets/icons/pencil.svg"
 
 type Side = MeasureWithLevels["side"]
 type LimbType = MeasureWithLevels["limbType"]
@@ -111,9 +112,15 @@ type MeasurementsTableProps = {
 	measures: MeasureWithLevels[]
 	visibleLevels: readonly Level[]
 	isLoading: boolean
+	onRowPress?: (measure: MeasureWithLevels) => void
 }
 
-function MeasurementsTable({ measures, visibleLevels, isLoading }: MeasurementsTableProps) {
+function MeasurementsTable({
+	measures,
+	visibleLevels,
+	isLoading,
+	onRowPress,
+}: MeasurementsTableProps) {
 	const { colors } = useTheme()
 
 	return (
@@ -130,6 +137,9 @@ function MeasurementsTable({ measures, visibleLevels, isLoading }: MeasurementsT
 						{`L${level}`}
 					</ThemedText>
 				))}
+				<ThemedView>
+					<IconPencil color={"transparent"} width={13.5} height={13.5} />
+				</ThemedView>
 			</View>
 
 			{!isLoading && measures.length === 0 && (
@@ -143,29 +153,42 @@ function MeasurementsTable({ measures, visibleLevels, isLoading }: MeasurementsT
 				</View>
 			)}
 
-			{measures.map((measure, index) => (
-				<View
-					key={measure.id}
-					style={[
-						tableStyles.row,
-						{ backgroundColor: index % 2 === 0 ? colors.bg_0 : colors.blue0 },
-					]}
-				>
-					<View style={tableStyles.colData}>
-						<ThemedText variant="H5" colorName="blue2" numberOfLines={1}>
-							{formatDate(measure.measuredAt, "dotted")}
-						</ThemedText>
-						<ThemedText variant="H4" colorName="blue2">
-							{formatHour(measure.measuredAt)}
-						</ThemedText>
+			{measures.map((measure, index) => {
+				const rowStyle = [
+					tableStyles.row,
+					{ backgroundColor: index % 2 === 0 ? colors.bg_0 : colors.blue0 },
+				]
+				const rowContent = (
+					<>
+						<View style={tableStyles.colData}>
+							<ThemedText variant="H5" colorName="blue2" numberOfLines={1}>
+								{formatDate(measure.measuredAt, "dotted")}
+							</ThemedText>
+							<ThemedText variant="H4" colorName="blue2">
+								{formatHour(measure.measuredAt)}
+							</ThemedText>
+						</View>
+						{visibleLevels.map((level) => (
+							<ThemedText key={level} variant="H4" colorName="graphite0" style={tableStyles.colVal}>
+								{formatValue(getLevelValue(measure, level))}
+							</ThemedText>
+						))}
+						<ThemedView>
+							<IconPencil color={colors.blue2} width={13.5} height={13.5} />
+						</ThemedView>
+					</>
+				)
+
+				return onRowPress ? (
+					<Pressable key={measure.id} style={rowStyle} onPress={() => onRowPress(measure)}>
+						{rowContent}
+					</Pressable>
+				) : (
+					<View key={measure.id} style={rowStyle}>
+						{rowContent}
 					</View>
-					{visibleLevels.map((level) => (
-						<ThemedText key={level} variant="H4" colorName="graphite0" style={tableStyles.colVal}>
-							{formatValue(getLevelValue(measure, level))}
-						</ThemedText>
-					))}
-				</View>
-			))}
+				)
+			})}
 		</>
 	)
 }
@@ -245,6 +268,9 @@ export default function MeasurementHistoryScreen() {
 					measures={history.items}
 					visibleLevels={visibleLevels}
 					isLoading={history.isLoading}
+					onRowPress={(measure) =>
+						router.push({ pathname: "/measure", params: { id: measure.id } })
+					}
 				/>
 			</ThemedView>
 			<ThemedView colorName="bg_0" variant="background" style={{ paddingBottom: 30 }}>
@@ -281,7 +307,8 @@ const tableStyles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 10,
 		paddingBottom: 5,
-		paddingHorizontal: "8%",
+		paddingLeft: "8%",
+		paddingRight: "2%",
 	},
 	headerRow: {
 		paddingVertical: 12,

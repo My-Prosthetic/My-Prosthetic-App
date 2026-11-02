@@ -37,13 +37,14 @@ export function isValidMeasurementDistance(value: string): boolean {
 }
 
 export function getMeasurementLevelsFromHistory(
-	measure: MeasureWithLevels | null
+	measure: MeasureWithLevels | null,
+	options?: { keepValues?: boolean }
 ): MeasurementLevel[] {
 	if (!measure) return INITIAL_MEASUREMENTS.map((item) => ({ ...item }))
 
-	return measure.levels.map(({ level, distance }) => ({
+	return measure.levels.map(({ level, distance, value }) => ({
 		level,
 		distance,
-		value: "",
+		value: options?.keepValues ? String(value).replace(".", ",") : "",
 	}))
 }

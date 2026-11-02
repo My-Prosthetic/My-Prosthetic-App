@@ -21,6 +21,11 @@ export type CreateMeasureInput = {
 	levels: CreateMeasureLevelInput[]
 }
 
+export type UpdateMeasureInput = Pick<
+	CreateMeasureInput,
+	"measuredAt" | "side" | "limbType" | "levels"
+>
+
 export type MeasuresPageQuery = {
 	side: Measure["side"]
 	limbType: Measure["limbType"]
@@ -31,6 +36,23 @@ export type MeasuresPageQuery = {
 export type MeasuresPage = {
 	items: MeasureWithLevels[]
 	total: number
+}
+
+async function insertLevels(
+	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+	measureId: string,
+	levels: CreateMeasureLevelInput[]
+) {
+	if (levels.length === 0) return
+
+	await tx.insert(measureLevels).values(
+		levels.map((lvl) => ({
+			measureId,
+			level: lvl.level,
+			distance: lvl.distance,
+			value: lvl.value,
+		}))
+	)
 }
 
 export async function createMeasure(input: CreateMeasureInput) {
@@ -53,16 +75,34 @@ export async function createMeasure(input: CreateMeasureInput) {
 			throw new Error("Failed to create measure")
 		}
 
-		if (input.levels.length > 0) {
-			await tx.insert(measureLevels).values(
-				input.levels.map((lvl) => ({
-					measureId: input.id,
-					level: lvl.level,
-					distance: lvl.distance,
-					value: lvl.value,
-				}))
-			)
+		await insertLevels(tx, input.id, input.levels)
+
+		return measure
+	})
+}
+
+export async function updateMeasure(id: string, input: UpdateMeasureInput) {
+	const now = new Date().toISOString()
+
+	return await db.transaction(async (tx) => {
+		const [measure] = await tx
+			.update(measures)
+			.set({
+				measuredAt: input.measuredAt.toISOString(),
+				side: input.side,
+				limbType: input.limbType,
+				isDirty: true,
+				updatedAt: now,
+			})
+			.where(and(eq(measures.id, id), isNull(measures.deletedAt)))
+			.returning()
+
+		if (!measure) {
+			throw new Error("Measure not found")
 		}
+
+		await tx.delete(measureLevels).where(eq(measureLevels.measureId, id))
+		await insertLevels(tx, id, input.levels)
 
 		return measure
 	})

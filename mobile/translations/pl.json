@@ -313,6 +313,9 @@
 	},
 	"measurements": {
 		"title": "DODAJ POMIAR",
+		"editTitle": "EDYTUJ POMIAR",
+		"saveChanges": "ZAPISZ ZMIANY",
+		"measureNotFound": "Ten pomiar już nie istnieje.",
 		"selectLimb": "WYBIERZ KOŃCZYNĘ",
 		"date": "DATA",
 		"datePlaceholder": "DD-MM-RRRR",
@@ -336,6 +339,11 @@
 		"saveSuccessTitle": "Pomiar zapisany",
 		"saveSuccessMessage": "Pomiar został zapisany.",
 		"saveError": "Nie udało się zapisać pomiaru.",
+		"deleteTitle": "Usuń pomiar",
+		"deleteConfirmation": "Czy na pewno chcesz usunąć ten pomiar?",
+		"deleteError": "Nie udało się usunąć pomiaru.",
+		"discardTitle": "Odrzuć pomiar",
+		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
 		"save": "ZAPISZ POMIAR",
 		"delete": "USUŃ",
 		"history": {
