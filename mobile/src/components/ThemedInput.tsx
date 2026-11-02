@@ -83,7 +83,7 @@ export const ThemedInput = ({
 			<TextInput
 				{...variantProps}
 				{...props}
-				placeholderTextColor={colors.graphite0}
+				placeholderTextColor={props.placeholderTextColor ?? colors.graphite0}
 				style={[commonTextStyle, textStyle]}
 			/>
 			{variant === "money" && (

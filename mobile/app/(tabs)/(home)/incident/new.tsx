@@ -25,7 +25,10 @@ import { useTranslation } from "react-i18next"
 import { ThemeColors, useTheme } from "@/context/ThemeContext"
 import {
 	createIncident,
+	getIncidentById,
 	getIncidentCustomValues,
+	updateIncident,
+	type Incident,
 	type IncidentCoordinates,
 } from "@/db/repositories/incidentRepository"
 import { getComponentsByProsthesisId } from "@/db/repositories/componentRepository"
@@ -142,9 +145,21 @@ function normalizeCustomValue(value: string) {
 	return value.trim().toLocaleLowerCase()
 }
 
+function parsePhotoUris(value: string): string[] {
+	try {
+		const parsed: unknown = JSON.parse(value)
+		return Array.isArray(parsed)
+			? parsed.filter((uri): uri is string => typeof uri === "string")
+			: []
+	} catch {
+		return []
+	}
+}
+
 export default function NewIncidentScreen() {
 	const router = useRouter()
-	const params = useLocalSearchParams<{ prosthesisId?: string }>()
+	const params = useLocalSearchParams<{ prosthesisId?: string; incidentId?: string }>()
+	const editId = Array.isArray(params.incidentId) ? params.incidentId[0] : params.incidentId
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const { width } = useWindowDimensions()
@@ -152,6 +167,8 @@ export default function NewIncidentScreen() {
 	const scrollRef = useRef<ScrollView>(null)
 	const incidentIdRef = useRef(Crypto.randomUUID())
 	const savedRef = useRef(false)
+	const originalMediaRef = useRef<{ photos: string[]; audio?: string }>({ photos: [] })
+	const [editRecord, setEditRecord] = useState<Incident | null>(null)
 	const dateScrollRef = useRef<ScrollView>(null)
 	const now = useMemo(() => new Date(), [])
 	const [selectedDate, setSelectedDate] = useState(now)
@@ -190,14 +207,32 @@ export default function NewIncidentScreen() {
 		let mounted = true
 		const load = async () => {
 			try {
-				const [prosthesisRows, customValues] = await Promise.all([
+				const [prosthesisRows, customValues, existing] = await Promise.all([
 					getAllProstheses(),
 					getIncidentCustomValues(),
+					editId ? getIncidentById(editId) : Promise.resolve(null),
 				])
 				if (!mounted) return
+				if (editId && !existing) throw new Error("Incident not found")
 				setCustomTypes(customValues.types)
 				setCustomActivities(customValues.activities)
 				setProstheses(prosthesisRows)
+				if (existing) {
+					const occurred = new Date(existing.occurredAt)
+					const photos = parsePhotoUris(existing.photoUrisJson)
+					originalMediaRef.current = { photos, audio: existing.audioUri ?? undefined }
+					setEditRecord(existing)
+					setSelectedDate(occurred)
+					setTimeText(toTimeText(occurred))
+					setIncidentType(existing.type)
+					setActivity(existing.activity ?? "")
+					setDescription(existing.description ?? "")
+					setIntensity(existing.intensity ?? 0)
+					setPhotoUris(photos)
+					setAudioUri(existing.audioUri ?? undefined)
+					setSelectedProsthesisId(existing.prosthesisId)
+					return
+				}
 				const requestedId = Array.isArray(params.prosthesisId)
 					? params.prosthesisId[0]
 					: params.prosthesisId
@@ -218,12 +253,35 @@ export default function NewIncidentScreen() {
 		return () => {
 			mounted = false
 		}
-	}, [params.prosthesisId, t])
+	}, [params.prosthesisId, editId, t])
 	useEffect(() => {
 		let mounted = true
 		const loadComponents = async () => {
-			setSelectedComponentId(undefined)
-			setCoordinates(undefined)
+			const record = editRecord
+			setSelectedComponentId(
+				record && record.prosthesisId === selectedProsthesisId
+					? (record.componentId ?? undefined)
+					: undefined
+			)
+			if (record && record.prosthesisId === selectedProsthesisId && record.coordinatesJson) {
+				try {
+					const value: unknown = JSON.parse(record.coordinatesJson)
+					if (
+						value &&
+						typeof value === "object" &&
+						"x" in value &&
+						"y" in value &&
+						"view" in value &&
+						typeof value.x === "number" &&
+						typeof value.y === "number" &&
+						(value.view === "side" || value.view === "top_inside" || value.view === "front_back")
+					) {
+						setCoordinates({ x: value.x, y: value.y, view: value.view })
+					}
+				} catch {
+					setCoordinates(undefined)
+				}
+			} else setCoordinates(undefined)
 			if (!selectedProsthesisId) {
 				setComponents([])
 				return
@@ -241,7 +299,7 @@ export default function NewIncidentScreen() {
 		return () => {
 			mounted = false
 		}
-	}, [selectedProsthesisId])
+	}, [selectedProsthesisId, editRecord])
 	useEffect(() => {
 		const incidentId = incidentIdRef.current
 
@@ -327,7 +385,7 @@ export default function NewIncidentScreen() {
 		try {
 			await audioRecorder.stop()
 			if (!audioRecorder.uri) return
-			if (audioUri) {
+			if (audioUri && audioUri !== originalMediaRef.current.audio) {
 				deleteIncidentMediaFile(audioUri)
 			}
 			const persistentUri = await persistIncidentMedia(
@@ -398,10 +456,11 @@ export default function NewIncidentScreen() {
 		])
 	}
 	const removePhoto = (uri: string) => {
-		deleteIncidentMediaFile(uri)
+		if (!originalMediaRef.current.photos.includes(uri)) deleteIncidentMediaFile(uri)
 		setPhotoUris((current) => current.filter((value) => value !== uri))
 	}
 	const saveIncident = async () => {
+		if (editId && !editRecord) return
 		if (!selectedProsthesisId) {
 			Alert.alert(t("common.error"), t("newIncident.validation.prosthesis"))
 			return
@@ -429,8 +488,8 @@ export default function NewIncidentScreen() {
 		}
 		try {
 			setIsSaving(true)
-			await createIncident({
-				id: incidentIdRef.current,
+			const input = {
+				id: editId ?? incidentIdRef.current,
 				prosthesisId: selectedProsthesisId,
 				componentId: selectedComponentId || undefined,
 				type: incidentType,
@@ -441,7 +500,17 @@ export default function NewIncidentScreen() {
 				occurredAt,
 				photoUris,
 				audioUri,
-			})
+			}
+			if (editId) {
+				const updated = await updateIncident(editId, input)
+				if (!updated) throw new Error("Incident not found")
+				for (const uri of originalMediaRef.current.photos) {
+					if (!photoUris.includes(uri)) deleteIncidentMediaFile(uri)
+				}
+				if (originalMediaRef.current.audio && originalMediaRef.current.audio !== audioUri) {
+					deleteIncidentMediaFile(originalMediaRef.current.audio)
+				}
+			} else await createIncident(input)
 			savedRef.current = true
 			Alert.alert(t("newIncident.savedTitle"), t("newIncident.savedMessage"), [
 				{ text: t("common.save"), onPress: () => router.back() },
@@ -533,7 +602,10 @@ export default function NewIncidentScreen() {
 
 	return (
 		<ThemedView colorName="bg_1" style={styles.screen}>
-			<ThemedHeader tx="newIncident.title" style={styles.incidentHeader} />
+			<ThemedHeader
+				tx={editId ? "newIncident.editTitle" : "newIncident.title"}
+				style={styles.incidentHeader}
+			/>
 
 			<ScrollView
 				ref={scrollRef}
@@ -666,7 +738,7 @@ export default function NewIncidentScreen() {
 					{audioUri && !recorderState.isRecording && (
 						<ThemedView
 							onPress={() => {
-								deleteIncidentMediaFile(audioUri)
+								if (audioUri !== originalMediaRef.current.audio) deleteIncidentMediaFile(audioUri)
 								setAudioUri(undefined)
 							}}
 							style={styles.audioRemove}
@@ -825,11 +897,17 @@ export default function NewIncidentScreen() {
 				<ThemedView
 					colorName="blue2"
 					onPress={() => void saveIncident()}
-					disabled={isSaving || !selectedProsthesisId}
-					style={[styles.saveButton, (isSaving || !selectedProsthesisId) && styles.disabledButton]}
+					disabled={isSaving || !selectedProsthesisId || Boolean(editId && !editRecord)}
+					style={[
+						styles.saveButton,
+						(isSaving || !selectedProsthesisId || Boolean(editId && !editRecord)) &&
+							styles.disabledButton,
+					]}
 				>
 					<ThemedText variant="H1" colorName="bg_0" style={styles.saveButtonText}>
-						{t(isSaving ? "newIncident.saving" : "newIncident.save")}
+						{t(
+							isSaving ? "newIncident.saving" : editId ? "newIncident.saveEdit" : "newIncident.save"
+						)}
 					</ThemedText>
 				</ThemedView>
 			</ScrollView>

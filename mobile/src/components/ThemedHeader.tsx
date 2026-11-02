@@ -13,9 +13,10 @@ interface ThemedHeaderProps {
 	tx?: ParseKeys
 	onBack?: () => void
 	style?: StyleProp<ViewStyle>
+	backButtonStyle?: StyleProp<ViewStyle>
 }
 
-export const ThemedHeader = ({ tx, onBack, style }: ThemedHeaderProps) => {
+export const ThemedHeader = ({ tx, onBack, style, backButtonStyle }: ThemedHeaderProps) => {
 	const router = useRouter()
 	const { colors } = useTheme()
 	const { status } = useAuth()
@@ -55,7 +56,7 @@ export const ThemedHeader = ({ tx, onBack, style }: ThemedHeaderProps) => {
 		>
 			<View style={styles.container}>
 				<ThemedView
-					style={styles.backButton}
+					style={[styles.backButton, backButtonStyle]}
 					onPress={handleBack}
 					hitSlop={{ top: 15, bottom: 15, left: 13, right: 13 }}
 				>
