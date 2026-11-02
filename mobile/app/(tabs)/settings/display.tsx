@@ -126,7 +126,7 @@ export default function DisplayScreen() {
 						setOpenModal(null)
 					}}
 					onClose={() => setOpenModal(null)}
-				/>{" "}
+				/>
 			</ScrollView>
 		</ThemedView>
 	)
