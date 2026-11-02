@@ -113,6 +113,12 @@ export default function TabsLayout() {
 						tabBarButton: provideRenderButton("settings"),
 					}}
 				/>
+				<Tabs.Screen
+					name="(independent)"
+					options={{
+						href: null,
+					}}
+				/>
 			</Tabs>
 		</View>
 	)

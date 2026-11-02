@@ -210,7 +210,10 @@ export default function MeasurementHistoryScreen() {
 	return (
 		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 			<ThemedView colorName="bg_0" variant="background" style={{ paddingBottom: 30 }}>
-				<ThemedHeader tx="measurements.history.title" />
+				<ThemedHeader
+					tx="measurements.history.title"
+					onBack={() => router.push("/(tabs)/profile")}
+				/>
 				<View style={{ gap: 30, paddingTop: 20 }}>
 					{/* Controls */}
 					<View style={styles.selectorsSection}>

@@ -159,11 +159,18 @@ export default function AddMeasurementScreen() {
 						/>
 					}
 				/>
-				<ThemedView onPress={form.isEditing ? form.handleDeleteMeasurement : () =>  router.back()} variant="narrow" style={styles.delete}
+				<ThemedView
+					onPress={form.isEditing ? form.handleDeleteMeasurement : () => router.back()}
+					variant="narrow"
+					style={styles.delete}
 					centerChild={
-						<View style={{flexDirection: "row", gap: 10}}>
+						<View style={{ flexDirection: "row", gap: 10 }}>
 							<IconTrash color={colors.false} width={26} height={26} />
-							<ThemedText variant="H1" colorName="false" tx={form.isEditing ? "common.delete" : "common.cancel"}/>
+							<ThemedText
+								variant="H1"
+								colorName="false"
+								tx={form.isEditing ? "common.delete" : "common.cancel"}
+							/>
 						</View>
 					}
 				/>
@@ -210,7 +217,7 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		paddingBottom: 10,
 		gap: 20,
-		alignItems: "center"
+		alignItems: "center",
 	},
 	selectorsSection: {
 		flexDirection: "row",
@@ -265,6 +272,6 @@ const styles = StyleSheet.create({
 	},
 	delete: {
 		marginTop: -10,
-		width: 150
-	}
+		width: 150,
+	},
 })
