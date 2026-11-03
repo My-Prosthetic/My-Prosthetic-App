@@ -253,7 +253,7 @@ export default function HomeScreen() {
 					<ThemedView
 						variant="wide"
 						colorName="blue2"
-						onPress={() => router.push("./measure/")}
+						onPress={() => router.push("/measurementForm")}
 						leftChild={<IconMeasure color={colors.bg_0} />}
 						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} />}

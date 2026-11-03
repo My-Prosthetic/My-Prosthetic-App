@@ -223,7 +223,7 @@ export default function ProfileScreen() {
 							style={styles.actionButton}
 							variant="wide"
 							colorName="blue2"
-							onPress={() => router.push("/measurements")}
+							onPress={() => router.push("/measurementsHistory")}
 							leftChild={<IconMeasure color={colors.bg_0} />}
 							centerChild={<ThemedText tx="profile.addMeasurement" variant="H1" colorName="bg_0" />}
 							rightChild={<IconChevronRight color={colors.bg_0} />}

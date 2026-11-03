@@ -31,9 +31,7 @@ export default function AddMeasurementScreen() {
 			<ThemedView variant="background" colorName="bg_1" style={styles.scrollContent}>
 				<ThemedHeader
 					tx={form.isEditing ? "measurements.editTitle" : "measurements.title"}
-					onBack={
-						form.isEditing ? () => router.push("/measurements") : form.handleForefitMeasurement
-					}
+					onBack={form.isEditing ? () => router.back() : form.handleForefitMeasurement}
 				/>
 				<View style={styles.selectorsSection}>
 					<View>

@@ -78,6 +78,7 @@ export default function TabsLayout() {
 		>
 			{status === "GUEST" && <GuestBanner />}
 			<Tabs
+				backBehavior="history"
 				screenOptions={{
 					headerShown: false,
 					tabBarStyle: {

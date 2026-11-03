@@ -214,10 +214,7 @@ export default function MeasurementHistoryScreen() {
 	return (
 		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 			<ThemedView colorName="bg_0" variant="background" style={{ paddingBottom: 30 }}>
-				<ThemedHeader
-					tx="measurements.history.title"
-					onBack={() => router.push("/(tabs)/profile")}
-				/>
+				<ThemedHeader tx="measurements.history.title" />
 				<View style={{ gap: 30, paddingTop: 20 }}>
 					{/* Controls */}
 					<View style={styles.selectorsSection}>
@@ -263,7 +260,7 @@ export default function MeasurementHistoryScreen() {
 					<ThemedView
 						colorName="blue2"
 						variant="wide"
-						onPress={() => router.push("/measure")}
+						onPress={() => router.push("./measurementForm")}
 						leftChild={<IconRuler color={colors.bg_0} width={20} height={20} />}
 						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} width={20} height={20} />}
@@ -276,7 +273,7 @@ export default function MeasurementHistoryScreen() {
 					visibleLevels={visibleLevels}
 					isLoading={history.isLoading}
 					onRowPress={(measure) =>
-						router.push({ pathname: "/measure", params: { id: measure.id } })
+						router.push({ pathname: "./measurementForm", params: { id: measure.id } })
 					}
 				/>
 			</ThemedView>
