@@ -64,7 +64,7 @@ export const formatDate = (
 
 	switch (mode) {
 		case "numeric":
-			return isToday ? `${todayLabel} (${numericDate})` : numericDate
+			return isToday ? `${numericDate} (${todayLabel})` : numericDate
 
 		case "label": {
 			const formatter = new Intl.DateTimeFormat(locale, {
@@ -75,8 +75,7 @@ export const formatDate = (
 			})
 
 			const formattedLabel = formatter.format(date)
-
-			return isToday ? `${todayLabel} (${formattedLabel})` : formattedLabel
+			return isToday ? `${formattedLabel} (${todayLabel})` : formattedLabel
 		}
 	}
 }

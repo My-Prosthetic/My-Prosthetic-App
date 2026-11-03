@@ -13,6 +13,7 @@ import { logFullDatabase } from "@/db/debug"
 import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
 import { db } from "@/db/client"
 import migrations from "@/drizzle/migrations"
+import { SelectedProsthesisProvider } from "@/context/SelectedProsthesisContext"
 import { SettingsProvider } from "@/context/SettingsContext"
 
 //TODO tx
@@ -142,7 +143,9 @@ export default function RootLayout() {
 		<ThemeProvider>
 			<SettingsProvider>
 				<AuthProvider>
-					<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+					<SelectedProsthesisProvider>
+						<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+					</SelectedProsthesisProvider>
 				</AuthProvider>
 			</SettingsProvider>
 		</ThemeProvider>
