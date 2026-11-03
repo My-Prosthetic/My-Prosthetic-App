@@ -353,7 +353,8 @@
 			"title": "Historia pomiarów",
 			"date": "Data",
 			"points": "Punkty\npomiarowe",
-			"empty": "Brak danych do wyświetlenia dla bieżących filtrów"
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów",
+			"loadError": "Nie udało się pobrać pomiarów z historii"
 		}
 	},
 	"newIncident": {

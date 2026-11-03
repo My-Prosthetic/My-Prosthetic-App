@@ -354,7 +354,8 @@
 			"title": "Measurements history",
 			"date": "Date",
 			"points": "Measurement\npoints",
-			"empty": "No data to be displayed for current filters"
+			"empty": "No data to be displayed for current filters",
+			"loadError": "Failed to load measurements history"
 		}
 	},
 	"newIncident": {

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import { StyleSheet, View, ScrollView, Alert } from "react-native"
 import { useFocusEffect, useRouter } from "expo-router"
 
 import { ThemedView } from "@/src/components/ThemedView"
@@ -21,6 +21,7 @@ import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPencil from "@/assets/icons/pencil.svg"
+import { useTranslation } from "react-i18next"
 
 type Side = MeasureWithLevels["side"]
 type LimbType = MeasureWithLevels["limbType"]
@@ -49,6 +50,7 @@ const getLevelValue = (measure: MeasureWithLevels, level: number) =>
 
 function useMeasuresPage(query: MeasuresPageQuery) {
 	const { side, limbType, page, pageSize } = query
+	const { t } = useTranslation()
 
 	const [data, setData] = useState<MeasuresPage>(EMPTY_PAGE)
 	const [isLoading, setIsLoading] = useState(true)
@@ -63,11 +65,12 @@ function useMeasuresPage(query: MeasuresPageQuery) {
 			if (requestId === requestIdRef.current) setData(result)
 		} catch (error) {
 			console.error("Failed to load measures page:", error)
+			Alert.alert(t("common.error", t("measurements.history.loadError")))
 			if (requestId === requestIdRef.current) setData(EMPTY_PAGE)
 		} finally {
 			if (requestId === requestIdRef.current) setIsLoading(false)
 		}
-	}, [side, limbType, page, pageSize])
+	}, [side, limbType, page, pageSize, t])
 
 	useFocusEffect(
 		useCallback(() => {
