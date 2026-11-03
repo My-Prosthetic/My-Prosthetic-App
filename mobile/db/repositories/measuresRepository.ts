@@ -155,22 +155,24 @@ export async function getMeasuresPage({
 		isNull(measures.deletedAt)
 	)
 
-	const [items, [totalRow]] = await Promise.all([
-		db.query.measures.findMany({
-			where,
-			orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
-			limit: pageSize,
-			offset: (page - 1) * pageSize,
-			with: {
-				levels: {
-					orderBy: (fields, { asc }) => [asc(fields.level)],
+	return await db.transaction(async (tx) => {
+		const [items, [totalRow]] = await Promise.all([
+			tx.query.measures.findMany({
+				where,
+				orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
+				limit: pageSize,
+				offset: (page - 1) * pageSize,
+				with: {
+					levels: {
+						orderBy: (fields, { asc }) => [asc(fields.level)],
+					},
 				},
-			},
-		}),
-		db.select({ total: count() }).from(measures).where(where),
-	])
+			}),
+			tx.select({ total: count() }).from(measures).where(where),
+		])
 
-	return { items, total: totalRow?.total ?? 0 }
+		return { items, total: totalRow?.total ?? 0 }
+	})
 }
 
 export async function deleteMeasure(id: string) {
