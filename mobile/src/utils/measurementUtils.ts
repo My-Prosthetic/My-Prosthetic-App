@@ -33,6 +33,7 @@ export function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLe
 		.map((item, index) => ({ ...item, level: index + 1 }))
 }
 
+//TODO dodać dozwolone zakresy liczbowe
 export function isValidMeasurementValue(value: string): boolean {
 	const normalizedValue = value.trim().replace(",", ".")
 	return /^\d+(?:\.\d+)?$/.test(normalizedValue) && Number.isFinite(Number(normalizedValue))
@@ -42,7 +43,7 @@ export function isValidMeasurementDistance(value: string): boolean {
 	return (
 		/^\d+$/.test(value.trim()) &&
 		Number.isSafeInteger(Number(value)) &&
-		Number(value) >= 0 &&
+		Number(value) > 0 &&
 		Number(value) <= 100
 	)
 }
