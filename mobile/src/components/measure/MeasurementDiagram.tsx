@@ -3,13 +3,12 @@ import { StyleProp, ViewStyle } from "react-native"
 import Svg, { Circle, G, Line, Path, Text as SvgText } from "react-native-svg"
 import { useTheme } from "@/context/ThemeContext"
 import type { MeasurementLevel } from "@/src/utils/measurementUtils"
+import { MAX_MEASUREMENT_LEVELS } from "@/src/utils/measurementUtils"
 
 interface MeasurementDiagramProps {
 	levels: MeasurementLevel[]
 	style?: StyleProp<ViewStyle>
 }
-
-const MAX_LEVELS = 5
 
 /* Geometria kształtu – wartości wyciągnięte z MeasurementDiagram.svg */
 const TOP_Y = 1.196
@@ -95,7 +94,9 @@ const edgeX = (y: number) => {
 export function MeasurementDiagram({ levels, style }: MeasurementDiagramProps) {
 	const { colors } = useTheme()
 	const { items, viewMaxX } = useMemo(() => {
-		const sorted = [...levels].slice(0, MAX_LEVELS).sort((a, b) => b.distance - a.distance)
+		const sorted = [...levels]
+			.slice(0, MAX_MEASUREMENT_LEVELS)
+			.sort((a, b) => b.distance - a.distance)
 		if (sorted.length === 0) return { items: [], viewMaxX: DEFAULT_VIEW_MAX_X }
 
 		const radius = badgeRadius(sorted.length)
