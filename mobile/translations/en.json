@@ -78,7 +78,8 @@
 		"delete": "Delete",
 		"today": "Today",
 		"mp": "My Prosthetic",
-		"info": "Information"
+		"info": "Information",
+		"yes": "Yes"
 	},
 	"funding": {
 		"outOf": "out of",
@@ -343,6 +344,8 @@
 		"deleteTitle": "Delete measurement",
 		"deleteConfirmation": "Are you sure you want to delete this measurement?",
 		"deleteError": "Could not delete the measurement.",
+		"forefitTitle": "Forefit measurement",
+		"forefitConfirmation": "Are you sure you want to forefit this measurement?",
 		"discardTitle": "Discard measurement",
 		"discardConfirmation": "Are you sure you want to clear the form and leave?",
 		"save": "SAVE MEASUREMENT",

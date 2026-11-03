@@ -335,6 +335,19 @@ export function useMeasurementForm(measureId?: string) {
 		])
 	}
 
+	const handleForefitMeasurement = () => {
+		if (isEditing || isSubmitting || isLoadingConfig) return
+
+		Alert.alert(t("measurements.forefitTitle"), t("measurements.forefitConfirmation"), [
+			{ text: t("common.cancel"), style: "cancel" },
+			{
+				text: t("common.yes"),
+				style: "destructive",
+				onPress: () => router.back(),
+			},
+		])
+	}
+
 	const distanceDialogErrorMessage = t("measurements.invalidDistance")
 
 	return {
@@ -365,6 +378,7 @@ export function useMeasurementForm(measureId?: string) {
 		handleOpenDistanceDialog,
 		handleSaveMeasurement,
 		handleDeleteMeasurement,
+		handleForefitMeasurement,
 		setIsDateModalVisible,
 		setIsHourModalVisible,
 		setDistanceDialogTarget,

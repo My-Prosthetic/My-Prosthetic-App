@@ -29,7 +29,12 @@ export default function AddMeasurementScreen() {
 	return (
 		<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 			<ThemedView variant="background" colorName="bg_1" style={styles.scrollContent}>
-				<ThemedHeader tx={form.isEditing ? "measurements.editTitle" : "measurements.title"} />
+				<ThemedHeader
+					tx={form.isEditing ? "measurements.editTitle" : "measurements.title"}
+					onBack={
+						form.isEditing ? () => router.push("/measurements") : form.handleForefitMeasurement
+					}
+				/>
 				<View style={styles.selectorsSection}>
 					<View>
 						<ThemedText tx="measurements.selectLimb" variant="H1" colorName="blue2" />
@@ -160,7 +165,7 @@ export default function AddMeasurementScreen() {
 					}
 				/>
 				<ThemedView
-					onPress={form.isEditing ? form.handleDeleteMeasurement : () => router.back()}
+					onPress={form.isEditing ? form.handleDeleteMeasurement : form.handleForefitMeasurement}
 					variant="narrow"
 					style={styles.delete}
 					centerChild={
