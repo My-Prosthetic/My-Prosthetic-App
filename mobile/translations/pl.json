@@ -70,7 +70,7 @@
 	},
 	"common": {
 		"cancel": "Anuluj",
-		"confirm": "Potwierdź",
+		"confirm": "",
 		"enterDate": "Wprowadź {{date}}",
 		"error": "Błąd",
 		"validationError": "Błąd walidacji",
@@ -336,8 +336,6 @@
 		"saveSuccessTitle": "Pomiar zapisany",
 		"saveSuccessMessage": "Pomiar został zapisany.",
 		"saveError": "Nie udało się zapisać pomiaru.",
-		"discardTitle": "Odrzuć pomiar",
-		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
 		"save": "ZAPISZ POMIAR",
 		"delete": "USUŃ"
 	},
