@@ -1,5 +1,5 @@
 import React from "react"
-import { ScrollView, StyleSheet, View } from "react-native"
+import { ScrollView, StyleSheet, useWindowDimensions, View } from "react-native"
 import { useTheme } from "@/context/ThemeContext"
 import IconPlus from "@/assets/icons/plus.svg"
 import { ThemedDialog } from "@/src/components/ThemedDialog"
@@ -19,6 +19,7 @@ import { formatHour } from "@/src/utils/hourFormatter"
 export default function AddMeasurementScreen() {
 	const form = useAddMeasurementForm()
 	const { colors } = useTheme()
+	const { width: windowWidth } = useWindowDimensions()
 
 	return (
 		<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -96,7 +97,10 @@ export default function AddMeasurementScreen() {
 						colorName="blue2"
 						style={[styles.sectionTitle, { alignSelf: "flex-start" }]}
 					/>
-					<MeasurementDiagram levels={form.measurementLevels} style={{ width: 100, height: 150 }} />
+					<MeasurementDiagram
+						levels={form.measurementLevels}
+						style={{ height: 0.525 * windowWidth }}
+					/>
 				</View>
 
 				<View style={styles.valuesSection}>
