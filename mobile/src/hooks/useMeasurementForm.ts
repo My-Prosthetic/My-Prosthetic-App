@@ -19,7 +19,7 @@ import {
 	sortAndRenumberLevels,
 	type MeasurementLevel,
 } from "@/src/utils/measurementUtils"
-import { combineDateAndTime, FormatHourOptions, splitMeasuredAt } from "../utils/date&timeUtils"
+import { combineDateAndTime, FormatHourOptions, splitMeasuredAt } from "../utils/dateTimeUtils"
 import { useTranslation } from "react-i18next"
 import { useProsthesis } from "@/context/SelectedProsthesisContext"
 

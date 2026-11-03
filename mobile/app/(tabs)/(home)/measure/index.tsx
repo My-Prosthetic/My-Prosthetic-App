@@ -13,7 +13,7 @@ import { MeasurementCardItem } from "@/src/components/measure/MeasurementCard"
 import { MeasurementDiagram } from "@/src/components/measure/MeasurementDiagram"
 import { useMeasurementForm } from "@/src/hooks/useMeasurementForm"
 import { isValidMeasurementValue, MAX_MEASUREMENT_LEVELS } from "@/src/utils/measurementUtils"
-import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
+import { formatDate, formatHour } from "@/src/utils/dateTimeUtils"
 
 import IconPlus from "@/assets/icons/plus.svg"
 import IconTrash from "@/assets/icons/trash-bin.svg"

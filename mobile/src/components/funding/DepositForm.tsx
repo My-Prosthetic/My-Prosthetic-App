@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedInput } from "../ThemedInput"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
 import { DatePickerModal } from "@/src/components/DatePicker"
-import { formatDate } from "@/src/utils/date&timeUtils"
+import { formatDate } from "@/src/utils/dateTimeUtils"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import {
 	FUNDING_SOURCE_IDS,

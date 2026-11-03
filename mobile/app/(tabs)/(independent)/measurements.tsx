@@ -8,7 +8,7 @@ import { ThemedHeader } from "@/src/components/ThemedHeader"
 import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { useTheme } from "@/context/ThemeContext"
-import { formatDate, formatHour } from "@/src/utils/date&timeUtils"
+import { formatDate, formatHour } from "@/src/utils/dateTimeUtils"
 import {
 	getMeasuresPage,
 	type MeasuresPage,
