@@ -346,7 +346,7 @@
 		"selectType": "Wybierz typ incydentu",
 		"circumstances": "OKOLICZNOŚCI:",
 		"description": "OPIS:",
-		"descriptionPlaceholder": "Opisz krótko przebieg incydentu...",
+		"descriptionPlaceholder": "Wpisz krótki opis incydentu...",
 		"intensity": "SKALA NATĘŻENIA BÓLU:",
 		"relatedProsthesis": "POWIĄZANA PROTEZA:",
 		"component": "KOMPONENT:",
@@ -401,10 +401,10 @@
 		"removePhoto": "Usuń zdjęcie {{number}}",
 		"customValuePlaceholder": "Dodaj własną wartość",
 		"duplicateValue": "Ta wartość już znajduje się na liście.",
-		"noProsthesis": "Najpierw dodaj protezę, aby zapisać incydent.",
 		"savedTitle": "Zapisano",
 		"savedMessage": "Incydent został zapisany.",
 		"saveError": "Nie udało się zapisać incydentu w bazie danych.",
+		"assignProsthesisHint": "Aby zapisać incydent, najpierw dodaj protezę.",
 		"validation": {
 			"prosthesis": "Wybierz protezę powiązaną z incydentem.",
 			"type": "Wybierz typ incydentu.",
@@ -413,7 +413,22 @@
 			"point": "Zaznacz miejsce dolegliwości na schemacie.",
 			"time": "Podaj godzinę w formacie GG:MM.",
 			"futureDate": "Data i godzina incydentu nie mogą być ustawione w przyszłości."
-		}
+		},
+		"weekdays": {
+			"sun": "NIEDZ",
+			"mon": "PON",
+			"tue": "WT",
+			"wed": "ŚR",
+			"thu": "CZW",
+			"fri": "PT",
+			"sat": "SOB"
+		},
+		"chooseTime": "Wybierz godzinę",
+		"confirmTime": "Wprowadź",
+		"recordAudio": "Nagraj notatkę głosową",
+		"stopAudio": "Zatrzymaj nagrywanie",
+		"addImages": "Dodaj zdjęcia i pliki",
+		"photoName": "zdjęcie"
 	},
 	"prosthesisDetails": {
 		"title": "MOJA PROTEZA",
@@ -644,6 +659,20 @@
 			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
 		}
 	},
+	"about": {
+		"header": "O NAS I REGULAMINY",
+		"versionLabel": "Wersja: {{version}} ({{release}})",
+		"partnerIntro": "Projekt zrealizowany we współpracy z:",
+		"team": "ZESPÓŁ INŻYNIERSKI I TWÓRCY",
+		"documents": "DOKUMENTY I REGULAMINY",
+		"documentNotFound": "Nie znaleziono dokumentu.",
+		"openDocument": "Otwórz dokument {{title}}",
+		"docs": {
+			"rodo": "Polityka prywatności",
+			"statute": "Regulamin usług",
+			"license": "Licencje Open-Source"
+		}
+	},
 	"componentEdit": {
 		"title": "EDYTUJ KOMPONENT",
 		"name": "Nazwa",
@@ -656,5 +685,39 @@
 		"loadError": "Nie udało się wczytać danych komponentu.",
 		"selectDate": "Wybierz datę",
 		"clearDate": "Usuń datę"
+	},
+	"display": {
+		"title": "Wygląd i język aplikacji",
+		"name": "Wygląd i język",
+		"interface": {
+			"title": "Wygląd interfejsu",
+			"darkMode": "Tryb ciemny (Dark Mode)",
+			"contrast": "Tryb wysokiego kontrastu",
+			"fontSize": "Rozmiar tekstu"
+		},
+		"accessibility": {
+			"title": "Ułatwienia dostępu",
+			"tts": "Czytaj ekran na głos (TTS)"
+		},
+		"region": {
+			"title": "Język i region",
+			"language": "Język aplikacji",
+			"date": "Format daty"
+		},
+		"modals": {
+			"chooseLanguage": "Wybierz język",
+			"chooseDateFormat": "Wybierz format daty",
+			"chooseFontSize": "Wybierz rozmiar tekstu"
+		},
+		"fontSize": {
+			"small": "Mały",
+			"medium": "Średni",
+			"large": "Duży",
+			"extraLarge": "Bardzo duży"
+		},
+		"language": {
+			"polish": "Polski",
+			"english": "Angielski"
+		}
 	}
 }
