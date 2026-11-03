@@ -17,7 +17,7 @@ export interface ThemedDialogProps {
 	title?: string
 	errorMessageTx?: ParseKeys
 	errorMessage?: string
-	variant?: ThemedInputVariant
+	variant: ThemedInputVariant
 	currency?: string
 	initialValue?: string
 	validate?: (value: string) => boolean
@@ -87,18 +87,14 @@ function DialogCard({
 				>
 					<View style={styles.buttonContent}>
 						<IconX color={colors.blue2} width={16} height={16} />
-						<ThemedText variant="H2" colorName="blue2">
-							Anuluj
-						</ThemedText>
+						<ThemedText tx="common.cancel" variant="H2" colorName="blue2" />
 					</View>
 				</ThemedView>
 
 				<ThemedView colorName="blue2" style={styles.actionButton} onPress={onConfirm}>
 					<View style={styles.buttonContent}>
 						<IconCheck color={colors.bg_0} width={16} height={16} />
-						<ThemedText variant="H2" colorName="bg_0">
-							Potwierdź
-						</ThemedText>
+						<ThemedText tx="common.confirm" variant="H2" colorName="bg_0" />
 					</View>
 				</ThemedView>
 			</View>
@@ -109,10 +105,10 @@ function DialogCard({
 export function ThemedDialog({
 	visible,
 	titleTx,
-	title = "Zdefiniuj cel budżetowy:",
+	title,
 	errorMessageTx,
 	errorMessage,
-	variant = "money",
+	variant,
 	currency,
 	initialValue = "",
 	validate,
@@ -136,7 +132,6 @@ export function ThemedDialog({
 	}
 
 	const handleConfirm = () => {
-		//TODO
 		if (validate && !validate(inputValue)) {
 			setHasError(true)
 			return
@@ -146,7 +141,6 @@ export function ThemedDialog({
 	}
 
 	const handleCancel = () => {
-		//TODO
 		onCancel()
 	}
 
