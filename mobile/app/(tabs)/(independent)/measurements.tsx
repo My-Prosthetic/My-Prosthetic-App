@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react"
-import { Pressable, StyleSheet, View, ScrollView } from "react-native"
+import { StyleSheet, View, ScrollView } from "react-native"
 import { useFocusEffect, useRouter } from "expo-router"
 
 import { ThemedView } from "@/src/components/ThemedView"
@@ -180,9 +180,13 @@ function MeasurementsTable({
 				)
 
 				return onRowPress ? (
-					<Pressable key={measure.id} style={rowStyle} onPress={() => onRowPress(measure)}>
+					<ThemedView
+						key={measure.id}
+						style={[rowStyle, { borderRadius: 0 }]}
+						onPress={() => onRowPress(measure)}
+					>
 						{rowContent}
-					</Pressable>
+					</ThemedView>
 				) : (
 					<View key={measure.id} style={rowStyle}>
 						{rowContent}
