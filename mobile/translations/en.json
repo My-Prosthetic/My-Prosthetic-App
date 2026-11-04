@@ -78,7 +78,8 @@
 		"delete": "Delete",
 		"today": "Today",
 		"mp": "My Prosthetic",
-		"info": "Information"
+		"info": "Information",
+		"yes": "Yes"
 	},
 	"funding": {
 		"outOf": "out of",
@@ -314,6 +315,9 @@
 	},
 	"measurements": {
 		"title": "ADD MEASUREMENT",
+		"editTitle": "EDIT MEASUREMENT",
+		"saveChanges": "SAVE CHANGES",
+		"measureNotFound": "This measurement no longer exists.",
 		"selectLimb": "SELECT LIMB",
 		"date": "DATE",
 		"datePlaceholder": "MM-DD-YYYY",
@@ -337,8 +341,22 @@
 		"saveSuccessTitle": "Measurement saved",
 		"saveSuccessMessage": "The measurement has been saved.",
 		"saveError": "Could not save the measurement.",
+		"deleteTitle": "Delete measurement",
+		"deleteConfirmation": "Are you sure you want to delete this measurement?",
+		"deleteError": "Could not delete the measurement.",
+		"forefitTitle": "Forefit measurement",
+		"forefitConfirmation": "Are you sure you want to forefit this measurement?",
+		"discardTitle": "Discard measurement",
+		"discardConfirmation": "Are you sure you want to clear the form and leave?",
 		"save": "SAVE MEASUREMENT",
-		"delete": "DELETE"
+		"delete": "DELETE",
+		"history": {
+			"title": "Measurements history",
+			"date": "Date",
+			"points": "Measurement\npoints",
+			"empty": "No data to be displayed for current filters",
+			"loadError": "Failed to load measurements history"
+		}
 	},
 	"newIncident": {
 		"title": "NEW INCIDENT",

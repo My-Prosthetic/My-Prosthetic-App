@@ -78,7 +78,8 @@
 		"delete": "Usuń",
 		"today": "Dzisiaj",
 		"mp": "My Prosthetic",
-		"info": "Informacja"
+		"info": "Informacja",
+		"yes": "Tak"
 	},
 	"funding": {
 		"outOf": "z",
@@ -313,6 +314,9 @@
 	},
 	"measurements": {
 		"title": "DODAJ POMIAR",
+		"editTitle": "EDYTUJ POMIAR",
+		"saveChanges": "ZAPISZ ZMIANY",
+		"measureNotFound": "Ten pomiar już nie istnieje.",
 		"selectLimb": "WYBIERZ KOŃCZYNĘ",
 		"date": "DATA",
 		"datePlaceholder": "DD-MM-RRRR",
@@ -336,8 +340,22 @@
 		"saveSuccessTitle": "Pomiar zapisany",
 		"saveSuccessMessage": "Pomiar został zapisany.",
 		"saveError": "Nie udało się zapisać pomiaru.",
+		"deleteTitle": "Usuń pomiar",
+		"deleteConfirmation": "Czy na pewno chcesz usunąć ten pomiar?",
+		"forefitTitle": "Porzuć pomiar",
+		"forefitConfirmation": "Czy na pewno chcesz porzucić ten pomiar?",
+		"deleteError": "Nie udało się usunąć pomiaru.",
+		"discardTitle": "Odrzuć pomiar",
+		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
 		"save": "ZAPISZ POMIAR",
-		"delete": "USUŃ"
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty\npomiarowe",
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów",
+			"loadError": "Nie udało się pobrać pomiarów z historii"
+		}
 	},
 	"newIncident": {
 		"title": "NOWY INCYDENT",

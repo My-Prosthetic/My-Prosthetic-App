@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm"
+import { and, count, eq, isNull } from "drizzle-orm"
 
 import { db } from "../client"
 import { measures, measureLevels } from "@/db/schema/measures"
@@ -15,11 +15,44 @@ export type CreateMeasureLevelInput = {
 
 export type CreateMeasureInput = {
 	id: string
-	date: string
-	time: string
+	measuredAt: Date
 	side: "left" | "right"
 	limbType: "upper" | "lower"
 	levels: CreateMeasureLevelInput[]
+}
+
+export type UpdateMeasureInput = Pick<
+	CreateMeasureInput,
+	"measuredAt" | "side" | "limbType" | "levels"
+>
+
+export type MeasuresPageQuery = {
+	side: Measure["side"]
+	limbType: Measure["limbType"]
+	page: number
+	pageSize: number
+}
+
+export type MeasuresPage = {
+	items: MeasureWithLevels[]
+	total: number
+}
+
+async function insertLevels(
+	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+	measureId: string,
+	levels: CreateMeasureLevelInput[]
+) {
+	if (levels.length === 0) return
+
+	await tx.insert(measureLevels).values(
+		levels.map((lvl) => ({
+			measureId,
+			level: lvl.level,
+			distance: lvl.distance,
+			value: lvl.value,
+		}))
+	)
 }
 
 export async function createMeasure(input: CreateMeasureInput) {
@@ -30,8 +63,7 @@ export async function createMeasure(input: CreateMeasureInput) {
 			.insert(measures)
 			.values({
 				id: input.id,
-				date: input.date,
-				time: input.time,
+				measuredAt: input.measuredAt.toISOString(),
 				side: input.side,
 				limbType: input.limbType,
 				isDirty: true,
@@ -43,16 +75,34 @@ export async function createMeasure(input: CreateMeasureInput) {
 			throw new Error("Failed to create measure")
 		}
 
-		if (input.levels.length > 0) {
-			await tx.insert(measureLevels).values(
-				input.levels.map((lvl) => ({
-					measureId: input.id,
-					level: lvl.level,
-					distance: lvl.distance,
-					value: lvl.value,
-				}))
-			)
+		await insertLevels(tx, input.id, input.levels)
+
+		return measure
+	})
+}
+
+export async function updateMeasure(id: string, input: UpdateMeasureInput) {
+	const now = new Date().toISOString()
+
+	return await db.transaction(async (tx) => {
+		const [measure] = await tx
+			.update(measures)
+			.set({
+				measuredAt: input.measuredAt.toISOString(),
+				side: input.side,
+				limbType: input.limbType,
+				isDirty: true,
+				updatedAt: now,
+			})
+			.where(and(eq(measures.id, id), isNull(measures.deletedAt)))
+			.returning()
+
+		if (!measure) {
+			throw new Error("Measure not found")
 		}
+
+		await tx.delete(measureLevels).where(eq(measureLevels.measureId, id))
+		await insertLevels(tx, id, input.levels)
 
 		return measure
 	})
@@ -82,7 +132,7 @@ export async function getLatestMeasure(filter?: {
 			if (filter?.limbType) conditions.push(eq(fields.limbType, filter.limbType))
 			return and(...conditions)
 		},
-		orderBy: (fields, { desc }) => [desc(fields.date), desc(fields.time), desc(fields.updatedAt)],
+		orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
 		with: {
 			levels: {
 				orderBy: (fields, { asc }) => [asc(fields.level)],
@@ -91,6 +141,38 @@ export async function getLatestMeasure(filter?: {
 	})
 
 	return latest ?? null
+}
+
+export async function getMeasuresPage({
+	side,
+	limbType,
+	page,
+	pageSize,
+}: MeasuresPageQuery): Promise<MeasuresPage> {
+	const where = and(
+		eq(measures.side, side),
+		eq(measures.limbType, limbType),
+		isNull(measures.deletedAt)
+	)
+
+	return await db.transaction(async (tx) => {
+		const [items, [totalRow]] = await Promise.all([
+			tx.query.measures.findMany({
+				where,
+				orderBy: (fields, { desc }) => [desc(fields.measuredAt), desc(fields.id)],
+				limit: pageSize,
+				offset: (page - 1) * pageSize,
+				with: {
+					levels: {
+						orderBy: (fields, { asc }) => [asc(fields.level)],
+					},
+				},
+			}),
+			tx.select({ total: count() }).from(measures).where(where),
+		])
+
+		return { items, total: totalRow?.total ?? 0 }
+	})
 }
 
 export async function deleteMeasure(id: string) {

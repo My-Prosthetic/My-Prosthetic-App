@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 
 import { useAuth } from "@/context/AuthContext"
 import { Carousel } from "@/src/components/Carousel"
-import { formatDateBadge } from "@/src/utils/dateFormatter"
+import { formatDateBadge } from "@/src/utils/dateTimeUtils"
 
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
@@ -253,7 +253,7 @@ export default function HomeScreen() {
 					<ThemedView
 						variant="wide"
 						colorName="blue2"
-						onPress={() => router.push("./measure/")}
+						onPress={() => router.push("/measurementForm")}
 						leftChild={<IconMeasure color={colors.bg_0} />}
 						centerChild={<ThemedText tx="home.addMeasure" variant="H1" colorName="bg_0" />}
 						rightChild={<IconPlus color={colors.bg_0} />}

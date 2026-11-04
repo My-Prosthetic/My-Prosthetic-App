@@ -78,6 +78,7 @@ export default function TabsLayout() {
 		>
 			{status === "GUEST" && <GuestBanner />}
 			<Tabs
+				backBehavior="history"
 				screenOptions={{
 					headerShown: false,
 					tabBarStyle: {
@@ -111,6 +112,12 @@ export default function TabsLayout() {
 					name="settings"
 					options={{
 						tabBarButton: provideRenderButton("settings"),
+					}}
+				/>
+				<Tabs.Screen
+					name="(independent)"
+					options={{
+						href: null,
 					}}
 				/>
 			</Tabs>
