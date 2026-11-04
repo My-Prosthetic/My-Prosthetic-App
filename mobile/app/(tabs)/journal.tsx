@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react"
 import {
 	ActivityIndicator,
 	Modal,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	useWindowDimensions,
@@ -12,6 +11,7 @@ import { useFocusEffect, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
+import { useJournalFilters } from "@/context/JournalFilterContext"
 import { getJournalEvents, type JournalEvent } from "@/db/repositories/journalRepository"
 import { getAllProstheses, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -26,6 +26,21 @@ import FilterIcon from "@/assets/icons/filter-sliders.svg"
 import Pencil from "@/assets/icons/edit-outline-rounded.svg"
 import Plus from "@/assets/icons/plus.svg"
 import Search from "@/assets/icons/search.svg"
+
+const INCIDENT_TYPE_KEYS = {
+	pain: "newIncident.types.pain",
+	abrasion: "newIncident.types.abrasion",
+	poor_fit: "newIncident.types.poorFit",
+	phantom_pain: "newIncident.types.phantomPain",
+	mechanical_failure: "newIncident.types.mechanicalFailure",
+} as const
+const ACTIVITY_TYPE_KEYS = {
+	walking: "newIncident.activities.walking",
+	running: "newIncident.activities.running",
+	sitting: "newIncident.activities.sitting",
+	standing: "newIncident.activities.standing",
+	sport: "newIncident.activities.sport",
+} as const
 
 const keyOf = (date: Date) =>
 	`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
@@ -45,10 +60,16 @@ export default function JournalScreen() {
 	const today = useMemo(() => new Date(), [])
 	const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
 	const [selectedDay, setSelectedDay] = useState(() => keyOf(today))
-	const [search, setSearch] = useState("")
-	const [showIncidents, setShowIncidents] = useState(true)
-	const [showComponents, setShowComponents] = useState(true)
-	const [prosthesisId, setProsthesisId] = useState<string>()
+	const {
+		search,
+		setSearch,
+		showIncidents,
+		setShowIncidents,
+		showComponents,
+		setShowComponents,
+		prosthesisId,
+		setProsthesisId,
+	} = useJournalFilters()
 	const [filterOpen, setFilterOpen] = useState(false)
 	const [prostheses, setProstheses] = useState<Prosthesis[]>([])
 	const [events, setEvents] = useState<JournalEvent[]>([])
@@ -69,31 +90,33 @@ export default function JournalScreen() {
 			}),
 		[start]
 	)
+	const mapToIncidentType = useCallback(
+		(value: string) => {
+			const key = INCIDENT_TYPE_KEYS[value as keyof typeof INCIDENT_TYPE_KEYS]
+			return key ? t(key) : value
+		},
+		[t]
+	)
+	const mapToActivityType = useCallback(
+		(value: string) => {
+			const key = ACTIVITY_TYPE_KEYS[value as keyof typeof ACTIVITY_TYPE_KEYS]
+			return key ? t(key) : value
+		},
+		[t]
+	)
 	const searchAliases = useMemo(() => {
 		const needle = search.trim().toLocaleLowerCase(i18n.language)
-		const matching = (entries: [string, string][]) =>
+		const matching = (values: string[], mapToType: (value: string) => string) =>
 			needle
-				? entries
-						.filter(([, label]) => label.toLocaleLowerCase(i18n.language).includes(needle))
-						.map(([value]) => value)
+				? values.filter((value) =>
+						mapToType(value).toLocaleLowerCase(i18n.language).includes(needle)
+					)
 				: []
 		return {
-			incidentTypeMatches: matching([
-				["pain", t("newIncident.types.pain")],
-				["abrasion", t("newIncident.types.abrasion")],
-				["poor_fit", t("newIncident.types.poorFit")],
-				["phantom_pain", t("newIncident.types.phantomPain")],
-				["mechanical_failure", t("newIncident.types.mechanicalFailure")],
-			]),
-			activityMatches: matching([
-				["walking", t("newIncident.activities.walking")],
-				["running", t("newIncident.activities.running")],
-				["sitting", t("newIncident.activities.sitting")],
-				["standing", t("newIncident.activities.standing")],
-				["sport", t("newIncident.activities.sport")],
-			]),
+			incidentTypeMatches: matching(Object.keys(INCIDENT_TYPE_KEYS), mapToIncidentType),
+			activityMatches: matching(Object.keys(ACTIVITY_TYPE_KEYS), mapToActivityType),
 		}
-	}, [search, i18n.language, t])
+	}, [search, i18n.language, mapToIncidentType, mapToActivityType])
 
 	useFocusEffect(
 		useCallback(() => {
@@ -153,38 +176,6 @@ export default function JournalScreen() {
 		if (date.getMonth() !== month.getMonth() || date.getFullYear() !== month.getFullYear())
 			setMonth(new Date(date.getFullYear(), date.getMonth(), 1))
 	}
-	const incidentTitle = (value: string) => {
-		switch (value) {
-			case "pain":
-				return t("newIncident.types.pain")
-			case "abrasion":
-				return t("newIncident.types.abrasion")
-			case "poor_fit":
-				return t("newIncident.types.poorFit")
-			case "phantom_pain":
-				return t("newIncident.types.phantomPain")
-			case "mechanical_failure":
-				return t("newIncident.types.mechanicalFailure")
-			default:
-				return value
-		}
-	}
-	const activityTitle = (value: string) => {
-		switch (value) {
-			case "walking":
-				return t("newIncident.activities.walking")
-			case "running":
-				return t("newIncident.activities.running")
-			case "sitting":
-				return t("newIncident.activities.sitting")
-			case "standing":
-				return t("newIncident.activities.standing")
-			case "sport":
-				return t("newIncident.activities.sport")
-			default:
-				return value
-		}
-	}
 	const detail = (label: string, value: string | null | undefined) =>
 		value ? (
 			<View key={label} style={styles.detailRow}>
@@ -230,7 +221,7 @@ export default function JournalScreen() {
 						<Search color={colors.blue1} width={21} height={21} style={styles.searchIcon} />
 					</View>
 					<View style={[styles.filterRow, width < 360 && styles.smallFilterRow]}>
-						<Pressable
+						<ThemedView
 							onPress={() => setShowIncidents(!showIncidents)}
 							style={styles.checkControl}
 							accessibilityRole="checkbox"
@@ -254,8 +245,8 @@ export default function JournalScreen() {
 								colorName={incidentColorName}
 								style={styles.checkLabel}
 							/>
-						</Pressable>
-						<Pressable
+						</ThemedView>
+						<ThemedView
 							onPress={() => setShowComponents(!showComponents)}
 							style={styles.checkControl}
 							accessibilityRole="checkbox"
@@ -279,7 +270,7 @@ export default function JournalScreen() {
 								colorName="blue2"
 								style={styles.checkLabel}
 							/>
-						</Pressable>
+						</ThemedView>
 						<ThemedView
 							onPress={() => setFilterOpen(true)}
 							style={styles.filterButton}
@@ -346,7 +337,7 @@ export default function JournalScreen() {
 							const outside = date.getMonth() !== month.getMonth()
 							return (
 								<View key={key} style={styles.dayCell}>
-									<Pressable
+									<ThemedView
 										onPress={() => chooseDay(date)}
 										style={[styles.dayTouch, selected && { backgroundColor: colors.bg_2 }]}
 										accessibilityRole="button"
@@ -381,7 +372,7 @@ export default function JournalScreen() {
 												<View style={[styles.bothDot, { backgroundColor: colors.blue2 }]} />
 											)}
 										</View>
-									</Pressable>
+									</ThemedView>
 								</View>
 							)
 						})}
@@ -418,7 +409,7 @@ export default function JournalScreen() {
 									</ThemedView>
 									<ThemedText variant="H1" colorName="blue2" style={styles.eventTitle}>
 										{(event.kind === "incident"
-											? incidentTitle(event.title)
+											? mapToIncidentType(event.title)
 											: t("journal.componentAssembly", { name: event.title })
 										).toLocaleUpperCase(i18n.language)}
 									</ThemedText>
@@ -429,13 +420,15 @@ export default function JournalScreen() {
 								{event.kind === "incident" &&
 									detail(
 										t("journal.circumstances"),
-										event.activity ? activityTitle(event.activity) : null
+										event.activity ? mapToActivityType(event.activity) : null
 									)}
 								{detail(t("journal.prosthesis"), event.prosthesis)}
 								{detail(t("journal.component"), event.component)}
 								{detail(t("journal.description"), event.description)}
-								<Pressable
-									style={styles.editTouch}
+								<ThemedView
+									colorName="blue2"
+									style={styles.editButton}
+									hitSlop={10}
 									accessibilityRole="button"
 									accessibilityLabel={t("journal.edit")}
 									onPress={() =>
@@ -450,11 +443,9 @@ export default function JournalScreen() {
 												})
 									}
 								>
-									<ThemedView colorName="blue2" style={styles.editButton}>
-										<Pencil color={colors.bg_0} width={17} height={17} />
-										<ThemedText tx="journal.edit" variant="H5" colorName="bg_0" />
-									</ThemedView>
-								</Pressable>
+									<Pencil color={colors.bg_0} width={17} height={17} />
+									<ThemedText tx="journal.edit" variant="H5" colorName="bg_0" />
+								</ThemedView>
 							</View>
 						))
 					)}
@@ -625,15 +616,10 @@ const styles = StyleSheet.create({
 	},
 	detailLabel: { width: "39%" },
 	detailValue: { flex: 1 },
-	editTouch: {
-		alignSelf: "flex-end",
-		minHeight: 44,
-		minWidth: 91,
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 6,
-	},
 	editButton: {
+		alignSelf: "flex-end",
+		marginTop: 15,
+		marginBottom: 10,
 		height: 25,
 		minWidth: 91,
 		borderRadius: 22,

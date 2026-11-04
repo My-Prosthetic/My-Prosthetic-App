@@ -14,6 +14,7 @@ import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
 import { db } from "@/db/client"
 import migrations from "@/drizzle/migrations"
 import { SettingsProvider } from "@/context/SettingsContext"
+import { JournalFilterProvider } from "@/context/JournalFilterContext"
 
 //TODO tx
 
@@ -142,7 +143,9 @@ export default function RootLayout() {
 		<ThemeProvider>
 			<SettingsProvider>
 				<AuthProvider>
-					<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+					<JournalFilterProvider>
+						<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+					</JournalFilterProvider>
 				</AuthProvider>
 			</SettingsProvider>
 		</ThemeProvider>

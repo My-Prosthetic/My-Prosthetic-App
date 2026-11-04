@@ -76,6 +76,30 @@ const DESCRIPTION_MAX_LENGTH = 500
 const CUSTOM_VALUE = "__custom__"
 const INCIDENTS_DIRECTORY = "incidents"
 
+function parseCoordinates(
+	coordinatesJson: string | null | undefined
+): IncidentCoordinates | undefined {
+	if (!coordinatesJson) return undefined
+	try {
+		const value: unknown = JSON.parse(coordinatesJson)
+		if (
+			value &&
+			typeof value === "object" &&
+			"x" in value &&
+			"y" in value &&
+			"view" in value &&
+			typeof value.x === "number" &&
+			typeof value.y === "number" &&
+			(value.view === "side" || value.view === "top_inside" || value.view === "front_back")
+		) {
+			return { x: value.x, y: value.y, view: value.view }
+		}
+	} catch {
+		return undefined
+	}
+	return undefined
+}
+
 function getMediaExtension(uri: string, fallback: string) {
 	const cleanUri = uri.split("?")[0]
 	const match = cleanUri.match(/\.([a-zA-Z0-9]{2,5})$/)
@@ -263,25 +287,11 @@ export default function NewIncidentScreen() {
 					? (record.componentId ?? undefined)
 					: undefined
 			)
-			if (record && record.prosthesisId === selectedProsthesisId && record.coordinatesJson) {
-				try {
-					const value: unknown = JSON.parse(record.coordinatesJson)
-					if (
-						value &&
-						typeof value === "object" &&
-						"x" in value &&
-						"y" in value &&
-						"view" in value &&
-						typeof value.x === "number" &&
-						typeof value.y === "number" &&
-						(value.view === "side" || value.view === "top_inside" || value.view === "front_back")
-					) {
-						setCoordinates({ x: value.x, y: value.y, view: value.view })
-					}
-				} catch {
-					setCoordinates(undefined)
-				}
-			} else setCoordinates(undefined)
+			setCoordinates(
+				record && record.prosthesisId === selectedProsthesisId
+					? parseCoordinates(record.coordinatesJson)
+					: undefined
+			)
 			if (!selectedProsthesisId) {
 				setComponents([])
 				return

@@ -39,7 +39,6 @@
 	"screens": {
 		"homeTitle": "This is Home Screen 🏠",
 		"profileTitle": "Your User Profile 👤",
-		"journalTitle": "You medical journal x",
 		"settingsTitle": "App Settings ⚙️",
 		"programmesTitle": "Funding Programmes 📋",
 		"accumulatedTitle": "Accumulated Funds 💰"
