@@ -4,7 +4,6 @@ import i18n from "@/translations/i18n"
 
 export type DateFormat = "YYYY-MM-DD" | "DD-MM-YYYY" | "MM-DD-YYYY"
 export type Language = "pl" | "en"
-export type FontSize = "small" | "medium" | "large" | "extra-large"
 
 interface SettingsContextType {
 	language: Language
@@ -12,9 +11,6 @@ interface SettingsContextType {
 
 	dateFormat: DateFormat
 	setDateFormat: (format: DateFormat) => void
-
-	fontSize: FontSize
-	setFontSize: (fontSize: FontSize) => void
 
 	ttsEnabled: boolean
 	setTtsEnabled: (ttsEnabled: boolean) => void
@@ -24,13 +20,11 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 const DATE_FORMAT_STORAGE_KEY = "dateFormat"
 const LANGUAGE_STORAGE_KEY = "language"
-const FONT_SIZE_STORAGE_KEY = "fontSize"
 const TTS_ENABLED_STORAGE_KEY = "ttsEnabled"
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
 	const [language, setLanguageState] = useState<Language>("pl")
 	const [dateFormat, setDateFormatState] = useState<DateFormat>("YYYY-MM-DD")
-	const [fontSize, setFontSizeState] = useState<FontSize>("medium")
 	const [ttsEnabled, setTtsEnabledState] = useState(false)
 
 	useEffect(() => {
@@ -38,7 +32,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 			try {
 				const savedDateFormat = await AsyncStorage.getItem(DATE_FORMAT_STORAGE_KEY)
 				const savedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
-				const savedFontSize = await AsyncStorage.getItem(FONT_SIZE_STORAGE_KEY)
 				const savedTtsEnabled = await AsyncStorage.getItem(TTS_ENABLED_STORAGE_KEY)
 
 				if (savedLanguage === "pl" || savedLanguage === "en") {
@@ -52,15 +45,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 					savedDateFormat === "MM-DD-YYYY"
 				) {
 					setDateFormatState(savedDateFormat)
-				}
-
-				if (
-					savedFontSize === "small" ||
-					savedFontSize === "medium" ||
-					savedFontSize === "large" ||
-					savedFontSize === "extra-large"
-				) {
-					setFontSizeState(savedFontSize)
 				}
 
 				if (savedTtsEnabled !== null) {
@@ -87,12 +71,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 		void i18n.changeLanguage(language)
 	}
 
-	const setFontSize = (fontSize: FontSize) => {
-		setFontSizeState(fontSize)
-
-		void AsyncStorage.setItem(FONT_SIZE_STORAGE_KEY, fontSize)
-	}
-
 	const setTtsEnabled = (enabled: boolean) => {
 		setTtsEnabledState(enabled)
 		void AsyncStorage.setItem(TTS_ENABLED_STORAGE_KEY, String(enabled))
@@ -105,8 +83,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 				setDateFormat,
 				language,
 				setLanguage,
-				fontSize,
-				setFontSize,
 				ttsEnabled,
 				setTtsEnabled,
 			}}

@@ -13,6 +13,7 @@ import { logFullDatabase } from "@/db/debug"
 import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
 import { db } from "@/db/client"
 import migrations from "@/drizzle/migrations"
+import { SelectedProsthesisProvider } from "@/context/SelectedProsthesisContext"
 import { SettingsProvider } from "@/context/SettingsContext"
 import { JournalFilterProvider } from "@/context/JournalFilterContext"
 
@@ -50,7 +51,7 @@ function RootNavigationLayout({
 			.catch((error: unknown) => {
 				if (isMounted) {
 					setCatalogueError(
-						error instanceof Error ? error : new Error("Nieznany b┼é─ůd seedowania katalogu")
+						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
 					)
 				}
 			})
@@ -82,7 +83,7 @@ function RootNavigationLayout({
 	if (migrationError) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>B┼é─ůd migracji bazy danych: {migrationError.message}</Text>
+				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
 			</View>
 		)
 	}
@@ -90,7 +91,7 @@ function RootNavigationLayout({
 	if (catalogueError) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>B┼é─ůd inicjalizacji katalogu producent├│w: {catalogueError.message}</Text>
+				<Text>Błąd inicjalizacji katalogu producentów: {catalogueError.message}</Text>
 			</View>
 		)
 	}
@@ -143,9 +144,11 @@ export default function RootLayout() {
 		<ThemeProvider>
 			<SettingsProvider>
 				<AuthProvider>
-					<JournalFilterProvider>
-						<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
-					</JournalFilterProvider>
+					<SelectedProsthesisProvider>
+						<JournalFilterProvider>
+							<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
+						</JournalFilterProvider>
+					</SelectedProsthesisProvider>
 				</AuthProvider>
 			</SettingsProvider>
 		</ThemeProvider>

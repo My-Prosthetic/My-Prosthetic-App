@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next"
 import { ParseKeys, TOptions } from "i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useRef } from "react"
-import { useSettings } from "@/context/SettingsContext"
-import { FONT_SIZE_OPTIONS } from "./settings/SettingsOptions"
 
 type Variant =
 	| "H0"
@@ -46,15 +44,6 @@ export const ThemedText = ({
 	const { t } = useTranslation()
 	const content = tx ? t(tx, txOptions) : children
 
-	const { fontSize } = useSettings()
-	const fontScale = FONT_SIZE_OPTIONS.find((option) => option.value === fontSize)?.scale ?? 1
-	const variantStyle = typography[variant]
-
-	const scaledTypography = {
-		fontSize: variantStyle.fontSize * fontScale,
-		lineHeight: variantStyle.lineHeight * fontScale,
-	}
-
 	const isProcessingRef = useRef(false)
 	const lastPressRef = useRef(0)
 
@@ -79,7 +68,6 @@ export const ThemedText = ({
 					style={[
 						{ color: colors[colorName], textAlignVertical: "center" },
 						typography[variant],
-						scaledTypography,
 						style,
 					]}
 					{...props}
@@ -95,7 +83,6 @@ export const ThemedText = ({
 			style={[
 				{ color: colors[colorName], textAlignVertical: "center", paddingHorizontal: 1 },
 				typography[variant],
-				scaledTypography,
 				style,
 			]}
 			{...props}

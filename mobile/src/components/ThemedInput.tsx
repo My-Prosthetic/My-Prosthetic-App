@@ -4,7 +4,8 @@ import { ThemedText } from "./ThemedText"
 import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 
-export type ThemedInputVariant = "email" | "password" | "regular" | "note" | "search" | "money"
+export type ThemedInputVariant =
+	"email" | "password" | "regular" | "note" | "search" | "money" | "float"
 
 export interface ThemedInputProps extends TextInputProps {
 	variant: ThemedInputVariant
@@ -46,6 +47,9 @@ export const ThemedInput = ({
 		money: {
 			keyboardType: "numeric",
 		},
+		float: {
+			keyboardType: "decimal-pad",
+		},
 	}
 
 	const variantStyles: Record<ThemedInputVariant, ViewStyle> = {
@@ -59,6 +63,7 @@ export const ThemedInput = ({
 		money: {
 			flexDirection: "row",
 		},
+		float: {},
 	}
 
 	const variantProps = variantConfigs[variant]

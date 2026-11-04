@@ -17,8 +17,8 @@ export interface ThemedSwitchProps {
 }
 
 export default function ThemedSelectiveSwitch({
-	leftLabelWidth = 40,
-	rightLabelWidth = 40,
+	leftLabelWidth = 42,
+	rightLabelWidth = 42,
 	leftTx,
 	rightTx,
 	selectLeft,
