@@ -131,11 +131,13 @@ export default function ExportDataScreen() {
 
 	const locale = i18n.language.startsWith("pl") ? "pl-PL" : "en-US"
 
-	const compactDateFormatter = useMemo(
+	const dateFormatter = useMemo(
 		() =>
 			new Intl.DateTimeFormat(locale, {
+				weekday: "short",
 				day: "2-digit",
 				month: "2-digit",
+				year: "numeric",
 			}),
 		[locale]
 	)
@@ -377,33 +379,41 @@ export default function ExportDataScreen() {
 
 					<ThemedView colorName="bg_0" borderColor="blue1" style={styles.dataCard}>
 						<View style={styles.dateRow}>
-							<ThemedText tx="settings.export.dateRange" variant="H2" colorName="blue2" />
+							<ThemedText
+								tx="settings.export.dateRange"
+								variant="H2"
+								colorName="blue2"
+								style={styles.dateRangeTitle}
+							/>
 
 							<View style={styles.dateButtons}>
 								{(["from", "to"] as const).map((field) => {
 									const date = field === "from" ? fromDate : toDate
 									const label =
 										field === "from" ? "settings.export.fromDate" : "settings.export.toDate"
+									const isActive = activeDate === field
+
 									return (
 										<ThemedView
 											key={field}
 											onPress={() => setActiveDate(field)}
 											borderColor="blue1"
-											colorName="bg_1"
+											colorName={isActive ? "blue2" : "bg_1"}
 											style={styles.dateButton}
 											accessibilityRole="button"
 											accessibilityLabel={t(label)}
 										>
-											<ThemedText tx={label} variant="H5" colorName="blue2" />
+											<ThemedText tx={label} variant="H5" colorName={isActive ? "bg_0" : "blue2"} />
+
 											<ThemedText
-												variant="H4"
-												colorName="blue2"
+												variant="H5"
+												colorName={isActive ? "bg_0" : "blue1"}
 												numberOfLines={1}
 												adjustsFontSizeToFit
-												minimumFontScale={0.8}
+												minimumFontScale={0.75}
 												style={styles.dateButtonText}
 											>
-												{date ? compactDateFormatter.format(date) : "—"}
+												{date ? dateFormatter.format(date) : "—"}
 											</ThemedText>
 										</ThemedView>
 									)
@@ -504,8 +514,15 @@ export default function ExportDataScreen() {
 				onClose={() => setActiveDate(null)}
 				onSave={(date) => {
 					const selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-					if (activeDate === "from") setFromDate(selectedDate)
-					if (activeDate === "to") setToDate(selectedDate)
+
+					if (activeDate === "from") {
+						setFromDate(selectedDate)
+					}
+
+					if (activeDate === "to") {
+						setToDate(selectedDate)
+					}
+
 					setGeneratedFile(null)
 				}}
 			/>
@@ -580,23 +597,26 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 	},
 	dateRow: {
-		minHeight: 44,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		flexWrap: "wrap",
-		gap: 8,
+		width: "100%",
+		gap: 10,
+	},
+	dateRangeTitle: {
+		textAlign: "center",
 	},
 	dateButtons: {
+		width: "100%",
 		flexDirection: "row",
-		gap: 6,
+		gap: 10,
 	},
 	dateButton: {
-		width: 82,
-		minHeight: 44,
-		paddingHorizontal: 4,
-		borderRadius: 8,
-		flexShrink: 0,
+		flex: 1,
+		minHeight: 58,
+		paddingHorizontal: 8,
+		paddingVertical: 7,
+		borderRadius: 16,
+		alignItems: "center",
+		justifyContent: "center",
+		gap: 2,
 	},
 	dateButtonText: {
 		width: "100%",
