@@ -1248,7 +1248,6 @@ const getStyles = (colors: ThemeColors, width: number) => {
 				lineHeight: 18,
 				textAlign: "center",
 			},
-			infoText: { marginTop: 6, textAlign: "center" },
 			saveHint: { marginTop: 24, marginBottom: -18, textAlign: "center" },
 			schemaSection: { marginTop: 18 },
 			schemaTitle: { marginTop: 0, marginBottom: 18 },

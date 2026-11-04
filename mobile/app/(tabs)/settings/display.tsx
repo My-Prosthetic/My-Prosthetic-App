@@ -154,10 +154,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 15,
 	},
-	fontSizeSlider: {
-		width: "100%",
-		height: 44,
-	},
 	scrollView: {
 		flex: 1,
 		width: "100%",

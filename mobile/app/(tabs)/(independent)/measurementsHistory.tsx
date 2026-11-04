@@ -357,15 +357,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		flex: 1,
 	},
-	addButton: {
-		flexDirection: "row",
-		height: 50,
-		borderRadius: 25,
-		alignItems: "center",
-		justifyContent: "center",
-		gap: 12,
-		marginVertical: 6,
-	},
 	paginationRow: {
 		flexDirection: "row",
 		justifyContent: "center",

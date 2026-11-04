@@ -674,13 +674,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "flex-start",
 	},
-	addFilesButton: {
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 16,
-		paddingVertical: 12,
-		gap: 8,
-	},
 	addFilesSubtitle: {
 		textAlign: "center",
 	},

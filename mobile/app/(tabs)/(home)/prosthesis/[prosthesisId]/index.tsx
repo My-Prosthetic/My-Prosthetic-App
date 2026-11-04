@@ -169,9 +169,6 @@ function ProsthesisFilesSection() {
 }
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-	},
 	centered: {
 		flex: 1,
 		alignItems: "center",
@@ -179,25 +176,6 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		paddingBottom: 10,
-	},
-	topBar: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginBottom: 19,
-		marginTop: 20,
-	},
-	backButton: {
-		width: 26,
-		height: 28,
-		alignItems: "center",
-		justifyContent: "center",
-		marginRight: 1,
-	},
-	pageTitle: {
-		fontSize: 19,
-		lineHeight: 22,
-		fontWeight: "700",
-		letterSpacing: 0.1,
 	},
 	primaryActionRow: {
 		width: "83%",
