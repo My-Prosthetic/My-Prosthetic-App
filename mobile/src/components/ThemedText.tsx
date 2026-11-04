@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next"
 import { ParseKeys, TOptions } from "i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useRef } from "react"
-import { useSettings } from "@/context/SettingsContext"
 
 type Variant =
 	| "H0"
