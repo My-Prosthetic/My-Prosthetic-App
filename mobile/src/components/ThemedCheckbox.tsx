@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native"
+import { StyleSheet, Pressable, View } from "react-native"
 import { ThemedText } from "./ThemedText"
 import { useTheme } from "@/context/ThemeContext"
 
@@ -9,14 +9,14 @@ export default function ThemedCheckbox({
 	checked,
 	onPress,
 }: {
-	label: string
+	label?: string
 	checked: boolean
-	onPress: () => void
+	onPress?: () => void
 }) {
 	const { colors } = useTheme()
 
 	return (
-		<TouchableOpacity hitSlop={8} activeOpacity={0.7} onPress={onPress} style={styles.checkboxItem}>
+		<Pressable hitSlop={8} onPress={onPress} style={styles.checkboxItem}>
 			<View
 				style={[
 					styles.checkboxBox,
@@ -25,12 +25,14 @@ export default function ThemedCheckbox({
 						: { backgroundColor: colors.bg_0, borderColor: colors.blue2, borderWidth: 1.2 },
 				]}
 			>
-				{checked && <IconCheck color={colors.bg_0} width={14} height={12} />}
+				{checked && <IconCheck color={colors.bg_0} width={18} height={18} />}
 			</View>
-			<ThemedText variant="H2" colorName="blue2" style={styles.checkboxLabel}>
-				{label}
-			</ThemedText>
-		</TouchableOpacity>
+			{label && (
+				<ThemedText variant="H2" colorName="blue2" style={styles.checkboxLabel}>
+					{label}
+				</ThemedText>
+			)}
+		</Pressable>
 	)
 }
 
