@@ -50,6 +50,14 @@ class Prosthesis extends Model
     }
 
     /**
+     * @return HasMany<Incident, $this>
+     */
+    public function incidents(): HasMany
+    {
+        return $this->hasMany(Incident::class);
+    }
+
+    /**
      * Narrow the query to the patient's prostheses the actor may see: all of them for
      * the patient, the ones the current grant selects for a prosthetist, and none for
      * anyone else. Deleted prostheses stay hidden even while they are still selected.
