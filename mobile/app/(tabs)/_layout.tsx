@@ -43,9 +43,6 @@ export default function TabsLayout() {
 			let isFocused = currentTab === variant
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
-			if (variant === "home") {
-				isFocused = segments[2] === "home" //TODO logika obejmująca wszystkie ekrany albo wynikająca z routingu
-			}
 
 			const { ref, children, style, ...restProps } = props
 			return (
