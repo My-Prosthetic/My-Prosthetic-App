@@ -450,6 +450,9 @@
 		"photoName": "photo"
 	},
 	"prosthesisDetails": {
+		"actve": "active",
+		"histrocial": "historical",
+		"filter": "filter",
 		"title": "MY PROSTHESIS",
 		"side": "SIDE",
 		"limb": "LIMB",

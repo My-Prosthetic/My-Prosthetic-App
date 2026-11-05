@@ -449,6 +449,9 @@
 		"photoName": "zdjęcie"
 	},
 	"prosthesisDetails": {
+		"actve": "aktywne",
+		"histrocial": "archiwalne",
+		"filter": "filtruj",
 		"title": "MOJA PROTEZA",
 		"side": "STRONA",
 		"limb": "KOŃCZYNA",
