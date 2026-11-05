@@ -15,10 +15,30 @@
 		"accumulated": "Accumulated",
 		"accumulatedTitle": "Accumulated Funds"
 	},
+	"journal": {
+		"title": "CALENDAR",
+		"search": "search...",
+		"incidents": "incidents",
+		"components": "components",
+		"filter": "filter",
+		"previousMonth": "Previous month",
+		"nextMonth": "Next month",
+		"emptyDay": "No events on the selected day.",
+		"loadError": "Could not load events.",
+		"componentAssembly": "Component assembly: {{name}}",
+		"time": "time:",
+		"painScale": "pain scale:",
+		"circumstances": "circumstances:",
+		"prosthesis": "prosthesis:",
+		"component": "component:",
+		"description": "description:",
+		"edit": "edit",
+		"prosthesisFilter": "Filter by prosthesis",
+		"allProstheses": "All prostheses"
+	},
 	"screens": {
 		"homeTitle": "This is Home Screen 🏠",
 		"profileTitle": "Your User Profile 👤",
-		"journalTitle": "You medical journal x",
 		"settingsTitle": "App Settings ⚙️",
 		"programmesTitle": "Funding Programmes 📋",
 		"accumulatedTitle": "Accumulated Funds 💰"
@@ -359,6 +379,8 @@
 		}
 	},
 	"newIncident": {
+		"editTitle": "EDIT INCIDENT",
+		"saveEdit": "SAVE CHANGES",
 		"title": "NEW INCIDENT",
 		"time": "TIME",
 		"type": "INCIDENT TYPE:",
