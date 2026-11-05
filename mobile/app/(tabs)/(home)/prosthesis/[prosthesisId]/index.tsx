@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from "react"
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { useCallback, useState } from "react"
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native"
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 
 import { useTheme } from "@/context/ThemeContext"
@@ -11,19 +10,19 @@ import {
 import { getProsthesisById, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-import { ComponentsPanel } from "@/src/components/prosthesis/details/ComponentsPanel"
 import { EditProsthesisModal } from "@/src/components/prosthesis/details/EditProsthesisModal"
-import { ProsthesisSummary } from "@/src/components/prosthesis/details/ProsthesisSummary"
-import { ThemedHeader } from "@/src/components/ThemedHeader"
+import { ProsthesisComponentsList } from "@/src/components/prosthesis/details/ProsthesisComponentsList"
+import { ProsthesisOverview } from "@/src/components/prosthesis/details/ProsthesisOverview"
 
 export default function ProsthesisDetailsScreen() {
 	const router = useRouter()
 	const { colors } = useTheme()
 	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
-
 	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
 	const [components, setComponents] = useState<ComponentWithRelations[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [loadError, setLoadError] = useState(false)
+	const [loadAttempt, setLoadAttempt] = useState(0)
 	const [editVisible, setEditVisible] = useState(false)
 
 	useFocusEffect(
@@ -31,8 +30,10 @@ export default function ProsthesisDetailsScreen() {
 			let mounted = true
 
 			const load = async () => {
+				setIsLoading(true)
+				setLoadError(false)
 				if (!prosthesisId || typeof prosthesisId !== "string") {
-					if (mounted) setIsLoading(false)
+					setIsLoading(false)
 					return
 				}
 
@@ -41,130 +42,87 @@ export default function ProsthesisDetailsScreen() {
 						getProsthesisById(prosthesisId),
 						getComponentsByProsthesisId(prosthesisId),
 					])
-
 					if (mounted) {
 						setProsthesis(prosthesisResult)
 						setComponents(componentsResult)
 					}
 				} catch (error) {
-					console.error("Failed to load prosthesis:", error)
+					console.error(`Failed to load prosthesis details (attempt ${loadAttempt}):`, error)
+					if (mounted) setLoadError(true)
 				} finally {
 					if (mounted) setIsLoading(false)
 				}
 			}
 
 			void load()
-
 			return () => {
 				mounted = false
 			}
-		}, [prosthesisId])
+		}, [prosthesisId, loadAttempt])
 	)
 
 	if (isLoading) {
 		return (
-			<ThemedView colorName="tertiary_base_1" style={styles.centered}>
-				<ActivityIndicator size="large" color={colors.primary_base} />
+			<ThemedView colorName="bg_1" style={styles.centered}>
+				<ActivityIndicator size="large" color={colors.blue2} />
+			</ThemedView>
+		)
+	}
+
+	if (loadError) {
+		return (
+			<ThemedView colorName="bg_1" style={styles.centered}>
+				<ThemedText tx="prosthesisDetails.loadError" variant="H2" colorName="blue2" />
+				<ThemedView
+					colorName="blue2"
+					onPress={() => setLoadAttempt((attempt) => attempt + 1)}
+					style={styles.retryButton}
+				>
+					<ThemedText tx="prosthesisDetails.retry" variant="H2" colorName="bg_0" />
+				</ThemedView>
 			</ThemedView>
 		)
 	}
 
 	if (!prosthesis) {
 		return (
-			<ThemedView colorName="tertiary_base_1" style={styles.centered}>
-				<ThemedText tx="prosthesisDetails.notFound" variant="subTitle2" colorName="primary_base" />
+			<ThemedView colorName="bg_1" style={styles.centered}>
+				<ThemedText tx="prosthesisDetails.notFound" variant="H2" colorName="blue2" />
 			</ThemedView>
 		)
 	}
 
 	return (
-		<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-			<ThemedView variant="background" colorName="bg_1">
-				<ThemedHeader tx="prosthesisDetails.title" />
-				<ThemedView colorName="primary_base">
-					<Ionicons name="body-outline" size={64} color={colors.accent_base} />
-				</ThemedView>
-
-				<ProsthesisSummary prosthesis={prosthesis} onEdit={() => setEditVisible(true)} />
-
-				<PrimaryActionRow tx="prosthesisDetails.addIncident" iconName="add" />
-
-				<ComponentsPanel
-					components={components}
-					onAddComponent={() => router.push(`/prosthesis/${prosthesisId}/components/new` as any)}
-					onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
-				/>
-
-				<ProsthesisFilesSection />
-				{editVisible && (
-					<EditProsthesisModal
-						visible
+		<>
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<ThemedView colorName="bg_1" variant="background" style={styles.screen}>
+					<ProsthesisOverview
 						prosthesis={prosthesis}
-						onClose={() => setEditVisible(false)}
-						onSaved={setProsthesis}
+						onEdit={() => setEditVisible(true)}
+						onAddIncident={() =>
+							router.push({
+								pathname: "/incident/new",
+								params: { prosthesisId: prosthesis.id },
+							})
+						}
 					/>
-				)}
-			</ThemedView>
-		</ScrollView>
-	)
-}
-
-function PrimaryActionRow({
-	tx,
-	iconName,
-	onPress,
-}: {
-	tx: string
-	iconName: React.ComponentProps<typeof Ionicons>["name"]
-	onPress?: () => void
-}) {
-	const { colors } = useTheme()
-
-	return (
-		<ThemedView colorName="tertiary_base_1" onPress={onPress} style={styles.primaryActionRow}>
-			<ThemedView colorName="primary_base" style={styles.primaryActionIcon}>
-				<Ionicons name={iconName} size={30} color={colors.accent_base} />
-			</ThemedView>
-			<ThemedText
-				tx={tx as any}
-				variant="main1Button"
-				colorName="primary_base"
-				style={styles.primaryActionText}
-			/>
-		</ThemedView>
-	)
-}
-
-function ProsthesisFilesSection() {
-	const { colors } = useTheme()
-
-	return (
-		<View style={styles.filesSection}>
-			<ThemedText
-				tx="prosthesisDetails.photosAndFiles"
-				variant="subTitle2"
-				colorName="neutral_text"
-				style={styles.filesTitle}
-			/>
-			<ThemedView colorName="neutral_gray" style={styles.filePlaceholder} />
-			<ThemedView colorName="tertiary_base_1" style={styles.addFileRow}>
-				<ThemedView colorName="neutral_gray" style={styles.smallAddCircle}>
-					<Ionicons name="add" size={30} color={colors.neutral_text} />
+					<ProsthesisComponentsList
+						components={components}
+						onAddComponent={() => router.push(`/prosthesis/${prosthesis.id}/components/new` as any)}
+						onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
+					/>
 				</ThemedView>
-				<ThemedText
-					tx="prosthesisDetails.addFile"
-					variant="body1Regular"
-					colorName="neutral_text"
-					style={styles.addFileText}
+			</ScrollView>
+
+			{editVisible && (
+				<EditProsthesisModal
+					visible
+					prosthesis={prosthesis}
+					onClose={() => setEditVisible(false)}
+					onSaved={setProsthesis}
 				/>
-			</ThemedView>
-			<ThemedText
-				tx="prosthesisDetails.filesHint"
-				variant="body1Regular"
-				colorName="neutral_text"
-				style={styles.filesHint}
-			/>
-		</View>
+			)}
+		</>
 	)
 }
 
@@ -173,75 +131,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
+		padding: 24,
 	},
-	content: {
-		paddingBottom: 10,
-	},
-	primaryActionRow: {
-		width: "83%",
-		alignSelf: "center",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		marginTop: 18,
-		marginBottom: 18,
-		paddingHorizontal: 37,
-	},
-	primaryActionIcon: {
-		width: 38,
-		height: 38,
-		borderRadius: 19,
-		alignItems: "center",
-		justifyContent: "center",
-		marginRight: 10,
-	},
-	primaryActionText: {
-		fontSize: 18,
-		letterSpacing: 0.04,
-	},
-	filesSection: {
-		alignItems: "center",
-		marginTop: 45,
-	},
-	filesTitle: {
-		fontFamily: "Roboto_500Medium",
-		fontSize: 18,
-		lineHeight: 20,
-		letterSpacing: 0.04,
-		textTransform: "uppercase",
-	},
-	filePlaceholder: {
-		width: 188,
-		height: 188,
-		borderRadius: 7,
-		marginTop: 13,
-		marginBottom: 11,
-	},
-	addFileRow: {
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	smallAddCircle: {
-		width: 31,
-		height: 31,
+	retryButton: {
+		marginTop: 16,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 		borderRadius: 16,
+	},
+	screen: {
 		alignItems: "center",
-		justifyContent: "center",
-		marginRight: 10,
-	},
-	addFileText: {
-		fontFamily: "Roboto_500Medium",
-		fontSize: 12,
-		lineHeight: 20,
-		letterSpacing: 0.04,
-	},
-	filesHint: {
-		fontFamily: "Roboto_500Medium",
-		maxWidth: 170,
-		marginTop: 8,
-		fontSize: 10,
-		lineHeight: 14,
-		fontWeight: "500",
-		textAlign: "center",
+		paddingBottom: 20,
 	},
 })
