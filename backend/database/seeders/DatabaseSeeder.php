@@ -15,6 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Demo data includes accounts with a known password, so it must never reach production.
+        if (! app()->environment('local', 'testing')) {
+            return;
+        }
+
         if (! User::query()->where('email', 'test@example.com')->exists()) {
             User::factory()->create([
                 'name' => 'Test User',
