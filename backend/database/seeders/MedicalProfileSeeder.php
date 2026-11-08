@@ -5,15 +5,22 @@ namespace Database\Seeders;
 use App\Enums\KLevel;
 use App\Enums\UserRole;
 use App\Models\User;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Seeder;
 
 class MedicalProfileSeeder extends Seeder
 {
+    use SeedsDemoData;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        if (! $this->isDemoEnvironment()) {
+            return;
+        }
+
         $patient = User::query()->firstOrCreate(
             ['email' => 'prosthesis.patient@example.com'],
             [

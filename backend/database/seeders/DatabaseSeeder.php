@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    use SeedsDemoData;
     use WithoutModelEvents;
 
     /**
@@ -15,8 +17,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Demo data includes accounts with a known password, so it must never reach production.
-        if (! app()->environment('local', 'testing')) {
+        if (! $this->isDemoEnvironment()) {
             return;
         }
 
