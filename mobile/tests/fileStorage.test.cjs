@@ -307,20 +307,42 @@ test("component and incident folder categories refer to the correct records", as
 	assert.equal(folders[1].description, "Test incident")
 
 	await h.service.saveManagedEntry(
-		h.access, { type: "component", prosthesisId: "p1", resourceId: "c1" }, null,
-		"Component documentation", h.asset
+		h.access,
+		{ type: "component", prosthesisId: "p1", resourceId: "c1" },
+		null,
+		"Component documentation",
+		h.asset
 	)
 	await h.service.saveManagedEntry(
-		h.access, { type: "incident", prosthesisId: "p1", resourceId: "i1" }, null,
-		"Incident documentation", h.asset
+		h.access,
+		{ type: "incident", prosthesisId: "p1", resourceId: "i1" },
+		null,
+		"Incident documentation",
+		h.asset
 	)
 	const entries = await h.service.listManagedFiles(h.access)
 	assert.deepEqual(
-		h.metadata.filterFileEntries(entries, { type: "component", prosthesisId: "p1", resourceId: "c1" }, null, "", "pl").map((entry) => entry.name),
+		h.metadata
+			.filterFileEntries(
+				entries,
+				{ type: "component", prosthesisId: "p1", resourceId: "c1" },
+				null,
+				"",
+				"pl"
+			)
+			.map((entry) => entry.name),
 		["Component documentation"]
 	)
 	assert.deepEqual(
-		h.metadata.filterFileEntries(entries, { type: "incident", prosthesisId: "p1", resourceId: "i1" }, null, "", "pl").map((entry) => entry.name),
+		h.metadata
+			.filterFileEntries(
+				entries,
+				{ type: "incident", prosthesisId: "p1", resourceId: "i1" },
+				null,
+				"",
+				"pl"
+			)
+			.map((entry) => entry.name),
 		["Incident documentation"]
 	)
 })

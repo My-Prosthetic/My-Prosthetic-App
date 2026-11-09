@@ -238,36 +238,34 @@ function FilesScreen({ initial }: { initial: Filter }) {
 			!filter.resourceId
 		) {
 			const search = query.trim().toLocaleLowerCase(i18n.language)
-			return (
-				fileResources
-					.filter(
-						(item) =>
-							item.type === filter.type &&
-							(!filter.prosthesisId || item.prosthesisId === filter.prosthesisId)
-					)
-					.filter(
-						(item) =>
-							!item.deletedAt ||
-							entries.some(
-								(entry) =>
-									entry.contextType === item.type &&
-									entry.prosthesisId === item.prosthesisId &&
-									entry.resourceId === item.id
-							)
-					)
-					.map((item) => ({
-						...item,
-						kind: "resource" as const,
-						name:
-							(item.description?.trim() ||
-								item.fallbackName ||
-								(item.occurredAt
-									? t("files.incidentLabel", { date: formatFileDate(item.occurredAt, dateFormat) })
-									: item.id)) + (item.deletedAt ? ` (${t("files.archived")})` : ""),
-					}))
-					.filter((item) => item.name.toLocaleLowerCase(i18n.language).includes(search))
-					.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-			)
+			return fileResources
+				.filter(
+					(item) =>
+						item.type === filter.type &&
+						(!filter.prosthesisId || item.prosthesisId === filter.prosthesisId)
+				)
+				.filter(
+					(item) =>
+						!item.deletedAt ||
+						entries.some(
+							(entry) =>
+								entry.contextType === item.type &&
+								entry.prosthesisId === item.prosthesisId &&
+								entry.resourceId === item.id
+						)
+				)
+				.map((item) => ({
+					...item,
+					kind: "resource" as const,
+					name:
+						(item.description?.trim() ||
+							item.fallbackName ||
+							(item.occurredAt
+								? t("files.incidentLabel", { date: formatFileDate(item.occurredAt, dateFormat) })
+								: item.id)) + (item.deletedAt ? ` (${t("files.archived")})` : ""),
+				}))
+				.filter((item) => item.name.toLocaleLowerCase(i18n.language).includes(search))
+				.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 		}
 		return filterFileEntries(entries, activeFilter, folderId, query, i18n.language)
 	}, [
