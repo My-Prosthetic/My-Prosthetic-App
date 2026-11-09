@@ -509,7 +509,18 @@
 		"location": "Miejsce",
 		"startDate": "Data od",
 		"description": "Opis",
-		"editSaveError": "Nie udało się zapisać zmian protezy."
+		"editSaveError": "Nie udało się zapisać zmian protezy.",
+		"saveChanges": "Zapisz zmiany",
+		"unsavedChangesTitle": "Niezapisane zmiany",
+		"unsavedChangesMessage": "Czy na pewno chcesz porzucić wprowadzane zmiany?",
+		"discardChanges": "Odrzuć zmiany",
+		"deleteProsthesis": "Usuń protezę",
+		"deleteWarningTitle": "Utracisz w ten sposób wszystkie dane dotyczące tej protezy!",
+		"deleteWarningMessage": "Czy jesteś pewien, że chcesz ją usunąć?",
+		"continueDelete": "Kontynuuj",
+		"deleteConfirmTitle": "Potwierdź usunięcie protezy",
+		"deleteConfirmMessage": "Ta operacja usunie protezę wraz ze wszystkimi przypisanymi do niej komponentami. Tej czynności nie można cofnąć.",
+		"deleteError": "Nie udało się usunąć protezy."
 	},
 	"newComponent": {
 		"newComponent": "Nowy komponent",

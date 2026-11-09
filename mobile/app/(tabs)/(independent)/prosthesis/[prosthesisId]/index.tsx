@@ -10,7 +10,6 @@ import {
 import { getProsthesisById, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-import { EditProsthesisModal } from "@/src/components/prosthesis/details/EditProsthesisModal"
 import { ProsthesisComponentsList } from "@/src/components/prosthesis/details/ProsthesisComponentsList"
 import { ProsthesisOverview } from "@/src/components/prosthesis/details/ProsthesisOverview"
 
@@ -23,7 +22,6 @@ export default function ProsthesisDetailsScreen() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [loadError, setLoadError] = useState(false)
 	const [loadAttempt, setLoadAttempt] = useState(0)
-	const [editVisible, setEditVisible] = useState(false)
 
 	useFocusEffect(
 		useCallback(() => {
@@ -98,11 +96,10 @@ export default function ProsthesisDetailsScreen() {
 				<ThemedView colorName="bg_1" variant="background" style={styles.screen}>
 					<ProsthesisOverview
 						prosthesis={prosthesis}
-						onEdit={() => setEditVisible(true)}
-						onAddIncident={() =>
+						onEdit={() =>
 							router.push({
-								pathname: "/incident/new",
-								params: { prosthesisId: prosthesis.id },
+								pathname: "/prosthesis/prosthesisForm",
+								params: { mode: "Edit", prosthesisId: prosthesis.id },
 							})
 						}
 					/>
@@ -113,15 +110,6 @@ export default function ProsthesisDetailsScreen() {
 					/>
 				</ThemedView>
 			</ScrollView>
-
-			{editVisible && (
-				<EditProsthesisModal
-					visible
-					prosthesis={prosthesis}
-					onClose={() => setEditVisible(false)}
-					onSaved={setProsthesis}
-				/>
-			)}
 		</>
 	)
 }

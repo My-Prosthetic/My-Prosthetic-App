@@ -118,7 +118,12 @@ export default function HomeScreen() {
 		<ThemedView
 			colorName="blue2"
 			style={styles.prostheticCard}
-			onPress={() => router.push("/prosthesis/new")}
+			onPress={() =>
+				router.push({
+					pathname: "/prosthesis/prosthesisForm",
+					params: { mode: "Create" },
+				})
+			}
 		>
 			<View style={styles.cardIcon}>
 				<IconPlus color={colors.blue0} width={70} height={70} />

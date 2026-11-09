@@ -22,10 +22,9 @@ const toAmputationLevelKey = (level: string) =>
 type ProsthesisOverviewProps = {
 	prosthesis: Prosthesis
 	onEdit: () => void
-	onAddIncident: () => void
 }
 
-export function ProsthesisOverview({ prosthesis, onEdit, onAddIncident }: ProsthesisOverviewProps) {
+export function ProsthesisOverview({ prosthesis, onEdit }: ProsthesisOverviewProps) {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
 	const [descriptionExpanded, setDescriptionExpanded] = useState(false)
@@ -78,8 +77,9 @@ export function ProsthesisOverview({ prosthesis, onEdit, onAddIncident }: Prosth
 				<ThemedView variant="divider" colorName="blue1" />
 				<DetailRow
 					label={t("newProsthesis.replacementDate")}
-					value={formatDate(prosthesis.replacementDate)}
+					value={prosthesis.replacementDate ? formatDate(prosthesis.replacementDate) : "-"}
 				/>
+
 				<ThemedView variant="divider" colorName="blue1" />
 
 				<ThemedView

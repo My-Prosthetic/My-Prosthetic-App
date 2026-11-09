@@ -510,7 +510,18 @@
 		"location": "Location",
 		"startDate": "Since",
 		"description": "Description",
-		"editSaveError": "Could not save prosthesis changes."
+		"editSaveError": "Could not save prosthesis changes.",
+		"saveChanges": "Save changes",
+		"unsavedChangesTitle": "Unsaved changes",
+		"unsavedChangesMessage": "Leave this form without saving your changes?",
+		"discardChanges": "Discard changes",
+		"deleteProsthesis": "Delete prosthesis",
+		"deleteWarningTitle": "You will lose all data related to this prosthesis!",
+		"deleteWarningMessage": "Are you sure you want to delete it?",
+		"continueDelete": "Continue",
+		"deleteConfirmTitle": "Confirm prosthesis deletion",
+		"deleteConfirmMessage": "This will delete the prosthesis and all its components. This action cannot be undone.",
+		"deleteError": "Could not delete the prosthesis."
 	},
 	"newComponent": {
 		"newComponent": "New component",
