@@ -9,12 +9,19 @@ use App\Enums\UserRole;
 use App\Models\Component;
 use App\Models\Prosthesis;
 use App\Models\User;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Seeder;
 
 class ProsthesisSeeder extends Seeder
 {
+    use SeedsDemoData;
+
     public function run(): void
     {
+        if (! $this->isDemoEnvironment()) {
+            return;
+        }
+
         $patient = User::query()->firstOrCreate(
             ['email' => 'prosthesis.patient@example.com'],
             [
