@@ -23,6 +23,7 @@ import { Directory, File, Paths } from "expo-file-system"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { ThemeColors, useTheme } from "@/context/ThemeContext"
+import { getDatabaseSession } from "@/db/client"
 import {
 	createIncident,
 	getIncidentCustomValues,
@@ -80,7 +81,9 @@ function getMediaExtension(uri: string, fallback: string) {
 }
 
 function getIncidentMediaDirectory(incidentId: string) {
-	return new Directory(Paths.document, INCIDENTS_DIRECTORY, incidentId)
+	const session = getDatabaseSession()
+	if (!session) throw new Error("Incident media requires an active account")
+	return new Directory(Paths.document, session.storagePrefix, INCIDENTS_DIRECTORY, incidentId)
 }
 
 async function persistIncidentMedia(

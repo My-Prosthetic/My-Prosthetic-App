@@ -8,7 +8,7 @@ export interface MobileLoginPayload {
 }
 
 export interface AuthenticatedUser {
-	id: number
+	id: string | number
 	name: string
 	email: string
 	role: string
@@ -143,4 +143,11 @@ async function logout(): Promise<void> {
 	}
 }
 
-export const authService = { login, register, logout }
+async function profile(token: string): Promise<AuthenticatedUser> {
+	const response = await apiClient.get<{ data: AuthenticatedUser }>("/profile", {
+		headers: { Authorization: `Bearer ${token}` },
+	})
+	return response.data.data
+}
+
+export const authService = { login, register, logout, profile }

@@ -95,7 +95,11 @@ export default function ProsthesisDetailsScreen() {
 					onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
 				/>
 
-				<ProsthesisFilesSection />
+				<ProsthesisFilesSection
+					onPress={() =>
+						router.push({ pathname: "/files", params: { context: "prosthesis", prosthesisId } })
+					}
+				/>
 				{editVisible && (
 					<EditProsthesisModal
 						visible
@@ -135,7 +139,7 @@ function PrimaryActionRow({
 	)
 }
 
-function ProsthesisFilesSection() {
+function ProsthesisFilesSection({ onPress }: { onPress: () => void }) {
 	const { colors } = useTheme()
 
 	return (
@@ -147,7 +151,7 @@ function ProsthesisFilesSection() {
 				style={styles.filesTitle}
 			/>
 			<ThemedView colorName="neutral_gray" style={styles.filePlaceholder} />
-			<ThemedView colorName="tertiary_base_1" style={styles.addFileRow}>
+			<ThemedView colorName="tertiary_base_1" style={styles.addFileRow} onPress={onPress}>
 				<ThemedView colorName="neutral_gray" style={styles.smallAddCircle}>
 					<Ionicons name="add" size={30} color={colors.neutral_text} />
 				</ThemedView>

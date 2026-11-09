@@ -4,12 +4,20 @@ import * as SecureStore from "expo-secure-store"
 import { useTranslation } from "react-i18next"
 import { authService } from "@/src/services/authService"
 import { purgeDatabase } from "@/db/purgeDataBase"
+import type { AuthenticatedUser } from "@/src/services/authService"
+import {
+	clearLocalCredentials,
+	loginLocalAccount,
+	loginLocalGuest,
+	restoreLocalAccount,
+} from "@/src/services/localAccountService"
 
 export type AuthStatus = "INITIALIZING" | "UNAUTHENTICATED" | "AUTHENTICATED" | "GUEST"
 
 interface AuthContextValue {
 	status: AuthStatus
-	loginWithToken: (token: string) => Promise<boolean>
+	sessionKey: string | null
+	loginWithToken: (token: string, user: AuthenticatedUser) => Promise<boolean>
 	loginAsGuest: () => Promise<boolean>
 	logout: () => Promise<void>
 }
@@ -18,6 +26,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [status, setStatus] = useState<AuthStatus>("INITIALIZING")
+	const [sessionKey, setSessionKey] = useState<string | null>(null)
 	const { t } = useTranslation()
 
 	useEffect(() => {
@@ -25,14 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 		const initializeAuth = async () => {
 			try {
-				const token = await SecureStore.getItemAsync("auth_token")
-				if (token) {
-					if (isMounted) setStatus("AUTHENTICATED")
-					return
+				const restored = await restoreLocalAccount()
+				if (isMounted) {
+					setSessionKey(restored.key)
+					setStatus(restored.status)
 				}
-
-				const isGuest = await SecureStore.getItemAsync("is_guest")
-				if (isMounted) setStatus(isGuest === "true" ? "GUEST" : "UNAUTHENTICATED")
 			} catch (error) {
 				console.error("Failed to initialize authentication state:", error)
 				if (isMounted) setStatus("UNAUTHENTICATED")
@@ -46,14 +52,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}, [])
 
-	const loginWithToken = async (token: string): Promise<boolean> => {
+	const loginWithToken = async (token: string, user: AuthenticatedUser): Promise<boolean> => {
 		try {
-			await purgeDatabase()
-			await SecureStore.deleteItemAsync("is_guest")
-			await SecureStore.setItemAsync("auth_token", token)
+			setStatus("INITIALIZING")
+			setSessionKey(await loginLocalAccount(token, user))
 			setStatus("AUTHENTICATED")
 			return true
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to prepare local data during login.", error)
 			Alert.alert(t("auth.alerts.loginFailed"), t("auth.errors.sessionSetupFailed"))
 			return false
@@ -62,12 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const loginAsGuest = async (): Promise<boolean> => {
 		try {
-			await purgeDatabase()
-			await SecureStore.deleteItemAsync("auth_token")
-			await SecureStore.setItemAsync("is_guest", "true")
+			setStatus("INITIALIZING")
+			setSessionKey(await loginLocalGuest())
 			setStatus("GUEST")
 			return true
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to prepare local data during guest login.", error)
 			Alert.alert(t("auth.alerts.guestLoginFailed"), t("auth.errors.guestSessionSetupFailed"))
 			return false
@@ -84,29 +92,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			return
 		}
 
-		if (token) {
-			try {
-				await authService.logout()
-			} catch (error) {
-				console.warn("[Auth] Remote logout failed; continuing with local logout.", error)
-			}
-		}
-
 		try {
-			await purgeDatabase()
-			await SecureStore.deleteItemAsync("auth_token")
-			await SecureStore.deleteItemAsync("is_guest")
+			setStatus("INITIALIZING")
+			await purgeDatabase(async () => {
+				if (token) await authService.logout()
+				await clearLocalCredentials()
+			})
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to clear local data during logout.", error)
 			Alert.alert(t("auth.alerts.logoutFailed"), t("auth.errors.logoutCleanupFailed"))
 			return
 		}
 
+		setSessionKey(null)
 		setStatus("UNAUTHENTICATED")
 	}
 
 	return (
-		<AuthContext.Provider value={{ status, loginWithToken, loginAsGuest, logout }}>
+		<AuthContext.Provider value={{ status, sessionKey, loginWithToken, loginAsGuest, logout }}>
 			{children}
 		</AuthContext.Provider>
 	)

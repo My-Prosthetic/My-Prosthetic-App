@@ -8,7 +8,6 @@ import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
-import { createUser } from "@/db/repositories/userRepository"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
 
@@ -46,9 +45,7 @@ export default function LoginScreen() {
 		setIsLoading(true)
 		try {
 			const result = await authService.login({ email: normalizedEmail, password })
-			if (!(await loginWithToken(result.token))) return
-			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
-			await createUser({ name: firstName })
+			if (!(await loginWithToken(result.token, result.data))) return
 			//TODO fetch user database contents from api
 		} catch (error) {
 			setErrorMessage(

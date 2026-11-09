@@ -1,4 +1,5 @@
 import i18n from "@/translations/i18n"
+import type { DateFormat } from "@/context/SettingsContext"
 
 export type DateInput = Date | string
 
@@ -42,7 +43,8 @@ export const formatHour = (value: DateInput | FormatHourOptions = new Date()): s
 export const formatDate = (
 	value: DateInput,
 	mode: DateFormatMode = "numeric",
-	referenceDate: Date = new Date()
+	referenceDate: Date = new Date(),
+	dateFormat?: DateFormat
 ): string => {
 	const date = toDate(value)
 	const year = date.getFullYear()
@@ -54,7 +56,15 @@ export const formatDate = (
 			return `${day}.${month}.${year}`
 
 		case "numeric":
-			return markIfToday(`${day}-${month}-${year}`, date, referenceDate)
+			return markIfToday(
+				dateFormat === "YYYY-MM-DD"
+					? `${year}-${month}-${day}`
+					: dateFormat === "MM-DD-YYYY"
+						? `${month}-${day}-${year}`
+						: `${day}-${month}-${year}`,
+				date,
+				referenceDate
+			)
 
 		case "label": {
 			const label = new Intl.DateTimeFormat(i18n.language, {

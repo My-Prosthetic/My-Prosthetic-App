@@ -8,7 +8,6 @@ import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
-import { createUser } from "@/db/repositories/userRepository"
 import { ParseKeys } from "i18next"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
@@ -93,9 +92,7 @@ export default function SignUpScreen() {
 				password,
 				password_confirmation: repeatPassword,
 			})
-			if (!(await loginWithToken(result.token))) return
-			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
-			await createUser({ name: apiFirstName })
+			if (!(await loginWithToken(result.token, result.data))) return
 		} catch (error) {
 			setErrorMessage(
 				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
