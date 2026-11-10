@@ -1,22 +1,30 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { Alert, ScrollView, StyleSheet, TextInput, View, Switch } from "react-native"
+import { useEffect, useMemo, useState } from "react"
+import { Alert, ScrollView, StyleSheet, View } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { Ionicons } from "@expo/vector-icons"
+import { ParseKeys } from "i18next"
+import { useTheme } from "@/context/ThemeContext"
+
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
-import { useTheme } from "@/context/ThemeContext"
-import { formatDate } from "@/src/utils/dateTimeUtils"
+import { ThemedInput } from "@/src/components/ThemedInput"
 import { DatePickerModal } from "@/src/components/DatePicker"
+import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
+import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
+
+import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
+import { formatDate } from "@/src/utils/dateTimeUtils"
+import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
+
 import { createComponent } from "@/db/repositories/componentRepository"
 import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
 import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
-import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
-import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
-import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
+
+import IconFile from "@/assets/icons/file.svg"
+import IconPlus from "@/assets/icons/plus.svg"
 
 export default function NewComponentScreen() {
 	const router = useRouter()
@@ -100,6 +108,17 @@ export default function NewComponentScreen() {
 
 	const handleOnAddFiles = () => {
 		// TODO
+	}
+
+	const handleDelete = () => {
+		//TODO (ai)
+		//soft delete the component from the database. Use the repository methods, implement accurate method if there is none for component deletions
+	}
+
+	const handleForefit = () => {
+		//TODO (ai)
+		// if any data has been changed in the form, ask by Alert "Are you sure you want to forefit" or smth (check how it has been done in the translations)
+		//and after router.back()
 	}
 
 	const handleSave = async () => {
@@ -195,16 +214,13 @@ export default function NewComponentScreen() {
 	}, [prosthesis?.limbType, t])
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-			<ThemedView variant="background" colorName="tertiary_base_1">
-				<ThemedHeader tx="newComponent.newComponent" />
+		<ScrollView showsVerticalScrollIndicator={false}>
+			<ThemedView variant="background" colorName="bg_1">
+				<ThemedHeader tx="newComponent.newComponent" onBack={handleForefit} />
+
 				{/* Kategoria podzespołu */}
 				<View style={[styles.fieldGroup, { paddingTop: 0, paddingBottom: 10 }]}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
+					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.category")} *
 					</ThemedText>
 					<DropdownSelect
@@ -219,59 +235,27 @@ export default function NewComponentScreen() {
 					/>
 				</View>
 
-				{/* Przełączniki: Rodzaj leja & Typ komponentu */}
-				<View style={styles.switchRowsContainer}>
-					{category === "socket" && (
-						<View style={styles.switchRow}>
-							<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-								{t("newComponent.switches.socketType")}
-							</ThemedText>
-							<View style={styles.toggleContainer}>
-								<ThemedText variant="subTitle1" colorName="primary_base">
-									{t("newComponent.switches.test")}
-								</ThemedText>
-								<Switch //TODO useThemedSwitch
-									value={isFinal}
-									onValueChange={setIsFinal}
-									trackColor={{ false: colors.primary_base_2, true: colors.primary_base }}
-									thumbColor={colors.tertiary_base_1}
-									style={styles.switch}
-								/>
-								<ThemedText variant="subTitle1" colorName="primary_base">
-									{t("newComponent.switches.final")}
-								</ThemedText>
-							</View>
-						</View>
-					)}
-					<View style={styles.switchRow}>
-						<ThemedText variant="tab1Category" colorName="secondary_base_0c">
-							{t("newComponent.switches.componentType")}
-						</ThemedText>
+				{category === "socket" && (
+					<View style={styles.switchGroup}>
+						<ThemedText variant="H1" colorName="blue2" tx="newComponent.switches.socketType" />
 						<View style={styles.toggleContainer}>
-							<ThemedText variant="subTitle1" colorName="primary_base">
-								{t("newComponent.switches.active")}
-							</ThemedText>
-							<Switch
-								value={isHistorical}
-								onValueChange={setIsHistorical}
-								trackColor={{ false: colors.primary_base_2, true: colors.primary_base }}
-								thumbColor={colors.tertiary_base_1}
-								style={styles.switch}
+							<ThemedSelectiveSwitch
+								leftLabelWidth={80}
+								rightLabelWidth={80}
+								leftTx="newComponent.switches.test"
+								rightTx="newComponent.switches.final"
+								selectLeft={() => setIsFinal(false)}
+								selectRight={() => setIsFinal(true)}
+								initialState="left"
+								backgroundColor={colors.bg_0}
 							/>
-							<ThemedText variant="subTitle1" colorName="primary_base">
-								{t("newComponent.switches.historical")}
-							</ThemedText>
 						</View>
 					</View>
-				</View>
+				)}
 
 				{/* Marka podzespołu */}
 				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
+					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.brand")} *
 					</ThemedText>
 					<DropdownSelect
@@ -297,11 +281,7 @@ export default function NewComponentScreen() {
 
 				{/* Model */}
 				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
+					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.model")} *
 					</ThemedText>
 					{brand ? (
@@ -323,152 +303,75 @@ export default function NewComponentScreen() {
 								}}
 							/>
 							{!isLoadingModels && modelsList.length === 0 && (
-								<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+								<ThemedText variant="subTitle2" colorName="blue2">
 									{t("newComponent.modelsUnavailable")}
 								</ThemedText>
 							)}
 						</>
 					) : (
 						<>
-							<View
-								style={[
-									styles.modelUnavailable,
-									{ backgroundColor: colors.tertiary_base_3, borderColor: colors.primary_base_2 },
-								]}
+							<ThemedView
+								variant="wide"
+								borderColor="blue1"
+								style={[styles.modelUnavailable, { backgroundColor: colors.bg_2 }]}
 							>
-								<ThemedText variant="main1Button" colorName="primary_base_3">
+								<ThemedText variant="H3" colorName="blue2">
 									{t("newComponent.placeholders.selectBrandFirst")}
 								</ThemedText>
-							</View>
-							<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+							</ThemedView>
+							<ThemedText variant="H4" colorName="blue2">
 								{t("newComponent.hints.selectBrandForModel")}
 							</ThemedText>
 						</>
 					)}
 				</View>
 
+				<View style={styles.switchGroup}>
+					<ThemedText variant="H1" colorName="blue2" tx="newComponent.switches.componentType" />
+					<ThemedSelectiveSwitch
+						leftLabelWidth={80}
+						rightLabelWidth={80}
+						rightTx="newComponent.switches.historical"
+						leftTx="newComponent.switches.active"
+						selectLeft={() => setIsHistorical(false)}
+						selectRight={() => setIsHistorical(true)}
+						initialState="left"
+						backgroundColor={colors.bg_0}
+					/>
+				</View>
+
 				{/* Data montażu */}
 				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
-						{t("newComponent.fields.assemblyDate")}: *
+					<ThemedText variant="H1" colorName="blue2">
+						{t("newComponent.fields.assemblyDate")} *
 					</ThemedText>
-					<ThemedView
-						borderColor="primary_base_2"
-						colorName="tertiary_base_3"
-						variant="old_wide"
-						onPress={() => setAssemblyDateModalVisible(true)}
-						style={styles.dateField}
-					>
-						<ThemedText variant="main1Button" colorName="primary_base">
-							{formatDate(assemblyDate, "numeric")}
-						</ThemedText>
-						<Ionicons name="chevron-down" size={20} color={colors.primary_base} />
-					</ThemedView>
+					<DateRow t={t} onPress={() => setAssemblyDateModalVisible(true)} value={assemblyDate} />
 				</View>
 
 				{/* Opis */}
 				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
-						{t("newComponent.fields.description")}:
+					<ThemedText variant="H1" colorName="blue2">
+						{t("newComponent.fields.description")}
 					</ThemedText>
-					<TextInput
-						multiline
+					<ThemedInput
+						viewStyle={{ backgroundColor: colors.bg_0 }}
+						variant="note"
+						placeholder={t("newComponent.placeholders.description")}
 						value={description}
 						onChangeText={setDescription}
-						placeholder={t("newComponent.placeholders.description")}
-						placeholderTextColor={colors.primary_base_3}
-						style={[
-							styles.textArea,
-							{
-								backgroundColor: colors.tertiary_base_3,
-								borderColor: colors.primary_base_2,
-								color: colors.primary_base,
-							},
-						]}
 					/>
-				</View>
-
-				{/* Sekcja: Gwarancja i zużycie */}
-				<View style={styles.sectionHeader}>
-					<ThemedText
-						variant="main1Button"
-						colorName="secondary_base_0c"
-						style={styles.sectionTitle}
-					>
-						{t("newComponent.sections.warrantyAndUsage")}
-					</ThemedText>
 				</View>
 
 				{/* Data końca gwarancji */}
 				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
+					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.warrantyEndDate")}:
 					</ThemedText>
-					<ThemedView
-						borderColor="primary_base_2"
-						colorName="tertiary_base_3"
-						variant="old_wide"
+					<DateRow
+						t={t}
+						value={warrantyEndDate}
 						onPress={() => setWarrantyEndDateModalVisible(true)}
-						style={styles.dateField}
-					>
-						<ThemedText variant="main1Button" colorName="primary_base">
-							{warrantyEndDate
-								? formatDate(warrantyEndDate, "numeric")
-								: t("prosthesisDetails.filters.chooseDate")}
-						</ThemedText>
-						<Ionicons name="chevron-down" size={20} color={colors.primary_base} />
-					</ThemedView>
-				</View>
-
-				{/* Przewidywana data wymiany */}
-				<View style={styles.fieldGroup}>
-					<ThemedText
-						variant="tab1Category"
-						colorName="secondary_base_0c"
-						style={styles.fieldLabel}
-					>
-						{t("newComponent.fields.expectedExchangeDate")}
-					</ThemedText>
-					<ThemedView
-						borderColor="primary_base_2"
-						colorName="tertiary_base_3"
-						variant="old_wide"
-						onPress={() => setExpectedExchangeDateModalVisible(true)}
-						style={styles.dateField}
-					>
-						<ThemedText variant="main1Button" colorName="primary_base">
-							{expectedExchangeDate
-								? formatDate(expectedExchangeDate, "numeric")
-								: t("prosthesisDetails.filters.chooseDate")}
-						</ThemedText>
-						<Ionicons name="chevron-down" size={20} color={colors.primary_base} />
-					</ThemedView>
-				</View>
-
-				{/* Sekcja przypomnień / checklist */}
-				<View style={styles.remindersContainer}>
-					<ReminderCheckRow
-						label={t("newComponent.reminders.exchangeDate")}
-						emailValue={remindExchangeEmail}
-						appValue={remindExchangeApp}
-						pushValue={remindExchangePush}
-						onEmailChange={() => setRemindExchangeEmail(!remindExchangeEmail)}
-						onAppChange={() => setRemindExchangeApp(!remindExchangeApp)}
-						onPushChange={() => setRemindExchangePush(!remindExchangePush)}
 					/>
-
 					<ReminderCheckRow
 						label={t("newComponent.reminders.warrantyEnd")}
 						emailValue={remindWarrantyEmail}
@@ -480,38 +383,55 @@ export default function NewComponentScreen() {
 					/>
 				</View>
 
+				{/* Przewidywana data wymiany */}
+				<View style={styles.fieldGroup}>
+					<ThemedText variant="H1" colorName="blue2">
+						{t("newComponent.fields.expectedExchangeDate")}
+					</ThemedText>
+					<DateRow
+						t={t}
+						value={expectedExchangeDate}
+						onPress={() => setExpectedExchangeDateModalVisible(true)}
+					/>
+					<ReminderCheckRow
+						label={t("newComponent.reminders.exchangeDate")}
+						emailValue={remindExchangeEmail}
+						appValue={remindExchangeApp}
+						pushValue={remindExchangePush}
+						onEmailChange={() => setRemindExchangeEmail(!remindExchangeEmail)}
+						onAppChange={() => setRemindExchangeApp(!remindExchangeApp)}
+						onPushChange={() => setRemindExchangePush(!remindExchangePush)}
+					/>
+				</View>
+
 				{/* Dodaj pliki */}
 				<ThemedView
-					variant="old_narrow"
-					style={{ backgroundColor: "transparent" }}
+					variant="wide"
+					colorName="blue0"
 					onPress={handleOnAddFiles}
-				>
-					<Ionicons name="add-circle" size={28} color={colors.primary_base} />
-					<ThemedText variant="main1Button" colorName="primary_base">
-						{t("newComponent.addFiles")}
-					</ThemedText>
-				</ThemedView>
-				<ThemedText variant="subTitle2" colorName="primary_base" style={styles.addFilesSubtitle}>
-					{t("newComponent.filesDescription")}
-				</ThemedText>
+					leftChild={<IconFile color={colors.graphite0} />}
+					centerChild={<ThemedText variant="H1" colorName="graphite0" tx="newComponent.addFiles" />}
+					rightChild={<IconPlus color={colors.graphite0} />}
+					style={{ marginTop: 10 }}
+				/>
 
 				{/* Zapisz komponent */}
 				<ThemedView
-					variant="old_narrow"
-					borderColor="accent_base"
+					variant="wide"
+					colorName="blue2"
 					onPress={() => handleSave()}
 					disabled={isSaving}
-					accessibilityRole="button"
-				>
-					<ThemedText
-						variant="main1Button"
-						colorName="accent_base"
-						numberOfLines={1}
-						adjustsFontSizeToFit
-					>
-						{isSaving ? t("newComponent.saving") : t("newComponent.save")}
-					</ThemedText>
-				</ThemedView>
+					centerChild={<ThemedText variant="H1" colorName="bg_0" tx="newComponent.save" />}
+					style={{ marginVertical: 10 }}
+				/>
+
+				<ThemedView
+					variant="wide"
+					colorName="blue2"
+					// onPress={formMode === "Edit" ? handleDelete : handleForefit} //TODO (ai)
+					// centerChild={<ThemedText variant="H1" colorName="bg_0" tx={formMode === "Edit" ? "common.delete" : "common.cancel"} />} //TODO(ai)
+					style={{ marginVertical: 10 }}
+				/>
 			</ThemedView>
 			<CustomOptionDialogModal
 				visible={customOptionType !== null}
@@ -545,6 +465,30 @@ export default function NewComponentScreen() {
 	)
 }
 
+function DateRow({
+	value,
+	onPress,
+	t,
+}: {
+	value: Date | null | undefined
+	onPress: () => void
+	t: (key: ParseKeys) => string
+}) {
+	return (
+		<ThemedView
+			borderColor="blue1"
+			colorName="bg_0"
+			variant="wide"
+			onPress={onPress}
+			style={styles.dateField}
+		>
+			<ThemedText variant="H3" colorName="graphite0">
+				{value ? formatDate(value, "numeric") : t("prosthesisDetails.filters.chooseDate")}
+			</ThemedText>
+		</ThemedView>
+	)
+}
+
 interface ReminderCheckRowProps {
 	label: string
 	emailValue: boolean
@@ -569,7 +513,7 @@ function ReminderCheckRow({
 	return (
 		<View style={styles.reminderRow}>
 			<View style={styles.reminderTitleWrapper}>
-				<ThemedText variant="tab1Category" colorName="secondary_base_0c">
+				<ThemedText variant="H4" colorName="blue2">
 					{label}
 				</ThemedText>
 			</View>
@@ -596,85 +540,47 @@ function ReminderCheckRow({
 }
 
 const styles = StyleSheet.create({
-	scrollContent: {
-		paddingBottom: 20,
+	switchGroup: {
+		justifyContent: "flex-start",
+		gap: 10,
+		alignItems: "flex-start",
+		paddingVertical: 10,
 	},
+
 	fieldGroup: {
 		gap: 6,
-		paddingTop: 10,
-	},
-	fieldLabel: {
-		paddingLeft: 4,
-	},
-	switchRowsContainer: {
-		paddingVertical: 4,
-	},
-	switchRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		paddingHorizontal: 4,
-		height: 30,
+		paddingVertical: 10,
 	},
 	toggleContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 6,
 	},
-	switch: {
-		transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
-	},
 	dateField: {
-		borderWidth: 1,
-		justifyContent: "space-between",
-		paddingVertical: 0,
+		minHeight: 44,
+		alignItems: "flex-start",
 		paddingHorizontal: 10,
+		borderRadius: 15,
 	},
 	modelUnavailable: {
-		minHeight: 48,
-		borderWidth: 1,
-		borderRadius: 16,
+		minHeight: 44,
+		borderRadius: 15,
 		justifyContent: "center",
 		paddingHorizontal: 16,
 		opacity: 0.6,
-	},
-	textArea: {
-		minHeight: 90,
-		borderWidth: 1,
-		borderRadius: 16,
-		paddingHorizontal: 16,
-		paddingTop: 12,
-		paddingBottom: 12,
-		textAlignVertical: "top",
-		fontFamily: "Afacad-Regular",
-		fontSize: 16,
-	},
-	sectionHeader: {
-		marginTop: 8,
-	},
-	sectionTitle: {
-		textAlign: "left",
-	},
-	remindersContainer: {
-		marginTop: 8,
-		gap: 20,
 	},
 	reminderRow: {
 		flexDirection: "row",
 		alignItems: "flex-start",
 		justifyContent: "space-between",
+		marginTop: 10,
 	},
 	reminderTitleWrapper: {
 		width: "36%",
 		paddingRight: 4,
 	},
 	checkboxesGroup: {
-		flex: 1,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "flex-start",
-	},
-	addFilesSubtitle: {
-		textAlign: "center",
+		flexDirection: "column",
+		gap: 10,
 	},
 })

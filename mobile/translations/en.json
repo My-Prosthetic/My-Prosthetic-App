@@ -277,7 +277,7 @@
 		"replacementDatePastError": "The expected replacement date cannot be in the past.",
 		"notes": "Description / notes",
 		"notesPlaceholder": "Add notes...",
-		"addFiles": "Add files",
+		"addFiles": "Add photos and files",
 		"filesDescription": "here you can add photos, documentation, 3D scans and other files related to the prosthesis",
 		"save": "Save prosthesis",
 		"saveError": "The prosthesis could not be saved to the database.",
@@ -551,10 +551,10 @@
 			"other": "Other component"
 		},
 		"switches": {
-			"socketType": "Socket type:",
+			"socketType": "Socket type",
 			"test": "test",
 			"final": "final",
-			"componentType": "Component status:",
+			"componentType": "Status (is it in use)",
 			"active": "active",
 			"historical": "historical"
 		},
@@ -603,10 +603,10 @@
 		},
 		"reminderChannels": {
 			"email": "email",
-			"app": "in the\napp",
-			"push": "push\nnotification"
+			"app": "in the app",
+			"push": "push notification"
 		},
-		"addFiles": "Add files",
+		"addFiles": "Add photos and files",
 		"filesDescription": "add photos, documentation,\n3D scans and other files\nrelated to the prosthesis",
 		"save": "Save component",
 		"saving": "Saving...",

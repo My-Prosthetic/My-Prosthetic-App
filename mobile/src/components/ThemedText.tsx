@@ -33,8 +33,8 @@ const PRESS_GUARD_MS = 500
 export const ThemedText = ({
 	tx,
 	txOptions,
-	variant = "title",
-	colorName = "primary_base",
+	variant = "H1",
+	colorName = "graphite0",
 	onPress,
 	style,
 	children,

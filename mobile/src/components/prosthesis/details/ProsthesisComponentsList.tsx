@@ -234,7 +234,7 @@ function ComponentCard({
 							{t("prosthesisDetails.warranty")}:
 						</ThemedText>
 						<ThemedText variant="H2" colorName="blue2">
-							{formatDate(component.warrantyEndDate)}
+							{component.warrantyEndDate ? formatDate(component.warrantyEndDate) : " -"}
 						</ThemedText>
 					</View>
 				</View>

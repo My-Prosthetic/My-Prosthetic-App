@@ -198,6 +198,7 @@ export default function HomeScreen() {
 					{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
 					<ThemedView variant="wide" style={styles.headerRow}>
 						<ThemedText
+							variant="H0"
 							tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
 							txOptions={{ name: userName }}
 							colorName="blue2"
@@ -302,6 +303,7 @@ const getStyles = (colors: ThemeColors) => {
 				textAlign: "left",
 				fontFamily: "Montserrat-Bold",
 				textTransform: "none",
+				fontSize: 32,
 			},
 			dateBadge: {
 				width: 60,

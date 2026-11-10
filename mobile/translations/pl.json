@@ -276,7 +276,7 @@
 		"replacementDatePastError": "Przewidywana data wymiany nie może przypadać w przeszłości.",
 		"notes": "Opis / notatki",
 		"notesPlaceholder": "Dodaj krótki opis lub notatki...",
-		"addFiles": "Dodaj pliki",
+		"addFiles": "Dodaj zdjęcia i pliki",
 		"filesDescription": "tutaj możesz dodać zdjęcia, dokumentację, skany 3D i inne pliki dotyczące protezy",
 		"save": "Zapisz protezę",
 		"saveError": "Nie udało się zapisać protezy w bazie danych.",
@@ -550,10 +550,10 @@
 			"other": "Inny komponent"
 		},
 		"switches": {
-			"socketType": "Rodzaj leja:",
+			"socketType": "Rodzaj leja",
 			"test": "testowy",
 			"final": "finalny",
-			"componentType": "Typ komponentu:",
+			"componentType": "Typ (czy jest w użyciu)",
 			"active": "aktywny",
 			"historical": "historyczny"
 		},
@@ -602,10 +602,10 @@
 		},
 		"reminderChannels": {
 			"email": "e-mail",
-			"app": "w\naplikacji",
-			"push": "powiadomienie\npush"
+			"app": "w aplikacji",
+			"push": "powiadomienie push"
 		},
-		"addFiles": "Dodaj pliki",
+		"addFiles": "Dodaj zdjęcia i pliki",
 		"filesDescription": "tutaj możesz dodać zdjęcia,\ndokumentację i skany 3D\noraz inne pliki dotyczące protezy",
 		"save": "Zapisz komponent",
 		"saving": "Zapisywanie...",
