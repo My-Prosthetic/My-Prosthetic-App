@@ -28,7 +28,7 @@ export default function ThemedCheckbox({
 				{checked && <IconCheck color={colors.bg_0} width={18} height={18} />}
 			</View>
 			{label && (
-				<ThemedText variant="H2" colorName="blue2" style={styles.checkboxLabel}>
+				<ThemedText variant="H2" colorName="blue2">
 					{label}
 				</ThemedText>
 			)}
@@ -38,7 +38,8 @@ export default function ThemedCheckbox({
 
 const styles = StyleSheet.create({
 	checkboxItem: {
-		alignItems: "center",
+		flexDirection: "row",
+		gap: 8,
 	},
 	checkboxBox: {
 		width: 28,
@@ -47,8 +48,5 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginBottom: 4,
-	},
-	checkboxLabel: {
-		textAlign: "center",
 	},
 })

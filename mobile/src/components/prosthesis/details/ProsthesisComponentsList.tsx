@@ -83,26 +83,16 @@ export function ProsthesisComponentsList({
 			/>
 
 			<View style={styles.filtersRow}>
-				<ThemedView
-					style={styles.filtersRowElement}
+				<ThemedCheckbox
+					label={t("prosthesisDetails.activeFilter")}
+					checked={showActive}
 					onPress={() => setShowActive((visible) => !visible)}
-				>
-					<ThemedCheckbox
-						checked={showActive}
-						onPress={() => setShowActive((visible) => !visible)}
-					/>
-					<ThemedText tx="prosthesisDetails.activeFilter" variant="H2" colorName="blue2" />
-				</ThemedView>
-				<ThemedView
-					style={styles.filtersRowElement}
+				/>
+				<ThemedCheckbox
+					label={t("prosthesisDetails.historicalFilter")}
+					checked={showHistorical}
 					onPress={() => setShowHistorical((visible) => !visible)}
-				>
-					<ThemedCheckbox
-						checked={showHistorical}
-						onPress={() => setShowHistorical((visible) => !visible)}
-					/>
-					<ThemedText tx="prosthesisDetails.historicalFilter" variant="H2" colorName="blue2" />
-				</ThemedView>
+				/>
 				<ThemedView
 					style={styles.filtersRowElement}
 					onPress={() => setFiltersVisible(true)}
@@ -119,17 +109,16 @@ export function ProsthesisComponentsList({
 				colorName="blue2"
 				onPress={onAddComponent}
 				style={styles.addButton}
-			>
-				<View style={styles.actionButtonContent}>
+				centerChild={
 					<ThemedText
 						tx="prosthesisDetails.addComponent"
-						variant="H2"
+						variant="H1"
 						colorName="bg_0"
 						style={styles.addButtonText}
 					/>
-					<IconPlus color={colors.bg_0} width={20} height={20} />
-				</View>
-			</ThemedView>
+				}
+				rightChild={<IconPlus color={colors.bg_0} width={20} height={20} />}
+			/>
 
 			<View style={styles.componentsList}>
 				{paginatedComponents.length ? (
@@ -284,14 +273,8 @@ const styles = StyleSheet.create({
 		height: 50,
 		marginVertical: 16,
 	},
-	actionButtonContent: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		gap: 8,
-	},
 	addButtonText: {
-		letterSpacing: 0.5,
+		alignSelf: "center",
 	},
 	componentsList: {
 		gap: 12,

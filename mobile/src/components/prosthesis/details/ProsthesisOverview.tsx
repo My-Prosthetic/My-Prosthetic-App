@@ -105,9 +105,9 @@ export function ProsthesisOverview({ prosthesis, onEdit }: ProsthesisOverviewPro
 					onPress={onHandleImagesPress}
 					variant="wide"
 					colorName="blue0"
-					leftChild={<IconFile color={colors.blue2} width={20} height={20} />}
-					centerChild={<ThemedText tx="newIncident.addImages" variant="H1" colorName="blue2" />}
-					rightChild={<IconChevronRight color={colors.blue2} />}
+					leftChild={<IconFile color={colors.graphite0} width={20} height={20} />}
+					centerChild={<ThemedText tx="newIncident.addImages" variant="H1" colorName="graphite0" />}
+					rightChild={<IconChevronRight color={colors.graphite0} />}
 					style={{ marginTop: 20 }}
 				/>
 			</View>
