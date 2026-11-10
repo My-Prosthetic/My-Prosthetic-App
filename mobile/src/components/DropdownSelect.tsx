@@ -1,20 +1,17 @@
-import React, { useState, useMemo } from "react"
-import {
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	TextInput,
-	View,
-	StyleProp,
-	ViewStyle,
-} from "react-native"
+import { useState, useMemo } from "react"
+import { Pressable, ScrollView, StyleSheet, View, StyleProp, ViewStyle } from "react-native"
 import { ParseKeys } from "i18next"
 import { ThemedText } from "@/src/components/ThemedText"
-import { ThemedView, ThemedViewProps } from "@/src/components/ThemedView"
+import { ThemedViewProps } from "@/src/components/ThemedView"
 import { ThemeColors, useTheme } from "@/context/ThemeContext"
 
 import IconChevronDown from "@/assets/icons/chevron-down.svg"
 import IconSearch from "@/assets/icons/search.svg"
+import IconPlus from "@/assets/icons/plus.svg"
+import { ThemedInput } from "./ThemedInput"
+
+const ROW_HEIGHT = 44
+const VISIBLE_ROWS = 4.5
 
 export interface DropdownOption<T> {
 	label: string
@@ -28,7 +25,6 @@ export interface CustomLastConfig {
 }
 
 interface DropdownSelectProps<T> {
-	label?: string
 	placeholder: string
 	options: DropdownOption<T>[]
 	value?: T
@@ -37,9 +33,6 @@ interface DropdownSelectProps<T> {
 	headerStyleProps?: ThemedViewProps
 	search?: string
 	customLast?: CustomLastConfig
-	variant?: "default" | "incident"
-	renderChevron?: (isOpen: boolean) => React.ReactNode
-	renderCreateIcon?: () => React.ReactNode
 }
 
 export function DropdownSelect<T>({
@@ -51,205 +44,99 @@ export function DropdownSelect<T>({
 	headerStyleProps,
 	search,
 	customLast,
-	variant = "default",
-	renderChevron,
-	renderCreateIcon,
 }: DropdownSelectProps<T>) {
 	const { colors } = useTheme()
 	const styles = getStyles(colors)
 	const [isOpen, setIsOpen] = useState(false)
 	const [query, setQuery] = useState("")
 
-	const isIncident = variant === "incident"
-
-	const selectedOption =
-		value === undefined
-			? undefined
-			: options.find((option) => getOptionKey(option.value) === getOptionKey(value))
+	const hasSearch = search !== undefined
+	const selectedKey = value === undefined ? undefined : getOptionKey(value)
+	const selectedOption = options.find((option) => getOptionKey(option.value) === selectedKey)
 
 	const filteredOptions = useMemo(() => {
-		if (!search || !query.trim()) return options
+		const trimmed = query.trim().toLowerCase()
+		if (!hasSearch || !trimmed) return options
 
-		return options.filter((option) =>
-			option.label.toLowerCase().includes(query.trim().toLowerCase())
-		)
-	}, [options, search, query])
+		return options.filter((option) => option.label.toLowerCase().includes(trimmed))
+	}, [options, hasSearch, query])
 
-	if (isIncident) {
-		return (
-			<View style={[styles.incidentShell, !isOpen && styles.incidentShellClosed]}>
-				<Pressable
-					onPress={() => setIsOpen((open) => !open)}
-					style={[
-						styles.incidentTrigger,
-						!isOpen && styles.incidentTriggerClosed,
-						headerStyleProps?.style,
-					]}
-				>
-					<ThemedText variant="H3" colorName="graphite0" style={styles.incidentTriggerText}>
-						{selectedOption?.label ?? placeholder}
-					</ThemedText>
-
-					{renderChevron ? (
-						renderChevron(isOpen)
-					) : (
-						<IconChevronDown color={colors.blue1} width={28} height={28} />
-					)}
-				</Pressable>
-
-				{isOpen && (
-					<View style={styles.incidentMenu}>
-						<ScrollView
-							nestedScrollEnabled
-							showsVerticalScrollIndicator={false}
-							keyboardShouldPersistTaps="handled"
-						>
-							{search !== undefined && (
-								<View style={styles.searchContainer}>
-									<IconSearch
-										color={colors.blue1}
-										width={18}
-										height={18}
-										style={styles.searchIcon}
-									/>
-									<TextInput
-										style={styles.searchInput}
-										placeholder={search}
-										placeholderTextColor={colors.primary_base_2}
-										value={query}
-										onChangeText={setQuery}
-										autoCorrect={false}
-									/>
-								</View>
-							)}
-
-							{filteredOptions.map((option) => {
-								const isSelected =
-									getOptionKey(option.value) ===
-									(value === undefined ? undefined : getOptionKey(value))
-
-								return (
-									<Pressable
-										key={getOptionKey(option.value)}
-										onPress={() => {
-											onChange(option.value)
-											setIsOpen(false)
-											setQuery("")
-										}}
-										style={[styles.incidentOption, isSelected && styles.incidentSelectedOption]}
-									>
-										<ThemedText
-											variant="H3"
-											colorName="graphite0"
-											style={styles.incidentOptionText}
-										>
-											{option.label}
-										</ThemedText>
-									</Pressable>
-								)
-							})}
-
-							{customLast && (
-								<Pressable
-									onPress={async () => {
-										setIsOpen(false)
-										setQuery("")
-										await customLast.onPress()
-									}}
-									style={[styles.incidentCustomLastItem, customLast.style]}
-								>
-									{renderCreateIcon?.()}
-
-									<ThemedText
-										tx={customLast.tx}
-										variant="H3"
-										colorName="graphite0"
-										style={styles.incidentCustomLastText}
-									/>
-								</Pressable>
-							)}
-						</ScrollView>
-					</View>
-				)}
-			</View>
-		)
+	const close = () => {
+		setIsOpen(false)
+		setQuery("")
 	}
 
+	const rowStyle = (index: number) => [styles.row, index > 0 && styles.rowDivider]
+	const firstOptionIndex = hasSearch ? 1 : 0
+
 	return (
-		<View style={styles.wrapper}>
-			<ThemedView
-				variant="wide"
-				colorName="bg_0"
-				borderColor="blue1"
-				onPress={() => setIsOpen((open) => !open)}
-				style={[styles.trigger, headerStyleProps]}
-			>
-				<ThemedText variant="H3" colorName="graphite0">
+		<View style={[styles.shell, headerStyleProps?.style]}>
+			<Pressable onPress={() => (isOpen ? close() : setIsOpen(true))} style={styles.trigger}>
+				<ThemedText variant="H3" colorName="graphite0" numberOfLines={1} style={styles.triggerText}>
 					{selectedOption?.label ?? placeholder}
 				</ThemedText>
-
-				{renderChevron ? renderChevron(isOpen) : <IconChevronDown color={colors.blue1} />}
-			</ThemedView>
+				<IconChevronDown color={colors.blue1} />
+			</Pressable>
 
 			{isOpen && (
-				<ThemedView colorName="bg_0" style={styles.menu} borderColor="blue1">
-					<ScrollView
-						nestedScrollEnabled
-						showsVerticalScrollIndicator
-						keyboardShouldPersistTaps="handled"
-					>
-						{search !== undefined && (
-							<View style={styles.searchContainer}>
-								<IconSearch color={colors.blue1} width={18} height={18} style={styles.searchIcon} />
-								<TextInput
-									style={styles.searchInput}
-									placeholder={search}
-									placeholderTextColor={colors.primary_base_2}
-									value={query}
-									onChangeText={setQuery}
-									autoCorrect={false}
-								/>
-							</View>
-						)}
+				<ScrollView
+					style={styles.menu}
+					nestedScrollEnabled
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+				>
+					{hasSearch && (
+						<View style={[styles.row, { gap: 0 }]}>
+							<IconSearch color={colors.blue1} width={18} height={18} style={styles.searchIcon} />
+							<ThemedInput
+								variant="search"
+								placeholder={search}
+								value={query}
+								onChangeText={setQuery}
+								viewStyle={styles.searchInput}
+							/>
+						</View>
+					)}
 
-						{filteredOptions.map((option) => {
-							const isSelected =
-								getOptionKey(option.value) ===
-								(value === undefined ? undefined : getOptionKey(value))
+					{filteredOptions.map((option, index) => {
+						const key = getOptionKey(option.value)
 
-							return (
-								<Pressable
-									key={getOptionKey(option.value)}
-									onPress={() => {
-										onChange(option.value)
-										setIsOpen(false)
-										setQuery("")
-									}}
-									style={[styles.option, isSelected && styles.selectedOption]}
-								>
-									<ThemedText variant="H3" colorName="graphite0">
-										{option.label}
-									</ThemedText>
-								</Pressable>
-							)
-						})}
-
-						{customLast && (
-							<ThemedView
-								colorName="primary_base"
-								onPress={async () => {
-									setIsOpen(false)
-									setQuery("")
-									await customLast.onPress()
+						return (
+							<Pressable
+								key={key}
+								onPress={() => {
+									onChange(option.value)
+									close()
 								}}
-								style={[styles.customLastItem, customLast.style]}
+								style={[
+									rowStyle(firstOptionIndex + index),
+									key === selectedKey && styles.selectedRow,
+								]}
 							>
-								{renderCreateIcon?.()}
-								<ThemedText tx={customLast.tx} variant="body1Regular" colorName="tertiary_base_3" />
-							</ThemedView>
-						)}
-					</ScrollView>
-				</ThemedView>
+								<ThemedText variant="H3" colorName="graphite0" numberOfLines={1}>
+									{option.label}
+								</ThemedText>
+							</Pressable>
+						)
+					})}
+
+					{customLast && (
+						<Pressable
+							onPress={async () => {
+								close()
+								await customLast.onPress()
+							}}
+							style={[
+								rowStyle(firstOptionIndex + filteredOptions.length),
+								{ marginBottom: 5 },
+								customLast.style,
+							]}
+						>
+							<IconPlus color={colors.blue1} />
+							<ThemedText tx={customLast.tx} variant="H3" colorName="graphite0" numberOfLines={1} />
+						</Pressable>
+					)}
+				</ScrollView>
 			)}
 		</View>
 	)
@@ -257,125 +144,48 @@ export function DropdownSelect<T>({
 
 const getStyles = (colors: ThemeColors) => {
 	const styles = StyleSheet.create({
-		wrapper: {
-			gap: 8,
-			zIndex: 2,
+		shell: {
+			borderWidth: 1,
+			borderColor: colors.blue1,
+			borderRadius: 18,
+			backgroundColor: colors.bg_0,
+			overflow: "hidden",
 		},
 		trigger: {
-			minHeight: 44,
-			borderRadius: 15,
-			paddingHorizontal: 16,
+			minHeight: ROW_HEIGHT,
+			paddingHorizontal: 20,
 			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "space-between",
 		},
-		menu: {
-			marginTop: 4,
-			borderRadius: 16,
-			maxHeight: 220,
-			overflow: "hidden",
+		triggerText: {
+			flexShrink: 1,
 		},
-		searchContainer: {
+		menu: {
+			maxHeight: ROW_HEIGHT * VISIBLE_ROWS,
+			borderTopWidth: 1,
+			borderTopColor: colors.blue1,
+		},
+		row: {
+			height: ROW_HEIGHT,
+			paddingHorizontal: 20,
 			flexDirection: "row",
 			alignItems: "center",
-			borderBottomWidth: 1,
-			borderBottomColor: colors.primary_base_2,
-			paddingHorizontal: 16,
-			paddingVertical: 8,
+			gap: 15,
+		},
+		rowDivider: {
+			borderTopWidth: 1,
+			borderTopColor: colors.blue0,
+		},
+		selectedRow: {
+			backgroundColor: colors.blue1,
 		},
 		searchIcon: {
 			marginRight: 8,
 		},
 		searchInput: {
-			flex: 1,
-			height: 36,
-			color: colors.primary_base,
-			fontFamily: "Inter-Regular",
-			fontSize: 14,
-			padding: 0,
-		},
-		option: {
-			minHeight: 48,
-			paddingHorizontal: 16,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between",
-		},
-		selectedOption: {
-			backgroundColor: colors.blue1,
-		},
-		customLastItem: {
-			minHeight: 48,
-			paddingHorizontal: 16,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
-		},
-
-		incidentShell: {
-			zIndex: 2,
-			borderWidth: 1.25,
-			borderColor: colors.blue1,
-			borderRadius: 18,
-			backgroundColor: colors.bg_0,
-			overflow: "hidden",
-		},
-		incidentShellClosed: {
-			borderWidth: 0,
 			backgroundColor: "transparent",
-			overflow: "visible",
-		},
-		incidentTrigger: {
-			minHeight: 48,
-			paddingHorizontal: 20,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between",
-			backgroundColor: colors.bg_0,
-			borderWidth: 1.25,
-			borderColor: colors.blue1,
-			borderRadius: 18,
-			marginHorizontal: -1.25,
-			marginTop: -1.25,
-		},
-		incidentTriggerClosed: {
-			marginHorizontal: 0,
-			marginTop: 0,
-		},
-		incidentTriggerText: {
-			flexShrink: 1,
-			fontSize: 18,
-			lineHeight: 24,
-		},
-		incidentMenu: {
-			backgroundColor: colors.bg_0,
-			maxHeight: 260,
-			paddingHorizontal: 20,
-		},
-		incidentOption: {
-			minHeight: 43,
-			justifyContent: "center",
-			borderBottomWidth: 1,
-			borderBottomColor: colors.blue0,
-		},
-		incidentSelectedOption: {
-			backgroundColor: colors.bg_0,
-		},
-		incidentOptionText: {
-			fontSize: 18,
-			lineHeight: 24,
-		},
-		incidentCustomLastItem: {
-			minHeight: 56,
-			flexDirection: "row",
-			alignItems: "center",
-			gap: 14,
-			backgroundColor: colors.bg_0,
-		},
-		incidentCustomLastText: {
-			flexShrink: 1,
-			fontSize: 18,
-			lineHeight: 24,
+			borderWidth: 0,
 		},
 	})
 	return styles

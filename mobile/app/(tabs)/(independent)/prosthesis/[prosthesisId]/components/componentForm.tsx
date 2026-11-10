@@ -127,7 +127,6 @@ export default function ComponentFormScreen() {
 						{t("newComponent.fields.category")} *
 					</ThemedText>
 					<DropdownSelect
-						label={t("newComponent.fields.category")}
 						placeholder={t("newComponent.placeholders.category")}
 						value={category}
 						onChange={handleCategoryChange}
@@ -160,7 +159,6 @@ export default function ComponentFormScreen() {
 						{t("newComponent.fields.brand")} *
 					</ThemedText>
 					<DropdownSelect
-						label={t("newComponent.fields.brand")}
 						placeholder={
 							isLoadingBrands
 								? t("newComponent.placeholders.loadingBrands")
@@ -188,7 +186,6 @@ export default function ComponentFormScreen() {
 					{brand ? (
 						<>
 							<DropdownSelect
-								label={t("newComponent.fields.model")}
 								placeholder={
 									isLoadingModels
 										? t("newComponent.placeholders.loadingModels")

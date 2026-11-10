@@ -594,8 +594,6 @@ export default function NewIncidentScreen() {
 
 				<FieldLabel text={t("newIncident.type")} />
 				<DropdownSelect
-					variant="incident"
-					label={t("newIncident.type")}
 					options={typeOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={incidentType || undefined}
 					placeholder={t("newIncident.selectType")}
@@ -604,8 +602,6 @@ export default function NewIncidentScreen() {
 						tx: "newIncident.customValuePlaceholder",
 						onPress: () => selectIncidentType(CUSTOM_VALUE),
 					}}
-					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
-					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customTypeMode && (
 					<CustomValueInput
@@ -617,8 +613,6 @@ export default function NewIncidentScreen() {
 
 				<FieldLabel text={t("newIncident.circumstances")} />
 				<DropdownSelect
-					variant="incident"
-					label={t("newIncident.circumstances")}
 					options={activityOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={activity}
 					placeholder={t("newIncident.none")}
@@ -627,8 +621,6 @@ export default function NewIncidentScreen() {
 						tx: "newIncident.customValuePlaceholder",
 						onPress: () => selectActivity(CUSTOM_VALUE),
 					}}
-					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
-					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customActivityMode && (
 					<CustomValueInput
@@ -722,8 +714,6 @@ export default function NewIncidentScreen() {
 					<>
 						<FieldLabel text={t("newIncident.relatedProsthesis")} />
 						<DropdownSelect
-							variant="incident"
-							label={t("newIncident.relatedProsthesis")}
 							options={prostheses.map((prosthesis) => ({
 								label: prosthesis.name,
 								value: prosthesis.id,
@@ -731,7 +721,6 @@ export default function NewIncidentScreen() {
 							value={selectedProsthesisId}
 							placeholder="-"
 							onChange={setSelectedProsthesisId}
-							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
 						/>
 					</>
 				)}
@@ -740,8 +729,6 @@ export default function NewIncidentScreen() {
 					<>
 						<FieldLabel text={t("newIncident.component")} />
 						<DropdownSelect
-							variant="incident"
-							label={t("newIncident.component")}
 							options={componentOptions}
 							value={selectedComponentId ?? ""}
 							placeholder={t("newIncident.none")}
@@ -749,7 +736,6 @@ export default function NewIncidentScreen() {
 								setSelectedComponentId(value || undefined)
 								setCoordinates(undefined)
 							}}
-							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
 						/>
 					</>
 				)}
