@@ -180,7 +180,8 @@ class User extends Authenticatable
     }
 
     // each user can have many external identities (one for each provider: google, facebook, apple etc)
-    public function externalIdentities(): HasMany {
-        return $this -> hasMany(ExternalIdentity::class);
+    public function externalIdentities(): HasMany
+    {
+        return $this->hasMany(ExternalIdentity::class);
     }
 }

@@ -13,7 +13,7 @@ class GoogleTokenVerifier
         $client = new Client([
             'client_id' => config('services.google.client_id'),
         ]);
-        
+
         try {
             $payload = $client->verifyIdToken($idToken);
         } catch (UnexpectedValueException $e) {

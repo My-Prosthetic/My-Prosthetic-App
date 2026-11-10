@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistSearchController;

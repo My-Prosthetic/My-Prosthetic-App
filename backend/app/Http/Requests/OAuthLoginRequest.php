@@ -24,7 +24,8 @@ class OAuthLoginRequest extends FormRequest
     {
         return [
             'provider' => ['required', 'string', 'in:google,facebook'],
-            'id_token' => ['required', 'string'],
+            'id_token' => ['required_if:provider,google', 'string'],
+            'access_token' => ['required_if:provider,facebook', 'string'],
             'deviceName' => ['nullable', 'string', 'max:100'],
         ];
     }
