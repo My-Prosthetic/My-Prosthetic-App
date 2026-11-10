@@ -1,7 +1,6 @@
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native"
 import { useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
-import type { ParseKeys } from "i18next"
 
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -12,8 +11,8 @@ import { ThemedInput } from "@/src/components/ThemedInput"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
 import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
-import ThemedCheckbox from "@/src/components/ThemedCheckbox"
-import { formatDate } from "@/src/utils/dateTimeUtils"
+import { DateRow } from "@/src/components/prosthesis/component/DateRow"
+import { ReminderCheckRow } from "@/src/components/prosthesis/component/ReminderCheckRow"
 import { useComponentForm, type ComponentFormMode } from "@/src/hooks/useComponentForm"
 
 import IconFile from "@/assets/icons/file.svg"
@@ -250,7 +249,7 @@ export default function ComponentFormScreen() {
 					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.assemblyDate")} *
 					</ThemedText>
-					<DateRow t={t} value={assemblyDate} onPress={() => setAssemblyDateModalVisible(true)} />
+					<DateRow value={assemblyDate} onPress={() => setAssemblyDateModalVisible(true)} />
 				</View>
 
 				{/* Opis */}
@@ -273,7 +272,6 @@ export default function ComponentFormScreen() {
 						{t("newComponent.fields.warrantyEndDate")}:
 					</ThemedText>
 					<DateRow
-						t={t}
 						value={warrantyEndDate}
 						onPress={() => setWarrantyEndDateModalVisible(true)}
 						onClear={() => setWarrantyEndDate(null)}
@@ -295,7 +293,6 @@ export default function ComponentFormScreen() {
 						{t("newComponent.fields.expectedExchangeDate")}
 					</ThemedText>
 					<DateRow
-						t={t}
 						value={expectedExchangeDate}
 						onPress={() => setExpectedExchangeDateModalVisible(true)}
 						onClear={() => setExpectedExchangeDate(null)}
@@ -390,88 +387,6 @@ export default function ComponentFormScreen() {
 	)
 }
 
-function DateRow({
-	value,
-	onPress,
-	onClear,
-	t,
-}: {
-	value: Date | null
-	onPress: () => void
-	onClear?: () => void
-	t: (key: ParseKeys) => string
-}) {
-	return (
-		<View style={styles.dateRow}>
-			<ThemedView
-				borderColor="blue1"
-				colorName="bg_0"
-				variant="wide"
-				onPress={onPress}
-				style={styles.dateField}
-			>
-				<ThemedText variant="H3" colorName="graphite0">
-					{value ? formatDate(value, "numeric") : t("prosthesisDetails.filters.chooseDate")}
-				</ThemedText>
-			</ThemedView>
-			{value && onClear && (
-				<ThemedView onPress={onClear} style={styles.clearDate}>
-					<ThemedText tx="common.delete" variant="H4" colorName="false" />
-				</ThemedView>
-			)}
-		</View>
-	)
-}
-
-interface ReminderCheckRowProps {
-	label: string
-	emailValue: boolean
-	appValue: boolean
-	pushValue: boolean
-	onEmailChange: () => void
-	onAppChange: () => void
-	onPushChange: () => void
-}
-
-function ReminderCheckRow({
-	label,
-	emailValue,
-	appValue,
-	pushValue,
-	onEmailChange,
-	onAppChange,
-	onPushChange,
-}: ReminderCheckRowProps) {
-	const { t } = useTranslation()
-
-	return (
-		<View style={styles.reminderRow}>
-			<View style={styles.reminderTitleWrapper}>
-				<ThemedText variant="H4" colorName="blue2">
-					{label}
-				</ThemedText>
-			</View>
-			<View style={styles.checkboxesGroup}>
-				<ThemedCheckbox
-					label={t("newComponent.reminderChannels.email")}
-					checked={emailValue}
-					onPress={onEmailChange}
-				/>
-				<ThemedCheckbox
-					label={t("newComponent.reminderChannels.app")}
-					checked={appValue}
-					onPress={onAppChange}
-				/>
-				<ThemedCheckbox
-					label={t("newComponent.reminderChannels.push")}
-					checked={pushValue}
-					onPress={onPushChange}
-				/>
-			</View>
-		</View>
-	)
-}
-
 const styles = StyleSheet.create({
 	centered: {
 		flex: 1,
@@ -504,40 +419,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 6,
 	},
-	dateRow: {
-		gap: 6,
-	},
-	dateField: {
-		minHeight: 44,
-		alignItems: "flex-start",
-		paddingHorizontal: 10,
-		borderRadius: 15,
-	},
-	clearDate: {
-		alignSelf: "flex-start",
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-	},
 	modelUnavailable: {
 		minHeight: 44,
 		borderRadius: 15,
 		justifyContent: "center",
 		paddingHorizontal: 16,
 		opacity: 0.6,
-	},
-	reminderRow: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		justifyContent: "space-between",
-		marginTop: 10,
-	},
-	reminderTitleWrapper: {
-		width: "36%",
-		paddingRight: 4,
-	},
-	checkboxesGroup: {
-		flexDirection: "column",
-		gap: 10,
 	},
 	addFiles: {
 		marginTop: 10,
