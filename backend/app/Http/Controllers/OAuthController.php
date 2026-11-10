@@ -3,16 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OAuthLoginRequest;
+use App\Services\Auth\GoogleTokenVerifier;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class OAuthController extends Controller
 {
-    public function login(OAuthLoginRequest $request): JsonResponse
-    {
-        $validated = $request->validated();
+    public function login(
+    OAuthLoginRequest $request,
+    GoogleTokenVerifier $googleVerifier
+): JsonResponse {
+    $data = $request->validated();
 
-        return response()->json([
-            'message' => 'OAuth authentication is not implemented yet.',
-        ], 501);
+    if ($data['provider'] !== 'google') {
+        throw ValidationException::withMessages([
+            'provider' => ['This OAuth provider is not implemented yet.'],
+        ]);
     }
+
+    $identity = $googleVerifier->verify($data['id_token']);
+
+    return response()->json([
+        'message' => 'Google identity verified successfully.',
+        'identity' => $identity,
+    ]);
+}
 }
