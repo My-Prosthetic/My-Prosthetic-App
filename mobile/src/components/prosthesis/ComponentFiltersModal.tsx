@@ -9,7 +9,7 @@ import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
 import { formatDate } from "@/src/utils/dateTimeUtils"
 
-import { COMPONENT_TYPES, ComponentType } from "../constants/componentTypes"
+import { COMPONENT_TYPES, ComponentType } from "../../constants/componentTypes"
 
 export type ComponentFilters = {
 	status: "all" | "active" | "historical"

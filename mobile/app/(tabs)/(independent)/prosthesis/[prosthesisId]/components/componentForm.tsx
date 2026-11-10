@@ -9,7 +9,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
 import { ThemedInput } from "@/src/components/ThemedInput"
 import { DatePickerModal } from "@/src/components/DatePicker"
-import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
+import { ThemedDialog } from "@/src/components/ThemedDialog"
 import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import { DateRow } from "@/src/components/prosthesis/component/DateRow"
 import { ReminderCheckRow } from "@/src/components/prosthesis/component/ReminderCheckRow"
@@ -61,8 +61,6 @@ export default function ComponentFormScreen() {
 		modelsList,
 		isLoadingModels,
 		customOptionType,
-		customOptionName,
-		setCustomOptionName,
 		isCreatingCustomOption,
 		openCustomOptionDialog,
 		closeCustomOptionDialog,
@@ -355,14 +353,18 @@ export default function ComponentFormScreen() {
 				</ThemedView>
 			</ThemedView>
 
-			<CustomOptionDialogModal
+			<ThemedDialog
 				visible={customOptionType !== null}
-				type={customOptionType}
-				value={customOptionName}
-				onChangeText={setCustomOptionName}
-				onSave={() => void saveCustomOption()}
-				onClose={closeCustomOptionDialog}
-				isSaving={isCreatingCustomOption}
+				titleTx={
+					customOptionType === "brand"
+						? "newComponent.customBrand.title"
+						: "newComponent.customModel.title"
+				}
+				errorMessageTx="newComponent.validation.customOptionName"
+				variant="regular"
+				validate={(value) => value.trim().length > 0 && !isCreatingCustomOption}
+				onSave={(value) => void saveCustomOption(value)}
+				onCancel={closeCustomOptionDialog}
 			/>
 
 			<DatePickerModal

@@ -630,7 +630,8 @@
 		"validation": {
 			"requiredFields": "Complete the fields marked *:\n{{fields}}",
 			"warrantyBeforeAssembly": "The warranty end date cannot be earlier than the assembly date.",
-			"exchangeBeforeAssembly": "The expected replacement date cannot be earlier than the assembly date."
+			"exchangeBeforeAssembly": "The expected replacement date cannot be earlier than the assembly date.",
+			"customOptionName": "Enter a name."
 		}
 	},
 	"login": {

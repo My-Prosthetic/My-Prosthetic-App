@@ -70,7 +70,7 @@
 	},
 	"common": {
 		"cancel": "Anuluj",
-		"confirm": "",
+		"confirm": "Potwierdź",
 		"enterDate": "Wprowadź {{date}}",
 		"error": "Błąd",
 		"validationError": "Błąd walidacji",
@@ -629,7 +629,8 @@
 		"validation": {
 			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}",
 			"warrantyBeforeAssembly": "Koniec gwarancji nie może być wcześniejszy niż data montażu.",
-			"exchangeBeforeAssembly": "Przewidywana wymiana nie może być wcześniejsza niż data montażu."
+			"exchangeBeforeAssembly": "Przewidywana wymiana nie może być wcześniejsza niż data montażu.",
+			"customOptionName": "Wpisz nazwę."
 		}
 	},
 	"login": {

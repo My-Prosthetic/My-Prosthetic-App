@@ -8,7 +8,7 @@ import {
 	ComponentFiltersModal,
 	DEFAULT_COMPONENT_FILTERS,
 	type ComponentFilters,
-} from "@/src/components/ComponentFiltersModal"
+} from "@/src/components/prosthesis/ComponentFiltersModal"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import ThemedSearch from "@/src/components/ThemedSearch"
 import { ThemedText } from "@/src/components/ThemedText"

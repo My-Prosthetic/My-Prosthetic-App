@@ -1,5 +1,5 @@
 import type { ComponentWithRelations } from "@/db/repositories/componentRepository"
-import type { ComponentFilters } from "@/src/components/ComponentFiltersModal"
+import type { ComponentFilters } from "@/src/components/prosthesis/ComponentFiltersModal"
 
 export function filterComponents(components: ComponentWithRelations[], filters: ComponentFilters) {
 	const today = new Date()
