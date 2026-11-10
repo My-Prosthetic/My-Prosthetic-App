@@ -105,8 +105,18 @@ export default function ProsthesisDetailsScreen() {
 					/>
 					<ProsthesisComponentsList
 						components={components}
-						onAddComponent={() => router.push(`/prosthesis/${prosthesis.id}/components/new` as any)}
-						onOpenComponent={(componentId) => router.push(`/component/${componentId}` as any)}
+						onAddComponent={() =>
+							router.push({
+								pathname: "/prosthesis/[prosthesisId]/components/componentForm",
+								params: { prosthesisId: prosthesis.id, mode: "Create" },
+							})
+						}
+						onOpenComponent={(componentId) =>
+							router.push({
+								pathname: "/prosthesis/[prosthesisId]/components/componentForm",
+								params: { prosthesisId: prosthesis.id, componentId, mode: "Edit" },
+							})
+						}
 					/>
 				</ThemedView>
 			</ScrollView>

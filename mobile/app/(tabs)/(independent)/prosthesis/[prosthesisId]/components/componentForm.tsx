@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react"
-import { Alert, ScrollView, StyleSheet, View } from "react-native"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native"
+import { useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { ParseKeys } from "i18next"
-import { useTheme } from "@/context/ThemeContext"
+import type { ParseKeys } from "i18next"
 
+import { useTheme } from "@/context/ThemeContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
@@ -14,77 +13,50 @@ import { DatePickerModal } from "@/src/components/DatePicker"
 import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
 import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
-
-import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
 import { formatDate } from "@/src/utils/dateTimeUtils"
-import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
-
-import { createComponent } from "@/db/repositories/componentRepository"
-import { getProsthesisById } from "@/db/repositories/prosthesisRepository"
-import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
+import { useComponentForm, type ComponentFormMode } from "@/src/hooks/useComponentForm"
 
 import IconFile from "@/assets/icons/file.svg"
 import IconPlus from "@/assets/icons/plus.svg"
+import IconTrash from "@/assets/icons/trash-bin.svg"
 
-export default function NewComponentScreen() {
-	const router = useRouter()
-	const { prosthesisId } = useLocalSearchParams<{ prosthesisId: string }>()
+export default function ComponentFormScreen() {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
-
-	const [category, setCategory] = useState<ComponentType>("socket")
-	const [prosthesis, setProsthesis] = useState<Prosthesis | null>(null)
-	const [brand, setBrand] = useState("")
-	const [model, setModel] = useState("")
-	const [assemblyDate, setAssemblyDate] = useState(new Date())
-	const [warrantyEndDate, setWarrantyEndDate] = useState<Date | null>(null)
-	const [expectedExchangeDate, setExpectedExchangeDate] = useState<Date | null>(null)
-
-	const [assemblyDateModalVisible, setAssemblyDateModalVisible] = useState(false)
-	const [warrantyEndDateModalVisible, setWarrantyEndDateModalVisible] = useState(false)
-	const [expectedExchangeDateModalVisible, setExpectedExchangeDateModalVisible] = useState(false)
-
-	const [isFinal, setIsFinal] = useState(false)
-	const [isHistorical, setIsHistorical] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
-
-	const [remindExchangeEmail, setRemindExchangeEmail] = useState(true)
-	const [remindExchangeApp, setRemindExchangeApp] = useState(true)
-	const [remindExchangePush, setRemindExchangePush] = useState(false)
-
-	const [remindWarrantyEmail, setRemindWarrantyEmail] = useState(true)
-	const [remindWarrantyApp, setRemindWarrantyApp] = useState(true)
-	const [remindWarrantyPush, setRemindWarrantyPush] = useState(false)
-
-	const [description, setDescription] = useState("")
-	useEffect(() => {
-		let isActive = true
-
-		if (typeof prosthesisId !== "string" || prosthesisId.length === 0) {
-			return () => {
-				isActive = false
-			}
-		}
-
-		void getProsthesisById(prosthesisId)
-			.then((result) => {
-				if (isActive) {
-					setProsthesis(result)
-				}
-			})
-			.catch((error: unknown) => {
-				console.error("Failed to load prosthesis:", error)
-				if (isActive) {
-					setProsthesis(null)
-				}
-			})
-
-		return () => {
-			isActive = false
-		}
-	}, [prosthesisId])
-
+	const params = useLocalSearchParams<{
+		prosthesisId?: string
+		componentId?: string
+		mode?: string
+	}>()
+	const formMode: ComponentFormMode = params.mode === "Edit" ? "Edit" : "Create"
 	const {
+		screenLoadState,
+		componentCategories,
+		category,
+		brand,
+		model,
+		isFinal,
+		isHistorical,
+		assemblyDate,
+		warrantyEndDate,
+		expectedExchangeDate,
+		description,
+		remindExchangeEmail,
+		remindExchangeApp,
+		remindExchangePush,
+		remindWarrantyEmail,
+		remindWarrantyApp,
+		remindWarrantyPush,
+		assemblyDateModalVisible,
+		warrantyEndDateModalVisible,
+		expectedExchangeDateModalVisible,
+		isSaving,
+		handleCategoryChange,
+		handleSave,
+		handleLeave,
+		handleDelete,
+		handleOnAddFiles,
+		retryLoad,
 		brandsList,
 		isLoadingBrands,
 		modelsList,
@@ -96,130 +68,64 @@ export default function NewComponentScreen() {
 		openCustomOptionDialog,
 		closeCustomOptionDialog,
 		saveCustomOption,
-	} = useBrandModelCatalog({
-		category,
-		selectedBrandId: brand,
-		onBrandCreatedAndSelected: (brandId) => {
-			setBrand(brandId)
-			setModel("")
-		},
-		onModelCreatedAndSelected: setModel,
-	})
+		setBrand,
+		setModel,
+		setIsFinal,
+		setIsHistorical,
+		setAssemblyDate,
+		setWarrantyEndDate,
+		setExpectedExchangeDate,
+		setDescription,
+		toggleRemindExchangeEmail,
+		toggleRemindExchangeApp,
+		toggleRemindExchangePush,
+		toggleRemindWarrantyEmail,
+		toggleRemindWarrantyApp,
+		toggleRemindWarrantyPush,
+		setAssemblyDateModalVisible,
+		setWarrantyEndDateModalVisible,
+		setExpectedExchangeDateModalVisible,
+	} = useComponentForm(formMode, params.componentId)
 
-	const handleOnAddFiles = () => {
-		// TODO
+	if (screenLoadState === "loading") {
+		return (
+			<ThemedView colorName="bg_1" style={styles.centered}>
+				<ActivityIndicator size="large" color={colors.blue2} />
+			</ThemedView>
+		)
 	}
 
-	const handleDelete = () => {
-		//TODO (ai)
-		//soft delete the component from the database. Use the repository methods, implement accurate method if there is none for component deletions
+	if (screenLoadState === "notFound" || screenLoadState === "error") {
+		return (
+			<ThemedView colorName="bg_1" style={styles.centered}>
+				<ThemedText
+					tx={
+						screenLoadState === "notFound"
+							? "newComponent.errors.notFound"
+							: "newComponent.errors.loadComponent"
+					}
+					variant="H2"
+					colorName="blue2"
+				/>
+				{screenLoadState === "error" && (
+					<ThemedView colorName="blue2" onPress={retryLoad} style={styles.retryButton}>
+						<ThemedText tx="prosthesisDetails.retry" variant="H2" colorName="bg_0" />
+					</ThemedView>
+				)}
+			</ThemedView>
+		)
 	}
-
-	const handleForefit = () => {
-		//TODO (ai)
-		// if any data has been changed in the form, ask by Alert "Are you sure you want to forefit" or smth (check how it has been done in the translations)
-		//and after router.back()
-	}
-
-	const handleSave = async () => {
-		if (typeof prosthesisId !== "string" || isSaving) {
-			return
-		}
-
-		const missingFields: string[] = []
-
-		if (!category) {
-			missingFields.push(t("newComponent.fields.category"))
-		}
-		if (!brand.trim()) {
-			missingFields.push(t("newComponent.fields.brand"))
-		}
-		if (!model.trim()) {
-			missingFields.push(t("newComponent.fields.model"))
-		}
-		if (!(assemblyDate instanceof Date) || Number.isNaN(assemblyDate.getTime())) {
-			missingFields.push(t("newComponent.fields.assemblyDate"))
-		}
-
-		if (missingFields.length > 0) {
-			Alert.alert(
-				t("common.validationError"),
-				t("newComponent.validation.requiredFields", {
-					fields: missingFields.map((field) => `• ${field}`).join("\n"),
-				})
-			)
-			return
-		}
-
-		const assemblyDay = new Date(assemblyDate)
-		assemblyDay.setHours(0, 0, 0, 0)
-
-		if (warrantyEndDate) {
-			const warrantyDay = new Date(warrantyEndDate)
-			warrantyDay.setHours(0, 0, 0, 0)
-			if (warrantyDay < assemblyDay) {
-				Alert.alert(
-					t("common.validationError"),
-					t("newComponent.validation.warrantyBeforeAssembly")
-				)
-				return
-			}
-		}
-
-		if (expectedExchangeDate) {
-			const exchangeDay = new Date(expectedExchangeDate)
-			exchangeDay.setHours(0, 0, 0, 0)
-			if (exchangeDay < assemblyDay) {
-				Alert.alert(
-					t("common.validationError"),
-					t("newComponent.validation.exchangeBeforeAssembly")
-				)
-				return
-			}
-		}
-
-		try {
-			setIsSaving(true)
-			await createComponent({
-				prosthesisId,
-				modelId: model.trim(),
-				isFinal,
-				isHistorical,
-				assemblyDate: assemblyDate.toISOString(),
-				warrantyEndDate: warrantyEndDate?.toISOString(),
-				expectedExchangeDate: expectedExchangeDate?.toISOString(),
-				description: description.trim(),
-				remindExchangeEmail,
-				remindExchangeApp,
-				remindExchangePush,
-				remindWarrantyEmail,
-				remindWarrantyApp,
-				remindWarrantyPush,
-			})
-			router.back()
-		} catch (error) {
-			console.error("Failed to save component:", error)
-			Alert.alert(t("common.error"), t("newComponent.errors.saveComponent"))
-		} finally {
-			setIsSaving(false)
-		}
-	}
-
-	const componentCategories = useMemo(() => {
-		const availableTypes = getComponentTypesForProsthesis(prosthesis?.limbType)
-		return availableTypes.map((type) => ({
-			label: t(`newComponent.categories.${type}`),
-			value: type,
-		}))
-	}, [prosthesis?.limbType, t])
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
+		<ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 			<ThemedView variant="background" colorName="bg_1">
-				<ThemedHeader tx="newComponent.newComponent" onBack={handleForefit} />
+				<ThemedHeader
+					tx={formMode === "Create" ? "newComponent.newComponent" : "newComponent.editComponent"}
+					onBack={handleLeave}
+				/>
 
 				{/* Kategoria podzespołu */}
-				<View style={[styles.fieldGroup, { paddingTop: 0, paddingBottom: 10 }]}>
+				<View style={[styles.fieldGroup, styles.categoryGroup]}>
 					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.category")} *
 					</ThemedText>
@@ -227,10 +133,7 @@ export default function NewComponentScreen() {
 						label={t("newComponent.fields.category")}
 						placeholder={t("newComponent.placeholders.category")}
 						value={category}
-						onChange={(value) => {
-							setModel("")
-							setCategory(value)
-						}}
+						onChange={handleCategoryChange}
 						options={componentCategories}
 					/>
 				</View>
@@ -240,13 +143,14 @@ export default function NewComponentScreen() {
 						<ThemedText variant="H1" colorName="blue2" tx="newComponent.switches.socketType" />
 						<View style={styles.toggleContainer}>
 							<ThemedSelectiveSwitch
+								key={`final-${formMode}-${isFinal}`}
 								leftLabelWidth={80}
 								rightLabelWidth={80}
 								leftTx="newComponent.switches.test"
 								rightTx="newComponent.switches.final"
 								selectLeft={() => setIsFinal(false)}
 								selectRight={() => setIsFinal(true)}
-								initialState="left"
+								initialState={isFinal ? "right" : "left"}
 								backgroundColor={colors.bg_0}
 							/>
 						</View>
@@ -329,13 +233,14 @@ export default function NewComponentScreen() {
 				<View style={styles.switchGroup}>
 					<ThemedText variant="H1" colorName="blue2" tx="newComponent.switches.componentType" />
 					<ThemedSelectiveSwitch
+						key={`historical-${formMode}-${isHistorical}`}
 						leftLabelWidth={80}
 						rightLabelWidth={80}
 						rightTx="newComponent.switches.historical"
 						leftTx="newComponent.switches.active"
 						selectLeft={() => setIsHistorical(false)}
 						selectRight={() => setIsHistorical(true)}
-						initialState="left"
+						initialState={isHistorical ? "right" : "left"}
 						backgroundColor={colors.bg_0}
 					/>
 				</View>
@@ -345,7 +250,7 @@ export default function NewComponentScreen() {
 					<ThemedText variant="H1" colorName="blue2">
 						{t("newComponent.fields.assemblyDate")} *
 					</ThemedText>
-					<DateRow t={t} onPress={() => setAssemblyDateModalVisible(true)} value={assemblyDate} />
+					<DateRow t={t} value={assemblyDate} onPress={() => setAssemblyDateModalVisible(true)} />
 				</View>
 
 				{/* Opis */}
@@ -371,15 +276,16 @@ export default function NewComponentScreen() {
 						t={t}
 						value={warrantyEndDate}
 						onPress={() => setWarrantyEndDateModalVisible(true)}
+						onClear={() => setWarrantyEndDate(null)}
 					/>
 					<ReminderCheckRow
 						label={t("newComponent.reminders.warrantyEnd")}
 						emailValue={remindWarrantyEmail}
 						appValue={remindWarrantyApp}
 						pushValue={remindWarrantyPush}
-						onEmailChange={() => setRemindWarrantyEmail(!remindWarrantyEmail)}
-						onAppChange={() => setRemindWarrantyApp(!remindWarrantyApp)}
-						onPushChange={() => setRemindWarrantyPush(!remindWarrantyPush)}
+						onEmailChange={toggleRemindWarrantyEmail}
+						onAppChange={toggleRemindWarrantyApp}
+						onPushChange={toggleRemindWarrantyPush}
 					/>
 				</View>
 
@@ -392,15 +298,16 @@ export default function NewComponentScreen() {
 						t={t}
 						value={expectedExchangeDate}
 						onPress={() => setExpectedExchangeDateModalVisible(true)}
+						onClear={() => setExpectedExchangeDate(null)}
 					/>
 					<ReminderCheckRow
 						label={t("newComponent.reminders.exchangeDate")}
 						emailValue={remindExchangeEmail}
 						appValue={remindExchangeApp}
 						pushValue={remindExchangePush}
-						onEmailChange={() => setRemindExchangeEmail(!remindExchangeEmail)}
-						onAppChange={() => setRemindExchangeApp(!remindExchangeApp)}
-						onPushChange={() => setRemindExchangePush(!remindExchangePush)}
+						onEmailChange={toggleRemindExchangeEmail}
+						onAppChange={toggleRemindExchangeApp}
+						onPushChange={toggleRemindExchangePush}
 					/>
 				</View>
 
@@ -412,27 +319,45 @@ export default function NewComponentScreen() {
 					leftChild={<IconFile color={colors.graphite0} />}
 					centerChild={<ThemedText variant="H1" colorName="graphite0" tx="newComponent.addFiles" />}
 					rightChild={<IconPlus color={colors.graphite0} />}
-					style={{ marginTop: 10 }}
-				/>
-
-				{/* Zapisz komponent */}
-				<ThemedView
-					variant="wide"
-					colorName="blue2"
-					onPress={() => handleSave()}
-					disabled={isSaving}
-					centerChild={<ThemedText variant="H1" colorName="bg_0" tx="newComponent.save" />}
-					style={{ marginVertical: 10 }}
+					style={styles.addFiles}
 				/>
 
 				<ThemedView
 					variant="wide"
 					colorName="blue2"
-					// onPress={formMode === "Edit" ? handleDelete : handleForefit} //TODO (ai)
-					// centerChild={<ThemedText variant="H1" colorName="bg_0" tx={formMode === "Edit" ? "common.delete" : "common.cancel"} />} //TODO(ai)
-					style={{ marginVertical: 10 }}
+					onPress={() => void handleSave()}
+					disabled={isSaving || isLoadingBrands || isLoadingModels}
+					centerChild={
+						<ThemedText
+							variant="H1"
+							colorName="bg_0"
+							tx={
+								isSaving
+									? "newComponent.saving"
+									: formMode === "Create"
+										? "newComponent.save"
+										: "newComponent.saveChanges"
+							}
+						/>
+					}
+					style={styles.saveButton}
 				/>
+				<ThemedView
+					variant="narrow"
+					onPress={formMode === "Edit" ? handleDelete : handleLeave}
+					style={{ paddingBottom: 20 }}
+				>
+					<View style={{ flexDirection: "row", gap: 20 }}>
+						<IconTrash color={colors.false} />
+						<ThemedText
+							tx={formMode === "Edit" ? "common.delete" : "common.cancel"}
+							variant="H1"
+							colorName="false"
+						/>
+					</View>
+				</ThemedView>
 			</ThemedView>
+
 			<CustomOptionDialogModal
 				visible={customOptionType !== null}
 				type={customOptionType}
@@ -445,19 +370,19 @@ export default function NewComponentScreen() {
 
 			<DatePickerModal
 				visible={assemblyDateModalVisible}
-				initialDate={assemblyDate}
+				initialDate={assemblyDate ?? new Date()}
 				onClose={() => setAssemblyDateModalVisible(false)}
 				onSave={setAssemblyDate}
 			/>
 			<DatePickerModal
 				visible={warrantyEndDateModalVisible}
-				initialDate={warrantyEndDate ?? assemblyDate}
+				initialDate={warrantyEndDate ?? assemblyDate ?? new Date()}
 				onClose={() => setWarrantyEndDateModalVisible(false)}
 				onSave={setWarrantyEndDate}
 			/>
 			<DatePickerModal
 				visible={expectedExchangeDateModalVisible}
-				initialDate={expectedExchangeDate ?? assemblyDate}
+				initialDate={expectedExchangeDate ?? assemblyDate ?? new Date()}
 				onClose={() => setExpectedExchangeDateModalVisible(false)}
 				onSave={setExpectedExchangeDate}
 			/>
@@ -468,24 +393,33 @@ export default function NewComponentScreen() {
 function DateRow({
 	value,
 	onPress,
+	onClear,
 	t,
 }: {
-	value: Date | null | undefined
+	value: Date | null
 	onPress: () => void
+	onClear?: () => void
 	t: (key: ParseKeys) => string
 }) {
 	return (
-		<ThemedView
-			borderColor="blue1"
-			colorName="bg_0"
-			variant="wide"
-			onPress={onPress}
-			style={styles.dateField}
-		>
-			<ThemedText variant="H3" colorName="graphite0">
-				{value ? formatDate(value, "numeric") : t("prosthesisDetails.filters.chooseDate")}
-			</ThemedText>
-		</ThemedView>
+		<View style={styles.dateRow}>
+			<ThemedView
+				borderColor="blue1"
+				colorName="bg_0"
+				variant="wide"
+				onPress={onPress}
+				style={styles.dateField}
+			>
+				<ThemedText variant="H3" colorName="graphite0">
+					{value ? formatDate(value, "numeric") : t("prosthesisDetails.filters.chooseDate")}
+				</ThemedText>
+			</ThemedView>
+			{value && onClear && (
+				<ThemedView onPress={onClear} style={styles.clearDate}>
+					<ThemedText tx="common.delete" variant="H4" colorName="false" />
+				</ThemedView>
+			)}
+		</View>
 	)
 }
 
@@ -517,7 +451,6 @@ function ReminderCheckRow({
 					{label}
 				</ThemedText>
 			</View>
-
 			<View style={styles.checkboxesGroup}>
 				<ThemedCheckbox
 					label={t("newComponent.reminderChannels.email")}
@@ -540,13 +473,28 @@ function ReminderCheckRow({
 }
 
 const styles = StyleSheet.create({
+	centered: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: 24,
+	},
+	retryButton: {
+		marginTop: 16,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		borderRadius: 16,
+	},
+	categoryGroup: {
+		paddingTop: 0,
+		paddingBottom: 10,
+	},
 	switchGroup: {
 		justifyContent: "flex-start",
 		gap: 10,
 		alignItems: "flex-start",
 		paddingVertical: 10,
 	},
-
 	fieldGroup: {
 		gap: 6,
 		paddingVertical: 10,
@@ -556,11 +504,19 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 6,
 	},
+	dateRow: {
+		gap: 6,
+	},
 	dateField: {
 		minHeight: 44,
 		alignItems: "flex-start",
 		paddingHorizontal: 10,
 		borderRadius: 15,
+	},
+	clearDate: {
+		alignSelf: "flex-start",
+		paddingHorizontal: 8,
+		paddingVertical: 4,
 	},
 	modelUnavailable: {
 		minHeight: 44,
@@ -582,5 +538,11 @@ const styles = StyleSheet.create({
 	checkboxesGroup: {
 		flexDirection: "column",
 		gap: 10,
+	},
+	addFiles: {
+		marginTop: 10,
+	},
+	saveButton: {
+		marginVertical: 20,
 	},
 })

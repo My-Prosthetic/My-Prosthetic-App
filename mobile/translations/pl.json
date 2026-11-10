@@ -514,6 +514,7 @@
 		"unsavedChangesTitle": "Niezapisane zmiany",
 		"unsavedChangesMessage": "Czy na pewno chcesz porzucić wprowadzane zmiany?",
 		"discardChanges": "Odrzuć zmiany",
+		"deleteConfirmation": "Czy na pewno chcesz usunąć ten komponent?",
 		"deleteProsthesis": "Usuń protezę",
 		"deleteWarningTitle": "Utracisz w ten sposób wszystkie dane dotyczące tej protezy!",
 		"deleteWarningMessage": "Czy jesteś pewien, że chcesz ją usunąć?",
@@ -524,6 +525,11 @@
 	},
 	"newComponent": {
 		"newComponent": "Nowy komponent",
+		"editComponent": "Edytuj komponent",
+		"saveChanges": "Zapisz zmiany",
+		"unsavedChangesTitle": "Niezapisane zmiany",
+		"unsavedChangesMessage": "Czy na pewno chcesz porzucić wprowadzane zmiany?",
+		"discardChanges": "Odrzuć zmiany",
 		"fields": {
 			"category": "Kategoria podzespołu",
 			"brand": "Marka podzespołu",
@@ -614,7 +620,11 @@
 			"loadModels": "Nie udało się pobrać listy modeli.",
 			"createBrand": "Nie udało się zapisać nowej marki.",
 			"createModel": "Nie udało się zapisać nowego modelu.",
-			"saveComponent": "Nie udało się zapisać komponentu."
+			"saveComponent": "Nie udało się zapisać komponentu.",
+			"updateComponent": "Nie udało się zapisać zmian komponentu.",
+			"deleteComponent": "Nie udało się usunąć komponentu.",
+			"loadComponent": "Nie udało się wczytać danych komponentu.",
+			"notFound": "Nie znaleziono komponentu ani przypisanej protezy."
 		},
 		"validation": {
 			"requiredFields": "Wypełnij pola oznaczone *:\n{{fields}}",
@@ -681,19 +691,6 @@
 			"statute": "Regulamin usług",
 			"license": "Licencje Open-Source"
 		}
-	},
-	"componentEdit": {
-		"title": "Edytuj komponent",
-		"name": "Nazwa",
-		"manufacturer": "Producent",
-		"model": "Model",
-		"warrantyUntil": "Gwarancja do",
-		"save": "Zapisz",
-		"notFound": "Nie znaleziono komponentu.",
-		"saveError": "Nie udało się zapisać komponentu.",
-		"loadError": "Nie udało się wczytać danych komponentu.",
-		"selectDate": "Wybierz datę",
-		"clearDate": "Usuń datę"
 	},
 	"display": {
 		"title": "Wygląd i język aplikacji",
