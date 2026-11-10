@@ -5,15 +5,22 @@ namespace Database\Seeders;
 use App\Enums\SocketView;
 use App\Models\User;
 use App\ValueObjects\PainPoint;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Seeder;
 
 class IncidentSeeder extends Seeder
 {
+    use SeedsDemoData;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        if (! $this->isDemoEnvironment()) {
+            return;
+        }
+
         $this->call(ProsthesisSeeder::class);
 
         $patient = User::query()->where('email', 'prosthesis.patient@example.com')->firstOrFail();

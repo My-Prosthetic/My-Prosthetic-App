@@ -15,10 +15,30 @@
 		"accumulated": "Środki",
 		"accumulatedTitle": "Zgromadzone Środki"
 	},
+	"journal": {
+		"title": "KALENDARZ",
+		"search": "szukaj...",
+		"incidents": "incydenty",
+		"components": "komponenty",
+		"filter": "filtruj",
+		"previousMonth": "Poprzedni miesiąc",
+		"nextMonth": "Następny miesiąc",
+		"emptyDay": "Brak zdarzeń w wybranym dniu.",
+		"loadError": "Nie udało się wczytać zdarzeń.",
+		"componentAssembly": "Montaż komponentu: {{name}}",
+		"time": "godzina:",
+		"painScale": "skala bólu:",
+		"circumstances": "okoliczności:",
+		"prosthesis": "proteza:",
+		"component": "komponent:",
+		"description": "opis:",
+		"edit": "edytuj",
+		"prosthesisFilter": "Filtruj według protezy",
+		"allProstheses": "Wszystkie protezy"
+	},
 	"screens": {
 		"homeTitle": "To jest Ekran Główny 🏠",
 		"profileTitle": "Twój Profil Użytkownika 👤",
-		"journalTitle": "Twój dziennik medyczny x",
 		"settingsTitle": "Ustawienia Aplikacji ⚙️",
 		"programmesTitle": "Programy Dofinansowań 📋",
 		"accumulatedTitle": "Zgromadzone Środki 💰"
@@ -70,6 +90,7 @@
 	},
 	"common": {
 		"cancel": "Anuluj",
+		"confirm": "",
 		"enterDate": "Wprowadź {{date}}",
 		"error": "Błąd",
 		"validationError": "Błąd walidacji",
@@ -77,7 +98,8 @@
 		"delete": "Usuń",
 		"today": "Dzisiaj",
 		"mp": "My Prosthetic",
-		"info": "Informacja"
+		"info": "Informacja",
+		"yes": "Tak"
 	},
 	"funding": {
 		"outOf": "z",
@@ -310,7 +332,54 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "DODAJ POMIAR",
+		"editTitle": "EDYTUJ POMIAR",
+		"saveChanges": "ZAPISZ ZMIANY",
+		"measureNotFound": "Ten pomiar już nie istnieje.",
+		"selectLimb": "WYBIERZ KOŃCZYNĘ",
+		"date": "DATA",
+		"datePlaceholder": "DD-MM-RRRR",
+		"time": "GODZINA",
+		"timePlaceholder": "GG:MM",
+		"schema": "SCHEMAT PUNKTÓW POMIAROWYCH",
+		"circumferenceValues": "WARTOŚCI OBWODÓW",
+		"measurementHeight": "Wysokość pomiaru",
+		"distanceFromTip": "{{distance}} cm od szczyciku",
+		"centimeters": "cm",
+		"addLevel": "Dodaj nowy poziom",
+		"addDistanceTitle": "Podaj odległość nowego miejsca pomiarowego L{{level}} od szczyciku",
+		"editDistanceTitle": "Zmień odległość punktu pomiarowego L{{level}} od szczyciku",
+		"invalidDistance": "Odległość musi być liczbą całkowitą między 0 a 100 i nie może się powtarzać.",
+		"removeLevelTitle": "Usuń poziom pomiaru",
+		"removeLevelConfirmation": "Czy na pewno chcesz usunąć poziom L{{level}}?",
+		"invalidMeasurementValue": "Wprowadź poprawną liczbę.",
+		"missingMeasurement": "Brakuje pomiaru",
+		"invalidMeasurementForLevel": "Pomiar L{{level}} w niepoprawnej formie",
+		"futureMomentError": "Moment pomiaru nie może być z przyszłości",
+		"saveSuccessTitle": "Pomiar zapisany",
+		"saveSuccessMessage": "Pomiar został zapisany.",
+		"saveError": "Nie udało się zapisać pomiaru.",
+		"deleteTitle": "Usuń pomiar",
+		"deleteConfirmation": "Czy na pewno chcesz usunąć ten pomiar?",
+		"forefitTitle": "Porzuć pomiar",
+		"forefitConfirmation": "Czy na pewno chcesz porzucić ten pomiar?",
+		"deleteError": "Nie udało się usunąć pomiaru.",
+		"discardTitle": "Odrzuć pomiar",
+		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
+		"save": "ZAPISZ POMIAR",
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty\npomiarowe",
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów",
+			"loadError": "Nie udało się pobrać pomiarów z historii"
+		}
+	},
 	"newIncident": {
+		"editTitle": "EDYTUJ INCYDENT",
+		"saveEdit": "ZAPISZ ZMIANY",
 		"title": "NOWY INCYDENT",
 		"time": "GODZINA",
 		"type": "TYP INCYDENTU:",
@@ -656,5 +725,39 @@
 		"loadError": "Nie udało się wczytać danych komponentu.",
 		"selectDate": "Wybierz datę",
 		"clearDate": "Usuń datę"
+	},
+	"display": {
+		"title": "Wygląd i język aplikacji",
+		"name": "Wygląd i język",
+		"interface": {
+			"title": "Wygląd interfejsu",
+			"darkMode": "Tryb ciemny (Dark Mode)",
+			"contrast": "Tryb wysokiego kontrastu",
+			"fontSize": "Rozmiar tekstu"
+		},
+		"accessibility": {
+			"title": "Ułatwienia dostępu",
+			"tts": "Czytaj ekran na głos (TTS)"
+		},
+		"region": {
+			"title": "Język i region",
+			"language": "Język aplikacji",
+			"date": "Format daty"
+		},
+		"modals": {
+			"chooseLanguage": "Wybierz język",
+			"chooseDateFormat": "Wybierz format daty",
+			"chooseFontSize": "Wybierz rozmiar tekstu"
+		},
+		"fontSize": {
+			"small": "Mały",
+			"medium": "Średni",
+			"large": "Duży",
+			"extraLarge": "Bardzo duży"
+		},
+		"language": {
+			"polish": "Polski",
+			"english": "Angielski"
+		}
 	}
 }
