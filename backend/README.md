@@ -281,6 +281,35 @@ Run the focused access tests from this directory:
 php vendor/bin/phpunit tests/Feature/PatientProsthesisAccessTest.php
 ```
 
+## Specialist notes
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/patients/{patient}/notes` | `GET` | Lists the notes the caller may see, newest first, 20 per page; optional `type` filter |
+| `/api/patients/{patient}/notes` | `POST` | Adds a note from required `type` (`technical_note` or `recommendation`) and `content` (up to 5000 characters) |
+| `/api/patients/{patient}/notes/{specialistNote}` | `PUT` | Corrects the note from required `content` |
+
+A prosthetist holding a grant from the patient adds notes of both kinds. The
+patient reads their recommendations; a prosthetist reads their own notes, and
+every note of the patient when the grant covers the medical history. The author
+corrects their note while they hold a grant: the replaced text is kept as a
+revision and `edited_at` is set. Every refusal is the same `403`.
+
+Each note has `id`, `type`, `content`, `author` (`id` and `name`, or `null` once
+the author's account is deleted), `created_at`, `updated_at`, and `edited_at`.
+The list is cursor-paginated: follow `links.next` until it is `null`. Note text
+and revisions are encrypted at rest.
+
+`php artisan db:seed` adds the prosthetist `demo.prosthetist@example.com`
+(password `password`) with a grant from `prosthesis.patient@example.com` and
+four notes, one of them corrected.
+
+Run the focused tests from this directory:
+
+```bash
+php artisan test --filter=SpecialistNote
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
