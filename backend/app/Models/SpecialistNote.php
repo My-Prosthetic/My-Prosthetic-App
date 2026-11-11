@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 #[Fillable([
     'type',
@@ -56,6 +58,35 @@ class SpecialistNote extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return HasMany<SpecialistNoteRevision, $this>
+     */
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(SpecialistNoteRevision::class);
+    }
+
+    /**
+     * The note is re-read under a lock, so concurrent corrections each keep the text they replaced.
+     */
+    public function correct(string $content): void
+    {
+        DB::transaction(function () use ($content): void {
+            $current = self::query()->lockForUpdate()->findOrFail($this->id);
+
+            if ($current->content === $content) {
+                return;
+            }
+
+            $current->revisions()->create(['content' => $current->content]);
+            $current->content = $content;
+            $current->edited_at = now();
+            $current->save();
+        });
+
+        $this->refresh();
     }
 
     /**

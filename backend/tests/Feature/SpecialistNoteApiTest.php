@@ -69,17 +69,6 @@ class SpecialistNoteApiTest extends TestCase
         ]);
     }
 
-    public function test_a_grant_that_selects_nothing_still_lets_the_prosthetist_add_notes(): void
-    {
-        $patient = User::factory()->create();
-        $prosthetist = User::factory()->prosthetist()->create();
-        $this->grant($patient, $prosthetist, []);
-
-        $this->asWebUser($prosthetist)
-            ->postJson($this->notesOf($patient), $this->validNote())
-            ->assertCreated();
-    }
-
     public function test_the_author_and_patient_come_from_the_session_and_the_url(): void
     {
         $patient = User::factory()->create();
@@ -146,12 +135,15 @@ class SpecialistNoteApiTest extends TestCase
     {
         $patient = User::factory()->create();
         $prosthetist = User::factory()->prosthetist()->create();
+        $note = $this->addNote($patient, $prosthetist, SpecialistNoteType::RECOMMENDATION);
 
         $this->assertFalse($prosthetist->can('create', [SpecialistNote::class, $patient]));
+        $this->assertFalse($prosthetist->can('update', $note));
 
         $this->grant($patient, $prosthetist, []);
 
         $this->assertTrue($prosthetist->can('create', [SpecialistNote::class, $patient]));
+        $this->assertTrue($prosthetist->can('update', $note));
     }
 
     public function test_adding_a_note_requires_authentication(): void
@@ -398,6 +390,103 @@ class SpecialistNoteApiTest extends TestCase
         $this->assertRefused($this->asWebUser(User::factory()->admin()->create())->getJson($url));
         $this->assertRefused($this->asPatient(User::factory()->create())->getJson($url));
         $this->assertRefused($this->asPatient($patient)->getJson('/api/patients/'.Str::uuid().'/notes'));
+    }
+
+    public function test_the_author_corrects_a_note_and_the_old_text_is_kept(): void
+    {
+        $this->travelTo(Carbon::parse('2026-11-11 10:00:00'));
+        $patient = User::factory()->create();
+        $author = User::factory()->prosthetist()->create(['name' => 'Anna Kowalska']);
+        $this->grant($patient, $author, []);
+        $note = $this->addNote($patient, $author, SpecialistNoteType::RECOMMENDATION);
+        $oldContent = $note->content;
+        $this->travelTo(Carbon::parse('2026-11-11 12:30:00'));
+
+        $this->asWebUser($author)
+            ->putJson("{$this->notesOf($patient)}/{$note->id}", ['content' => 'Measure the stump twice a day.'])
+            ->assertOk()
+            ->assertExactJson(['data' => [
+                'id' => $note->id,
+                'type' => 'recommendation',
+                'content' => 'Measure the stump twice a day.',
+                'author' => ['id' => $author->id, 'name' => 'Anna Kowalska'],
+                'created_at' => '2026-11-11T10:00:00.000000Z',
+                'updated_at' => '2026-11-11T12:30:00.000000Z',
+                'edited_at' => '2026-11-11T12:30:00.000000Z',
+            ]]);
+
+        $this->assertSame([$oldContent], $note->revisions()->get()->pluck('content')->all());
+    }
+
+    public function test_resubmitting_the_same_text_changes_nothing(): void
+    {
+        $patient = User::factory()->create();
+        $author = User::factory()->prosthetist()->create();
+        $this->grant($patient, $author, []);
+        $note = $this->addNote($patient, $author, SpecialistNoteType::TECHNICAL_NOTE);
+
+        $this->asWebUser($author)
+            ->putJson("{$this->notesOf($patient)}/{$note->id}", ['content' => $note->content])
+            ->assertOk()
+            ->assertJsonPath('data.edited_at', null);
+
+        $this->assertDatabaseCount('specialist_note_revisions', 0);
+    }
+
+    #[DataProvider('refusedCorrections')]
+    public function test_every_refused_correction_looks_the_same_and_changes_nothing(string $caller, string $target): void
+    {
+        $patient = User::factory()->create();
+        $otherPatient = User::factory()->create();
+        $author = User::factory()->prosthetist()->create();
+        $colleague = User::factory()->prosthetist()->create();
+        $formerAuthor = User::factory()->prosthetist()->create();
+        $this->grant($patient, $author, []);
+        $this->grant($patient, $colleague, ['medical_history' => true]);
+        $this->grant($patient, $formerAuthor, []);
+        $this->grant($otherPatient, $author, []);
+        $notes = [
+            'note' => $this->addNote($patient, $author, SpecialistNoteType::RECOMMENDATION)->id,
+            'formerAuthorsNote' => $this->addNote($patient, $formerAuthor, SpecialistNoteType::RECOMMENDATION)->id,
+            'otherPatientsNote' => $this->addNote($otherPatient, $author, SpecialistNoteType::RECOMMENDATION)->id,
+            'unknown' => (string) Str::uuid(),
+        ];
+        $this->asPatient($patient)->deleteJson("/api/shares/{$formerAuthor->id}")->assertNoContent();
+        $client = match ($caller) {
+            'author' => $this->asWebUser($author),
+            'colleague' => $this->asWebUser($colleague),
+            'formerAuthor' => $this->asWebUser($formerAuthor),
+            'patient' => $this->asPatient($patient),
+        };
+
+        $this->assertRefused(
+            $client->putJson("{$this->notesOf($patient)}/{$notes[$target]}", ['content' => 'Changed by someone else.']),
+        );
+        $this->assertDatabaseCount('specialist_note_revisions', 0);
+    }
+
+    public static function refusedCorrections(): iterable
+    {
+        yield 'a colleague with the medical history' => ['colleague', 'note'];
+        yield 'the patient' => ['patient', 'note'];
+        yield 'the author after the grant was revoked' => ['formerAuthor', 'formerAuthorsNote'];
+        yield 'a note that does not exist' => ['author', 'unknown'];
+        yield 'another patients note under this patient' => ['author', 'otherPatientsNote'];
+    }
+
+    public function test_a_correction_cannot_change_the_type(): void
+    {
+        $patient = User::factory()->create();
+        $author = User::factory()->prosthetist()->create();
+        $this->grant($patient, $author, []);
+        $note = $this->addNote($patient, $author, SpecialistNoteType::TECHNICAL_NOTE);
+
+        $this->asWebUser($author)
+            ->putJson("{$this->notesOf($patient)}/{$note->id}", ['type' => 'recommendation', 'content' => 'Visible now.'])
+            ->assertUnprocessable()
+            ->assertOnlyJsonValidationErrors(['type']);
+
+        $this->assertSame(SpecialistNoteType::TECHNICAL_NOTE, $note->refresh()->type);
     }
 
     private function notesOf(User $patient): string

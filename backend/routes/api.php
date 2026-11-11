@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // A missing patient or record is refused exactly like a forbidden one, so the
     // responses never reveal which records exist.
     Route::prefix('/patients/{patient}')
-        ->whereUuid(['patient', 'prosthesis'])
+        ->whereUuid(['patient', 'prosthesis', 'specialistNote'])
         ->scopeBindings()
         ->missing(fn () => throw new AuthorizationException)
         ->can('viewRecords', 'patient')
@@ -67,5 +67,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
             Route::post('/notes', [SpecialistNoteController::class, 'store'])
                 ->can('create', [SpecialistNote::class, 'patient'])
                 ->name('notes.store');
+            Route::put('/notes/{specialistNote}', [SpecialistNoteController::class, 'update'])
+                ->can('update', 'specialistNote')
+                ->name('notes.update');
         });
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ListSpecialistNotesRequest;
 use App\Http\Requests\StoreSpecialistNoteRequest;
+use App\Http\Requests\UpdateSpecialistNoteRequest;
 use App\Http\Resources\SpecialistNoteResource;
 use App\Models\SpecialistNote;
 use App\Models\User;
@@ -38,6 +39,13 @@ class SpecialistNoteController extends Controller
         return SpecialistNoteResource::make($note)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    public function update(UpdateSpecialistNoteRequest $request, User $patient, SpecialistNote $specialistNote): SpecialistNoteResource
+    {
+        $specialistNote->correct($request->validated('content'));
+
+        return SpecialistNoteResource::make($specialistNote);
     }
 
     private function actor(Request $request): User
