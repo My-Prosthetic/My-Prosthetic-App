@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Enums\SpecialistNoteType;
+use App\Enums\UserRole;
 use Database\Factories\SpecialistNoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,5 +56,32 @@ class SpecialistNote extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, User $actor, User $patient): void
+    {
+        $query->whereBelongsTo($patient, 'patient');
+
+        if ($actor->is($patient)) {
+            $query->where('type', SpecialistNoteType::RECOMMENDATION);
+
+            return;
+        }
+
+        $grant = $actor->role === UserRole::PROSTHETIST ? $actor->receivedShareFrom($patient) : null;
+
+        if ($grant === null) {
+            $query->whereKey([]);
+
+            return;
+        }
+
+        if (! $grant->permissions->medicalHistory) {
+            $query->whereBelongsTo($actor, 'author');
+        }
     }
 }

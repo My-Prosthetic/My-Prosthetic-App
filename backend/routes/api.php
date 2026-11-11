@@ -62,6 +62,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
             Route::get('/prostheses/{prosthesis}', [PatientProsthesisController::class, 'show'])
                 ->can('view', 'prosthesis')
                 ->name('prostheses.show');
+            Route::get('/notes', [SpecialistNoteController::class, 'index'])
+                ->name('notes.index');
             Route::post('/notes', [SpecialistNoteController::class, 'store'])
                 ->can('create', [SpecialistNote::class, 'patient'])
                 ->name('notes.store');

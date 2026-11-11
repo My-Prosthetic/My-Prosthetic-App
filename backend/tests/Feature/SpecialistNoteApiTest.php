@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\SpecialistNoteType;
 use App\Models\SpecialistNote;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -237,9 +239,178 @@ class SpecialistNoteApiTest extends TestCase
         $this->assertDatabaseCount('specialist_notes', 1);
     }
 
+    public function test_the_patient_reads_only_recommendations_from_every_author(): void
+    {
+        $this->travelTo(Carbon::parse('2026-11-11 10:00:00'));
+        $patient = User::factory()->create();
+        $current = User::factory()->prosthetist()->create(['name' => 'Anna Kowalska']);
+        $revoked = User::factory()->prosthetist()->create();
+        $deleted = User::factory()->prosthetist()->create();
+        $this->grant($patient, $current, []);
+        $this->grant($patient, $revoked, []);
+
+        $fromCurrent = $this->addNote($patient, $current, SpecialistNoteType::RECOMMENDATION);
+        $this->addNote($patient, $current, SpecialistNoteType::TECHNICAL_NOTE, minutesAgo: 30);
+        $fromDeleted = $this->addNote($patient, $deleted, SpecialistNoteType::RECOMMENDATION, minutesAgo: 60);
+        $fromRevoked = $this->addNote($patient, $revoked, SpecialistNoteType::RECOMMENDATION, minutesAgo: 90);
+        $deleted->delete();
+        $this->asPatient($patient)->deleteJson("/api/shares/{$revoked->id}")->assertNoContent();
+
+        $this->asPatient($patient)
+            ->getJson($this->notesOf($patient))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [$fromCurrent->id, $fromDeleted->id, $fromRevoked->id])
+            ->assertJsonPath('data.0', [
+                'id' => $fromCurrent->id,
+                'type' => 'recommendation',
+                'content' => $fromCurrent->content,
+                'author' => ['id' => $current->id, 'name' => 'Anna Kowalska'],
+                'created_at' => '2026-11-11T10:00:00.000000Z',
+                'updated_at' => '2026-11-11T10:00:00.000000Z',
+                'edited_at' => null,
+            ])
+            ->assertJsonPath('data.1.author', null)
+            ->assertJsonPath('data.2.author.id', $revoked->id)
+            ->assertJsonPath('links.next', null)
+            ->assertJsonPath('meta.per_page', 20);
+    }
+
+    public function test_the_medical_history_decides_whether_a_prosthetist_sees_other_authors_notes(): void
+    {
+        $patient = User::factory()->create();
+        $prosthetist = User::factory()->prosthetist()->create();
+        $colleague = User::factory()->prosthetist()->create();
+        $this->grant($patient, $prosthetist, []);
+        $ownTechnicalNote = $this->addNote($patient, $prosthetist, SpecialistNoteType::TECHNICAL_NOTE, minutesAgo: 4);
+        $ownRecommendation = $this->addNote($patient, $prosthetist, SpecialistNoteType::RECOMMENDATION, minutesAgo: 3);
+        $colleaguesTechnicalNote = $this->addNote($patient, $colleague, SpecialistNoteType::TECHNICAL_NOTE, minutesAgo: 2);
+        $colleaguesRecommendation = $this->addNote($patient, $colleague, SpecialistNoteType::RECOMMENDATION, minutesAgo: 1);
+
+        $this->asWebUser($prosthetist)
+            ->getJson($this->notesOf($patient))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [$ownRecommendation->id, $ownTechnicalNote->id]);
+
+        $this->asPatient($patient)
+            ->putJson("/api/shares/{$prosthetist->id}", ['permissions' => ['medical_history' => true]])
+            ->assertOk();
+
+        $this->asWebUser($prosthetist)
+            ->getJson($this->notesOf($patient))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [
+                $colleaguesRecommendation->id,
+                $colleaguesTechnicalNote->id,
+                $ownRecommendation->id,
+                $ownTechnicalNote->id,
+            ]);
+    }
+
+    public function test_the_list_pages_newest_first_without_repeats_when_a_note_is_added(): void
+    {
+        $patient = User::factory()->create();
+        $prosthetist = User::factory()->prosthetist()->create();
+        $this->grant($patient, $prosthetist, []);
+        $notes = SpecialistNote::factory()
+            ->count(25)
+            ->for($patient, 'patient')
+            ->for($prosthetist, 'author')
+            ->sequence(fn (Sequence $sequence) => ['created_at' => now()->subMinutes($sequence->index + 1)])
+            ->create();
+
+        $firstPage = $this->asWebUser($prosthetist)
+            ->getJson($this->notesOf($patient))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', $notes->take(20)->pluck('id')->all());
+
+        $this->addNote($patient, $prosthetist, SpecialistNoteType::RECOMMENDATION);
+
+        $this->asWebUser($prosthetist)
+            ->getJson($firstPage->json('links.next'))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', $notes->skip(20)->pluck('id')->all())
+            ->assertJsonPath('links.next', null);
+    }
+
+    public function test_the_type_filter_holds_on_every_page(): void
+    {
+        $patient = User::factory()->create();
+        $prosthetist = User::factory()->prosthetist()->create();
+        $this->grant($patient, $prosthetist, []);
+        $technicalNote = $this->addNote($patient, $prosthetist, SpecialistNoteType::TECHNICAL_NOTE, minutesAgo: 100);
+        $recommendations = SpecialistNote::factory()
+            ->count(21)
+            ->recommendation()
+            ->for($patient, 'patient')
+            ->for($prosthetist, 'author')
+            ->sequence(fn (Sequence $sequence) => ['created_at' => now()->subMinutes($sequence->index + 1)])
+            ->create();
+
+        $firstPage = $this->asWebUser($prosthetist)
+            ->getJson($this->notesOf($patient).'?type=recommendation')
+            ->assertOk()
+            ->assertJsonPath('data.*.id', $recommendations->take(20)->pluck('id')->all());
+
+        $this->asWebUser($prosthetist)
+            ->getJson($firstPage->json('links.next'))
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [$recommendations->last()->id]);
+
+        $this->asWebUser($prosthetist)
+            ->getJson($this->notesOf($patient).'?type=technical_note')
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [$technicalNote->id]);
+    }
+
+    public function test_the_patient_asking_for_technical_notes_gets_an_empty_page(): void
+    {
+        $patient = User::factory()->create();
+        $this->addNote($patient, User::factory()->prosthetist()->create(), SpecialistNoteType::TECHNICAL_NOTE);
+
+        $this->asPatient($patient)
+            ->getJson($this->notesOf($patient).'?type=technical_note')
+            ->assertOk()
+            ->assertJsonPath('data', []);
+    }
+
+    public function test_an_unknown_type_filter_is_rejected(): void
+    {
+        $patient = User::factory()->create();
+
+        $this->asPatient($patient)
+            ->getJson($this->notesOf($patient).'?type=diary')
+            ->assertUnprocessable()
+            ->assertOnlyJsonValidationErrors(['type']);
+    }
+
+    public function test_only_the_patient_and_granted_prosthetists_read_the_notes(): void
+    {
+        $patient = User::factory()->create();
+        $author = User::factory()->prosthetist()->create();
+        $this->grant($patient, $author, ['medical_history' => true]);
+        $this->addNote($patient, $author, SpecialistNoteType::RECOMMENDATION);
+        $this->asPatient($patient)->deleteJson("/api/shares/{$author->id}")->assertNoContent();
+        $url = $this->notesOf($patient);
+
+        $this->asNewClient()->getJson($url)->assertUnauthorized();
+        $this->assertRefused($this->asWebUser($author)->getJson($url));
+        $this->assertRefused($this->asWebUser(User::factory()->prosthetist()->create())->getJson($url));
+        $this->assertRefused($this->asWebUser(User::factory()->admin()->create())->getJson($url));
+        $this->assertRefused($this->asPatient(User::factory()->create())->getJson($url));
+        $this->assertRefused($this->asPatient($patient)->getJson('/api/patients/'.Str::uuid().'/notes'));
+    }
+
     private function notesOf(User $patient): string
     {
         return "/api/patients/{$patient->id}/notes";
+    }
+
+    private function addNote(User $patient, User $author, SpecialistNoteType $type, int $minutesAgo = 0): SpecialistNote
+    {
+        return SpecialistNote::factory()
+            ->for($patient, 'patient')
+            ->for($author, 'author')
+            ->create(['type' => $type, 'created_at' => now()->subMinutes($minutesAgo)]);
     }
 
     private function validNote(): array
