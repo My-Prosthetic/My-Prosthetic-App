@@ -111,8 +111,6 @@ class SpecialistNoteTest extends TestCase
     }
 
     /**
-     * A raw row the database accepts, so each test breaks exactly one rule.
-     *
      * @return array<string, string>
      */
     private function validRow(): array

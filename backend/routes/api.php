@@ -4,8 +4,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
+use App\Http\Controllers\SpecialistNoteController;
 use App\Http\Controllers\SpecialistSearchController;
 use App\Http\Controllers\WalletEntryController;
+use App\Models\SpecialistNote;
 use App\Models\WalletEntry;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Route;
@@ -60,5 +62,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
             Route::get('/prostheses/{prosthesis}', [PatientProsthesisController::class, 'show'])
                 ->can('view', 'prosthesis')
                 ->name('prostheses.show');
+            Route::post('/notes', [SpecialistNoteController::class, 'store'])
+                ->can('create', [SpecialistNote::class, 'patient'])
+                ->name('notes.store');
         });
 });

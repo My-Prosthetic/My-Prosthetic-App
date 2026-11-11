@@ -33,7 +33,7 @@ class SpecialistNoteFactory extends Factory
     }
 
     /**
-     * Indicate that the note is a Technical Note for specialists.
+     * Indicate that the note is a technical note.
      */
     public function technicalNote(): static
     {
@@ -43,7 +43,7 @@ class SpecialistNoteFactory extends Factory
     }
 
     /**
-     * Indicate that the note is a Recommendation the patient also sees.
+     * Indicate that the note is a recommendation.
      */
     public function recommendation(): static
     {

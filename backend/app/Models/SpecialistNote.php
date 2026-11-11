@@ -21,6 +21,13 @@ class SpecialistNote extends Model
 
     public const MAX_CONTENT_LENGTH = 5000;
 
+    /**
+     * @return array{
+     *     type: 'App\\Enums\\SpecialistNoteType',
+     *     content: 'encrypted',
+     *     edited_at: 'datetime',
+     * }
+     */
     protected function casts(): array
     {
         return [
