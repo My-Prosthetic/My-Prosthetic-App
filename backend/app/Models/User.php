@@ -172,6 +172,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the notes prosthetists have written about this patient.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function specialistNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'patient_id');
+    }
+
+    /**
+     * Get the notes this prosthetist has written.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function authoredNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'author_id');
+    }
+
+    /**
      * Get the patient's wallet entries.
      */
     public function walletEntries(): HasMany
