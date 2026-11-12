@@ -12,7 +12,7 @@ export default function SettingsScreen() {
 			<ThemedText tx="screens.settingsTitle" />
 
 			<ThemedView
-				variant="old_narrow"
+				variant="narrow"
 				colorName="false"
 				shadow
 				onPress={() => router.push("/settings/about")}
@@ -22,7 +22,7 @@ export default function SettingsScreen() {
 			</ThemedView>
 
 			<ThemedView
-				variant="old_narrow"
+				variant="narrow"
 				colorName="false"
 				shadow
 				onPress={() => router.push("/settings/display")}
@@ -34,7 +34,7 @@ export default function SettingsScreen() {
 			{__DEV__ ? (
 				<>
 					<ThemedView
-						variant="old_narrow"
+						variant="narrow"
 						colorName="false"
 						shadow
 						onPress={logout}
