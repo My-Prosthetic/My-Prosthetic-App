@@ -45,6 +45,7 @@ import IconClose from "@/assets/icons/incident/close.svg"
 import IconMic from "@/assets/icons/incident/mic.svg"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 
 type IncidentComponent = Awaited<ReturnType<typeof getComponentsByProsthesisId>>[number]
 
@@ -199,6 +200,7 @@ export default function NewIncidentScreen() {
 	const [timeText, setTimeText] = useState(toTimeText(now))
 	const [timePickerOpen, setTimePickerOpen] = useState(false)
 	const [incidentType, setIncidentType] = useState("")
+	const [isSharingWithProsthetist, setIsSharingWithProsthetist] = useState(true)
 	const [activity, setActivity] = useState("")
 	const [description, setDescription] = useState("")
 	const [intensity, setIntensity] = useState(0)
@@ -510,6 +512,7 @@ export default function NewIncidentScreen() {
 				occurredAt,
 				photoUris,
 				audioUri,
+				isSharingWithProsthetist,
 			}
 			if (editId) {
 				const updated = await updateIncident(editId, input)
@@ -676,8 +679,6 @@ export default function NewIncidentScreen() {
 
 				<FieldLabel text={t("newIncident.type")} />
 				<DropdownSelect
-					variant="incident"
-					label={t("newIncident.type")}
 					options={typeOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={incidentType || undefined}
 					placeholder={t("newIncident.selectType")}
@@ -686,8 +687,6 @@ export default function NewIncidentScreen() {
 						tx: "newIncident.customValuePlaceholder",
 						onPress: () => selectIncidentType(CUSTOM_VALUE),
 					}}
-					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
-					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customTypeMode && (
 					<CustomValueInput
@@ -699,8 +698,6 @@ export default function NewIncidentScreen() {
 
 				<FieldLabel text={t("newIncident.circumstances")} />
 				<DropdownSelect
-					variant="incident"
-					label={t("newIncident.circumstances")}
 					options={activityOptions.filter((option) => option.value !== CUSTOM_VALUE)}
 					value={activity}
 					placeholder={t("newIncident.none")}
@@ -709,8 +706,6 @@ export default function NewIncidentScreen() {
 						tx: "newIncident.customValuePlaceholder",
 						onPress: () => selectActivity(CUSTOM_VALUE),
 					}}
-					renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
-					renderCreateIcon={() => <IconPlus color={colors.blue1} width={18} height={18} />}
 				/>
 				{customActivityMode && (
 					<CustomValueInput
@@ -760,7 +755,7 @@ export default function NewIncidentScreen() {
 					)}
 				</View>
 				{(recorderState.isRecording || audioUri) && (
-					<ThemedText variant="body1Regular" colorName="blue2" style={styles.audioStatus}>
+					<ThemedText variant="H3" colorName="blue2" style={styles.audioStatus}>
 						{recorderState.isRecording
 							? t("newIncident.recording", {
 									seconds: Math.floor(recorderState.durationMillis / 1000),
@@ -804,8 +799,6 @@ export default function NewIncidentScreen() {
 					<>
 						<FieldLabel text={t("newIncident.relatedProsthesis")} />
 						<DropdownSelect
-							variant="incident"
-							label={t("newIncident.relatedProsthesis")}
 							options={prostheses.map((prosthesis) => ({
 								label: prosthesis.name,
 								value: prosthesis.id,
@@ -813,17 +806,25 @@ export default function NewIncidentScreen() {
 							value={selectedProsthesisId}
 							placeholder="-"
 							onChange={setSelectedProsthesisId}
-							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
 						/>
 					</>
 				)}
+
+				<ThemedView
+					style={styles.sharingLine}
+					onPress={() => setIsSharingWithProsthetist((checked) => !checked)}
+				>
+					<ThemedText tx="newIncident.shareWithProsthetist" variant="H1" colorName="blue2" />
+					<ThemedCheckbox
+						checked={isSharingWithProsthetist}
+						onPress={() => setIsSharingWithProsthetist((checked) => !checked)}
+					/>
+				</ThemedView>
 
 				{selectedProsthesisId && (
 					<>
 						<FieldLabel text={t("newIncident.component")} />
 						<DropdownSelect
-							variant="incident"
-							label={t("newIncident.component")}
 							options={componentOptions}
 							value={selectedComponentId ?? ""}
 							placeholder={t("newIncident.none")}
@@ -831,7 +832,6 @@ export default function NewIncidentScreen() {
 								setSelectedComponentId(value || undefined)
 								setCoordinates(undefined)
 							}}
-							renderChevron={() => <Arrow direction="down" size={18} color={colors.blue1} />}
 						/>
 					</>
 				)}
@@ -899,7 +899,7 @@ export default function NewIncidentScreen() {
 				</View>
 
 				{!selectedProsthesisId && (
-					<ThemedText variant="body1Regular" colorName="false" style={styles.saveHint}>
+					<ThemedText variant="H1" colorName="false" style={styles.saveHint}>
 						{t("newIncident.assignProsthesisHint")}
 					</ThemedText>
 				)}
@@ -1239,6 +1239,7 @@ const getStyles = (colors: ThemeColors, width: number) => {
 				shadowRadius: 6,
 				elevation: 3,
 			},
+			sharingLine: { flexDirection: "row", justifyContent: "space-between", paddingTop: 15 },
 			dateStrip: { paddingHorizontal: 12, alignItems: "center" },
 			dateItem: {
 				width: dateCellWidth,
@@ -1336,7 +1337,6 @@ const getStyles = (colors: ThemeColors, width: number) => {
 				lineHeight: 18,
 				textAlign: "center",
 			},
-			infoText: { marginTop: 6, textAlign: "center" },
 			saveHint: { marginTop: 24, marginBottom: -18, textAlign: "center" },
 			schemaSection: { marginTop: 18 },
 			schemaTitle: { marginTop: 0, marginBottom: 18 },

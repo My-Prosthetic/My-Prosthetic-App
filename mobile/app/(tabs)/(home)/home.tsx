@@ -118,7 +118,12 @@ export default function HomeScreen() {
 		<ThemedView
 			colorName="blue2"
 			style={styles.prostheticCard}
-			onPress={() => router.push("/prosthesis/new")}
+			onPress={() =>
+				router.push({
+					pathname: "/prosthesis/prosthesisForm",
+					params: { mode: "Create" },
+				})
+			}
 		>
 			<View style={styles.cardIcon}>
 				<IconPlus color={colors.blue0} width={70} height={70} />
@@ -193,6 +198,7 @@ export default function HomeScreen() {
 					{/* ----------------- NAGŁÓWEK (CZEŚĆ USER!) ----------------- */}
 					<ThemedView variant="wide" style={styles.headerRow}>
 						<ThemedText
+							variant="H0"
 							tx={status === "GUEST" ? "home.greetingGuest" : "home.greetingUser"}
 							txOptions={{ name: userName }}
 							colorName="blue2"
@@ -297,6 +303,7 @@ const getStyles = (colors: ThemeColors) => {
 				textAlign: "left",
 				fontFamily: "Montserrat-Bold",
 				textTransform: "none",
+				fontSize: 32,
 			},
 			dateBadge: {
 				width: 60,

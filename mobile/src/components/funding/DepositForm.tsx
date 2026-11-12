@@ -200,7 +200,6 @@ export function DepositForm({ mode }: DepositFormProps) {
 							tx="funding.fundingSource"
 						/>
 						<DropdownSelect
-							label={t("funding.fundingSource")}
 							placeholder={t("funding.select")}
 							options={options}
 							value={fundingSource}

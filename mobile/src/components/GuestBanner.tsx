@@ -1,8 +1,9 @@
 import { StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useTheme } from "@/context/ThemeContext"
+
+import IconFile from "@/assets/icons/file.svg"
 
 export function GuestBanner() {
 	const { colors } = useTheme()
@@ -19,7 +20,7 @@ export function GuestBanner() {
 				},
 			]}
 		>
-			<Ionicons name="warning-outline" size={22} color={colors.warning} />
+			<IconFile width={22} color={colors.warning} />
 			<View style={styles.messages}>
 				<ThemedText tx="login.noCopy" variant="H2" colorName="blue2" />
 			</View>

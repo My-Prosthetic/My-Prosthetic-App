@@ -18,11 +18,10 @@ export default function AboutScreen() {
 	return (
 		<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 			<ThemedView variant="background" colorName="bg_1" style={styles.scrollContent}>
-				{/* Header */}
-				<ThemedHeader tx="about.header" />
-
 				{/* Introduction */}
-				<ThemedView variant="background" colorName="bg_0" style={styles.introSection}>
+				<ThemedView variant="background" colorName="bg_0" shadow style={styles.introSection}>
+					{/* Header */}
+					<ThemedHeader tx="about.header" style={{ marginBottom: 20 }} />
 					<ThemedView style={styles.appRow}>
 						<Logo width={80} height={44.26} color={colors.blue2} />
 
@@ -43,7 +42,7 @@ export default function AboutScreen() {
 						</ThemedView>
 					</ThemedView>
 
-					<ThemedText variant="subTitle2" tx="about.partnerIntro" colorName="blue2" />
+					<ThemedText variant="H4" tx="about.partnerIntro" colorName="blue2" />
 
 					<ThemedText variant="H5" colorName="blue2">
 						{aboutConfig.partner}
@@ -121,9 +120,9 @@ const styles = StyleSheet.create({
 	introSection: {
 		alignSelf: "center",
 		width: "119%",
-		paddingTop: 24,
 		paddingBottom: 16,
-		borderRadius: 0,
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
 	},
 
 	appRow: {

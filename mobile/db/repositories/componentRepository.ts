@@ -27,10 +27,14 @@ export type CreateComponentInput = {
 }
 
 export type UpdateComponentInput = Partial<
-	Omit<CreateComponentInput, "prosthesisId" | "description" | "warrantyEndDate">
+	Omit<
+		CreateComponentInput,
+		"prosthesisId" | "description" | "warrantyEndDate" | "expectedExchangeDate"
+	>
 > & {
 	description?: string | null
 	warrantyEndDate?: string | null
+	expectedExchangeDate?: string | null
 }
 
 export async function createComponent(input: CreateComponentInput) {

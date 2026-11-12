@@ -14,6 +14,7 @@ export interface ThemedSwitchProps {
 	selectRight: () => void
 	initialState?: "left" | "right"
 	accessibilityLabel?: string
+	backgroundColor?: string
 }
 
 export default function ThemedSelectiveSwitch({
@@ -25,6 +26,7 @@ export default function ThemedSelectiveSwitch({
 	selectRight,
 	initialState = "left",
 	accessibilityLabel,
+	backgroundColor = "transparent",
 }: ThemedSwitchProps) {
 	const { t } = useTranslation()
 	const [selected, setSelected] = useState<"left" | "right">(initialState)
@@ -63,7 +65,10 @@ export default function ThemedSelectiveSwitch({
 
 			<ThemedView
 				borderColor="blue2"
-				style={[styles.track, { justifyContent: isLeft ? "flex-start" : "flex-end" }]}
+				style={[
+					styles.track,
+					{ justifyContent: isLeft ? "flex-start" : "flex-end", backgroundColor: backgroundColor },
+				]}
 			>
 				<ThemedView colorName="blue2" style={styles.thumb} />
 			</ThemedView>

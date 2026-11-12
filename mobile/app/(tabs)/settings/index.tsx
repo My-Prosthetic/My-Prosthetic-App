@@ -3,46 +3,44 @@ import { router } from "expo-router"
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useAuth } from "@/context/AuthContext"
-import { useTranslation } from "react-i18next"
 
 export default function SettingsScreen() {
 	const { logout } = useAuth()
-	const { i18n } = useTranslation()
 
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
+		<ThemedView variant="background" colorName="bg_1" style={styles.container}>
 			<ThemedText tx="screens.settingsTitle" />
 
 			<ThemedView
-				variant="old_narrow"
+				variant="narrow"
 				colorName="false"
 				shadow
 				onPress={() => router.push("/settings/about")}
 				style={styles.devLogoutButton}
 			>
-				<ThemedText tx="about.header" colorName="accent_base_1" variant="main1Button" />
+				<ThemedText tx="about.header" colorName="blue0" variant="H2" />
 			</ThemedView>
 
 			<ThemedView
-				variant="old_narrow"
+				variant="narrow"
 				colorName="false"
 				shadow
 				onPress={() => router.push("/settings/display")}
 				style={styles.devLogoutButton}
 			>
-				<ThemedText tx="display.title" colorName="accent_base_1" variant="main1Button" />
+				<ThemedText tx="display.title" colorName="blue0" variant="H2" />
 			</ThemedView>
 
 			{__DEV__ ? (
 				<>
 					<ThemedView
-						variant="old_narrow"
+						variant="narrow"
 						colorName="false"
 						shadow
 						onPress={logout}
 						style={styles.devLogoutButton}
 					>
-						<ThemedText colorName="accent_base_1" variant="main1Button">
+						<ThemedText colorName="blue0" variant="H2">
 							DEV: WYLOGUJ
 						</ThemedText>
 					</ThemedView>
@@ -52,20 +50,6 @@ export default function SettingsScreen() {
 						variant="subTitle1"
 						tx={themeType === "light" ? "home.switchToHighContrast" : "home.switchToLightTheme"}
 					/> */}
-
-					{/* ----------------- PROSTY PRZEŁĄCZNIK JĘZYKA (DEWELOPERSKI) ----------------- */}
-
-					<ThemedText
-						onPress={() => {
-							const nextLang = i18n.language.startsWith("pl") ? "en" : "pl"
-							i18n.changeLanguage(nextLang)
-						}}
-						variant="subTitle1"
-					>
-						{i18n.language.startsWith("pl")
-							? "Zmień język: English (EN)"
-							: "Change language: Polski (PL)"}
-					</ThemedText>
 				</>
 			) : null}
 		</ThemedView>

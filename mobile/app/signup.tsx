@@ -199,10 +199,10 @@ export default function SignUpScreen() {
 								<View key={rule.id} style={styles.requirementRow}>
 									<View
 										style={[
-											styles.requirementBullet, //TODO nowa logika wyświetlania
+											styles.requirementBullet,
 											{
-												backgroundColor: rule.valid ? colors.true : colors.primary_base_4,
-												borderColor: rule.valid ? colors.true : colors.primary_base_3,
+												backgroundColor: rule.valid ? colors.true : "transparent",
+												borderColor: rule.valid ? colors.true : colors.blue1,
 											},
 										]}
 									/>
@@ -317,7 +317,7 @@ export default function SignUpScreen() {
 				onRequestClose={() => {}}
 			>
 				<View style={styles.loadingOverlay}>
-					<ActivityIndicator size="large" color={colors.primary_base} />
+					<ActivityIndicator size="large" color={colors.blue2} />
 				</View>
 			</Modal>
 		</>
@@ -360,25 +360,6 @@ const styles = StyleSheet.create({
 		borderRadius: 999,
 		borderWidth: 1,
 	},
-	themedInputWrapper: {
-		borderWidth: 1,
-		minHeight: 44,
-		paddingVertical: 0,
-		paddingHorizontal: 0,
-		justifyContent: "center",
-		borderRadius: 12,
-	},
-	repeatPasswordWrapper: {
-		flexDirection: "row",
-		alignItems: "center",
-		paddingRight: 14,
-	},
-	input: {
-		width: "100%",
-		fontSize: 16,
-		paddingLeft: 16,
-		fontFamily: "Afacad-SemiBold",
-	},
 	errorMessage: {
 		width: "100%",
 		fontSize: 14,
@@ -398,11 +379,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 40,
-	},
-	centerRow: {
-		justifyContent: "center",
-		paddingLeft: 0,
-		marginTop: 6,
 	},
 	actionsSection: {
 		gap: 16,

@@ -53,7 +53,7 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 	const markerVisible = value?.view === view
 
 	return (
-		<ThemedView colorName="secondary_base_2" style={styles.card}>
+		<ThemedView colorName="blue2" style={styles.card}>
 			<View style={styles.diagram}>
 				<Svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} viewBox={VIEWBOX}>
 					{view === "side" ? (
@@ -61,8 +61,8 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							{/* Główny obszar klikalny */}
 							<Path
 								d="M76 25C100.037 44.2296 128.881 53.8444 162.533 53.8444L140.9 183.644C121.67 207.681 102.441 207.681 83.2111 183.644L76 25Z"
-								fill={colors.tertiary_base_2}
-								stroke={colors.primary_base_1}
+								fill={colors.blue0}
+								stroke={colors.blue1}
 								strokeWidth={2.88444}
 								strokeLinejoin="round"
 								onPress={handlePress}
@@ -72,7 +72,7 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							<Path
 								d="M76 25C90.4222 73.0741 97.6333 113.937 97.6333 147.589"
 								fill="none"
-								stroke={colors.primary_base_2}
+								stroke={colors.blue1}
 								strokeWidth={1.44222}
 								strokeLinejoin="round"
 								pointerEvents="none"
@@ -83,8 +83,8 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							{/* Główny obszar klikalny */}
 							<Path
 								d="M113.376 44C167.459 44 185.487 118.287 113.376 177.716C41.265 118.287 59.2928 44 113.376 44Z"
-								fill={colors.tertiary_base_3}
-								stroke={colors.primary_base_1}
+								fill={colors.blue0}
+								stroke={colors.blue1}
 								strokeWidth={2.88444}
 								strokeLinejoin="round"
 								onPress={handlePress}
@@ -93,8 +93,8 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							{/* Wewnętrzny obrys */}
 							<Path
 								d="M113.376 58.8574C153.037 58.8574 167.459 110.858 113.376 155.43C59.2928 110.858 73.715 58.8574 113.376 58.8574Z"
-								fill={colors.tertiary_base_2}
-								stroke={colors.primary_base_3}
+								fill={colors.blue0}
+								stroke={colors.blue2}
 								strokeWidth={2.16333}
 								pointerEvents="none"
 							/>
@@ -104,8 +104,8 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							{/* Główny obszar klikalny */}
 							<Path
 								d="M65 40.2112C101.056 49.826 137.111 49.826 173.167 40.2112L151.533 184.433C129.9 208.47 108.267 208.47 86.6333 184.433L65 40.2112Z"
-								fill={colors.tertiary_base_2}
-								stroke={colors.primary_base_1}
+								fill={colors.blue0}
+								stroke={colors.blue1}
 								strokeWidth={2.88444}
 								strokeLinejoin="round"
 								onPress={handlePress}
@@ -115,7 +115,7 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							<Path
 								d="M65 40.2111C101.056 30.5963 137.111 30.5963 173.167 40.2111"
 								fill="none"
-								stroke={colors.primary_base_2}
+								stroke={colors.blue1}
 								strokeWidth={1.44222}
 								strokeLinejoin="round"
 								strokeDasharray="4.33 4.33"
@@ -136,13 +136,13 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 							},
 						]}
 					>
-						<ThemedView colorName="false_2" style={styles.markerOuter} />
-						<ThemedView colorName="false_1" style={styles.markerInner} />
+						<ThemedView colorName="false" style={styles.markerOuter} />
+						<ThemedView colorName="false" style={styles.markerInner} />
 					</View>
 				)}
 			</View>
 
-			<ThemedText variant="subTitle1" colorName="primary_base" style={styles.caption}>
+			<ThemedText variant="H2" colorName="bg_0" numberOfLines={1}>
 				{view === "side"
 					? t("newIncident.schemaViews.side")
 					: view === "top_inside"
@@ -162,7 +162,7 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "center",
 			paddingTop: 0,
 			paddingBottom: 8,
-			shadowColor: colors.primary_base,
+			shadowColor: colors.blue2,
 			shadowOffset: {
 				width: 0,
 				height: 0,
@@ -199,13 +199,6 @@ const getStyles = (colors: ThemeColors) => {
 			width: MARKER_INNER_SIZE,
 			height: MARKER_INNER_SIZE,
 			borderRadius: MARKER_INNER_SIZE / 2,
-		},
-
-		caption: {
-			textAlign: "center",
-			marginTop: 4,
-			fontSize: 12,
-			fontFamily: "Inter-Bold",
 		},
 	})
 	return styles

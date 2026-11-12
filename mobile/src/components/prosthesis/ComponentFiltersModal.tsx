@@ -1,15 +1,18 @@
 import { useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { Modal, ScrollView, StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useTheme } from "@/context/ThemeContext"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import { ThemedText } from "@/src/components/ThemedText"
+import { ThemedView } from "@/src/components/ThemedView"
 import { formatDate } from "@/src/utils/dateTimeUtils"
 
-import { COMPONENT_TYPES, ComponentType } from "../constants/componentTypes"
+import { COMPONENT_TYPES, ComponentType } from "../../constants/componentTypes"
+
+import IconX from "@/assets/icons/x.svg"
+import IconCheck from "@/assets/icons/check.svg"
 
 export type ComponentFilters = {
 	status: "all" | "active" | "historical"
@@ -61,28 +64,18 @@ export function ComponentFiltersModal({
 	}
 
 	const renderChoice = (label: string, selected: boolean, onPress: () => void) => (
-		<Pressable
+		<ThemedView
 			key={label}
 			onPress={onPress}
-			style={[
-				styles.choice,
-				{
-					backgroundColor: selected ? colors.primary_base : colors.tertiary_base_1,
-					borderColor: selected ? colors.primary_base : colors.primary_base_3,
-				},
-			]}
-			accessibilityRole="button"
+			style={styles.choice}
+			colorName={selected ? "blue2" : "blue0"}
 			accessibilityState={{ selected }}
 		>
-			{selected && <Ionicons name="checkmark" size={16} color={colors.accent_base} />}
-			<ThemedText
-				variant="subTitle2"
-				colorName={selected ? "accent_base" : "primary_base"}
-				numberOfLines={1}
-			>
+			{selected && <IconCheck color={colors.bg_0} width={14} height={14} />}
+			<ThemedText variant="H4" colorName={selected ? "bg_0" : "blue2"} numberOfLines={1}>
 				{label}
 			</ThemedText>
-		</Pressable>
+		</ThemedView>
 	)
 
 	const datePickerValue = datePickerTarget
@@ -99,35 +92,20 @@ export function ComponentFiltersModal({
 				onRequestClose={onClose}
 			>
 				<View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
-					<Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" />
-					<View style={[styles.sheet, { backgroundColor: colors.tertiary_base_3 }]}>
+					<ThemedView style={styles.backdrop} onPress={onClose} accessibilityRole="button" />
+					<View style={[styles.sheet, { backgroundColor: colors.bg_1 }]}>
 						<View style={styles.sheetHeader}>
-							<ThemedText
-								tx="prosthesisDetails.filters.title"
-								variant="subTitle1"
-								colorName="primary_base"
-							/>
-							<Pressable onPress={onClose} hitSlop={10} accessibilityLabel={t("common.cancel")}>
-								<Ionicons name="close" size={26} color={colors.primary_base} />
-							</Pressable>
+							<ThemedText tx="prosthesisDetails.filters.title" variant="H0" colorName="blue2" />
+							<ThemedView onPress={onClose} hitSlop={10} accessibilityLabel={t("common.cancel")}>
+								<IconX color={colors.false} width={26} height={26} />
+							</ThemedView>
 						</View>
 
 						<ScrollView
 							contentContainerStyle={styles.filterContent}
 							showsVerticalScrollIndicator={false}
 						>
-							<ThemedText tx="prosthesisDetails.filters.status" variant="tab1Category" />
-							<View style={styles.choiceWrap}>
-								{(["all", "active", "historical"] as const).map((status) =>
-									renderChoice(
-										t(`prosthesisDetails.filters.${status}`),
-										draftFilters.status === status,
-										() => setDraftFilters((current) => ({ ...current, status }))
-									)
-								)}
-							</View>
-
-							<ThemedText tx="prosthesisDetails.filters.category" variant="tab1Category" />
+							<ThemedText tx="prosthesisDetails.filters.category" variant="H1" colorName="blue2" />
 							<View style={styles.choiceWrap}>
 								{COMPONENT_TYPES.map((type) =>
 									renderChoice(
@@ -138,7 +116,11 @@ export function ComponentFiltersModal({
 								)}
 							</View>
 
-							<ThemedText tx="prosthesisDetails.filters.assemblyDate" variant="tab1Category" />
+							<ThemedText
+								tx="prosthesisDetails.filters.assemblyDate"
+								variant="H1"
+								colorName="blue2"
+							/>
 							<View style={styles.dateFields}>
 								{(["assemblyFrom", "assemblyTo"] as const).map((target) => {
 									const selectedDate = draftFilters[target]
@@ -146,40 +128,39 @@ export function ComponentFiltersModal({
 
 									return (
 										<View key={target} style={styles.dateField}>
-											<Pressable
+											<ThemedView
 												onPress={() => setDatePickerTarget(target)}
-												style={[styles.dateButton, { borderColor: colors.primary_base_3 }]}
+												style={styles.dateButton}
+												borderColor="blue0"
 											>
-												<ThemedText variant="subTitle2" colorName="secondary_base_0c">
+												<ThemedText variant="H5" colorName="blue2">
 													{label}
 												</ThemedText>
-												<ThemedText
-													variant="body1Regular"
-													colorName="primary_base"
-													numberOfLines={1}
-												>
+												<ThemedText variant="H3" colorName="blue2" numberOfLines={1}>
 													{selectedDate
 														? formatDate(selectedDate, "numeric")
 														: t("prosthesisDetails.filters.chooseDate")}
 												</ThemedText>
-											</Pressable>
+											</ThemedView>
 											{selectedDate && (
-												<Pressable
+												<ThemedView
 													onPress={() =>
 														setDraftFilters((current) => ({ ...current, [target]: null }))
 													}
 													accessibilityLabel={t("prosthesisDetails.filters.clearDate")}
 													hitSlop={8}
+													style={styles.circleX}
+													colorName="false"
 												>
-													<Ionicons name="close-circle" size={20} color={colors.primary_base_2} />
-												</Pressable>
+													<IconX color={colors.bg_0} width={15} height={15} />
+												</ThemedView>
 											)}
 										</View>
 									)
 								})}
 							</View>
 
-							<ThemedText tx="prosthesisDetails.filters.warranty" variant="tab1Category" />
+							<ThemedText tx="prosthesisDetails.filters.warranty" variant="H1" colorName="blue2" />
 							<View style={styles.choiceWrap}>
 								{(["all", "endingSoon", "expired", "noDate"] as const).map((warranty) =>
 									renderChoice(
@@ -192,28 +173,23 @@ export function ComponentFiltersModal({
 						</ScrollView>
 
 						<View style={styles.actions}>
-							<Pressable
+							<ThemedView
 								onPress={() => setDraftFilters({ ...DEFAULT_COMPONENT_FILTERS, types: [] })}
-								style={[styles.actionButton, { borderColor: colors.primary_base }]}
+								style={styles.actionButton}
+								borderColor="false"
 							>
-								<ThemedText tx="prosthesisDetails.filters.reset" variant="subTitle2" />
-							</Pressable>
-							<Pressable
-								onPress={onClose}
-								style={[styles.actionButton, { borderColor: colors.primary_base_2 }]}
-							>
-								<ThemedText tx="common.cancel" variant="subTitle2" />
-							</Pressable>
-							<Pressable
+								<ThemedText colorName="false" tx="prosthesisDetails.filters.reset" variant="H3" />
+							</ThemedView>
+							<ThemedView onPress={onClose} style={styles.actionButton} borderColor="blue1">
+								<ThemedText tx="common.cancel" variant="H3" colorName="graphite0" />
+							</ThemedView>
+							<ThemedView
 								onPress={() => onApply(draftFilters)}
-								style={[styles.actionButton, { backgroundColor: colors.primary_base }]}
+								style={styles.actionButton}
+								colorName="blue2"
 							>
-								<ThemedText
-									tx="prosthesisDetails.filters.apply"
-									variant="subTitle2"
-									colorName="accent_base"
-								/>
-							</Pressable>
+								<ThemedText tx="prosthesisDetails.filters.apply" variant="H3" colorName="bg_0" />
+							</ThemedView>
 						</View>
 					</View>
 				</View>
@@ -273,8 +249,6 @@ const styles = StyleSheet.create({
 		minHeight: 38,
 		maxWidth: "100%",
 		paddingHorizontal: 12,
-		borderWidth: 1,
-		borderRadius: 12,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
@@ -293,14 +267,18 @@ const styles = StyleSheet.create({
 	},
 	dateButton: {
 		flex: 1,
-		minWidth: 0,
 		minHeight: 58,
 		paddingHorizontal: 10,
 		paddingVertical: 7,
-		borderWidth: 1,
-		borderRadius: 12,
 		justifyContent: "center",
 		gap: 3,
+	},
+	circleX: {
+		width: 20,
+		height: 20,
+		borderRadius: 10,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	actions: {
 		flexDirection: "row",
@@ -311,8 +289,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		minHeight: 44,
 		paddingHorizontal: 8,
-		borderWidth: 1,
-		borderRadius: 12,
 		alignItems: "center",
 		justifyContent: "center",
 	},

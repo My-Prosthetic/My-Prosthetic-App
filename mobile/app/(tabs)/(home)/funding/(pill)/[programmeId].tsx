@@ -34,7 +34,7 @@ export default function ProgrammeDetailsScreen() {
 	if (!programme) {
 		return (
 			<ThemedView variant="wide" colorName="bg_1" style={styles.notFoundContainer}>
-				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="blue2" />
+				<ThemedText tx="funding.notFound" variant="H5" colorName="blue2" />
 			</ThemedView>
 		)
 	}
@@ -305,19 +305,10 @@ const styles = StyleSheet.create({
 		height: 38,
 		paddingVertical: 5,
 	},
-	stepDot: {
-		width: 3,
-		height: 3,
-		borderRadius: 1.5,
-		backgroundColor: "#E0E0E0",
-	},
 	stepLine: {
 		borderRadius: 1000,
 		width: 2,
 		height: 25,
-		// marginLeft: 23,
-		// overflow: "visible",
-		// marginVertical: -10,
 	},
 	stepContent: {
 		flex: 1,
@@ -344,9 +335,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "flex-start",
 		marginBottom: 8,
-	},
-	bullet: {
-		marginRight: 4,
 	},
 	eligibilityText: {
 		flex: 1,

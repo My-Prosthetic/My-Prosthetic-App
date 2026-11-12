@@ -4,20 +4,7 @@ import { ParseKeys, TOptions } from "i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useRef } from "react"
 
-type Variant =
-	| "H0"
-	| "H1"
-	| "H2"
-	| "H3"
-	| "H4"
-	| "H5"
-	| "title"
-	| "tab1Category"
-	| "main1Button"
-	| "subTitle1"
-	| "subTitle2"
-	| "body1Regular"
-	| "basic1"
+type Variant = "H0" | "H1" | "H2" | "H3" | "H4" | "H5"
 
 interface ThemedTextProps extends TextProps {
 	tx?: ParseKeys
@@ -33,8 +20,8 @@ const PRESS_GUARD_MS = 500
 export const ThemedText = ({
 	tx,
 	txOptions,
-	variant = "title",
-	colorName = "primary_base",
+	variant = "H1",
+	colorName = "graphite0",
 	onPress,
 	style,
 	children,
@@ -136,64 +123,5 @@ const typography = StyleSheet.create({
 		fontFamily: "Montserrat-Bold",
 		fontSize: 12,
 		lineHeight: 15,
-	},
-	title: {
-		fontFamily: "Afacad-Medium",
-		fontSize: 30,
-		lineHeight: 34,
-		letterSpacing: 1.2,
-		textTransform: "uppercase",
-		textAlign: "center",
-		textAlignVertical: "center",
-	},
-	tab1Category: {
-		fontFamily: "Inter-SemiBold",
-		fontSize: 12,
-		lineHeight: 16,
-		letterSpacing: 0.48,
-		textTransform: "uppercase",
-		textAlign: "left",
-		textAlignVertical: "center",
-	},
-	main1Button: {
-		fontFamily: "Inter-SemiBold",
-		fontSize: 18,
-		lineHeight: 22,
-		letterSpacing: 0.72,
-		textTransform: "uppercase",
-		textAlign: "center",
-		textAlignVertical: "center",
-	},
-	subTitle1: {
-		fontFamily: "Afacad-SemiBold",
-		fontSize: 17,
-		lineHeight: 20,
-		letterSpacing: 0.68,
-		textAlign: "left",
-		textAlignVertical: "center",
-	},
-	subTitle2: {
-		fontFamily: "Afacad-Regular",
-		fontSize: 14,
-		lineHeight: 18,
-		letterSpacing: 0.56,
-		textAlign: "left",
-		textAlignVertical: "center",
-	},
-	body1Regular: {
-		fontFamily: "Inter-Regular",
-		fontSize: 14,
-		lineHeight: 18,
-		letterSpacing: 0,
-		textAlign: "left",
-		textAlignVertical: "center",
-	},
-	basic1: {
-		fontFamily: "Afacad-Regular",
-		fontSize: 16,
-		lineHeight: 20,
-		letterSpacing: 0,
-		textAlign: "left",
-		textAlignVertical: "center",
 	},
 })

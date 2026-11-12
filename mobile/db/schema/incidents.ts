@@ -22,6 +22,11 @@ export const incidents = sqliteTable(
 		createdAt: text("created_at").notNull(),
 		updatedAt: text("updated_at").notNull(),
 		deletedAt: text("deleted_at"),
+		isSharingWithProsthetist: integer("is_sharing_with_prosthetist", {
+			mode: "boolean",
+		})
+			.notNull()
+			.default(false),
 		isDirty: integer("is_dirty", { mode: "boolean" }).notNull().default(true),
 	},
 	(table) => [
