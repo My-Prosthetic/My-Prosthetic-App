@@ -15,10 +15,30 @@
 		"accumulated": "Środki",
 		"accumulatedTitle": "Zgromadzone Środki"
 	},
+	"journal": {
+		"title": "KALENDARZ",
+		"search": "szukaj...",
+		"incidents": "incydenty",
+		"components": "komponenty",
+		"filter": "filtruj",
+		"previousMonth": "Poprzedni miesiąc",
+		"nextMonth": "Następny miesiąc",
+		"emptyDay": "Brak zdarzeń w wybranym dniu.",
+		"loadError": "Nie udało się wczytać zdarzeń.",
+		"componentAssembly": "Montaż komponentu: {{name}}",
+		"time": "godzina:",
+		"painScale": "skala bólu:",
+		"circumstances": "okoliczności:",
+		"prosthesis": "proteza:",
+		"component": "komponent:",
+		"description": "opis:",
+		"edit": "edytuj",
+		"prosthesisFilter": "Filtruj według protezy",
+		"allProstheses": "Wszystkie protezy"
+	},
 	"screens": {
 		"homeTitle": "To jest Ekran Główny 🏠",
 		"profileTitle": "Twój Profil Użytkownika 👤",
-		"journalTitle": "Twój dziennik medyczny x",
 		"settingsTitle": "Ustawienia Aplikacji ⚙️",
 		"programmesTitle": "Programy Dofinansowań 📋",
 		"accumulatedTitle": "Zgromadzone Środki 💰"
@@ -358,9 +378,11 @@
 		}
 	},
 	"newIncident": {
-		"title": "Nowy incydent",
-		"time": "Godzina",
-		"type": "Typ incydentu:",
+		"editTitle": "EDYTUJ INCYDENT",
+		"saveEdit": "ZAPISZ ZMIANY",
+		"title": "NOWY INCYDENT",
+		"time": "GODZINA",
+		"type": "TYP INCYDENTU:",
 		"selectType": "Wybierz typ incydentu",
 		"circumstances": "Okoliczności:",
 		"description": "Opis:",

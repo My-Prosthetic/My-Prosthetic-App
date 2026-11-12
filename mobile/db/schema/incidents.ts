@@ -26,7 +26,7 @@ export const incidents = sqliteTable(
 			mode: "boolean",
 		})
 			.notNull()
-			.default(true),
+			.default(false),
 		isDirty: integer("is_dirty", { mode: "boolean" }).notNull().default(true),
 	},
 	(table) => [

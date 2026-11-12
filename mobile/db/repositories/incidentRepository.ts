@@ -99,3 +99,64 @@ export async function getIncidentCustomValues() {
 		],
 	}
 }
+
+export async function getIncidentById(id: string): Promise<Incident | null> {
+	const [incident] = await db
+		.select()
+		.from(incidents)
+		.where(and(eq(incidents.id, id), isNull(incidents.deletedAt)))
+	return incident ?? null
+}
+
+export async function updateIncident(
+	id: string,
+	input: CreateIncidentInput
+): Promise<Incident | null> {
+	return db.transaction(async (tx) => {
+		const [existing] = await tx
+			.select()
+			.from(incidents)
+			.where(and(eq(incidents.id, id), isNull(incidents.deletedAt)))
+		if (!existing) return null
+
+		const [prosthesis] = await tx
+			.select({ id: prostheses.id })
+			.from(prostheses)
+			.where(and(eq(prostheses.id, input.prosthesisId), isNull(prostheses.deletedAt)))
+		if (!prosthesis) throw new Error("Active prosthesis not found")
+		if (input.componentId) {
+			const [component] = await tx
+				.select({ id: components.id })
+				.from(components)
+				.where(
+					and(
+						eq(components.id, input.componentId),
+						eq(components.prosthesisId, input.prosthesisId),
+						isNull(components.deletedAt)
+					)
+				)
+			if (!component) throw new Error("Component does not belong to the selected prosthesis")
+		}
+
+		const [updated] = await tx
+			.update(incidents)
+			.set({
+				prosthesisId: input.prosthesisId,
+				componentId: input.componentId ?? null,
+				type: input.type,
+				coordinatesJson: input.coordinates ? JSON.stringify(input.coordinates) : null,
+				intensity: input.intensity ?? null,
+				activity: input.activity || null,
+				description: input.description?.trim() || null,
+				occurredAt: input.occurredAt,
+				photoUrisJson: JSON.stringify(input.photoUris ?? []),
+				audioUri: input.audioUri ?? null,
+				isSharingWithProsthetist: input.isSharingWithProsthetist ?? false,
+				updatedAt: new Date().toISOString(),
+				isDirty: true,
+			})
+			.where(and(eq(incidents.id, id), isNull(incidents.deletedAt)))
+			.returning()
+		return updated ?? null
+	})
+}

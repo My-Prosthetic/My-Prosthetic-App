@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    use SeedsDemoData;
     use WithoutModelEvents;
 
     /**
@@ -15,6 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (! $this->isDemoEnvironment()) {
+            return;
+        }
+
         if (! User::query()->where('email', 'test@example.com')->exists()) {
             User::factory()->create([
                 'name' => 'Test User',
@@ -24,5 +30,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ProsthesisSeeder::class);
         $this->call(WalletEntrySeeder::class);
+        $this->call(MedicalProfileSeeder::class);
     }
 }
