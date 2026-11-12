@@ -15,6 +15,7 @@ import {
 	type MeasuresPageQuery,
 	type MeasureWithLevels,
 } from "@/db/repositories/measuresRepository"
+import { formatMeasurement } from "@/src/utils/measurementUtils"
 
 import IconRuler from "@/assets/icons/measure-filled.svg"
 import IconPlus from "@/assets/icons/plus.svg"
@@ -40,10 +41,6 @@ const INITIAL_SELECTED_LEVELS: Record<Level, boolean> = {
 const PAGE_SIZE = 10
 
 const EMPTY_PAGE: MeasuresPage = { items: [], total: 0 }
-
-//TODO przerzucić do utils i zaimplementować w addMeasurement
-const formatValue = (value?: number) =>
-	value === undefined ? "–" : value.toFixed(2).replace(".", ",")
 
 const getLevelValue = (measure: MeasureWithLevels, level: number) =>
 	measure.levels.find((l) => l.level === level)?.value
@@ -173,7 +170,7 @@ function MeasurementsTable({
 						</View>
 						{visibleLevels.map((level) => (
 							<ThemedText key={level} variant="H4" colorName="graphite0" style={tableStyles.colVal}>
-								{formatValue(getLevelValue(measure, level))}
+								{formatMeasurement(getLevelValue(measure, level))}
 							</ThemedText>
 						))}
 						<ThemedView>
