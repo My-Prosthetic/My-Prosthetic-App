@@ -42,6 +42,7 @@ import IconClose from "@/assets/icons/incident/close.svg"
 import IconMic from "@/assets/icons/incident/mic.svg"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
+import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 
 type IncidentComponent = Awaited<ReturnType<typeof getComponentsByProsthesisId>>[number]
 
@@ -158,6 +159,7 @@ export default function NewIncidentScreen() {
 	const [timeText, setTimeText] = useState(toTimeText(now))
 	const [timePickerOpen, setTimePickerOpen] = useState(false)
 	const [incidentType, setIncidentType] = useState("")
+	const [isSharingWithProsthetist, setIsSharingWithProsthetist] = useState(true)
 	const [activity, setActivity] = useState("")
 	const [description, setDescription] = useState("")
 	const [intensity, setIntensity] = useState(0)
@@ -441,6 +443,7 @@ export default function NewIncidentScreen() {
 				occurredAt,
 				photoUris,
 				audioUri,
+				isSharingWithProsthetist,
 			})
 			savedRef.current = true
 			Alert.alert(t("newIncident.savedTitle"), t("newIncident.savedMessage"), [
@@ -724,6 +727,17 @@ export default function NewIncidentScreen() {
 						/>
 					</>
 				)}
+
+				<ThemedView
+					style={styles.sharingLine}
+					onPress={() => setIsSharingWithProsthetist((checked) => !checked)}
+				>
+					<ThemedText tx="newIncident.shareWithProsthetist" variant="H1" colorName="blue2" />
+					<ThemedCheckbox
+						checked={isSharingWithProsthetist}
+						onPress={() => setIsSharingWithProsthetist((checked) => !checked)}
+					/>
+				</ThemedView>
 
 				{selectedProsthesisId && (
 					<>
@@ -1137,6 +1151,7 @@ const getStyles = (colors: ThemeColors, width: number) => {
 				shadowRadius: 6,
 				elevation: 3,
 			},
+			sharingLine: { flexDirection: "row", justifyContent: "space-between", paddingTop: 15 },
 			dateStrip: { paddingHorizontal: 12, alignItems: "center" },
 			dateItem: {
 				width: dateCellWidth,

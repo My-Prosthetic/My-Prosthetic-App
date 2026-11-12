@@ -26,6 +26,7 @@ export type CreateIncidentInput = {
 	occurredAt: string
 	photoUris?: string[]
 	audioUri?: string
+	isSharingWithProsthetist?: boolean
 }
 
 export async function createIncident(input: CreateIncidentInput) {
@@ -73,6 +74,7 @@ export async function createIncident(input: CreateIncidentInput) {
 			audioUri: input.audioUri ?? null,
 			createdAt: now,
 			updatedAt: now,
+			isSharingWithProsthetist: input.isSharingWithProsthetist ?? true,
 			isDirty: true,
 		})
 		.returning()

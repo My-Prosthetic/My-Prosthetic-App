@@ -368,6 +368,7 @@
 		"descriptionPlaceholder": "Briefly describe the incident...",
 		"intensity": "Pain intensity:",
 		"relatedProsthesis": "Related prosthesis:",
+		"shareWithProsthetist": "Share with prosthetist",
 		"component": "Component:",
 		"schema": "Diagram",
 		"addFile": "Add file",

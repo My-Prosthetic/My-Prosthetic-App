@@ -1,0 +1,1 @@
+ALTER TABLE `incidents` ADD `is_sharing_with_prosthetist` integer DEFAULT true NOT NULL;
