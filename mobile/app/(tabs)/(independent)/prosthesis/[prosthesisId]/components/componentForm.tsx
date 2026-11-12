@@ -201,7 +201,7 @@ export default function ComponentFormScreen() {
 								}}
 							/>
 							{!isLoadingModels && modelsList.length === 0 && (
-								<ThemedText variant="subTitle2" colorName="blue2">
+								<ThemedText variant="H5" colorName="blue2">
 									{t("newComponent.modelsUnavailable")}
 								</ThemedText>
 							)}

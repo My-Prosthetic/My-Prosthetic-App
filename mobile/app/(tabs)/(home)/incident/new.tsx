@@ -670,7 +670,7 @@ export default function NewIncidentScreen() {
 					)}
 				</View>
 				{(recorderState.isRecording || audioUri) && (
-					<ThemedText variant="body1Regular" colorName="blue2" style={styles.audioStatus}>
+					<ThemedText variant="H3" colorName="blue2" style={styles.audioStatus}>
 						{recorderState.isRecording
 							? t("newIncident.recording", {
 									seconds: Math.floor(recorderState.durationMillis / 1000),
@@ -803,7 +803,7 @@ export default function NewIncidentScreen() {
 				</View>
 
 				{!selectedProsthesisId && (
-					<ThemedText variant="body1Regular" colorName="false" style={styles.saveHint}>
+					<ThemedText variant="H1" colorName="false" style={styles.saveHint}>
 						{t("newIncident.assignProsthesisHint")}
 					</ThemedText>
 				)}

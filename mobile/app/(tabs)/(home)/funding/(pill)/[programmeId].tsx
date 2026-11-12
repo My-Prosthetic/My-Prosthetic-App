@@ -34,7 +34,7 @@ export default function ProgrammeDetailsScreen() {
 	if (!programme) {
 		return (
 			<ThemedView variant="wide" colorName="bg_1" style={styles.notFoundContainer}>
-				<ThemedText tx="funding.notFound" variant="subTitle1" colorName="blue2" />
+				<ThemedText tx="funding.notFound" variant="H5" colorName="blue2" />
 			</ThemedView>
 		)
 	}

@@ -142,7 +142,7 @@ export function IncidentBodyMap({ view, value, onChange }: Props) {
 				)}
 			</View>
 
-			<ThemedText variant="subTitle1" colorName="bg_0" style={styles.caption}>
+			<ThemedText variant="H2" colorName="bg_0" numberOfLines={1}>
 				{view === "side"
 					? t("newIncident.schemaViews.side")
 					: view === "top_inside"
@@ -199,13 +199,6 @@ const getStyles = (colors: ThemeColors) => {
 			width: MARKER_INNER_SIZE,
 			height: MARKER_INNER_SIZE,
 			borderRadius: MARKER_INNER_SIZE / 2,
-		},
-
-		caption: {
-			textAlign: "center",
-			marginTop: 4,
-			fontSize: 12,
-			fontFamily: "Inter-Bold",
 		},
 	})
 	return styles

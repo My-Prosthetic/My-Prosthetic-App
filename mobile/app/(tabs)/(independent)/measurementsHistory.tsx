@@ -148,7 +148,7 @@ function MeasurementsTable({
 			{!isLoading && measures.length === 0 && (
 				<View style={tableStyles.emptyRow}>
 					<ThemedText
-						variant="body1Regular"
+						variant="H3"
 						colorName="graphite0"
 						style={tableStyles.emptyText}
 						tx="measurements.history.empty"
