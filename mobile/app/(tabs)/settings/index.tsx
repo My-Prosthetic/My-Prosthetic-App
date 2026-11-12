@@ -10,7 +10,7 @@ export default function SettingsScreen() {
 	const { i18n } = useTranslation()
 
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
+		<ThemedView variant="background" colorName="bg_1" style={styles.container}>
 			<ThemedText tx="screens.settingsTitle" />
 
 			<ThemedView
@@ -20,7 +20,7 @@ export default function SettingsScreen() {
 				onPress={() => router.push("/settings/about")}
 				style={styles.devLogoutButton}
 			>
-				<ThemedText tx="about.header" colorName="accent_base_1" variant="main1Button" />
+				<ThemedText tx="about.header" colorName="blue0" variant="main1Button" />
 			</ThemedView>
 
 			<ThemedView
@@ -30,7 +30,7 @@ export default function SettingsScreen() {
 				onPress={() => router.push("/settings/display")}
 				style={styles.devLogoutButton}
 			>
-				<ThemedText tx="display.title" colorName="accent_base_1" variant="main1Button" />
+				<ThemedText tx="display.title" colorName="blue0" variant="main1Button" />
 			</ThemedView>
 
 			{__DEV__ ? (
@@ -42,7 +42,7 @@ export default function SettingsScreen() {
 						onPress={logout}
 						style={styles.devLogoutButton}
 					>
-						<ThemedText colorName="accent_base_1" variant="main1Button">
+						<ThemedText colorName="blue0" variant="main1Button">
 							DEV: WYLOGUJ
 						</ThemedText>
 					</ThemedView>

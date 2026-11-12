@@ -199,10 +199,10 @@ export default function SignUpScreen() {
 								<View key={rule.id} style={styles.requirementRow}>
 									<View
 										style={[
-											styles.requirementBullet, //TODO nowa logika wyświetlania
+											styles.requirementBullet,
 											{
-												backgroundColor: rule.valid ? colors.true : colors.primary_base_4,
-												borderColor: rule.valid ? colors.true : colors.primary_base_3,
+												backgroundColor: rule.valid ? colors.true : "transparent",
+												borderColor: rule.valid ? colors.true : colors.blue1,
 											},
 										]}
 									/>
@@ -317,7 +317,7 @@ export default function SignUpScreen() {
 				onRequestClose={() => {}}
 			>
 				<View style={styles.loadingOverlay}>
-					<ActivityIndicator size="large" color={colors.primary_base} />
+					<ActivityIndicator size="large" color={colors.blue2} />
 				</View>
 			</Modal>
 		</>

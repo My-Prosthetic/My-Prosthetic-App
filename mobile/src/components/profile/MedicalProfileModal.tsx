@@ -118,6 +118,7 @@ export function MedicalProfileModal({
 		}
 	}
 
+	//TODO use ThemedDialog
 	return (
 		<Modal visible={mode !== null} transparent animationType="fade" onRequestClose={handleClose}>
 			<Pressable style={styles.modalBackdrop} onPress={handleClose}>
@@ -127,7 +128,7 @@ export function MedicalProfileModal({
 				/>
 
 				<Pressable
-					style={[styles.modalCard, { backgroundColor: colors.tertiary_base_3 }]}
+					style={[styles.modalCard, { backgroundColor: colors.bg_1 }]}
 					onPress={(event) => event.stopPropagation()}
 				>
 					<ThemedText

@@ -44,7 +44,7 @@ export function SettingsOptionModal<T extends string>({
 				/>
 
 				<Pressable
-					style={[styles.modalCard, { backgroundColor: colors.tertiary_base_3 }]}
+					style={[styles.modalCard, { backgroundColor: colors.bg_1 }]}
 					onPress={(event) => event.stopPropagation()}
 				>
 					<ThemedText variant="H3" colorName="blue2" style={styles.modalTitle}>
@@ -58,11 +58,11 @@ export function SettingsOptionModal<T extends string>({
 								onPress={() => onSelect(option.value)}
 								style={styles.option}
 							>
-								<ThemedText variant="H3" colorName="neutral_text">
+								<ThemedText variant="H3" colorName="graphite0">
 									{option.label}
 								</ThemedText>
 
-								<ThemedView variant="divider" colorName="neutral_text" style={styles.divider} />
+								<ThemedView variant="divider" colorName="blue1" style={styles.divider} />
 							</ThemedView>
 						))}
 					</ScrollView>

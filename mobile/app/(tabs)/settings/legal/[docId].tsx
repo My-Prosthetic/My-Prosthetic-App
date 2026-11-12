@@ -36,7 +36,7 @@ export default function LegalDocScreen() {
 					</ThemedView>
 				) : (
 					<ThemedView style={styles.notFound}>
-						<ThemedText variant="basic1" tx="about.documentNotFound" colorName="false_1" />
+						<ThemedText variant="basic1" tx="about.documentNotFound" colorName="false" />
 					</ThemedView>
 				)}
 			</ThemedView>

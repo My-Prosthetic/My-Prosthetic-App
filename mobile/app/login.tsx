@@ -213,7 +213,7 @@ export default function LoginScreen() {
 				onRequestClose={() => {}}
 			>
 				<View style={styles.loadingOverlay}>
-					<ActivityIndicator size="large" color={colors.primary_base} />
+					<ActivityIndicator size="large" color={colors.blue2} />
 				</View>
 			</Modal>
 		</>

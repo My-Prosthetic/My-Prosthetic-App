@@ -59,15 +59,11 @@ export function MedicationsSection({ medications, onAddPress, onDelete }: Medica
 								<View style={[styles.medicationBullet, { backgroundColor: colors.blue2 }]} />
 
 								<View style={styles.medicationTextRow}>
-									<ThemedText
-										variant="subTitle2"
-										colorName="primary_base"
-										style={styles.medicationName}
-									>
+									<ThemedText variant="subTitle2" colorName="blue2" style={styles.medicationName}>
 										{medication.name}
 									</ThemedText>
 
-									<ThemedText variant="H2" colorName="blue2">
+									<ThemedText variant="H2" colorName="blue1">
 										{" "}
 										({medication.usage})
 									</ThemedText>

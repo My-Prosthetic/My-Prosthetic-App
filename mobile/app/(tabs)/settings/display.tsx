@@ -76,8 +76,8 @@ export default function DisplayScreen() {
 					}
 				>
 					PRESS ME TO TEST TTS !!!!!!
-				</ThemedText> */}
-				<ThemedView variant="divider" colorName="blue1" />
+				</ThemedText> 
+				<ThemedView variant="divider" colorName="blue1" />*/}
 				{/* LANGUAGE & REGION SETTINGS */}
 				<ThemedText
 					variant="H1"

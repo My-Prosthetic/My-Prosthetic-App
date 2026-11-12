@@ -4,7 +4,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 
 export default function JournalScreen() {
 	return (
-		<ThemedView variant="background" colorName="tertiary_base_2" style={styles.container}>
+		<ThemedView variant="background" colorName="blue0" style={styles.container}>
 			<ThemedText tx="screens.journalTitle" />
 		</ThemedView>
 	)
