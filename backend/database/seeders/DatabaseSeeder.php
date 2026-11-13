@@ -32,5 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(IncidentSeeder::class);
         $this->call(WalletEntrySeeder::class);
         $this->call(MedicalProfileSeeder::class);
+        $this->call(SpecialistNoteSeeder::class);
     }
 }
