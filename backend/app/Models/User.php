@@ -189,4 +189,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(WalletEntry::class);
     }
+
+    // each user can have many external identities (one for each provider: google, facebook, apple etc)
+    public function externalIdentities(): HasMany
+    {
+        return $this->hasMany(ExternalIdentity::class);
+    }
 }

@@ -85,7 +85,8 @@
 			"sessionSetupFailed": "Nie udało się przygotować sesji. Spróbuj ponownie.",
 			"guestSessionSetupFailed": "Nie udało się uruchomić trybu gościa. Spróbuj ponownie.",
 			"logoutCredentialsReadFailed": "Nie udało się odczytać danych sesji. Spróbuj ponownie.",
-			"logoutCleanupFailed": "Nie udało się wyczyścić danych lokalnych. Pozostajesz w bieżącej sesji."
+			"logoutCleanupFailed": "Nie udało się wyczyścić danych lokalnych. Pozostajesz w bieżącej sesji.",
+			"oauthAccountConflict": "Konto z tym adresem e-mail już istnieje. Zaloguj się za pomocą hasła."
 		}
 	},
 	"common": {

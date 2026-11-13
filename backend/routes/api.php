@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistSearchController;
@@ -19,6 +20,10 @@ Route::post('/register', [AuthController::class, 'register'])
 Route::post('/login', [AuthController::class, 'mobileLogin'])
     ->middleware('throttle:auth')
     ->name('auth.mobile-login');
+
+Route::post('/oauth/login', [OAuthController::class, 'login'])
+    ->middleware('throttle:auth')
+    ->name('auth.oauth-login');
 
 Route::post('/web/login', [AuthController::class, 'webLogin'])
     ->middleware('throttle:auth')
