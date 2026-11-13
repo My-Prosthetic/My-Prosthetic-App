@@ -21,6 +21,7 @@ class OAuthController extends Controller
         FacebookTokenVerifier $facebookVerifier
     ): JsonResponse {
         $data = $request->validated();
+        /** @var 'google'|'facebook' $provider */
         $provider = $data['provider'];
 
         $identity = match ($provider) {

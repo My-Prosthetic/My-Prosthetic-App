@@ -13,7 +13,9 @@ class ExternalIdentity extends Model
         'provider_user_id',
     ];
 
-    // user belongs to User table
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
