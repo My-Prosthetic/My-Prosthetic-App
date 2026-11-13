@@ -260,9 +260,9 @@ export default function SignUpScreen() {
 						variant="narrow"
 						colorName="blue0"
 						onPress={() => {
-                            console.log("SIGNUP GOOGLE BUTTON PRESSED")
-                            handleGoogleLogin()
-                        }}
+							console.log("SIGNUP GOOGLE BUTTON PRESSED")
+							handleGoogleLogin()
+						}}
 						disabled={isSubmitting || isOAuthLoading}
 						accessibilityState={{
 							disabled: isSubmitting || isOAuthLoading,
