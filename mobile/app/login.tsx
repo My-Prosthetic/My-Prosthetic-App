@@ -11,6 +11,16 @@ import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
+import {
+	GoogleSignin,
+	isErrorWithCode,
+	statusCodes,
+} from "@react-native-google-signin/google-signin"
+import { AccessToken, LoginManager } from "react-native-fbsdk-next"
+
+GoogleSignin.configure({
+	webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+})
 
 export default function LoginScreen() {
 	const router = useRouter()
@@ -59,11 +69,80 @@ export default function LoginScreen() {
 		}
 	}
 
-	//TODO
-	const handleGoogleLogin = () => {}
+	const handleGoogleLogin = async () => {
+		if (isLoading) return
 
-	//TODO
-	const handleFacebookLogin = () => {}
+		setErrorMessage("")
+		setIsLoading(true)
+
+		try {
+			await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true })
+
+			const response = await GoogleSignin.signIn()
+
+			if (response.type === "cancelled") return
+
+			const idToken = response.data.idToken
+
+			if (!idToken) {
+				throw new Error("Google did not return an ID token")
+			}
+
+			const result = await authService.oauthLogin({
+				provider: "google",
+				id_token: idToken,
+			})
+
+			if (!(await loginWithToken(result.token))) return
+
+			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
+			// that is only for SQLite DB
+			await createUser({ name: firstName })
+		} catch (error) {
+			if (isErrorWithCode(error) && error.code === statusCodes.SIGN_IN_CANCELLED) {
+				return
+			}
+			setErrorMessage(
+				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
+			)
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
+	const handleFacebookLogin = async () => {
+		if (isLoading) return
+
+		setErrorMessage("")
+		setIsLoading(true)
+
+		try {
+			const loginResult = await LoginManager.logInWithPermissions(["public_profile", "email"])
+
+			if (loginResult.isCancelled) return
+			const tokenData = await AccessToken.getCurrentAccessToken()
+			const accessToken = tokenData?.accessToken
+
+			if (!accessToken) {
+				throw new Error("Facebook did not return an access token.")
+			}
+
+			const result = await authService.oauthLogin({
+				provider: "facebook",
+				access_token: accessToken,
+			})
+
+			if (!(await loginWithToken(result.token))) return
+			const firstName = result.data.name.trim().split(/\s+/)[0] ?? ""
+			await createUser({ name: firstName })
+		} catch (error) {
+			setErrorMessage(
+				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
+			)
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
 	const handleSignUp = () => {
 		router.push("../signup")
