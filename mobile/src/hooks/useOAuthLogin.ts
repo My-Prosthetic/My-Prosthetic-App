@@ -39,7 +39,6 @@ export const useOAuthLogin = () => {
 			await GoogleSignin.hasPlayServices({
 				showPlayServicesUpdateDialog: true,
 			})
-			await GoogleSignin.signOut()
 			const response = await GoogleSignin.signIn()
 
 			if (response.type === "cancelled") return
