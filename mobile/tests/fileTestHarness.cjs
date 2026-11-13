@@ -134,6 +134,9 @@ function harness(t) {
 		result: { canceled: true, assets: null },
 		permission: { granted: true, canAskAgain: true },
 		calls: [],
+		openError: null,
+		sharingAvailable: true,
+		shared: null,
 	}
 	const native = {
 		"react-native": { Platform: { OS: "android" } },
@@ -187,9 +190,19 @@ function harness(t) {
 		"expo-intent-launcher": {
 			startActivityAsync: async () => {
 				picker.calls.push("open")
+				if (picker.openError) throw picker.openError
 			},
 		},
-		"expo-sharing": {},
+		"expo-sharing": {
+			isAvailableAsync: async () => {
+				picker.calls.push("sharing-available")
+				return picker.sharingAvailable
+			},
+			shareAsync: async (uri, options) => {
+				picker.calls.push("share")
+				picker.shared = { uri, options }
+			},
+		},
 		"@/translations/i18n": {
 			__esModule: true,
 			default: {

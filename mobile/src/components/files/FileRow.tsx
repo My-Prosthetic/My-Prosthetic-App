@@ -48,6 +48,7 @@ export function FileRow({
 		<View style={[styles.row, { borderBottomColor: colors.blue0 }]}>
 			<ThemedView
 				onPress={onOpen}
+				accessibilityRole="button"
 				disabled={disabled}
 				style={styles.open}
 				accessibilityLabel={entry.fileName}
@@ -74,6 +75,7 @@ export function FileRow({
 			<View style={styles.trailing}>
 				<ThemedView
 					onPress={onDelete}
+					accessibilityRole="button"
 					disabled={disabled}
 					style={styles.delete}
 					accessibilityLabel={t("files.deleteNamed", { name: entry.name })}

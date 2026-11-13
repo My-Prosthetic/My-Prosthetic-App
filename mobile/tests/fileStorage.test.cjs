@@ -667,3 +667,42 @@ test("soft-deleting linked objects preserves their documents in reachable archiv
 		{ code: "context" }
 	)
 })
+
+test("validates Unicode and forbidden file name characters", (t) => {
+	const h = harness(t)
+	for (const name of ["a\x1fb", "a\x7fb"]) {
+		assert.equal(h.metadata.validFileName(name), false)
+	}
+	assert.equal(h.metadata.validFileName("Zdjęcie 👍 (1)"), true)
+	assert.equal(h.metadata.pickedFile({ uri: "file:///test", name: "a:b?.pdf" }).name, "a_b_")
+	assert.equal(h.metadata.pickedFile({ uri: "file:///test", name: "a\x7fb.pdf" }).name, "a_b")
+	assert.equal(h.metadata.pickedFile({ uri: "file:///test", name: "A👍B.pdf" }).name, "A👍B")
+	assert.equal(
+		h.metadata.pickedFile({ uri: "file:///test", name: "a".repeat(119) + "👍.pdf" }).name,
+		"a".repeat(119)
+	)
+	assert.equal(
+		h.metadata.pickedFile({ uri: "file:///test", name: "a".repeat(118) + "👍.pdf" }).name,
+		"a".repeat(118) + "👍"
+	)
+})
+
+test("Android file opening falls back to sharing after viewer failure", async (t) => {
+	const h = harness(t)
+	await h.service.saveManagedEntry(h.access, h.context, null, "Open", h.asset)
+	const entry = h.rows()[0]
+	const { openManagedFile } = h.load("src/services/filePickerService.ts")
+
+	await openManagedFile(h.access, entry.id, "Files")
+	assert.deepEqual(h.picker.calls, ["open"])
+
+	h.picker.openError = new Error("No installed viewer")
+	await openManagedFile(h.access, entry.id, "Files")
+	assert.deepEqual(h.picker.calls, ["open", "open", "sharing-available", "share"])
+	assert.equal(h.picker.shared.options.dialogTitle, "Files")
+	assert.ok(h.picker.shared.uri.startsWith("file:"))
+
+	h.picker.sharingAvailable = false
+	await assert.rejects(openManagedFile(h.access, entry.id, "Files"), { code: "unavailable" })
+	assert.deepEqual(h.picker.calls.slice(-2), ["open", "sharing-available"])
+})

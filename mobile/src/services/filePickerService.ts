@@ -70,12 +70,16 @@ export async function openManagedFile(access: FileAccess, id: string, title: str
 	const file = await getManagedFile(access, id)
 	if (getDatabaseSession() !== access.session) throw new ManagedFileError("context")
 	if (Platform.OS === "android" && file.contentUri) {
-		await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-			data: file.contentUri,
-			flags: 1,
-			type: file.mimeType ?? "*/*",
-		})
-		return
+		try {
+			await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+				data: file.contentUri,
+				flags: 1,
+				type: file.mimeType ?? "*/*",
+			})
+			return
+		} catch (error) {
+			console.warn("Could not open file with Android viewer, trying sharing:", error)
+		}
 	}
 	if (!(await Sharing.isAvailableAsync())) throw new ManagedFileError("unavailable")
 	if (getDatabaseSession() !== access.session) throw new ManagedFileError("context")

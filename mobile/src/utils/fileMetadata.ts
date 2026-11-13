@@ -49,12 +49,17 @@ export class ManagedFileError extends Error {
 	}
 }
 
+function invalidFileNameCharacter(character: string): boolean {
+	const code = character.codePointAt(0)
+	return (code !== undefined && (code < 32 || code === 127)) || '/\\:*?"<>|'.includes(character)
+}
+
 export function validFileName(value: string): boolean {
 	const name = value.trim()
 	return (
 		name.length > 0 &&
 		name.length <= 120 &&
-		!/[\x00-\x1f\x7f/\\:*?"<>|]/.test(name) &&
+		![...name].some(invalidFileNameCharacter) &&
 		!/[. ]$/.test(name) &&
 		name !== "." &&
 		name !== ".." &&
@@ -108,12 +113,16 @@ export function pickedFile(input: {
 		input.name || decodeURIComponent(input.uri.split(/[?#]/)[0].split("/").pop() || "file")
 	const match = original.match(/^(.*)(\.[a-zA-Z0-9]{1,12})$/)
 	const extension = match?.[2] ?? ""
-	const name =
-		(match?.[1] || original)
-			.normalize("NFC")
-			.replace(/[\x00-\x1f\x7f/\\:*?"<>|]/g, "_")
-			.replace(/[. ]+$/, "")
-			.slice(0, 120) || "file"
+	const cleaned = [...(match?.[1] || original).normalize("NFC")]
+		.map((character) => (invalidFileNameCharacter(character) ? "_" : character))
+		.join("")
+		.replace(/[. ]+$/, "")
+	let name = ""
+	for (const character of cleaned) {
+		if (name.length + character.length > 120) break
+		name += character
+	}
+	if (!name) name = "file"
 	return {
 		uri: input.uri,
 		name,

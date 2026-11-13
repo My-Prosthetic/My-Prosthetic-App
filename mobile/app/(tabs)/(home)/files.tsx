@@ -1,14 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import {
-	ActivityIndicator,
-	Alert,
-	BackHandler,
-	FlatList,
-	Linking,
-	Platform,
-	StyleSheet,
-	View,
-} from "react-native"
+import { ActivityIndicator, Alert, BackHandler, FlatList, StyleSheet, View } from "react-native"
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
 import type { ParseKeys } from "i18next"
@@ -33,12 +24,8 @@ import {
 	captureFileAccess,
 	type FileAccess,
 } from "@/src/services/fileStorageService"
-import {
-	FilePermissionError,
-	openManagedFile,
-	pickManagedFile,
-	type FileSource,
-} from "@/src/services/filePickerService"
+import { openManagedFile, type FileSource } from "@/src/services/filePickerService"
+import { useFilePicker } from "@/src/hooks/useFilePicker"
 import {
 	filterFileEntries,
 	formatFileSize,
@@ -94,6 +81,7 @@ function FilesScreen({ initial }: { initial: Filter }) {
 	const { dateFormat } = useSettings()
 	const { status } = useAuth()
 	const { t, i18n } = useTranslation()
+	const { pickFile, onSourceDismiss } = useFilePicker()
 	const router = useRouter()
 	const [ownerId, setOwnerId] = useState<FileAccess | null>(null)
 	const [entries, setEntries] = useState<FileEntry[]>([])
@@ -117,14 +105,11 @@ function FilesScreen({ initial }: { initial: Filter }) {
 	const [deleting, setDeleting] = useState<FileEntry | null>(null)
 	const mounted = useRef(true)
 	const operation = useRef(false)
-	const sourceDismiss = useRef<(() => void) | null>(null)
 
 	useEffect(() => {
 		mounted.current = true
 		return () => {
 			mounted.current = false
-			sourceDismiss.current?.()
-			sourceDismiss.current = null
 		}
 	}, [])
 	const errorKey = (cause: unknown, fallback: ParseKeys): ParseKeys =>
@@ -348,43 +333,12 @@ function FilesScreen({ initial }: { initial: Filter }) {
 		operation.current = true
 		setBusy(true)
 		try {
-			await new Promise<void>((resolve) => {
-				if (Platform.OS === "ios") sourceDismiss.current = resolve
-				else setTimeout(resolve, 250)
-				setSheet(null)
-			})
-			if (!mounted.current) return
-			const result = await pickManagedFile(source)
+			const result = await pickFile(source, () => setSheet(null))
 			if (!mounted.current || !result) return
 			setPicked(result)
 			setName(result.name)
 			setError(null)
 			setSheet("rename")
-		} catch (cause) {
-			console.error("File picker failed:", cause)
-			if (!mounted.current) return
-			if (cause instanceof FilePermissionError) {
-				Alert.alert(
-					t("common.error"),
-					t(cause.canAskAgain ? "files.permission" : "files.permissionSettings"),
-					[
-						{ text: t("common.cancel"), style: "cancel" },
-						...(!cause.canAskAgain
-							? [
-									{
-										text: t("files.settings"),
-										onPress: () => {
-											void Linking.openSettings().catch((settingsError: unknown) => {
-												console.error("Could not open settings:", settingsError)
-												Alert.alert(t("common.error"), t("files.permissionSettings"))
-											})
-										},
-									},
-								]
-							: []),
-					]
-				)
-			} else Alert.alert(t("common.error"), t("files.errors.pick"))
 		} finally {
 			operation.current = false
 			if (mounted.current) setBusy(false)
@@ -626,10 +580,7 @@ function FilesScreen({ initial }: { initial: Filter }) {
 				title="files.sourceTitle"
 				visible={sheet === "source"}
 				onClose={closeSheet}
-				onDismiss={() => {
-					sourceDismiss.current?.()
-					sourceDismiss.current = null
-				}}
+				onDismiss={onSourceDismiss}
 			>
 				{SOURCES.map((source) => {
 					const Icon = SOURCE_ICONS[source]

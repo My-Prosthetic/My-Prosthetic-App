@@ -1,15 +1,12 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react"
-import { Alert, Linking, Platform, Pressable, StyleSheet, View } from "react-native"
+import { Alert, Pressable, StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { useTheme } from "@/context/ThemeContext"
 import { createUser, getLatestUser } from "@/db/repositories/userRepository"
 import { captureFileAccess, saveManagedEntry } from "@/src/services/fileStorageService"
-import {
-	FilePermissionError,
-	pickManagedFile,
-	type FileSource,
-} from "@/src/services/filePickerService"
+import type { FileSource } from "@/src/services/filePickerService"
+import { useFilePicker } from "@/src/hooks/useFilePicker"
 import { validFileName, type FileContext, type PickedFile } from "@/src/utils/fileMetadata"
 import { ThemedInput } from "@/src/components/ThemedInput"
 import { ThemedText } from "@/src/components/ThemedText"
@@ -27,6 +24,7 @@ export const PendingFileAttachments = forwardRef<PendingFileAttachmentsHandle, o
 	function PendingFileAttachments(_props, ref) {
 		const { colors } = useTheme()
 		const { t } = useTranslation()
+		const { pickFile, onSourceDismiss } = useFilePicker()
 		const { status } = useAuth()
 		const [sheet, setSheet] = useState<"source" | "rename" | null>(null)
 		const [picked, setPicked] = useState<PickedFile | null>(null)
@@ -36,7 +34,6 @@ export const PendingFileAttachments = forwardRef<PendingFileAttachmentsHandle, o
 		const counter = useRef(0)
 		const picking = useRef(false)
 		const saving = useRef(false)
-		const dismissSource = useRef<(() => void) | null>(null)
 
 		const setQueued = (next: QueuedFile[]) => {
 			filesRef.current = next
@@ -74,39 +71,11 @@ export const PendingFileAttachments = forwardRef<PendingFileAttachmentsHandle, o
 			if (picking.current || saving.current) return
 			picking.current = true
 			try {
-				await new Promise<void>((resolve) => {
-					if (Platform.OS === "ios") dismissSource.current = resolve
-					else setTimeout(resolve, 250)
-					setSheet(null)
-				})
-				const result = await pickManagedFile(source)
+				const result = await pickFile(source, () => setSheet(null))
 				if (!result) return
 				setPicked(result)
 				setFileName(result.name)
 				setSheet("rename")
-			} catch (error) {
-				if (error instanceof FilePermissionError) {
-					Alert.alert(
-						t("common.error"),
-						t(error.canAskAgain ? "files.permission" : "files.permissionSettings"),
-						[
-							{ text: t("common.cancel"), style: "cancel" },
-							...(!error.canAskAgain
-								? [
-										{
-											text: t("files.settings"),
-											onPress: () => {
-												void Linking.openSettings()
-											},
-										},
-									]
-								: []),
-						]
-					)
-				} else {
-					console.error("Attachment picker failed:", error)
-					Alert.alert(t("common.error"), t("files.errors.pick"))
-				}
 			} finally {
 				picking.current = false
 			}
@@ -159,10 +128,7 @@ export const PendingFileAttachments = forwardRef<PendingFileAttachmentsHandle, o
 					title="files.sourceTitle"
 					visible={sheet === "source"}
 					onClose={() => setSheet(null)}
-					onDismiss={() => {
-						dismissSource.current?.()
-						dismissSource.current = null
-					}}
+					onDismiss={onSourceDismiss}
 				>
 					<FileSheetButton tx="files.camera" onPress={() => void selectSource("camera")} />
 					<FileSheetButton tx="files.gallery" onPress={() => void selectSource("gallery")} />
