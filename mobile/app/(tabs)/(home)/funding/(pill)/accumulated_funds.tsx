@@ -101,7 +101,7 @@ export default function AccumulatedFundsScreen() {
 					if (!isActive) return
 
 					setGoalsList(goals)
-					const safeIndex = goals.length > 0 ? Math.min(indexRef.current, goals.length) : 0
+					const safeIndex = goals.length > 0 ? Math.min(indexRef.current, goals.length - 1) : 0
 
 					if (safeIndex !== indexRef.current) {
 						setCurrentGoalIndex(safeIndex)

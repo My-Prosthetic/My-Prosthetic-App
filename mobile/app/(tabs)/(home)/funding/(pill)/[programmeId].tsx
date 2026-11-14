@@ -7,7 +7,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ProgrammeSummary } from "@/src/components/programmes/ProgrammeSummary"
 
-import IconChevronRigh from "@/assets/icons/chevron-right.svg"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
 
 import fundingConfig from "@/config/fundingConfig.json"
 
@@ -232,7 +232,7 @@ export default function ProgrammeDetailsScreen() {
 											{translate(foundation.descriptionKey)}
 										</ThemedText>
 									</View>
-									<IconChevronRigh color={colors.blue1} />
+									<IconChevronRight color={colors.blue1} />
 								</ThemedView>
 								<ThemedView
 									variant="divider"
