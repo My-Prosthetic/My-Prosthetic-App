@@ -4,8 +4,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
+use App\Http\Controllers\SpecialistNoteController;
 use App\Http\Controllers\SpecialistSearchController;
 use App\Http\Controllers\WalletEntryController;
+use App\Models\SpecialistNote;
 use App\Models\WalletEntry;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Route;
@@ -49,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // A missing patient or record is refused exactly like a forbidden one, so the
     // responses never reveal which records exist.
     Route::prefix('/patients/{patient}')
-        ->whereUuid(['patient', 'prosthesis'])
+        ->whereUuid(['patient', 'prosthesis', 'specialistNote'])
         ->scopeBindings()
         ->missing(fn () => throw new AuthorizationException)
         ->can('viewRecords', 'patient')
@@ -60,5 +62,13 @@ Route::middleware('auth:sanctum')->group(function (): void {
             Route::get('/prostheses/{prosthesis}', [PatientProsthesisController::class, 'show'])
                 ->can('view', 'prosthesis')
                 ->name('prostheses.show');
+            Route::get('/notes', [SpecialistNoteController::class, 'index'])
+                ->name('notes.index');
+            Route::post('/notes', [SpecialistNoteController::class, 'store'])
+                ->can('create', [SpecialistNote::class, 'patient'])
+                ->name('notes.store');
+            Route::put('/notes/{specialistNote}', [SpecialistNoteController::class, 'update'])
+                ->can('update', 'specialistNote')
+                ->name('notes.update');
         });
 });
