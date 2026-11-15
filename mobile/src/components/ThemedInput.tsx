@@ -42,6 +42,7 @@ export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedI
 		fontFamily: "Cabin-Medium",
 		width: "100%",
 		paddingLeft: 16,
+		paddingRight: 16,
 	}
 
 	return (

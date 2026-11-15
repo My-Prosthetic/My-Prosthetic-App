@@ -8,7 +8,6 @@ import {
 	StyleProp,
 	Platform,
 } from "react-native"
-import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
 export type ThemedViewSize =
@@ -76,8 +75,7 @@ export const ThemedView = ({
 	...props
 }: ThemedViewProps) => {
 	const { colors } = useTheme()
-	const insets = useSafeAreaInsets()
-	const sizes = getSizes(insets)
+	const sizes = getSizes()
 
 	const isProcessingRef = useRef(false)
 	const lastPressRef = useRef(0)
@@ -179,7 +177,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const getSizes = (insets: EdgeInsets) =>
+const getSizes = () =>
 	StyleSheet.create({
 		none: {},
 		old_tag: {

@@ -49,9 +49,11 @@ export default function TabsLayout() {
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
 
-			const { ref, children, style, ...restProps } = props
+			const { style, ...restProps } = props
+			const pressableProps = { ...restProps, ref: undefined }
+
 			return (
-				<Pressable {...restProps} style={[props.style, { justifyContent: "center" }]}>
+				<Pressable {...pressableProps} style={[style, { justifyContent: "center" }]}>
 					<View
 						style={{
 							backgroundColor: isFocused ? colors.blue2 : colors.bg_0,

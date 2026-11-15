@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet, ScrollView, Dimensions } from "react-native"
+import { View, StyleSheet, ScrollView, useWindowDimensions } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useRouter } from "expo-router"
@@ -32,7 +32,8 @@ export default function HomeScreen() {
 	const { colors } = useTheme()
 	const { status } = useAuth()
 
-	const styles = getStyles(colors)
+	const { width: windowWidth } = useWindowDimensions()
+	const styles = getStyles(colors, windowWidth)
 
 	useEffect(() => {
 		const timer = setInterval(() => setCurrentDate(new Date()), 60_000)
@@ -227,9 +228,7 @@ export default function HomeScreen() {
 	)
 }
 
-const windowWidth = Dimensions.get("window").width
-
-const getStyles = (colors: ThemeColors) => {
+const getStyles = (colors: ThemeColors, windowWidth: number) => {
 	return StyleSheet.create({
 		headerRow: {
 			flexDirection: "row",
@@ -271,11 +270,6 @@ const getStyles = (colors: ThemeColors) => {
 			paddingRight: 40,
 			marginBottom: 15,
 		},
-		logoImage: {
-			width: 120,
-			height: 120,
-			marginBottom: 10,
-		},
 		addProsthesisCircle: {
 			width: 82,
 			height: 82,
@@ -285,32 +279,10 @@ const getStyles = (colors: ThemeColors) => {
 			alignItems: "center",
 			marginBottom: 24,
 		},
-		cardContainer: {
-			flexDirection: "column",
-			borderRadius: 16,
-			marginTop: 20,
-			width: "100%",
-			paddingVertical: 18,
-			alignItems: "center",
-		},
-		headerText: {
-			textAlign: "center",
-			marginBottom: 12,
-		},
-		listContainer: {
-			width: "100%",
-		},
 		activityRow: {
 			width: "100%",
 			minHeight: 44,
 			backgroundColor: "transparent",
-		},
-		timelineContainer: {
-			width: 16,
-			height: 25,
-			alignItems: "center",
-			justifyContent: "center",
-			position: "relative",
 		},
 		timelineDot: {
 			width: 12,
