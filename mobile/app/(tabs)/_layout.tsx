@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, useSegments usePathname  } from "expo-router"
+import { Redirect, Tabs, useSegments, usePathname  } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"

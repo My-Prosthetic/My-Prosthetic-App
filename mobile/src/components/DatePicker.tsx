@@ -23,8 +23,6 @@ interface CalendarViewProps {
 	onSelect: (date: Date) => void
 	onCancel: () => void
 	onApply: () => void
-interface CalendarWeek {
-	days: Date[]
 }
 
 interface CalendarViewProps {
@@ -37,15 +35,6 @@ interface CalendarViewProps {
 	onSelect: (date: Date) => void
 	onCancel: () => void
 	onApply: () => void
-}
-
-export interface DatePickerModalProps {
-	visible: boolean
-	onClose: () => void
-	onSave: (selectedDate: Date) => void
-	initialDate?: Date
-	minimumDate?: Date
-	maximumDate?: Date
 }
 
 function dayValue(date: Date): number {
@@ -81,43 +70,11 @@ function shiftCalendarYear(date: Date, offset: number): Date {
 function getCalendarWeeks(month: Date): CalendarWeek[] {
 	const firstDayOfMonth = startOfCalendarMonth(month)
 	const mondayOffset = (firstDayOfMonth.getDay() + 6) % 7
-	const gridStart = new Date(
-		firstDayOfMonth.getFullYear(),
-		firstDayOfMonth.getMonth(),
-		1 - mondayOffset
-	)
-
-	return Array.from({ length: 6 }, (_, weekIndex) => {
-		const days = Array.from({ length: 7 }, (_, dayIndex) => {
-			const day = new Date(gridStart)
-			day.setDate(gridStart.getDate() + weekIndex * 7 + dayIndex)
-			return day
-		})
-
-		return { days }
-	})
-}
-
-function startOfCalendarMonth(date: Date): Date {
-	return new Date(date.getFullYear(), date.getMonth(), 1)
-}
-
-function shiftCalendarMonth(date: Date, offset: number): Date {
-	return new Date(date.getFullYear(), date.getMonth() + offset, 1)
-}
-
-function shiftCalendarYear(date: Date, offset: number): Date {
-	return new Date(date.getFullYear() + offset, date.getMonth(), 1)
-}
-
-function getCalendarWeeks(month: Date): CalendarWeek[] {
-	const firstDayOfMonth = startOfCalendarMonth(month)
-	const mondayOffset = (firstDayOfMonth.getDay() + 6) % 7
-	const gridStart = new Date(
-		firstDayOfMonth.getFullYear(),
-		firstDayOfMonth.getMonth(),
-		1 - mondayOffset
-	)
+    const gridStart = new Date(
+        firstDayOfMonth.getFullYear(),
+        firstDayOfMonth.getMonth(),
+        1 - mondayOffset
+    )
 
 	return Array.from({ length: 6 }, (_, weekIndex) => {
 		const days = Array.from({ length: 7 }, (_, dayIndex) => {
@@ -268,7 +225,16 @@ function CalendarView({
 	)
 }
 
-export function DatePickerModal({ visible, onClose, onSave, initialDate }: DatePickerModalProps) {
+export interface DatePickerModalProps {
+    visible: boolean
+    onClose: () => void
+    onSave: (selectedDate: Date) => void
+    initialDate?: Date
+    minimumDate?: Date
+    maximumDate?: Date
+}
+
+export function DatePickerModal({ visible, onClose, onSave, initialDate, minimumDate, maximumDate }: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
 	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
 		() => initialDate ?? new Date()
