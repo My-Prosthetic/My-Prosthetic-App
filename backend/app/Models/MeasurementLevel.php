@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsEncryptedFloat;
 use Database\Factories\MeasurementLevelFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -32,7 +33,7 @@ class MeasurementLevel extends Model
         return [
             'level' => 'integer',
             'distance_cm' => 'integer',
-            'circumference_cm' => 'float',
+            'circumference_cm' => AsEncryptedFloat::class,
         ];
     }
 }

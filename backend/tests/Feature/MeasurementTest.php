@@ -10,9 +10,11 @@ use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -139,6 +141,40 @@ class MeasurementTest extends TestCase
         $this->assertNull($level->id);
         $this->assertNull($level->measurement_id);
         $this->assertSame(2, $level->level);
+    }
+
+    #[DataProvider('circumferences')]
+    public function test_circumference_is_encrypted_at_rest_and_read_as_a_float(float|int|string $circumference, float $expected): void
+    {
+        $level = MeasurementLevel::factory()->create(['circumference_cm' => $circumference]);
+
+        $stored = DB::table('measurement_levels')->where('id', $level->id)->value('circumference_cm');
+
+        $this->assertSame($expected, (float) Crypt::decryptString($stored));
+        $this->assertSame($expected, $level->refresh()->circumference_cm);
+    }
+
+    public static function circumferences(): iterable
+    {
+        yield 'decimal' => [40.12, 40.12];
+        yield 'whole number' => [40, 40.0];
+        yield 'numeric text' => ['40.5', 40.5];
+    }
+
+    #[DataProvider('invalidCircumferences')]
+    public function test_circumference_must_be_a_finite_number(mixed $circumference): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new MeasurementLevel(['circumference_cm' => $circumference]);
+    }
+
+    public static function invalidCircumferences(): iterable
+    {
+        yield 'text' => ['forty'];
+        yield 'boolean' => [true];
+        yield 'infinity' => [INF];
+        yield 'not a number' => [NAN];
     }
 
     public function test_deleted_measurement_leaves_the_card_but_stays_in_the_database_with_its_levels(): void
