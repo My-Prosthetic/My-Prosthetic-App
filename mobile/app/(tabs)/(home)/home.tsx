@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
-import { View, StyleSheet, ScrollView, Dimensions, useWindowDimensions } from "react-native"
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import { useFocusEffect, useRouter } from "expo-router"
@@ -282,7 +282,7 @@ export default function HomeScreen() {
 	)
 }
 
-const { width: windowWidth } = useWindowDimensions()
+const windowWidth = Dimensions.get("window").width
 
 const getStyles = (colors: ThemeColors) => {
 	{
@@ -327,15 +327,6 @@ const getStyles = (colors: ThemeColors) => {
 				paddingRight: 40,
 				marginBottom: 15,
 			},
-            addProsthesisCircle: {
-                width: 82,
-                height: 82,
-                borderRadius: 41,
-                backgroundColor: colors.accent_base,
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: 24,
-            },
 			activityRow: {
 				width: "100%",
 				minHeight: 44,
