@@ -12,6 +12,7 @@ import { createUser } from "@/db/repositories/userRepository"
 import { ParseKeys } from "i18next"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
+import { useOAuthLogin } from "@/src/hooks/useOAuthLogin"
 
 const getPasswordRequirements = (value: string, repeatedValue: string) => {
 	const hasMinLength = value.length >= 12
@@ -36,6 +37,7 @@ export default function SignUpScreen() {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const { loginWithToken } = useAuth()
+	const { handleGoogleLogin, handleFacebookLogin, isOAuthLoading, oauthError } = useOAuthLogin()
 
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
@@ -104,11 +106,6 @@ export default function SignUpScreen() {
 			setIsSubmitting(false)
 		}
 	}
-
-	//TODO
-	const handleGoogleLogin = () => {}
-	//TODO
-	const handleFacebookLogin = () => {}
 
 	const handleLogin = () => {
 		router.push("../login")
@@ -233,14 +230,14 @@ export default function SignUpScreen() {
 
 				{/* Sekcja Przycisków Akcji */}
 				<View style={styles.actionsSection}>
-					{errorMessage ? (
+					{errorMessage || oauthError ? (
 						<ThemedText
 							accessibilityRole="alert"
 							variant="H3"
 							colorName="false"
 							style={styles.errorMessage}
 						>
-							{errorMessage}
+							{errorMessage || oauthError}
 						</ThemedText>
 					) : null}
 
@@ -249,10 +246,10 @@ export default function SignUpScreen() {
 						variant="narrow"
 						colorName="blue2"
 						onPress={handleRegister}
-						disabled={isSubmitting}
+						disabled={isSubmitting || isOAuthLoading}
 						accessibilityState={{
-							disabled: isSubmitting,
-							busy: isSubmitting,
+							disabled: isSubmitting || isOAuthLoading,
+							busy: isSubmitting || isOAuthLoading,
 						}}
 					>
 						<ThemedText tx="login.createAccount" variant="H1" colorName="bg_0" />
@@ -262,11 +259,14 @@ export default function SignUpScreen() {
 					<ThemedView
 						variant="narrow"
 						colorName="blue0"
-						onPress={handleGoogleLogin}
-						disabled={isSubmitting}
+						onPress={() => {
+							console.log("SIGNUP GOOGLE BUTTON PRESSED")
+							handleGoogleLogin()
+						}}
+						disabled={isSubmitting || isOAuthLoading}
 						accessibilityState={{
-							disabled: isSubmitting,
-							busy: isSubmitting,
+							disabled: isSubmitting || isOAuthLoading,
+							busy: isSubmitting || isOAuthLoading,
 						}}
 					>
 						<ThemedText tx="login.continueGoogle" variant="H1" colorName="blue2" />
@@ -277,10 +277,10 @@ export default function SignUpScreen() {
 						variant="narrow"
 						colorName="blue0"
 						onPress={handleFacebookLogin}
-						disabled={isSubmitting}
+						disabled={isSubmitting || isOAuthLoading}
 						accessibilityState={{
-							disabled: isSubmitting,
-							busy: isSubmitting,
+							disabled: isSubmitting || isOAuthLoading,
+							busy: isSubmitting || isOAuthLoading,
 						}}
 					>
 						<ThemedText tx="login.continueFacebook" variant="H1" colorName="blue2" />
@@ -310,7 +310,7 @@ export default function SignUpScreen() {
 			/>
 			<Modal
 				transparent
-				visible={isSubmitting}
+				visible={isSubmitting || isOAuthLoading}
 				animationType="fade"
 				statusBarTranslucent
 				navigationBarTranslucent

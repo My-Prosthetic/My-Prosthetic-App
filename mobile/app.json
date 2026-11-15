@@ -6,7 +6,7 @@
 		"orientation": "portrait",
 		"icon": "./assets/mp_logo_accent.png",
 		"userInterfaceStyle": "light",
-		"scheme": "your-app-scheme",
+		"scheme": "myprosthetics",
 		"ios": {
 			"supportsTablet": true
 		},
@@ -32,6 +32,18 @@
 			"expo-sqlite",
 			"expo-font",
 			"expo-splash-screen",
+			"@react-native-google-signin/google-signin",
+			[
+				"react-native-fbsdk-next",
+				{
+					"appID": "1953314088968715",
+					"clientToken": "0fbf321f1b3cd1e782e21b6ba9768fb8",
+					"displayName": "MyProsthetics",
+					"scheme": "fb1953314088968715",
+					"advertiserIDCollectionEnabled": false,
+					"autoLogAppEventsEnabled": false
+				}
+			],
 			[
 				"expo-audio",
 				{
@@ -54,8 +66,7 @@
 						"usesCleartextTraffic": true
 					}
 				}
-			],
-			"expo-build-properties"
+			]
 		],
 		"extra": {
 			"router": {},

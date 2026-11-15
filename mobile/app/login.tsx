@@ -11,6 +11,7 @@ import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
+import { useOAuthLogin } from "@/src/hooks/useOAuthLogin"
 
 export default function LoginScreen() {
 	const router = useRouter()
@@ -23,6 +24,8 @@ export default function LoginScreen() {
 	const [password, setPassword] = useState("")
 	const [isLoading, setIsLoading] = useState(false)
 	const [errorMessage, setErrorMessage] = useState("")
+
+	const { handleGoogleLogin, handleFacebookLogin, isOAuthLoading, oauthError } = useOAuthLogin()
 
 	//TODO
 	const handleResetPassword = () => {
@@ -58,12 +61,6 @@ export default function LoginScreen() {
 			setIsLoading(false)
 		}
 	}
-
-	//TODO
-	const handleGoogleLogin = () => {}
-
-	//TODO
-	const handleFacebookLogin = () => {}
 
 	const handleSignUp = () => {
 		router.push("../signup")
@@ -142,11 +139,12 @@ export default function LoginScreen() {
 
 				{/* Sekcja Przycisków Akcji */}
 				<View style={styles.actionsSection}>
-					{errorMessage && (
-						<ThemedText accessibilityRole="alert" variant="H3" colorName="false">
-							{errorMessage}
-						</ThemedText>
-					)}
+					{errorMessage ||
+						(oauthError && (
+							<ThemedText accessibilityRole="alert" variant="H3" colorName="false">
+								{errorMessage || oauthError}
+							</ThemedText>
+						))}
 
 					{/* Przycisk ZALOGUJ */}
 					<ThemedView
@@ -206,7 +204,7 @@ export default function LoginScreen() {
 			/>
 			<Modal
 				transparent
-				visible={isLoading}
+				visible={isLoading || isOAuthLoading}
 				animationType="fade"
 				statusBarTranslucent
 				navigationBarTranslucent

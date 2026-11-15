@@ -7,6 +7,18 @@ export interface MobileLoginPayload {
 	device_name?: string
 }
 
+export type OAuthLoginPayload =
+	| {
+			provider: "google"
+			id_token: string
+			device_name?: string
+	  }
+	| {
+			provider: "facebook"
+			access_token: string
+			device_name?: string
+	  }
+
 export interface AuthenticatedUser {
 	id: number
 	name: string
@@ -46,6 +58,7 @@ export type AuthErrorTranslationKey =
 	| "auth.errors.validationFailed"
 	| "auth.errors.requestFailed"
 	| "auth.errors.unexpected"
+	| "auth.errors.oauthAccountConflict"
 
 export class AuthApiError extends Error {
 	constructor(
@@ -74,8 +87,9 @@ function getErrorMessage(body: unknown): string | undefined {
 function getErrorTranslationKey(
 	status: number,
 	body: unknown,
-	operation: "login" | "register"
+	operation: "login" | "register" | "oauth"
 ): AuthErrorTranslationKey {
+	if (operation === "oauth" && status === 409) return "auth.errors.oauthAccountConflict"
 	if (status === 401) return "auth.errors.invalidCredentials"
 	if (status !== 422) return "auth.errors.requestFailed"
 
@@ -104,7 +118,7 @@ function getErrorTranslationKey(
 }
 
 // takes whatever error axios throws and translates it into an AuthApiError
-function toAuthApiError(error: unknown, operation: "login" | "register"): AuthApiError {
+function toAuthApiError(error: unknown, operation: "login" | "register" | "oauth"): AuthApiError {
 	if (isAxiosError(error) && error.response) {
 		const { status, data } = error.response
 		return new AuthApiError(
@@ -126,6 +140,15 @@ async function login(payload: MobileLoginPayload): Promise<MobileLoginResponse> 
 	}
 }
 
+async function oauthLogin(payload: OAuthLoginPayload): Promise<MobileLoginResponse> {
+	try {
+		const response = await apiClient.post<MobileLoginResponse>("/oauth/login", payload)
+		return response.data
+	} catch (error) {
+		throw toAuthApiError(error, "oauth")
+	}
+}
+
 async function register(payload: RegisterPayload): Promise<RegisterResponse> {
 	try {
 		const response = await apiClient.post<RegisterResponse>("/register", payload)
@@ -143,4 +166,4 @@ async function logout(): Promise<void> {
 	}
 }
 
-export const authService = { login, register, logout }
+export const authService = { login, oauthLogin, register, logout }
