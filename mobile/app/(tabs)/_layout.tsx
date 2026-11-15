@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, useSegments, usePathname  } from "expo-router"
+import { Redirect, Tabs, useSegments, usePathname } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
@@ -39,12 +39,12 @@ export default function TabsLayout() {
 
 	const provideRenderButton = (variant: "home" | "journal" | "profile" | "settings") => {
 		return function renderButton(props: BottomTabBarButtonProps) {
-            const isFocused =
-                variant === "home"
-                    ? pathname.startsWith("/home") ||
-                        pathname.startsWith("/funding") ||
-                        pathname.startsWith("/prosthesis")
-                    : pathname.startsWith(`/${variant}`)
+			const isFocused =
+				variant === "home"
+					? pathname.startsWith("/home") ||
+						pathname.startsWith("/funding") ||
+						pathname.startsWith("/prosthesis")
+					: pathname.startsWith(`/${variant}`)
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
 
@@ -72,7 +72,7 @@ export default function TabsLayout() {
 		}
 	}
 
-    const isSettingsRoute = pathname.startsWith("/settings")
+	const isSettingsRoute = pathname.startsWith("/settings")
 
 	return (
 		<View

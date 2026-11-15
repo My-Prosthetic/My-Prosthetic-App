@@ -70,11 +70,11 @@ function shiftCalendarYear(date: Date, offset: number): Date {
 function getCalendarWeeks(month: Date): CalendarWeek[] {
 	const firstDayOfMonth = startOfCalendarMonth(month)
 	const mondayOffset = (firstDayOfMonth.getDay() + 6) % 7
-    const gridStart = new Date(
-        firstDayOfMonth.getFullYear(),
-        firstDayOfMonth.getMonth(),
-        1 - mondayOffset
-    )
+	const gridStart = new Date(
+		firstDayOfMonth.getFullYear(),
+		firstDayOfMonth.getMonth(),
+		1 - mondayOffset
+	)
 
 	return Array.from({ length: 6 }, (_, weekIndex) => {
 		const days = Array.from({ length: 7 }, (_, dayIndex) => {
@@ -99,8 +99,8 @@ function CalendarView({
 	month,
 	selectedDate,
 	locale,
-    minimumDate,
-    maximumDate,
+	minimumDate,
+	maximumDate,
 	onMonthChange,
 	onSelect,
 	onCancel,
@@ -226,15 +226,22 @@ function CalendarView({
 }
 
 export interface DatePickerModalProps {
-    visible: boolean
-    onClose: () => void
-    onSave: (selectedDate: Date) => void
-    initialDate?: Date
-    minimumDate?: Date
-    maximumDate?: Date
+	visible: boolean
+	onClose: () => void
+	onSave: (selectedDate: Date) => void
+	initialDate?: Date
+	minimumDate?: Date
+	maximumDate?: Date
 }
 
-export function DatePickerModal({ visible, onClose, onSave, initialDate, minimumDate, maximumDate }: DatePickerModalProps) {
+export function DatePickerModal({
+	visible,
+	onClose,
+	onSave,
+	initialDate,
+	minimumDate,
+	maximumDate,
+}: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
 	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
 		() => initialDate ?? new Date()
@@ -273,8 +280,8 @@ export function DatePickerModal({ visible, onClose, onSave, initialDate, minimum
 					month={calendarMonth}
 					selectedDate={calendarSelectedDate}
 					locale={i18n.language}
-                    minimumDate={minimumDate}
-                    maximumDate={maximumDate}
+					minimumDate={minimumDate}
+					maximumDate={maximumDate}
 					onMonthChange={setCalendarMonth}
 					onSelect={setCalendarSelectedDate}
 					onCancel={onClose}
