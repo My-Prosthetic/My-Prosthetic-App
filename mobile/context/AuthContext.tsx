@@ -5,13 +5,21 @@ import Storage from "expo-sqlite/kv-store"
 import { useTranslation } from "react-i18next"
 import { authService } from "@/src/services/authService"
 import { purgeDatabase } from "@/db/purgeDataBase"
+import type { AuthenticatedUser } from "@/src/services/authService"
+import {
+	clearLocalCredentials,
+	loginLocalAccount,
+	loginLocalGuest,
+	restoreLocalAccount,
+} from "@/src/services/localAccountService"
 import { clearSettingsPreferences } from "@/src/hooks/useSettingsPreferences"
 
 export type AuthStatus = "INITIALIZING" | "UNAUTHENTICATED" | "AUTHENTICATED" | "GUEST"
 
 interface AuthContextValue {
 	status: AuthStatus
-	loginWithToken: (token: string) => Promise<boolean>
+	sessionKey: string | null
+	loginWithToken: (token: string, user: AuthenticatedUser) => Promise<boolean>
 	loginAsGuest: () => Promise<boolean>
 	logout: () => Promise<void>
 	closeDeletedAccountSession: () => Promise<void>
@@ -51,6 +59,7 @@ async function resumeDeletedAccountCleanupIfNeeded(): Promise<void> {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [status, setStatus] = useState<AuthStatus>("INITIALIZING")
+	const [sessionKey, setSessionKey] = useState<string | null>(null)
 	const { t } = useTranslation()
 
 	useEffect(() => {
@@ -58,23 +67,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 		const initializeAuth = async () => {
 			try {
-				if ((await Storage.getItem(DELETED_ACCOUNT_CLEANUP_KEY)) === "true") {
-					try {
-						await finishDeletedAccountCleanup()
-					} catch (error) {
-						console.error("Could not finish deleted account cleanup at startup:", error)
-					}
-					if (isMounted) setStatus("UNAUTHENTICATED")
-					return
+				const restored = await restoreLocalAccount()
+				if (isMounted) {
+					setSessionKey(restored.key)
+					setStatus(restored.status)
 				}
-				const token = await SecureStore.getItemAsync("auth_token")
-				if (token) {
-					if (isMounted) setStatus("AUTHENTICATED")
-					return
-				}
-
-				const isGuest = await SecureStore.getItemAsync("is_guest")
-				if (isMounted) setStatus(isGuest === "true" ? "GUEST" : "UNAUTHENTICATED")
 			} catch (error) {
 				console.error("Failed to initialize authentication state:", error)
 				if (isMounted) setStatus("UNAUTHENTICATED")
@@ -88,8 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}, [])
 
-	const loginWithToken = async (token: string): Promise<boolean> => {
+	const loginWithToken = async (token: string, user: AuthenticatedUser): Promise<boolean> => {
 		try {
+			setStatus("INITIALIZING")
+			setSessionKey(await loginLocalAccount(token, user))
 			await resumeDeletedAccountCleanupIfNeeded()
 			await purgeDatabase()
 			await SecureStore.deleteItemAsync("is_guest")
@@ -97,6 +96,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			setStatus("AUTHENTICATED")
 			return true
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to prepare local data during login.", error)
 			Alert.alert(t("auth.alerts.loginFailed"), t("auth.errors.sessionSetupFailed"))
 			return false
@@ -105,6 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const loginAsGuest = async (): Promise<boolean> => {
 		try {
+			setStatus("INITIALIZING")
+			setSessionKey(await loginLocalGuest())
 			await resumeDeletedAccountCleanupIfNeeded()
 			await purgeDatabase()
 			await SecureStore.deleteItemAsync("auth_token")
@@ -112,6 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			setStatus("GUEST")
 			return true
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to prepare local data during guest login.", error)
 			Alert.alert(t("auth.alerts.guestLoginFailed"), t("auth.errors.guestSessionSetupFailed"))
 			return false
@@ -128,23 +133,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			return
 		}
 
-		if (token) {
-			try {
-				await authService.logout()
-			} catch (error) {
-				console.warn("[Auth] Remote logout failed; continuing with local logout.", error)
-			}
-		}
-
 		try {
-			await purgeDatabase()
-			await SecureStore.deleteItemAsync("auth_token")
-			await SecureStore.deleteItemAsync("is_guest")
+			setStatus("INITIALIZING")
+			await purgeDatabase(async () => {
+				if (token) await authService.logout()
+				await clearLocalCredentials()
+			})
 		} catch (error) {
+			setSessionKey(null)
+			setStatus("UNAUTHENTICATED")
 			console.error("CRITICAL: Failed to clear local data during logout.", error)
 			Alert.alert(t("auth.alerts.logoutFailed"), t("auth.errors.logoutCleanupFailed"))
 			return
 		}
+
+		setSessionKey(null)
 		setStatus("UNAUTHENTICATED")
 	}
 
@@ -170,7 +173,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	return (
 		<AuthContext.Provider
-			value={{ status, loginWithToken, loginAsGuest, logout, closeDeletedAccountSession }}
+			value={{
+				status,
+				sessionKey,
+				loginWithToken,
+				loginAsGuest,
+				logout,
+				closeDeletedAccountSession,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>

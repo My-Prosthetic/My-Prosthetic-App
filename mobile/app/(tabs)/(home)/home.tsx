@@ -144,7 +144,7 @@ export default function HomeScreen() {
 
 	//TODO
 	const onHandleShowFullHistory = () => {}
-	const onHandleMyFiles = () => {}
+	const onHandleMyFiles = () => router.push("/files")
 
 	//MOCKS
 	interface Activity {

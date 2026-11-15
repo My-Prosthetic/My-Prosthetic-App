@@ -41,11 +41,14 @@ function getComponentType(type: string): ComponentType {
 	return componentType
 }
 
-export async function seedCatalogIfNotInitialized(): Promise<void> {
+export async function seedCatalogIfNotInitialized(database: typeof db = db): Promise<void> {
 	try {
 		const seededVersion = await Storage.getItemAsync(CATALOGUE_SEEDED_VERSION)
 
-		if (seededVersion === catalogue.lastUpdated) {
+		if (
+			seededVersion === catalogue.lastUpdated &&
+			database.select({ id: brands.id }).from(brands).limit(1).get()
+		) {
 			return
 		}
 
@@ -57,7 +60,7 @@ export async function seedCatalogIfNotInitialized(): Promise<void> {
 			})),
 		}))
 
-		db.transaction((tx) => {
+		database.transaction((tx) => {
 			for (const brand of validatedCatalogue) {
 				tx.insert(brands)
 					.values({

@@ -76,9 +76,7 @@ export default function SignUpScreen() {
 				password,
 				password_confirmation: repeatPassword,
 			})
-			if (!(await loginWithToken(result.token))) return
-			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
-			await createUser({ name: apiFirstName })
+			if (!(await loginWithToken(result.token, result.data))) return
 		} catch (error) {
 			setErrorMessage(
 				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
