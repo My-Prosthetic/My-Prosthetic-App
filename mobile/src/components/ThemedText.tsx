@@ -42,7 +42,6 @@ export const ThemedText = ({
 }: ThemedTextProps) => {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
-
 	const content = tx ? t(tx, txOptions) : children
 
 	const isProcessingRef = useRef(false)
@@ -102,6 +101,7 @@ const styles = StyleSheet.create({
 	},
 })
 
+/* eslint-disable react-native/no-unused-styles */
 const typography = StyleSheet.create({
 	H0: {
 		fontFamily: "Montserrat-Bold",

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 /**
  * A patient's management of their own Access Grants, addressed by specialist id.
- * A stored grant does not authorize any read of patient data on its own.
+ * Reads of patient records check the grant through UserPolicy and ProsthesisPolicy.
  */
 class ShareController extends Controller
 {

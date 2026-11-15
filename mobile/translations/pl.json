@@ -15,10 +15,30 @@
 		"accumulated": "Środki",
 		"accumulatedTitle": "Zgromadzone Środki"
 	},
+	"journal": {
+		"title": "KALENDARZ",
+		"search": "szukaj...",
+		"incidents": "incydenty",
+		"components": "komponenty",
+		"filter": "filtruj",
+		"previousMonth": "Poprzedni miesiąc",
+		"nextMonth": "Następny miesiąc",
+		"emptyDay": "Brak zdarzeń w wybranym dniu.",
+		"loadError": "Nie udało się wczytać zdarzeń.",
+		"componentAssembly": "Montaż komponentu: {{name}}",
+		"time": "godzina:",
+		"painScale": "skala bólu:",
+		"circumstances": "okoliczności:",
+		"prosthesis": "proteza:",
+		"component": "komponent:",
+		"description": "opis:",
+		"edit": "edytuj",
+		"prosthesisFilter": "Filtruj według protezy",
+		"allProstheses": "Wszystkie protezy"
+	},
 	"screens": {
 		"homeTitle": "To jest Ekran Główny 🏠",
 		"profileTitle": "Twój Profil Użytkownika 👤",
-		"journalTitle": "Twój dziennik medyczny x",
 		"settingsTitle": "Ustawienia Aplikacji ⚙️",
 		"programmesTitle": "Programy Dofinansowań 📋",
 		"accumulatedTitle": "Zgromadzone Środki 💰"
@@ -70,6 +90,8 @@
 	},
 	"common": {
 		"cancel": "Anuluj",
+		"cancelDate": "Anuluj",
+		"confirm": "",
 		"enterDate": "Wprowadź {{date}}",
 		"error": "Błąd",
 		"validationError": "Błąd walidacji",
@@ -77,7 +99,8 @@
 		"delete": "Usuń",
 		"today": "Dzisiaj",
 		"mp": "My Prosthetic",
-		"info": "Informacja"
+		"info": "Informacja",
+		"yes": "Tak"
 	},
 	"funding": {
 		"outOf": "z",
@@ -310,14 +333,61 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "DODAJ POMIAR",
+		"editTitle": "EDYTUJ POMIAR",
+		"saveChanges": "ZAPISZ ZMIANY",
+		"measureNotFound": "Ten pomiar już nie istnieje.",
+		"selectLimb": "WYBIERZ KOŃCZYNĘ",
+		"date": "DATA",
+		"datePlaceholder": "DD-MM-RRRR",
+		"time": "GODZINA",
+		"timePlaceholder": "GG:MM",
+		"schema": "SCHEMAT PUNKTÓW POMIAROWYCH",
+		"circumferenceValues": "WARTOŚCI OBWODÓW",
+		"measurementHeight": "Wysokość pomiaru",
+		"distanceFromTip": "{{distance}} cm od szczyciku",
+		"centimeters": "cm",
+		"addLevel": "Dodaj nowy poziom",
+		"addDistanceTitle": "Podaj odległość nowego miejsca pomiarowego L{{level}} od szczyciku",
+		"editDistanceTitle": "Zmień odległość punktu pomiarowego L{{level}} od szczyciku",
+		"invalidDistance": "Odległość musi być liczbą całkowitą między 0 a 100 i nie może się powtarzać.",
+		"removeLevelTitle": "Usuń poziom pomiaru",
+		"removeLevelConfirmation": "Czy na pewno chcesz usunąć poziom L{{level}}?",
+		"invalidMeasurementValue": "Wprowadź poprawną liczbę.",
+		"missingMeasurement": "Brakuje pomiaru",
+		"invalidMeasurementForLevel": "Pomiar L{{level}} w niepoprawnej formie",
+		"futureMomentError": "Moment pomiaru nie może być z przyszłości",
+		"saveSuccessTitle": "Pomiar zapisany",
+		"saveSuccessMessage": "Pomiar został zapisany.",
+		"saveError": "Nie udało się zapisać pomiaru.",
+		"deleteTitle": "Usuń pomiar",
+		"deleteConfirmation": "Czy na pewno chcesz usunąć ten pomiar?",
+		"forefitTitle": "Porzuć pomiar",
+		"forefitConfirmation": "Czy na pewno chcesz porzucić ten pomiar?",
+		"deleteError": "Nie udało się usunąć pomiaru.",
+		"discardTitle": "Odrzuć pomiar",
+		"discardConfirmation": "Czy na pewno chcesz wyczyścić formularz i wyjść?",
+		"save": "ZAPISZ POMIAR",
+		"delete": "USUŃ",
+		"history": {
+			"title": "Historia pomiarów",
+			"date": "Data",
+			"points": "Punkty\npomiarowe",
+			"empty": "Brak danych do wyświetlenia dla bieżących filtrów",
+			"loadError": "Nie udało się pobrać pomiarów z historii"
+		}
+	},
 	"newIncident": {
+		"editTitle": "EDYTUJ INCYDENT",
+		"saveEdit": "ZAPISZ ZMIANY",
 		"title": "NOWY INCYDENT",
 		"time": "GODZINA",
 		"type": "TYP INCYDENTU:",
 		"selectType": "Wybierz typ incydentu",
 		"circumstances": "OKOLICZNOŚCI:",
 		"description": "OPIS:",
-		"descriptionPlaceholder": "Opisz krótko przebieg incydentu...",
+		"descriptionPlaceholder": "Wpisz krótki opis incydentu...",
 		"intensity": "SKALA NATĘŻENIA BÓLU:",
 		"relatedProsthesis": "POWIĄZANA PROTEZA:",
 		"component": "KOMPONENT:",
@@ -372,10 +442,10 @@
 		"removePhoto": "Usuń zdjęcie {{number}}",
 		"customValuePlaceholder": "Dodaj własną wartość",
 		"duplicateValue": "Ta wartość już znajduje się na liście.",
-		"noProsthesis": "Najpierw dodaj protezę, aby zapisać incydent.",
 		"savedTitle": "Zapisano",
 		"savedMessage": "Incydent został zapisany.",
 		"saveError": "Nie udało się zapisać incydentu w bazie danych.",
+		"assignProsthesisHint": "Aby zapisać incydent, najpierw dodaj protezę.",
 		"validation": {
 			"prosthesis": "Wybierz protezę powiązaną z incydentem.",
 			"type": "Wybierz typ incydentu.",
@@ -384,7 +454,22 @@
 			"point": "Zaznacz miejsce dolegliwości na schemacie.",
 			"time": "Podaj godzinę w formacie GG:MM.",
 			"futureDate": "Data i godzina incydentu nie mogą być ustawione w przyszłości."
-		}
+		},
+		"weekdays": {
+			"sun": "NIEDZ",
+			"mon": "PON",
+			"tue": "WT",
+			"wed": "ŚR",
+			"thu": "CZW",
+			"fri": "PT",
+			"sat": "SOB"
+		},
+		"chooseTime": "Wybierz godzinę",
+		"confirmTime": "Wprowadź",
+		"recordAudio": "Nagraj notatkę głosową",
+		"stopAudio": "Zatrzymaj nagrywanie",
+		"addImages": "Dodaj zdjęcia i pliki",
+		"photoName": "zdjęcie"
 	},
 	"prosthesisDetails": {
 		"title": "MOJA PROTEZA",
@@ -615,6 +700,20 @@
 			"passwordInvalid": "Hasło nie spełnia wymagań bezpieczeństwa."
 		}
 	},
+	"about": {
+		"header": "O NAS I REGULAMINY",
+		"versionLabel": "Wersja: {{version}} ({{release}})",
+		"partnerIntro": "Projekt zrealizowany we współpracy z:",
+		"team": "ZESPÓŁ INŻYNIERSKI I TWÓRCY",
+		"documents": "DOKUMENTY I REGULAMINY",
+		"documentNotFound": "Nie znaleziono dokumentu.",
+		"openDocument": "Otwórz dokument {{title}}",
+		"docs": {
+			"rodo": "Polityka prywatności",
+			"statute": "Regulamin usług",
+			"license": "Licencje Open-Source"
+		}
+	},
 	"componentEdit": {
 		"title": "EDYTUJ KOMPONENT",
 		"name": "Nazwa",
@@ -628,84 +727,198 @@
 		"selectDate": "Wybierz datę",
 		"clearDate": "Usuń datę"
 	},
-	"settings34": {
-		"common": {
-			"cancel": "Anuluj",
-			"error": "Błąd",
-			"unavailable": "Funkcja niedostępna",
-			"ok": "OK"
+	"display": {
+		"title": "Wygląd i język aplikacji",
+		"name": "Wygląd i język",
+		"interface": {
+			"title": "Wygląd interfejsu",
+			"darkMode": "Tryb ciemny (Dark Mode)",
+			"contrast": "Tryb wysokiego kontrastu",
+			"fontSize": "Rozmiar tekstu"
 		},
-		"menu": {
-			"notifications": "Powiadomienia",
-			"account": "Konto i synchronizacja"
+		"accessibility": {
+			"title": "Ułatwienia dostępu",
+			"tts": "Czytaj ekran na głos (TTS)"
 		},
-		"notifications": {
-			"title": "Powiadomienia",
-			"sectionNotifications": "POWIADOMIENIA",
-			"push": "Zezwalaj na powiadomienia PUSH",
-			"email": "Zezwalaj na wiadomości e-mail",
-			"sectionHealth": "ZDROWIE I KONTAKT ZE SPECJALISTĄ",
-			"recommendations": "Nowe zalecenia od protetyka",
-			"recommendationsDescription": "Powiadom, gdy lekarz zostawi wpis na twoim profilu",
-			"measurements": "Karta Miarowa Kikuta",
-			"measurementsDescription": "Przypomnienia PUSH o rutynowym pomiarze kikuta",
-			"measurementTime": "Godzina przypomnienia o pomiarze",
-			"chooseTime": "Wybierz godzinę",
-			"everyDay": "codziennie",
-			"doNotNotify": "Nie powiadamiaj",
-			"info": "Powiadomienia o dacie wymiany oraz końcu gwarancji konfigurowane są indywidualnie w karcie każdego dodanego podzespołu."
+		"region": {
+			"title": "Język i region",
+			"language": "Język aplikacji",
+			"date": "Format daty"
+		},
+		"modals": {
+			"chooseLanguage": "Wybierz język",
+			"chooseDateFormat": "Wybierz format daty",
+			"chooseFontSize": "Wybierz rozmiar tekstu"
+		},
+		"fontSize": {
+			"small": "Mały",
+			"medium": "Średni",
+			"large": "Duży",
+			"extraLarge": "Bardzo duży"
+		},
+		"language": {
+			"polish": "Polski",
+			"english": "Angielski"
+		}
+	},
+	"settings": {
+      "common": {
+        "cancel": "Anuluj",
+        "error": "Błąd",
+        "unavailable": "Funkcja niedostępna",
+        "ok": "OK"
+      },
+      "menu": {
+        "notifications": "Powiadomienia",
+        "account": "Konto i synchronizacja"
+      },
+		"title": "USTAWIENIA",
+		"back": "Wróć",
+		"guest": {
+			"title": "Korzystasz bez konta",
+			"noBackup": "Brak kopii zapasowej",
+			"limitedSharing": "Ograniczenia w udostępnianiu historii medycznej specjalistom."
 		},
 		"account": {
-			"title": "Konto",
-			"profileUnavailable": "Profil użytkownika",
-			"profileError": "Nie udało się pobrać adresu e-mail",
-			"noEmail": "Adres e-mail niedostępny",
-			"connected": "Połączono z kontem",
-			"notConnected": "Brak połączenia z kontem",
-			"editProfile": "Edytuj profil",
-			"editNotReady": "Edycja profilu nie jest jeszcze podłączona do API.",
-			"syncSettings": "USTAWIENIA SYNCHRONIZACJI",
-			"backgroundSync": "Synchronizacja w tle",
-			"backgroundSyncDescription": "Automatycznie wysyłaj nowe wpisy i pobieraj zalecenia od protetyka",
-			"wifiOnly": "Tylko przez sieć Wi-Fi",
-			"wifiOnlyDescription": "Oszczędza transfer danych komórkowych zgodnie z ustawieniami telefonu",
-			"mediaBackup": "Kopia zapasowa multimediów",
-			"mediaBackupDescription": "Synchronizuj ciężkie pliki wideo oraz zdjęcia z incydentów",
-			"lastSync": "Ostatnia synchronizacja",
-			"neverSynced": "brak danych",
-			"syncNow": "synchronizuj",
-			"syncNotReady": "Przycisk jest przygotowany pod Sync Managera. Synchronizacja danych nie została jeszcze wdrożona.",
-			"accountSettings": "USTAWIENIA KONTA",
-			"changePassword": "Zmień hasło",
-			"deleteAccount": "Usuń konto",
-			"passwordPrompt": "Podaj aktualne hasło, aby usunąć konto.",
-			"passwordRequired": "Podaj aktualne hasło.",
-			"deleteError": "Nie udało się usunąć konta. Spróbuj ponownie.",
-			"deleteConfirm": "Czy na pewno chcesz trwale usunąć konto i powiązane z nim dane? Tej operacji nie można cofnąć.",
-			"localCleanupError": "Konto zostało usunięte na serwerze, ale nie udało się całkowicie wyczyścić danych na urządzeniu. Wyczyść dane aplikacji przed ponownym użyciem."
+			"userFallback": "Użytkownik",
+			"synced": "Konto zsynchronizowane z chmurą",
+          "title": "Konto",
+          "profileUnavailable": "Profil użytkownika",
+          "profileError": "Nie udało się pobrać adresu e-mail",
+          "noEmail": "Adres e-mail niedostępny",
+          "connected": "Połączono z kontem",
+          "notConnected": "Brak połączenia z kontem",
+          "editProfile": "Edytuj profil",
+          "editNotReady": "Edycja profilu nie jest jeszcze podłączona do API.",
+          "syncSettings": "USTAWIENIA SYNCHRONIZACJI",
+          "backgroundSync": "Synchronizacja w tle",
+          "backgroundSyncDescription": "Automatycznie wysyłaj nowe wpisy i pobieraj zalecenia od protetyka",
+          "wifiOnly": "Tylko przez sieć Wi-Fi",
+          "wifiOnlyDescription": "Oszczędza transfer danych komórkowych zgodnie z ustawieniami telefonu",
+          "mediaBackup": "Kopia zapasowa multimediów",
+          "mediaBackupDescription": "Synchronizuj ciężkie pliki wideo oraz zdjęcia z incydentów",
+          "lastSync": "Ostatnia synchronizacja",
+          "neverSynced": "brak danych",
+          "syncNow": "synchronizuj",
+          "syncNotReady": "Przycisk jest przygotowany pod Sync Managera. Synchronizacja danych nie została jeszcze wdrożona.",
+          "accountSettings": "USTAWIENIA KONTA",
+          "changePassword": "Zmień hasło",
+          "deleteAccount": "Usuń konto",
+          "passwordPrompt": "Podaj aktualne hasło, aby usunąć konto.",
+          "passwordRequired": "Podaj aktualne hasło.",
+          "deleteError": "Nie udało się usunąć konta. Spróbuj ponownie.",
+          "deleteConfirm": "Czy na pewno chcesz trwale usunąć konto i powiązane z nim dane? Tej operacji nie można cofnąć.",
+          "localCleanupError": "Konto zostało usunięte na serwerze, ale nie udało się całkowicie wyczyścić danych na urządzeniu. Wyczyść dane aplikacji przed ponownym użyciem."
 		},
-		"password": {
-			"title": "Zmień hasło",
-			"current": "Stare hasło",
-			"new": "Nowe hasło",
-			"confirm": "Powtórz nowe hasło",
-			"save": "Zmień hasło",
-			"required": "Wypełnij wszystkie pola.",
-			"mismatch": "Nowe hasła muszą być identyczne.",
-			"sameAsCurrent": "Nowe hasło musi różnić się od aktualnego.",
-			"saving": "Zapisywanie...",
-			"successTitle": "Hasło zmienione",
-			"successMessage": "Nowe hasło zostało zapisane. Pozostałe sesje zostały wylogowane."
+      "notifications": {
+        "title": "Powiadomienia",
+        "sectionNotifications": "POWIADOMIENIA",
+        "push": "Zezwalaj na powiadomienia PUSH",
+        "email": "Zezwalaj na wiadomości e-mail",
+        "sectionHealth": "ZDROWIE I KONTAKT ZE SPECJALISTĄ",
+        "recommendations": "Nowe zalecenia od protetyka",
+        "recommendationsDescription": "Powiadom, gdy lekarz zostawi wpis na twoim profilu",
+        "measurements": "Karta Miarowa Kikuta",
+        "measurementsDescription": "Przypomnienia PUSH o rutynowym pomiarze kikuta",
+        "measurementTime": "Godzina przypomnienia o pomiarze",
+        "chooseTime": "Wybierz godzinę",
+        "everyDay": "codziennie",
+        "doNotNotify": "Nie powiadamiaj",
+        "info": "Powiadomienia o dacie wymiany oraz końcu gwarancji konfigurowane są indywidualnie w karcie każdego dodanego podzespołu."
+      },
+      "password": {
+        "title": "Zmień hasło",
+        "current": "Stare hasło",
+        "new": "Nowe hasło",
+        "confirm": "Powtórz nowe hasło",
+        "save": "Zmień hasło",
+        "required": "Wypełnij wszystkie pola.",
+        "mismatch": "Nowe hasła muszą być identyczne.",
+        "sameAsCurrent": "Nowe hasło musi różnić się od aktualnego.",
+        "saving": "Zapisywanie...",
+        "successTitle": "Hasło zmienione",
+        "successMessage": "Nowe hasło zostało zapisane. Pozostałe sesje zostały wylogowane."
+      },
+      "api": {
+        "configuration": "Brak konfiguracji serwera API.",
+        "unauthorized": "Sesja wygasła. Zaloguj się ponownie.",
+        "forbidden": "Nie masz uprawnień do wykonania tej operacji.",
+        "wrongPassword": "Aktualne hasło jest nieprawidłowe.",
+        "validation": "Nie udało się zapisać zmian. Sprawdź wprowadzone dane.",
+        "network": "Nie udało się połączyć z serwerem. Sprawdź połączenie.",
+        "unavailable": "Funkcja nie jest jeszcze dostępna na serwerze.",
+        "server": "Nie udało się wykonać operacji. Spróbuj ponownie później."
+      },
+		"sections": {
+			"sharing": "UDOSTĘPNIANIE",
+			"settings": "USTAWIENIA",
+			"information": "INFORMACJE"
 		},
-		"api": {
-			"configuration": "Brak konfiguracji serwera API.",
-			"unauthorized": "Sesja wygasła. Zaloguj się ponownie.",
-			"forbidden": "Nie masz uprawnień do wykonania tej operacji.",
-			"wrongPassword": "Aktualne hasło jest nieprawidłowe.",
-			"validation": "Nie udało się zapisać zmian. Sprawdź wprowadzone dane.",
-			"network": "Nie udało się połączyć z serwerem. Sprawdź połączenie.",
-			"unavailable": "Funkcja nie jest jeszcze dostępna na serwerze.",
-			"server": "Nie udało się wykonać operacji. Spróbuj ponownie później."
+		"rows": {
+			"specialists": "Moi Specjaliści (udostępnij przez aplikację)",
+			"export": "Eksport danych (PDF / JSON)",
+			"accountSync": "Konto i synchronizacja",
+			"appearanceLanguage": "Wygląd i język aplikacji",
+			"notifications": "Powiadomienia",
+			"about": "O nas i regulaminy"
+		},
+		"logout": "WYLOGUJ",
+		"loginOrCreate": "ZALOGUJ LUB UTWÓRZ KONTO",
+		"export": {
+			"prosthesisName": "{{name}}:",
+			"title": "EKSPORT DANYCH",
+			"fileFormat": "FORMAT PLIKU",
+			"pdfTitle": "Raport Medyczny (PDF)",
+			"pdfDescription": "Czytelny dokument dla lekarza lub do wydruku.",
+			"jsonTitle": "Surowe Dane (JSON)",
+			"jsonDescription": "Format wspierany przez wybrane aplikacje trzecie.",
+			"dataRange": "ZAKRES DANYCH DO UDOSTĘPNIENIA",
+			"dateRange": "Zakres czasu:",
+			"datePlaceholder": "Wybierz daty",
+			"medicalProfile": "Mój profil medyczny:",
+			"prosthesis": "Moja proteza:",
+			"incidents": "Incydenty",
+			"components": "Komponenty protezy",
+			"generate": "GENERUJ I UDOSTĘPNIJ PLIK",
+			"notReadyTitle": "Eksport danych",
+			"notReadyMessage": "Generator pliku zostanie podłączony w kolejnym kroku.",
+			"csvTitle": "Dane tabelaryczne (CSV)",
+			"csvDescription": "Plik do arkusza kalkulacyjnego lub dalszej analizy.",
+			"selectedDateRange": "{{from}} - {{to}}",
+			"measurements": "Pomiary",
+			"generating": "GENEROWANIE...",
+			"datePickerTitle": "WYBIERZ ZAKRES DAT",
+			"fromDate": "OD",
+			"toDate": "DO",
+			"validationTitle": "Eksport danych",
+			"selectFormatMessage": "Wybierz format pliku.",
+			"selectDateRangeMessage": "Wybierz zakres dat do eksportu.",
+			"selectDataTypeMessage": "Wybierz co najmniej jeden zakres danych do eksportu.",
+			"invalidDateRangeMessage": "Data początkowa nie może być późniejsza niż data końcowa.",
+			"emptyRangeTitle": "Brak danych",
+			"emptyRangeMessage": "W wybranym zakresie i dla wybranych sekcji nie znaleziono danych do eksportu.",
+			"generateErrorTitle": "Nie udało się wygenerować pliku",
+			"generateErrorMessage": "Spróbuj ponownie. Dane nie zostały wysłane poza urządzenie.",
+			"shareDialogTitle": "Udostępnij eksport danych",
+			"shareUnavailableTitle": "Udostępnianie niedostępne",
+			"shareUnavailableMessage": "Na tym urządzeniu nie można otworzyć systemowego okna udostępniania.",
+			"reportTitle": "Raport danych My Prosthetics",
+			"generatedAt": "Wygenerowano",
+			"noRowsInSection": "Brak danych w tej sekcji.",
+			"csvDataType": "typ_danych",
+			"futureDateMessage": "Nie można eksportować danych z przyszłości.",
+			"prostheses": "Protezy",
+			"conditions": "Schorzenia i alergie",
+			"medications": "Stale przyjmowane leki",
+			"generateAndDownload": "GENERUJ I POBIERZ PLIK",
+			"shareFile": "UDOSTĘPNIJ PLIK",
+			"sharing": "UDOSTĘPNIANIE...",
+			"downloadSuccessTitle": "Plik zapisany",
+			"downloadSuccessMessage": "Plik został zapisany na urządzeniu.",
+			"downloadCancelledTitle": "Zapisywanie anulowane",
+			"downloadCancelledMessage": "Plik został wygenerowany, ale nie został zapisany. Nadal możesz go udostępnić.",
+			"shareErrorTitle": "Nie udało się udostępnić pliku",
+			"shareErrorMessage": "Spróbuj ponownie."
 		}
 	}
 }

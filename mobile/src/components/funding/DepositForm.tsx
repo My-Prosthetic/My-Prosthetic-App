@@ -8,7 +8,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedInput } from "../ThemedInput"
 import { DropdownSelect } from "@/src/components/DropdownSelect"
 import { DatePickerModal } from "@/src/components/DatePicker"
-import { formatDate } from "@/src/utils/dateFormatter"
+import { formatDate } from "@/src/utils/dateTimeUtils"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 import {
 	FUNDING_SOURCE_IDS,
@@ -319,11 +319,13 @@ export function DepositForm({ mode }: DepositFormProps) {
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 		screen: { justifyContent: "flex-start", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
 		fieldLabel: { marginBottom: 8 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
 	})
+	return styles
+}

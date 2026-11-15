@@ -15,10 +15,30 @@
 		"accumulated": "Accumulated",
 		"accumulatedTitle": "Accumulated Funds"
 	},
+	"journal": {
+		"title": "CALENDAR",
+		"search": "search...",
+		"incidents": "incidents",
+		"components": "components",
+		"filter": "filter",
+		"previousMonth": "Previous month",
+		"nextMonth": "Next month",
+		"emptyDay": "No events on the selected day.",
+		"loadError": "Could not load events.",
+		"componentAssembly": "Component assembly: {{name}}",
+		"time": "time:",
+		"painScale": "pain scale:",
+		"circumstances": "circumstances:",
+		"prosthesis": "prosthesis:",
+		"component": "component:",
+		"description": "description:",
+		"edit": "edit",
+		"prosthesisFilter": "Filter by prosthesis",
+		"allProstheses": "All prostheses"
+	},
 	"screens": {
 		"homeTitle": "This is Home Screen 🏠",
 		"profileTitle": "Your User Profile 👤",
-		"journalTitle": "You medical journal x",
 		"settingsTitle": "App Settings ⚙️",
 		"programmesTitle": "Funding Programmes 📋",
 		"accumulatedTitle": "Accumulated Funds 💰"
@@ -70,6 +90,8 @@
 	},
 	"common": {
 		"cancel": "Cancel",
+		"cancelDate": "Cancel",
+		"confirm": "Confirm",
 		"enterDate": "Enter {{date}}",
 		"error": "Error",
 		"validationError": "Validation error",
@@ -77,7 +99,8 @@
 		"delete": "Delete",
 		"today": "Today",
 		"mp": "My Prosthetic",
-		"info": "Information"
+		"info": "Information",
+		"yes": "Yes"
 	},
 	"funding": {
 		"outOf": "out of",
@@ -311,7 +334,54 @@
 			}
 		}
 	},
+	"measurements": {
+		"title": "ADD MEASUREMENT",
+		"editTitle": "EDIT MEASUREMENT",
+		"saveChanges": "SAVE CHANGES",
+		"measureNotFound": "This measurement no longer exists.",
+		"selectLimb": "SELECT LIMB",
+		"date": "DATE",
+		"datePlaceholder": "MM-DD-YYYY",
+		"time": "TIME",
+		"timePlaceholder": "HH:MM",
+		"schema": "MEASUREMENT POINT LAYOUT",
+		"circumferenceValues": "CIRCUMFERENCE VALUES",
+		"measurementHeight": "Measurement height",
+		"distanceFromTip": "{{distance}} cm from the tip",
+		"centimeters": "cm",
+		"addLevel": "Add a new level",
+		"addDistanceTitle": "Enter the distance of new measurement point L{{level}} from the stump tip",
+		"editDistanceTitle": "Change the distance of measurement point L{{level}} from the stump tip",
+		"invalidDistance": "Distance must be an integer between 0 and 100 and must not duplicate another point.",
+		"removeLevelTitle": "Remove measurement level",
+		"removeLevelConfirmation": "Are you sure you want to remove level L{{level}}?",
+		"invalidMeasurementValue": "Enter a valid number.",
+		"missingMeasurement": "A measurement is missing.",
+		"invalidMeasurementForLevel": "Measurement L{{level}} has an invalid format.",
+		"futureMomentError": "The measurement time cannot be in the future.",
+		"saveSuccessTitle": "Measurement saved",
+		"saveSuccessMessage": "The measurement has been saved.",
+		"saveError": "Could not save the measurement.",
+		"deleteTitle": "Delete measurement",
+		"deleteConfirmation": "Are you sure you want to delete this measurement?",
+		"deleteError": "Could not delete the measurement.",
+		"forefitTitle": "Forefit measurement",
+		"forefitConfirmation": "Are you sure you want to forefit this measurement?",
+		"discardTitle": "Discard measurement",
+		"discardConfirmation": "Are you sure you want to clear the form and leave?",
+		"save": "SAVE MEASUREMENT",
+		"delete": "DELETE",
+		"history": {
+			"title": "Measurements history",
+			"date": "Date",
+			"points": "Measurement\npoints",
+			"empty": "No data to be displayed for current filters",
+			"loadError": "Failed to load measurements history"
+		}
+	},
 	"newIncident": {
+		"editTitle": "EDIT INCIDENT",
+		"saveEdit": "SAVE CHANGES",
 		"title": "NEW INCIDENT",
 		"time": "TIME",
 		"type": "INCIDENT TYPE:",
@@ -373,10 +443,10 @@
 		"removePhoto": "Remove photo {{number}}",
 		"customValuePlaceholder": "Add custom value",
 		"duplicateValue": "This value is already on the list.",
-		"noProsthesis": "Add a prosthesis before saving an incident.",
 		"savedTitle": "Saved",
 		"savedMessage": "The incident has been saved.",
 		"saveError": "Could not save the incident to the database.",
+		"assignProsthesisHint": "To save the incident, first add a prosthesis.",
 		"validation": {
 			"prosthesis": "Select the prosthesis related to the incident.",
 			"type": "Select the incident type.",
@@ -385,7 +455,22 @@
 			"point": "Mark the affected area on the diagram.",
 			"time": "Enter time in HH:MM format.",
 			"futureDate": "The incident date and time cannot be set in the future."
-		}
+		},
+		"weekdays": {
+			"sun": "SUN",
+			"mon": "MON",
+			"tue": "TUE",
+			"wed": "WED",
+			"thu": "THU",
+			"fri": "FRI",
+			"sat": "SAT"
+		},
+		"chooseTime": "Select time",
+		"confirmTime": "Set",
+		"recordAudio": "Record voice note",
+		"stopAudio": "Stop recording",
+		"addImages": "Add photos and files",
+		"photoName": "photo"
 	},
 	"prosthesisDetails": {
 		"title": "MY PROSTHESIS",
@@ -616,6 +701,20 @@
 			"passwordInvalid": "Password does not meet the security requirements."
 		}
 	},
+	"about": {
+		"header": "ABOUT US & TERMS",
+		"versionLabel": "Version: {{version}} ({{release}})",
+		"partnerIntro": "Project developed in cooperation with:",
+		"team": "ENGINEERING TEAM & CREATORS",
+		"documents": "DOCUMENTS & TERMS",
+		"documentNotFound": "Document not found.",
+		"openDocument": "Open document {{title}}",
+		"docs": {
+			"rodo": "Privacy Policy",
+			"statute": "Terms of Service",
+			"license": "Open-Source Licenses"
+		}
+	},
 	"componentEdit": {
 		"title": "EDIT COMPONENT",
 		"name": "Name",
@@ -629,84 +728,200 @@
 		"selectDate": "Select date",
 		"clearDate": "Clear date"
 	},
-	"settings34": {
-		"common": {
-			"cancel": "Cancel",
-			"error": "Error",
-			"unavailable": "Feature unavailable",
-			"ok": "OK"
+	"display": {
+		"title": "App Appearance & Language",
+		"name": "Display & Language",
+		"interface": {
+			"title": "Interface Appearance",
+			"darkMode": "Dark Mode",
+			"contrast": "High Contrast Mode",
+			"fontSize": "Font size"
 		},
-		"menu": {
-			"notifications": "Notifications",
-			"account": "Account and sync"
+		"accessibility": {
+			"title": "Accessibility",
+			"tts": "Text To Speech"
 		},
-		"notifications": {
-			"title": "Notifications",
-			"sectionNotifications": "NOTIFICATIONS",
-			"push": "Allow PUSH notifications",
-			"email": "Allow email notifications",
-			"sectionHealth": "HEALTH AND SPECIALIST CONTACT",
-			"recommendations": "New recommendations from prosthetist",
-			"recommendationsDescription": "Notify me when a specialist adds an entry to my profile",
-			"measurements": "Residual limb measurement card",
-			"measurementsDescription": "PUSH reminders for routine residual limb measurements",
-			"measurementTime": "Measurement reminder time",
-			"chooseTime": "Choose a time",
-			"everyDay": "every day",
-			"doNotNotify": "Do not notify",
-			"info": "Replacement dates and warranty expiry notifications are configured individually in each prosthetic component's details."
+		"region": {
+			"title": "Language & Region",
+			"language": "App Language",
+			"date": "Date Format"
+		},
+		"modals": {
+			"chooseLanguage": "Choose language",
+			"chooseDateFormat": "Choose date format",
+			"chooseFontSize": "Choose text size"
+		},
+		"fontSize": {
+			"small": "Small",
+			"medium": "Medium",
+			"large": "Large",
+			"extraLarge": "Extra Large"
+		},
+		"language": {
+			"polish": "Polish",
+			"english": "English"
+		}
+	},
+	"settings": {
+      "common": {
+        "cancel": "Cancel",
+        "error": "Error",
+        "unavailable": "Feature unavailable",
+        "ok": "OK"
+      },
+      "menu": {
+        "notifications": "Notifications",
+        "account": "Account and sync"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "sectionNotifications": "NOTIFICATIONS",
+        "push": "Allow PUSH notifications",
+        "email": "Allow email notifications",
+        "sectionHealth": "HEALTH AND SPECIALIST CONTACT",
+        "recommendations": "New recommendations from prosthetist",
+        "recommendationsDescription": "Notify me when a specialist adds an entry to my profile",
+        "measurements": "Residual limb measurement card",
+        "measurementsDescription": "PUSH reminders for routine residual limb measurements",
+        "measurementTime": "Measurement reminder time",
+        "chooseTime": "Choose a time",
+        "everyDay": "every day",
+        "doNotNotify": "Do not notify",
+        "info": "Replacement dates and warranty expiry notifications are configured individually in each prosthetic component's details."
+      },
+      "account": {
+        "title": "Account",
+        "profileUnavailable": "User profile",
+        "profileError": "Could not load email address",
+        "noEmail": "Email address unavailable",
+        "connected": "Account connected",
+        "notConnected": "Account not connected",
+        "editProfile": "Edit profile",
+        "editNotReady": "Profile editing is not yet connected to the API.",
+        "syncSettings": "SYNC SETTINGS",
+        "backgroundSync": "Background sync",
+        "backgroundSyncDescription": "Automatically send new entries and retrieve specialist recommendations",
+        "wifiOnly": "Wi-Fi only",
+        "wifiOnlyDescription": "Save mobile data according to your phone settings",
+        "mediaBackup": "Media backup",
+        "mediaBackupDescription": "Sync large videos and incident photos",
+        "lastSync": "Last sync",
+        "neverSynced": "no data",
+        "syncNow": "sync now",
+        "syncNotReady": "This button is ready for a future Sync Manager. Data synchronization is not implemented yet.",
+        "accountSettings": "ACCOUNT SETTINGS",
+        "changePassword": "Change password",
+        "deleteAccount": "Delete account",
+        "passwordPrompt": "Enter your current password to delete your account.",
+        "passwordRequired": "Enter your current password.",
+        "deleteError": "Could not delete your account. Please try again.",
+        "deleteConfirm": "Do you want to permanently delete your account and its data? This cannot be undone.",
+        "localCleanupError": "Your account was deleted on the server, but some data could not be cleared from this device. Clear the app's data before using it again."
+      },
+      "password": {
+        "title": "Change password",
+        "current": "Current password",
+        "new": "New password",
+        "confirm": "Repeat new password",
+        "save": "Change password",
+        "required": "Fill in all fields.",
+        "mismatch": "The new passwords do not match.",
+        "sameAsCurrent": "The new password must differ from the current password.",
+        "saving": "Saving...",
+        "successTitle": "Password changed",
+        "successMessage": "Your new password was saved. Other sessions were signed out."
+      },
+      "api": {
+        "configuration": "API server configuration is missing.",
+        "unauthorized": "Your session has expired. Please sign in again.",
+        "forbidden": "You do not have permission to perform this action.",
+        "wrongPassword": "Your current password is incorrect.",
+        "validation": "Could not save the changes. Check the entered information.",
+        "network": "Could not connect to the server. Check your connection.",
+        "unavailable": "This feature is not yet available on the server.",
+        "server": "Could not complete the operation. Please try again later."
+      },
+		"title": "SETTINGS",
+		"back": "Go back",
+		"guest": {
+			"title": "You're using the app without an account",
+			"noBackup": "No backup",
+			"limitedSharing": "Limited ability to share medical history with specialists."
 		},
 		"account": {
-			"title": "Account",
-			"profileUnavailable": "User profile",
-			"profileError": "Could not load email address",
-			"noEmail": "Email address unavailable",
-			"connected": "Account connected",
-			"notConnected": "Account not connected",
-			"editProfile": "Edit profile",
-			"editNotReady": "Profile editing is not yet connected to the API.",
-			"syncSettings": "SYNC SETTINGS",
-			"backgroundSync": "Background sync",
-			"backgroundSyncDescription": "Automatically send new entries and retrieve specialist recommendations",
-			"wifiOnly": "Wi-Fi only",
-			"wifiOnlyDescription": "Save mobile data according to your phone settings",
-			"mediaBackup": "Media backup",
-			"mediaBackupDescription": "Sync large videos and incident photos",
-			"lastSync": "Last sync",
-			"neverSynced": "no data",
-			"syncNow": "sync now",
-			"syncNotReady": "This button is ready for a future Sync Manager. Data synchronization is not implemented yet.",
-			"accountSettings": "ACCOUNT SETTINGS",
-			"changePassword": "Change password",
-			"deleteAccount": "Delete account",
-			"passwordPrompt": "Enter your current password to delete your account.",
-			"passwordRequired": "Enter your current password.",
-			"deleteError": "Could not delete your account. Please try again.",
-			"deleteConfirm": "Do you want to permanently delete your account and its data? This cannot be undone.",
-			"localCleanupError": "Your account was deleted on the server, but some data could not be cleared from this device. Clear the app's data before using it again."
+			"userFallback": "User",
+			"synced": "Account synced with the cloud"
 		},
-		"password": {
-			"title": "Change password",
-			"current": "Current password",
-			"new": "New password",
-			"confirm": "Repeat new password",
-			"save": "Change password",
-			"required": "Fill in all fields.",
-			"mismatch": "The new passwords do not match.",
-			"sameAsCurrent": "The new password must differ from the current password.",
-			"saving": "Saving...",
-			"successTitle": "Password changed",
-			"successMessage": "Your new password was saved. Other sessions were signed out."
+		"sections": {
+			"sharing": "SHARING",
+			"settings": "SETTINGS",
+			"information": "INFORMATION"
 		},
-		"api": {
-			"configuration": "API server configuration is missing.",
-			"unauthorized": "Your session has expired. Please sign in again.",
-			"forbidden": "You do not have permission to perform this action.",
-			"wrongPassword": "Your current password is incorrect.",
-			"validation": "Could not save the changes. Check the entered information.",
-			"network": "Could not connect to the server. Check your connection.",
-			"unavailable": "This feature is not yet available on the server.",
-			"server": "Could not complete the operation. Please try again later."
+		"rows": {
+			"specialists": "My Specialists (share through the app)",
+			"export": "Export data (PDF / JSON)",
+			"accountSync": "Account and synchronization",
+			"appearanceLanguage": "Appearance and app language",
+			"notifications": "Notifications",
+			"about": "About and terms"
+		},
+		"logout": "LOG OUT",
+		"loginOrCreate": "LOG IN OR CREATE AN ACCOUNT",
+		"export": {
+			"prosthesisName": "{{name}}:",
+			"title": "EXPORT DATA",
+			"fileFormat": "FILE FORMAT",
+			"pdfTitle": "Medical Report (PDF)",
+			"pdfDescription": "A readable document for a doctor or for printing.",
+			"jsonTitle": "Raw Data (JSON)",
+			"jsonDescription": "A format supported by selected third-party applications.",
+			"dataRange": "DATA RANGE TO SHARE",
+			"dateRange": "Date range:",
+			"datePlaceholder": "Choose dates",
+			"medicalProfile": "My medical profile:",
+			"prosthesis": "My prosthesis:",
+			"incidents": "Incidents",
+			"components": "Prosthesis components",
+			"generate": "GENERATE AND SHARE FILE",
+			"notReadyTitle": "Data export",
+			"notReadyMessage": "The file generator will be connected in the next step.",
+			"csvTitle": "Tabular Data (CSV)",
+			"csvDescription": "A file for spreadsheets or further analysis.",
+			"selectedDateRange": "{{from}} - {{to}}",
+			"measurements": "Measurements",
+			"generating": "GENERATING...",
+			"datePickerTitle": "SELECT DATE RANGE",
+			"fromDate": "FROM",
+			"toDate": "TO",
+			"validationTitle": "Data export",
+			"selectFormatMessage": "Choose a file format.",
+			"selectDateRangeMessage": "Choose a date range to export.",
+			"selectDataTypeMessage": "Choose at least one data section to export.",
+			"invalidDateRangeMessage": "The start date cannot be later than the end date.",
+			"emptyRangeTitle": "No data",
+			"emptyRangeMessage": "No data was found for the selected range and sections.",
+			"generateErrorTitle": "Could not generate the file",
+			"generateErrorMessage": "Try again. No data was sent outside the device.",
+			"shareDialogTitle": "Share data export",
+			"shareUnavailableTitle": "Sharing unavailable",
+			"shareUnavailableMessage": "The system share sheet is not available on this device.",
+			"reportTitle": "My Prosthetics Data Report",
+			"generatedAt": "Generated",
+			"noRowsInSection": "No data in this section.",
+			"csvDataType": "data_type",
+			"futureDateMessage": "Future dates cannot be exported.",
+			"prostheses": "Prostheses",
+			"conditions": "Conditions and allergies",
+			"medications": "Regular medications",
+			"generateAndDownload": "GENERATE AND DOWNLOAD FILE",
+			"shareFile": "SHARE FILE",
+			"sharing": "SHARING...",
+			"downloadSuccessTitle": "File saved",
+			"downloadSuccessMessage": "The file has been saved on the device.",
+			"downloadCancelledTitle": "Saving cancelled",
+			"downloadCancelledMessage": "The file was generated but not saved. You can still share it.",
+			"shareErrorTitle": "Could not share the file",
+			"shareErrorMessage": "Try again."
 		}
 	}
 }

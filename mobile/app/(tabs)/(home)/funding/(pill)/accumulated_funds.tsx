@@ -101,7 +101,7 @@ export default function AccumulatedFundsScreen() {
 					if (!isActive) return
 
 					setGoalsList(goals)
-					const safeIndex = goals.length > 0 ? Math.min(indexRef.current, goals.length - 1) : 0
+					const safeIndex = goals.length > 0 ? Math.min(indexRef.current, goals.length) : 0
 
 					if (safeIndex !== indexRef.current) {
 						setCurrentGoalIndex(safeIndex)
@@ -297,6 +297,8 @@ export default function AccumulatedFundsScreen() {
 	)
 }
 
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 const getStyles = (colors: ThemeColors) =>
 	StyleSheet.create({
 		summaryCard: {
@@ -324,3 +326,5 @@ const getStyles = (colors: ThemeColors) =>
 			alignItems: "center",
 		},
 	})
+	return styles
+}

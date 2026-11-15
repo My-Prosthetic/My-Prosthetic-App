@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -110,6 +112,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the patient's Incident Log across all their prostheses.
+     *
+     * @return HasManyThrough<Incident, Prosthesis, $this>
+     */
+    public function incidents(): HasManyThrough
+    {
+        return $this->hasManyThrough(Incident::class, Prosthesis::class);
+    }
+
+    /**
+     * @return HasOne<MedicalProfile, $this>
+     */
+    public function medicalProfile(): HasOne
+    {
+        return $this->hasOne(MedicalProfile::class);
+    }
+
+    /**
      * Get the shares this patient has granted.
      *
      * @return HasMany<UserShare, $this>
@@ -121,10 +141,21 @@ class User extends Authenticatable
 
     /**
      * Get the shares this specialist has received.
+     *
+     * @return HasMany<UserShare, $this>
      */
     public function receivedShares(): HasMany
     {
         return $this->hasMany(UserShare::class, 'specialist_id');
+    }
+
+    /**
+     * Get the patient's current grant to this user. It is read from the database on
+     * every call, so a narrowed or revoked grant takes effect on the next request.
+     */
+    public function receivedShareFrom(User $patient): ?UserShare
+    {
+        return $this->receivedShares()->where('patient_id', $patient->id)->first();
     }
 
     /**
@@ -149,6 +180,26 @@ class User extends Authenticatable
             ->as('share')
             ->withPivot('id', 'permissions')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the notes prosthetists have written about this patient.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function specialistNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'patient_id');
+    }
+
+    /**
+     * Get the notes this prosthetist has written.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function authoredNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'author_id');
     }
 
     /**

@@ -191,7 +191,7 @@ export default function SignUpScreen() {
 									<ThemedText
 										variant="H2"
 										colorName={rule.valid ? "true" : "blue2"}
-										tx={rule.label}
+										tx={rule.label as ParseKeys}
 									/>
 								</View>
 							))}

@@ -268,8 +268,8 @@ export function GoalForm({ mode }: GoalFormProps) {
 	)
 }
 
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
+const getStyles = (colors: ThemeColors) => {
+	const styles = StyleSheet.create({
 		screen: { justifyContent: "space-between", flexDirection: "column", flex: 1 },
 		loading: { alignItems: "center", justifyContent: "center" },
 		formSection: { marginTop: 15 },
@@ -277,3 +277,5 @@ const getStyles = (colors: ThemeColors) =>
 		input: { backgroundColor: colors.bg_0 },
 		actions: { gap: 16, marginBottom: 16, alignItems: "center" },
 	})
+	return styles
+}
