@@ -360,6 +360,14 @@ const styles = StyleSheet.create({
 		borderRadius: 999,
 		borderWidth: 1,
 	},
+	themedInputWrapper: {
+		borderWidth: 1,
+		minHeight: 44,
+		paddingVertical: 0,
+		paddingHorizontal: 0,
+		justifyContent: "center",
+		borderRadius: 12,
+	},
 	repeatPasswordWrapper: {
 		flexDirection: "row",
 		alignItems: "center",

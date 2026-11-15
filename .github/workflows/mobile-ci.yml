@@ -3,19 +3,19 @@ name: Mobile CI
 on:
   pull_request:
     paths:
-      - 'mobile/**'
-      - '.github/workflows/mobile-ci.yml'
+      - "mobile/**"
+      - ".github/workflows/mobile-ci.yml"
 
   push:
     branches:
-      - '**'
-      - '!dependabot/**'
+      - "**"
+      - "!dependabot/**"
     paths:
-      - 'mobile/**'
+      - "mobile/**"
 
 permissions:
   contents: read
-  
+
 jobs:
   quality:
     name: Mobile Quality Checks
@@ -32,8 +32,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '20.19.4'
-          cache: 'npm'
+          node-version: "20.19.4"
+          cache: "npm"
           cache-dependency-path: mobile/package-lock.json
 
       - name: Install dependencies
@@ -47,3 +47,15 @@ jobs:
 
       - name: TypeScript check
         run: make typecheck
+        
+      # Fails when Expo-managed packages drift from the installed SDK version.
+      # Fix locally with: npx expo install --fix
+      - name: Expo dependency check
+        run: npx expo install --check
+ 
+      # Project health check (app config, duplicate native modules, etc.).
+      # TODO: remove continue-on-error once the app icon is square
+      # (expo-doctor currently fails on mp_logo_accent.png being 188x313).
+      - name: Expo doctor
+        continue-on-error: true
+        run: npx expo-doctor

@@ -1,17 +1,26 @@
 import { StyleProp, TextInput, TextInputProps, TextStyle, ViewStyle } from "react-native"
 import { ThemedView } from "./ThemedView"
+import { ThemedText } from "./ThemedText"
 import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 
-export type ThemedInputVariant = "email" | "password" | "regular" | "note" | "search"
+export type ThemedInputVariant =
+	"email" | "password" | "regular" | "note" | "search" | "money" | "float"
 
 export interface ThemedInputProps extends TextInputProps {
 	variant: ThemedInputVariant
+	currency?: string
 	textStyle?: StyleProp<TextStyle>
 	viewStyle?: StyleProp<ViewStyle>
 }
 
-export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedInputProps) => {
+export const ThemedInput = ({
+	variant,
+	currency,
+	textStyle,
+	viewStyle,
+	...props
+}: ThemedInputProps) => {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
 	const variantConfigs: Record<ThemedInputVariant, TextInputProps> = {
@@ -30,18 +39,44 @@ export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedI
 			autoCapitalize: "words",
 			autoCorrect: true,
 		},
-		note: {},
+		note: {
+			textAlignVertical: "top",
+			multiline: true,
+		},
 		search: {},
+		money: {
+			keyboardType: "numeric",
+		},
+		float: {
+			keyboardType: "decimal-pad",
+		},
+	}
+
+	const variantStyles: Record<ThemedInputVariant, ViewStyle> = {
+		email: {},
+		password: {},
+		regular: {},
+		note: {
+			minHeight: 90,
+		},
+		search: {},
+		money: {
+			flexDirection: "row",
+		},
+		float: {},
 	}
 
 	const variantProps = variantConfigs[variant]
+	const variantStyleProps = variantStyles[variant]
 
 	const commonTextStyle: TextStyle = {
 		fontSize: 16,
 		lineHeight: 20,
 		fontFamily: "Cabin-Medium",
+		flex: 1,
 		width: "100%",
 		paddingLeft: 16,
+		color: colors.graphite0,
 		paddingRight: 16,
 	}
 
@@ -50,14 +85,19 @@ export const ThemedInput = ({ variant, textStyle, viewStyle, ...props }: ThemedI
 			variant="wide"
 			colorName="bg_1"
 			borderColor="blue1"
-			style={[{ minHeight: 48, borderRadius: 15 }, viewStyle]}
+			style={[{ minHeight: 44, borderRadius: 15 }, variantStyleProps, viewStyle]}
 		>
 			<TextInput
 				{...variantProps}
 				{...props}
-				placeholderTextColor={colors.graphite0}
+				placeholderTextColor={props.placeholderTextColor ?? colors.graphite0}
 				style={[commonTextStyle, textStyle]}
 			/>
+			{variant === "money" && (
+				<ThemedText variant="H3" colorName="blue1" style={{ paddingRight: 16 }}>
+					{currency}
+				</ThemedText>
+			)}
 		</ThemedView>
 	)
 }

@@ -19,6 +19,18 @@ interface CalendarViewProps {
 	month: Date
 	selectedDate: Date
 	locale: string
+	onMonthChange: (month: Date) => void
+	onSelect: (date: Date) => void
+	onCancel: () => void
+	onApply: () => void
+interface CalendarWeek {
+	days: Date[]
+}
+
+interface CalendarViewProps {
+	month: Date
+	selectedDate: Date
+	locale: string
 	minimumDate?: Date
 	maximumDate?: Date
 	onMonthChange: (month: Date) => void
@@ -86,6 +98,38 @@ function getCalendarWeeks(month: Date): CalendarWeek[] {
 	})
 }
 
+function startOfCalendarMonth(date: Date): Date {
+	return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
+function shiftCalendarMonth(date: Date, offset: number): Date {
+	return new Date(date.getFullYear(), date.getMonth() + offset, 1)
+}
+
+function shiftCalendarYear(date: Date, offset: number): Date {
+	return new Date(date.getFullYear() + offset, date.getMonth(), 1)
+}
+
+function getCalendarWeeks(month: Date): CalendarWeek[] {
+	const firstDayOfMonth = startOfCalendarMonth(month)
+	const mondayOffset = (firstDayOfMonth.getDay() + 6) % 7
+	const gridStart = new Date(
+		firstDayOfMonth.getFullYear(),
+		firstDayOfMonth.getMonth(),
+		1 - mondayOffset
+	)
+
+	return Array.from({ length: 6 }, (_, weekIndex) => {
+		const days = Array.from({ length: 7 }, (_, dayIndex) => {
+			const day = new Date(gridStart)
+			day.setDate(gridStart.getDate() + weekIndex * 7 + dayIndex)
+			return day
+		})
+
+		return { days }
+	})
+}
+
 function isSameCalendarDay(left: Date, right: Date): boolean {
 	return (
 		left.getFullYear() === right.getFullYear() &&
@@ -98,8 +142,8 @@ function CalendarView({
 	month,
 	selectedDate,
 	locale,
-	minimumDate,
-	maximumDate,
+    minimumDate,
+    maximumDate,
 	onMonthChange,
 	onSelect,
 	onCancel,
@@ -171,16 +215,14 @@ function CalendarView({
 					{week.days.map((day) => {
 						const isSelected = isSameCalendarDay(day, selectedDate)
 						const isCurrentMonth = day.getMonth() === month.getMonth()
-						const disabled = !isSelectableDate(day, minimumDate, maximumDate)
 
 						return (
 							<Pressable
 								key={day.toISOString()}
 								style={[styles.dayCell, !isCurrentMonth && styles.outsideMonth]}
 								onPress={() => onSelect(day)}
-								disabled={disabled}
 								accessibilityRole="button"
-								accessibilityState={{ selected: isSelected, disabled }}
+								accessibilityState={{ selected: isSelected }}
 							>
 								<View
 									style={[
@@ -208,15 +250,10 @@ function CalendarView({
 				>
 					<View style={styles.cancelButtonContent}>
 						<IconX color={colors.graphite0} />
-						<ThemedText variant="H3" colorName="graphite0" tx="common.cancelDate" />
+						<ThemedText variant="H3" colorName="graphite0" tx="common.cancel" />
 					</View>
 				</ThemedView>
-				<ThemedView
-					colorName="blue2"
-					style={styles.actionButton}
-					onPress={onApply}
-					disabled={!isSelectableDate(selectedDate, minimumDate, maximumDate)}
-				>
+				<ThemedView colorName="blue2" style={styles.actionButton} onPress={onApply}>
 					<ThemedText
 						variant="H2"
 						colorName="bg_0"
@@ -231,24 +268,17 @@ function CalendarView({
 	)
 }
 
-export function DatePickerModal({
-	visible,
-	onClose,
-	onSave,
-	initialDate,
-	minimumDate,
-	maximumDate,
-}: DatePickerModalProps) {
+export function DatePickerModal({ visible, onClose, onSave, initialDate }: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
-	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(() =>
-		clampDate(initialDate ?? new Date(), minimumDate, maximumDate)
+	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
+		() => initialDate ?? new Date()
 	)
 	const [calendarMonth, setCalendarMonth] = useState<Date>(() =>
-		startOfCalendarMonth(clampDate(initialDate ?? new Date(), minimumDate, maximumDate))
+		startOfCalendarMonth(initialDate ?? new Date())
 	)
 
 	const handleOpen = () => {
-		const targetDate = clampDate(initialDate ?? new Date(), minimumDate, maximumDate)
+		const targetDate = initialDate ?? new Date()
 		setCalendarSelectedDate(targetDate)
 		setCalendarMonth(startOfCalendarMonth(targetDate))
 	}
@@ -277,16 +307,14 @@ export function DatePickerModal({
 					month={calendarMonth}
 					selectedDate={calendarSelectedDate}
 					locale={i18n.language}
-					minimumDate={minimumDate}
-					maximumDate={maximumDate}
+                    minimumDate={minimumDate}
+                    maximumDate={maximumDate}
 					onMonthChange={setCalendarMonth}
 					onSelect={setCalendarSelectedDate}
 					onCancel={onClose}
 					onApply={() => {
-						if (isSelectableDate(calendarSelectedDate, minimumDate, maximumDate)) {
-							onSave(calendarSelectedDate)
-							onClose()
-						}
+						onSave(calendarSelectedDate)
+						onClose()
 					}}
 				/>
 			</View>

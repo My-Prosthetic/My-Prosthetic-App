@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, usePathname } from "expo-router"
+import { Redirect, Tabs, useSegments usePathname  } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
@@ -39,13 +39,12 @@ export default function TabsLayout() {
 
 	const provideRenderButton = (variant: "home" | "journal" | "profile" | "settings") => {
 		return function renderButton(props: BottomTabBarButtonProps) {
-			const isFocused =
-				variant === "home"
-					? pathname.startsWith("/home") ||
-						pathname.startsWith("/funding") ||
-						pathname.startsWith("/prosthesis")
-					: pathname.startsWith(`/${variant}`)
-
+            const isFocused =
+                variant === "home"
+                    ? pathname.startsWith("/home") ||
+                        pathname.startsWith("/funding") ||
+                        pathname.startsWith("/prosthesis")
+                    : pathname.startsWith(`/${variant}`)
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
 
@@ -73,7 +72,7 @@ export default function TabsLayout() {
 		}
 	}
 
-	const isSettingsRoute = pathname.startsWith("/settings")
+    const isSettingsRoute = pathname.startsWith("/settings")
 
 	return (
 		<View
@@ -84,15 +83,16 @@ export default function TabsLayout() {
 		>
 			{status === "GUEST" && !isSettingsRoute && <GuestBanner />}
 			<Tabs
+				backBehavior="history"
 				screenOptions={{
 					headerShown: false,
 					tabBarStyle: {
-						height: 80,
-						paddingBottom: 0,
-						marginBottom: insets.bottom - 1,
+						height: 80 + insets.bottom,
 						borderTopLeftRadius: 15,
 						borderTopRightRadius: 15,
 						backgroundColor: colors.bg_0,
+						paddingBottom: 0,
+						marginBottom: insets.bottom - 1,
 					},
 					tabBarItemStyle: { flex: 1 },
 				}}
@@ -119,6 +119,12 @@ export default function TabsLayout() {
 					name="settings"
 					options={{
 						tabBarButton: provideRenderButton("settings"),
+					}}
+				/>
+				<Tabs.Screen
+					name="(independent)"
+					options={{
+						href: null,
 					}}
 				/>
 			</Tabs>

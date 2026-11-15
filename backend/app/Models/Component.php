@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -45,6 +46,23 @@ class Component extends Model
         return $this->belongsTo(Prosthesis::class);
     }
 
+    /**
+     * @return HasMany<Incident, $this>
+     */
+    public function incidents(): HasMany
+    {
+        return $this->hasMany(Incident::class);
+    }
+
+    /**
+     * @return array{
+     *     type: 'App\\Enums\\ComponentType',
+     *     is_test_socket: 'boolean',
+     *     installed_at: 'datetime',
+     *     replacement_at: 'datetime',
+     *     warranty_until: 'datetime',
+     * }
+     */
     protected function casts(): array
     {
         return [

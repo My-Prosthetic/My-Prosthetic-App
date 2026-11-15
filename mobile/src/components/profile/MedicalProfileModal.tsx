@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react"
-import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native"
+import { Modal, Pressable, StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 
 import type { AddMode, Condition, Medication } from "./types"
+import { ThemedInput } from "../ThemedInput"
 
 const CONDITION_NAME_MAX_LENGTH = 100
 const MEDICATION_NAME_MAX_LENGTH = 100
@@ -122,11 +123,7 @@ export function MedicalProfileModal({
 			<Pressable style={styles.modalBackdrop} onPress={handleClose}>
 				<View
 					pointerEvents="none"
-					style={[
-						StyleSheet.absoluteFill,
-						styles.modalOverlay,
-						{ backgroundColor: colors.primary_base },
-					]}
+					style={[StyleSheet.absoluteFill, styles.modalOverlay, { backgroundColor: colors.blue2 }]}
 				/>
 
 				<Pressable
@@ -135,74 +132,53 @@ export function MedicalProfileModal({
 				>
 					<ThemedText
 						tx={mode === "condition" ? "profile.addConditionTitle" : "profile.addMedicationTitle"}
-						variant="subTitle1"
-						colorName="primary_base"
+						variant="H3"
+						colorName="blue2"
 						style={styles.modalTitle}
 					/>
 
 					{mode === "condition" ? (
 						<>
-							<TextInput
+							<ThemedInput
+								variant="regular"
 								value={conditionName}
 								onChangeText={setConditionName}
 								maxLength={CONDITION_NAME_MAX_LENGTH}
 								placeholder={t("profile.conditionNamePlaceholder")}
-								placeholderTextColor={colors.secondary_base_0c}
-								style={[
-									styles.modalInput,
-									{
-										borderColor: colors.primary_base_3,
-										color: colors.primary_base,
-									},
-								]}
 							/>
 
 							{isDuplicate && (
 								<ThemedText
 									tx="profile.duplicateCondition"
-									variant="subTitle2"
-									colorName="secondary_base_0c"
+									variant="H4"
+									colorName="false"
 									style={styles.validationMessage}
 								/>
 							)}
 						</>
 					) : (
 						<>
-							<TextInput
+							<ThemedInput
+								variant="regular"
 								value={medicationName}
 								onChangeText={setMedicationName}
 								maxLength={MEDICATION_NAME_MAX_LENGTH}
 								placeholder={t("profile.medicationNamePlaceholder")}
-								placeholderTextColor={colors.secondary_base_0c}
-								style={[
-									styles.modalInput,
-									{
-										borderColor: colors.primary_base_3,
-										color: colors.primary_base,
-									},
-								]}
 							/>
 
-							<TextInput
+							<ThemedInput
+								variant="regular"
 								value={medicationUsage}
 								onChangeText={setMedicationUsage}
 								maxLength={MEDICATION_USAGE_MAX_LENGTH}
 								placeholder={t("profile.medicationUsagePlaceholder")}
-								placeholderTextColor={colors.secondary_base_0c}
-								style={[
-									styles.modalInput,
-									{
-										borderColor: colors.primary_base_3,
-										color: colors.primary_base,
-									},
-								]}
 							/>
 
 							{isDuplicate && (
 								<ThemedText
 									tx="profile.duplicateMedication"
-									variant="subTitle2"
-									colorName="secondary_base_0c"
+									variant="H4"
+									colorName="false"
 									style={styles.validationMessage}
 								/>
 							)}
@@ -212,9 +188,9 @@ export function MedicalProfileModal({
 					<View style={styles.modalActions}>
 						<Pressable
 							onPress={handleClose}
-							style={[styles.modalButton, { borderColor: colors.primary_base }]}
+							style={[styles.modalButton, { borderColor: colors.graphite0 }]}
 						>
-							<ThemedText tx="profile.cancel" variant="subTitle2" colorName="primary_base" />
+							<ThemedText tx="profile.cancel" variant="H4" colorName="graphite0" />
 						</Pressable>
 
 						<Pressable
@@ -222,14 +198,14 @@ export function MedicalProfileModal({
 							disabled={isSaving || !canSave}
 							style={[
 								styles.modalButton,
-								{ backgroundColor: colors.primary_base },
+								{ backgroundColor: colors.blue2 },
 								(isSaving || !canSave) && styles.disabledButton,
 							]}
 						>
 							<ThemedText
 								tx={isSaving ? "profile.saving" : "profile.save"}
-								variant="subTitle2"
-								colorName="accent_base"
+								variant="H5"
+								colorName="bg_0"
 							/>
 						</Pressable>
 					</View>
@@ -252,20 +228,12 @@ const styles = StyleSheet.create({
 		width: "100%",
 		borderRadius: 18,
 		padding: 18,
+		gap: 8,
 	},
 	modalTitle: {
 		marginBottom: 14,
 	},
-	modalInput: {
-		width: "100%",
-		minHeight: 44,
-		borderWidth: 1,
-		borderRadius: 12,
-		paddingHorizontal: 12,
-		marginBottom: 12,
-	},
 	validationMessage: {
-		marginTop: -4,
 		marginBottom: 12,
 	},
 	modalActions: {

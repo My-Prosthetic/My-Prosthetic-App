@@ -122,6 +122,9 @@ The `amount` is stored in the smallest currency unit used by the mobile app (for
 example, PLN grosze: `125000` represents `1250.00 PLN`). Supported sources are
 `family`, `fundraiser`, `grant`, `savings`, and `other`.
 
+Prosthetists receive `403` on both endpoints, whatever their grant covers; the
+wallet is never shared.
+
 Run the focused authentication tests from this directory with:
 
 ```bash
@@ -182,14 +185,156 @@ cannot share with themselves: the model rejects it on every driver, and
 PostgreSQL also enforces it with the `user_shares_distinct_participants` CHECK
 constraint.
 
-This is storage only. Specialist search, sharing endpoints, role/resource
-validation, component visibility, and effective authorization remain out of
-scope; a stored share never authorizes a request on its own.
+The model itself does not check roles or record ownership; the sharing
+endpoints below validate both.
 
 Run the focused persistence checks from this directory:
 
 ```bash
 php vendor/bin/phpunit tests/Feature/UserShareTest.php tests/Unit/SharePermissionsTest.php
+```
+
+## Sharing API
+
+Authenticated patients find prosthetists and manage which information each one
+may see through the mobile API. Every endpoint requires `auth:sanctum` and is
+available to patients only; prosthetists and administrators receive `403`.
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/specialists/search?q=…&page=…` | `GET` | Lists matching prosthetists as `{ id, name }`, 20 per page |
+| `/api/shares` | `GET` | Lists the patient's current grants, ordered by specialist name |
+| `/api/shares` | `POST` | Creates a grant from a prosthetist's UUID `specialist_id` and `permissions`; `201`, or `409` if one already exists |
+| `/api/shares/{specialist}` | `PUT` | Replaces the `permissions` of the grant for that prosthetist; `404` if there is none |
+| `/api/shares/{specialist}` | `DELETE` | Revokes (permanently deletes) the grant for that prosthetist; `204`, or `404` if there is none |
+
+A grant is addressed by the prosthetist's user id; a patient has at most one
+grant per prosthetist. Grants are responses like:
+
+```json
+{
+	"specialist": { "id": "<uuid>", "name": "Jan Kowalski" },
+	"permissions": { "medical_history": true, "prostheses": ["<uuid>"], "incidents": [] },
+	"created_at": "<ISO-8601>",
+	"updated_at": "<ISO-8601>"
+}
+```
+
+`permissions` is required and is an object; missing keys mean "not selected",
+so `{}` is a valid grant that shares nothing. `medical_history` is a boolean,
+`prostheses` is a list of UUIDs of the patient's own, non-deleted prostheses,
+and `incidents` must be absent or empty until incident sharing is supported.
+Unknown keys or malformed values return `422`. `PUT` replaces the whole
+selection; narrowing it to nothing keeps the grant, and only `DELETE` revokes it.
+What a grant lets a prosthetist read is described in
+[Prosthetist access to patient records](#prosthetist-access-to-patient-records).
+
+### Specialist search
+
+`q` is required, 3 to 100 characters after trimming, with at most 5 words. A
+prosthetist matches when every word appears in their name, in any order,
+ignoring letter case and Polish diacritics (`pawelka`, `Pawełka` and `PAWEŁKA`
+are equivalent). `%` and `_` are matched literally. The whole query also
+matches a prosthetist's **Specialist Code** exactly, ignoring case, spaces,
+hyphens, and `O`/`I`/`L` typed for `0`/`1`. Results never include patients,
+emails or codes, and are ordered by name, 20 per page. `page` is optional and
+starts at 1; `links.next` is the URL of the next page, or `null` on the last
+one. The endpoint allows `SPECIALIST_SEARCH_RATE_LIMIT` requests per minute per
+user (30 by default).
+
+Every prosthetist gets a unique 8-character Specialist Code (Crockford base32,
+without `I`, `L`, `O` and `U`) when the account is created. It appears as
+`specialist_code` in the prosthetist's own profile, login and registration
+responses, and is `null` for other roles.
+
+Run the focused sharing API tests from this directory:
+
+```bash
+php vendor/bin/phpunit tests/Feature/SpecialistSearchTest.php tests/Feature/SpecialistCodeTest.php tests/Feature/ShareApiTest.php tests/Unit/SpecialistCodeTest.php
+```
+
+## Prosthetist access to patient records
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/patients/{patient}/prostheses` | `GET` | Lists the prostheses the caller may see, ordered by name; may be empty |
+| `/api/patients/{patient}/prostheses/{prosthesis}` | `GET` | Returns one prosthesis |
+
+Both require `auth:sanctum`. The patient sees all of their non-deleted
+prostheses; a prosthetist sees only the non-deleted ones selected in the
+patient's current grant. The grant is checked on every request, so narrowing or
+revoking it takes effect on the next read. The list is not paginated.
+
+Each prosthesis has `id`, `name`, `side`, `limb_type`, `amputation_level`,
+`replacement_at`, `created_at`, `updated_at`, and `components`, ordered by
+`installed_at`. Each component has `id`, `type`, `name`, `manufacturer`, `model`,
+`serial_number`, `is_test_socket`, `installed_at`, `replacement_at`, and
+`warranty_until`.
+
+Every refusal is the same `403`, whether the record does not exist, belongs to
+someone else, is deleted, or is not shared, so clients must not expect `404`
+for a missing record. Unauthenticated requests receive `401`.
+
+Run the focused access tests from this directory:
+
+```bash
+php vendor/bin/phpunit tests/Feature/PatientProsthesisAccessTest.php
+```
+
+## Specialist notes
+
+| Endpoint | Method | Payload/result |
+| --- | --- | --- |
+| `/api/patients/{patient}/notes` | `GET` | Lists the notes the caller may see, newest first, 20 per page; optional `type` filter |
+| `/api/patients/{patient}/notes` | `POST` | Adds a note from required `type` (`technical_note` or `recommendation`) and `content` (up to 5000 characters) |
+| `/api/patients/{patient}/notes/{specialistNote}` | `PUT` | Corrects the note from required `content` |
+
+A prosthetist holding a grant from the patient adds notes of both kinds. The
+patient reads their recommendations; a prosthetist reads their own notes, and
+every note of the patient when the grant covers the medical history. The author
+corrects their note while they hold a grant: the replaced text is kept as a
+revision and `edited_at` is set. Every refusal is the same `403`.
+
+Each note has `id`, `type`, `content`, `author` (`id` and `name`, or `null` once
+the author's account is deleted), `created_at`, `updated_at`, and `edited_at`.
+The list is cursor-paginated: follow `links.next` until it is `null`. Note text
+and revisions are encrypted at rest.
+
+`php artisan db:seed` adds the prosthetist `demo.prosthetist@example.com`
+(password `password`) with a grant from `prosthesis.patient@example.com` and
+four notes, one of them corrected.
+
+Run the focused tests from this directory:
+
+```bash
+php artisan test --filter=SpecialistNote
+```
+
+## Incident log persistence
+
+An `Incident` belongs to one of the patient's prostheses and may point to one of
+its components. `IncidentMedia` rows reference the incident's photos and voice notes.
+
+| Relation | Returns |
+|---|---|
+| `User::incidents()` | The patient's incidents across all prostheses (`hasManyThrough`) |
+| `Prosthesis::incidents()` / `Component::incidents()` | Incidents of that equipment (`hasMany`) |
+| `Incident::media()` | Photos and voice notes (`hasMany`) |
+
+`type`, `activity`, `intensity`, `description` and `pain_point` are encrypted
+with `APP_KEY`, so they cannot be filtered or sorted in SQL. Losing `APP_KEY`
+loses this data; rotate it only through `APP_PREVIOUS_KEYS`. `pain_point` is
+cast to the `App\ValueObjects\PainPoint` value object (`x` and `y` between 0 and
+1, and a socket `view`). A media `path` is relative to the private `local` disk.
+
+Incidents are soft-deleted and stay hidden while their prosthesis is
+soft-deleted. Permanently deleting a component sets `component_id` to `null`, and
+deleting the patient cascades to incidents and media. Foreign keys are not mass
+assignable. The model does not check that the component belongs to the same
+prosthesis, the intensity range or media limits; the API/sync layer must.
+
+```bash
+php artisan test --filter=IncidentTest
 ```
 
 ## About Laravel

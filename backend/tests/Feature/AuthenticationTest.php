@@ -28,12 +28,13 @@ class AuthenticationTest extends TestCase
         $response
             ->assertCreated()
             ->assertJsonStructure([
-                'data' => ['id', 'name', 'email', 'role', 'email_verified_at'],
+                'data' => ['id', 'name', 'email', 'role', 'specialist_code', 'email_verified_at'],
                 'token',
                 'token_type',
             ])
             ->assertJsonPath('data.email', 'jane.patient@example.com')
             ->assertJsonPath('data.role', 'patient')
+            ->assertJsonPath('data.specialist_code', null)
             ->assertJsonPath('token_type', 'Bearer')
             ->assertJsonMissingPath('data.password');
 
