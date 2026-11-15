@@ -13,6 +13,7 @@ import { initializeDatabase } from "@/db/initialize"
 import { getDatabaseSession } from "@/db/client"
 import { SelectedProsthesisProvider } from "@/context/SelectedProsthesisContext"
 import { SettingsProvider } from "@/context/SettingsContext"
+import { JournalFilterProvider } from "@/context/JournalFilterContext"
 
 //TODO tx
 
@@ -42,7 +43,7 @@ function RootNavigationLayout({
 			.catch((error: unknown) => {
 				if (isMounted) {
 					setMigrationError(
-						error instanceof Error ? error : new Error("Nieznany b┼é─ůd seedowania katalogu")
+						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
 					)
 				}
 			})
@@ -73,7 +74,7 @@ function RootNavigationLayout({
 	if (migrationError) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>B┼é─ůd migracji bazy danych: {migrationError.message}</Text>
+				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
 			</View>
 		)
 	}

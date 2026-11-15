@@ -139,11 +139,11 @@ export default function LoginScreen() {
 
 				{/* Sekcja Przycisków Akcji */}
 				<View style={styles.actionsSection}>
-					{errorMessage && (
+					{errorMessage ? (
 						<ThemedText accessibilityRole="alert" variant="H3" colorName="false">
 							{errorMessage}
 						</ThemedText>
-					)}
+					) : null}
 
 					{/* Przycisk ZALOGUJ */}
 					<ThemedView

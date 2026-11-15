@@ -5,16 +5,23 @@ namespace Database\Seeders;
 use App\Enums\FundingSource;
 use App\Models\Goal;
 use App\Models\User;
+use Database\Seeders\Concerns\SeedsDemoData;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
 class WalletEntrySeeder extends Seeder
 {
+    use SeedsDemoData;
+
     /**
      * Seed wallet entries for a sample patient.
      */
     public function run(): void
     {
+        if (! $this->isDemoEnvironment()) {
+            return;
+        }
+
         $patient = User::query()->firstWhere('email', 'wallet.patient@example.com');
 
         if ($patient === null) {

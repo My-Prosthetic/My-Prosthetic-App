@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { Alert } from "react-native"
 import * as SecureStore from "expo-secure-store"
+import Storage from "expo-sqlite/kv-store"
 import { useTranslation } from "react-i18next"
 import { authService } from "@/src/services/authService"
 import { purgeDatabase } from "@/db/purgeDataBase"
@@ -11,6 +12,7 @@ import {
 	loginLocalGuest,
 	restoreLocalAccount,
 } from "@/src/services/localAccountService"
+import { clearSettingsPreferences } from "@/src/hooks/useSettingsPreferences"
 
 export type AuthStatus = "INITIALIZING" | "UNAUTHENTICATED" | "AUTHENTICATED" | "GUEST"
 
@@ -20,9 +22,40 @@ interface AuthContextValue {
 	loginWithToken: (token: string, user: AuthenticatedUser) => Promise<boolean>
 	loginAsGuest: () => Promise<boolean>
 	logout: () => Promise<void>
+	closeDeletedAccountSession: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+
+const DELETED_ACCOUNT_CLEANUP_KEY = "myprosthetic.settings.deletedAccountCleanupPending.v1"
+
+async function finishDeletedAccountCleanup(): Promise<void> {
+	let cleanupError: unknown = null
+	const attempt = async (action: () => Promise<unknown>) => {
+		try {
+			await action()
+		} catch (error) {
+			cleanupError ??= error
+		}
+	}
+
+	await attempt(() => SecureStore.deleteItemAsync("auth_token"))
+	await attempt(() => SecureStore.deleteItemAsync("is_guest"))
+	await attempt(purgeDatabase)
+	await attempt(clearSettingsPreferences)
+
+	if (cleanupError) {
+		await Storage.setItem(DELETED_ACCOUNT_CLEANUP_KEY, "true")
+		throw cleanupError
+	}
+	await Storage.removeItem(DELETED_ACCOUNT_CLEANUP_KEY)
+}
+
+async function resumeDeletedAccountCleanupIfNeeded(): Promise<void> {
+	if ((await Storage.getItem(DELETED_ACCOUNT_CLEANUP_KEY)) === "true") {
+		await finishDeletedAccountCleanup()
+	}
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [status, setStatus] = useState<AuthStatus>("INITIALIZING")
@@ -56,6 +89,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			setStatus("INITIALIZING")
 			setSessionKey(await loginLocalAccount(token, user))
+            await resumeDeletedAccountCleanupIfNeeded()
+            await purgeDatabase()
+            await SecureStore.deleteItemAsync("is_guest")
+            await SecureStore.setItemAsync("auth_token", token)
 			setStatus("AUTHENTICATED")
 			return true
 		} catch (error) {
@@ -71,6 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			setStatus("INITIALIZING")
 			setSessionKey(await loginLocalGuest())
+            await resumeDeletedAccountCleanupIfNeeded()
+            await purgeDatabase()
+            await SecureStore.deleteItemAsync("auth_token")
+            await SecureStore.setItemAsync("is_guest", "true")
 			setStatus("GUEST")
 			return true
 		} catch (error) {
@@ -110,8 +151,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		setStatus("UNAUTHENTICATED")
 	}
 
+	const closeDeletedAccountSession = async (): Promise<void> => {
+		let markerError: unknown = null
+		try {
+			await Storage.setItem(DELETED_ACCOUNT_CLEANUP_KEY, "true")
+		} catch (error) {
+			markerError = error
+			console.error("Could not persist account deletion cleanup marker:", error)
+		}
+		let cleanupError: unknown = null
+		try {
+			await finishDeletedAccountCleanup()
+		} catch (error) {
+			cleanupError = error
+			console.error("Local cleanup after account deletion was incomplete:", error)
+		}
+		setStatus("UNAUTHENTICATED")
+		if (cleanupError) throw cleanupError
+		if (markerError) console.warn("Local cleanup succeeded despite marker write failure")
+	}
+
 	return (
-		<AuthContext.Provider value={{ status, sessionKey, loginWithToken, loginAsGuest, logout }}>
+		<AuthContext.Provider
+			value={{ status, sessionKey, loginWithToken, loginAsGuest, logout, closeDeletedAccountSession }}
+		>
 			{children}
 		</AuthContext.Provider>
 	)

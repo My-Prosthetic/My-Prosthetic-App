@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -110,6 +112,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the patient's Incident Log across all their prostheses.
+     *
+     * @return HasManyThrough<Incident, Prosthesis, $this>
+     */
+    public function incidents(): HasManyThrough
+    {
+        return $this->hasManyThrough(Incident::class, Prosthesis::class);
+    }
+
+    /**
+     * @return HasOne<MedicalProfile, $this>
+     */
+    public function medicalProfile(): HasOne
+    {
+        return $this->hasOne(MedicalProfile::class);
+    }
+
+    /**
      * Get the shares this patient has granted.
      *
      * @return HasMany<UserShare, $this>
@@ -160,6 +180,26 @@ class User extends Authenticatable
             ->as('share')
             ->withPivot('id', 'permissions')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the notes prosthetists have written about this patient.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function specialistNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'patient_id');
+    }
+
+    /**
+     * Get the notes this prosthetist has written.
+     *
+     * @return HasMany<SpecialistNote, $this>
+     */
+    public function authoredNotes(): HasMany
+    {
+        return $this->hasMany(SpecialistNote::class, 'author_id');
     }
 
     /**
