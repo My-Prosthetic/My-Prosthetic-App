@@ -138,7 +138,10 @@ export default function SettingsScreen() {
 							style={styles.sectionTitle}
 						/>
 
-						<SettingsRow tx="settings.rows.export" onPress={() => router.push("/settings/export")} />
+						<SettingsRow
+							tx="settings.rows.export"
+							onPress={() => router.push("/settings/export")}
+						/>
 					</View>
 
 					<View style={styles.section}>
