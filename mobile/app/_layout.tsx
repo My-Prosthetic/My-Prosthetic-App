@@ -112,7 +112,9 @@ function SessionNavigation(props: { fontsLoaded: boolean; fontsError: Error | nu
 	}, [sessionKey, status])
 	return (
 		<SelectedProsthesisProvider key={sessionKey ?? "signed-out"}>
-			<RootNavigationLayout {...props} />
+			<JournalFilterProvider>
+				<RootNavigationLayout {...props} />
+			</JournalFilterProvider>
 		</SelectedProsthesisProvider>
 	)
 }

@@ -156,7 +156,10 @@ export default function SettingsScreen() {
 							tx="settings.rows.appearanceLanguage"
 							onPress={() => router.push("/settings/display")}
 						/>
-						<SettingsRow tx="settings.rows.notifications" />
+						<SettingsRow
+							tx="settings.rows.notifications"
+							onPress={() => router.push("/settings/notifications")}
+						/>
 					</View>
 
 					<View style={styles.section}>
