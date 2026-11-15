@@ -299,8 +299,6 @@ export default function AccumulatedFundsScreen() {
 
 const getStyles = (colors: ThemeColors) => {
 	const styles = StyleSheet.create({
-const getStyles = (colors: ThemeColors) =>
-	StyleSheet.create({
 		summaryCard: {
 			padding: 16,
 			flexDirection: "column",
