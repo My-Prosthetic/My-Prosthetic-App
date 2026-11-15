@@ -12,16 +12,16 @@ import InfoIcon from "@/assets/icons/info.svg"
 
 export default function NotificationsScreen() {
 	const { t } = useTranslation()
-	const { colors, themeType } = useTheme()
+	const { colors, highContrast } = useTheme()
 	const { preferences, ready, updatePreference } = useSettingsPreferences()
 	const timeOptions = useMemo(
 		() => [
-			{ value: "none", label: t("settings34.notifications.doNotNotify") },
+			{ value: "none", label: t("settings.notifications.doNotNotify") },
 			...Array.from({ length: 48 }, (_, index) => {
 				const hour = String(Math.floor(index / 2)).padStart(2, "0")
 				const minute = index % 2 === 0 ? "00" : "30"
 				const time = `${hour}:${minute}`
-				return { value: time, label: `${time} (${t("settings34.notifications.everyDay")})` }
+				return { value: time, label: `${time} (${t("settings.notifications.everyDay")})` }
 			}),
 		],
 		[t]
@@ -29,16 +29,16 @@ export default function NotificationsScreen() {
 
 	return (
 		<View style={[styles.screen, { backgroundColor: colors.bg_1 }]}>
-			<ThemedHeader tx="settings34.notifications.title" style={styles.header} />
+			<ThemedHeader tx="settings.notifications.title" style={styles.header} />
 			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 				<ThemedText variant="H3" colorName="blue2" style={styles.sectionTitle}>
-					{t("settings34.notifications.sectionNotifications")}
+					{t("settings.notifications.sectionNotifications")}
 				</ThemedText>
 				<SettingsRow
-					title={t("settings34.notifications.push")}
+					title={t("settings.notifications.push")}
 					right={
 						<SettingsToggle
-							label={t("settings34.notifications.push")}
+							label={t("settings.notifications.push")}
 							value={preferences.pushEnabled}
 							disabled={!ready}
 							onValueChange={(value) => updatePreference("pushEnabled", value)}
@@ -46,10 +46,10 @@ export default function NotificationsScreen() {
 					}
 				/>
 				<SettingsRow
-					title={t("settings34.notifications.email")}
+					title={t("settings.notifications.email")}
 					right={
 						<SettingsToggle
-							label={t("settings34.notifications.email")}
+							label={t("settings.notifications.email")}
 							value={preferences.emailEnabled}
 							disabled={!ready}
 							onValueChange={(value) => updatePreference("emailEnabled", value)}
@@ -62,14 +62,14 @@ export default function NotificationsScreen() {
 					colorName="blue2"
 					style={[styles.sectionTitle, styles.secondSection]}
 				>
-					{t("settings34.notifications.sectionHealth")}
+					{t("settings.notifications.sectionHealth")}
 				</ThemedText>
 				<SettingsRow
-					title={t("settings34.notifications.recommendations")}
-					description={t("settings34.notifications.recommendationsDescription")}
+					title={t("settings.notifications.recommendations")}
+					description={t("settings.notifications.recommendationsDescription")}
 					right={
 						<SettingsToggle
-							label={t("settings34.notifications.recommendations")}
+							label={t("settings.notifications.recommendations")}
 							value={preferences.newRecommendations}
 							disabled={!ready}
 							onValueChange={(value) => updatePreference("newRecommendations", value)}
@@ -77,11 +77,11 @@ export default function NotificationsScreen() {
 					}
 				/>
 				<SettingsRow
-					title={t("settings34.notifications.measurements")}
-					description={t("settings34.notifications.measurementsDescription")}
+					title={t("settings.notifications.measurements")}
+					description={t("settings.notifications.measurementsDescription")}
 					right={
 						<SettingsToggle
-							label={t("settings34.notifications.measurements")}
+							label={t("settings.notifications.measurements")}
 							value={preferences.stumpMeasurements}
 							disabled={!ready}
 							onValueChange={(value) => updatePreference("stumpMeasurements", value)}
@@ -90,11 +90,11 @@ export default function NotificationsScreen() {
 				/>
 
 				<ThemedText variant="H3" colorName="blue2" style={styles.timeLabel}>
-					{t("settings34.notifications.measurementTime")}
+					{t("settings.notifications.measurementTime")}
 				</ThemedText>
 				<DropdownSelect
-					label={t("settings34.notifications.measurementTime")}
-					placeholder={t("settings34.notifications.chooseTime")}
+					label={t("settings.notifications.measurementTime")}
+					placeholder={t("settings.notifications.chooseTime")}
 					options={timeOptions}
 					value={preferences.measurementTime}
 					onChange={(value) => updatePreference("measurementTime", value)}
@@ -102,14 +102,14 @@ export default function NotificationsScreen() {
 				<View
 					style={[
 						styles.note,
-						{ backgroundColor: themeType === "high-contrast" ? colors.bg_0 : colors.blue0 },
+						{ backgroundColor: highContrast ? colors.bg_0 : colors.blue0 },
 					]}
 				>
 					<View style={[styles.infoCircle, { backgroundColor: colors.blue2 }]}>
 						<InfoIcon color={colors.bg_0} width={18} height={18} />
 					</View>
 					<ThemedText variant="H4" colorName="blue2" style={styles.noteText}>
-						{t("settings34.notifications.info")}
+						{t("settings.notifications.info")}
 					</ThemedText>
 				</View>
 			</ScrollView>

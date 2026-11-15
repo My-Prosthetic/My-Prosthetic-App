@@ -42,15 +42,15 @@ export default function ChangePasswordScreen() {
 		if (saving) return
 		setAttemptedSubmit(true)
 		if (!currentPassword || !newPassword || !confirmPassword) {
-			Alert.alert(t("settings34.common.error"), t("settings34.password.required"))
+			Alert.alert(t("settings.common.error"), t("settings.password.required"))
 			return
 		}
 		if (newPassword !== confirmPassword) {
-			Alert.alert(t("settings34.common.error"), t("settings34.password.mismatch"))
+			Alert.alert(t("settings.common.error"), t("settings.password.mismatch"))
 			return
 		}
 		if (newPassword === currentPassword) {
-			Alert.alert(t("settings34.common.error"), t("settings34.password.sameAsCurrent"))
+			Alert.alert(t("settings.common.error"), t("settings.password.sameAsCurrent"))
 			return
 		}
 		if (missingRequirements.length > 0) return
@@ -63,12 +63,12 @@ export default function ChangePasswordScreen() {
 			setConfirmPassword("")
 			setAttemptedSubmit(false)
 			setShowConfirmError(false)
-			Alert.alert(t("settings34.password.successTitle"), t("settings34.password.successMessage"), [
-				{ text: t("settings34.common.ok"), onPress: () => router.back() },
+			Alert.alert(t("settings.password.successTitle"), t("settings.password.successMessage"), [
+				{ text: t("settings.common.ok"), onPress: () => router.back() },
 			])
 		} catch (error: unknown) {
 			const kind = error instanceof AccountApiError ? error.kind : "server"
-			Alert.alert(t("settings34.common.error"), t(`settings34.api.${kind}`))
+			Alert.alert(t("settings.common.error"), t(`settings.api.${kind}`))
 		} finally {
 			setSaving(false)
 		}
@@ -85,14 +85,14 @@ export default function ChangePasswordScreen() {
 				variant="forms"
 				topSectionRender={() => (
 					<ThemedText variant="H0" colorName="bg_0" style={styles.title}>
-						{t("settings34.password.title")}
+						{t("settings.password.title")}
 					</ThemedText>
 				)}
 				bottomSectionRender={() => (
 					<View style={styles.form}>
 						<View style={styles.fieldGroup}>
 							<ThemedText variant="H1" colorName="blue2" style={styles.fieldLabel}>
-								{t("settings34.password.current")}
+								{t("settings.password.current")}
 							</ThemedText>
 							<ThemedInput
 								variant="password"
@@ -101,14 +101,14 @@ export default function ChangePasswordScreen() {
 								viewStyle={styles.input}
 								placeholder=""
 								autoComplete="current-password"
-								accessibilityLabel={t("settings34.password.current")}
+								accessibilityLabel={t("settings.password.current")}
 								editable={!saving}
 							/>
 						</View>
 
 						<View style={[styles.fieldGroup, styles.nextField]}>
 							<ThemedText variant="H1" colorName="blue2" style={styles.fieldLabel}>
-								{t("settings34.password.new")}
+								{t("settings.password.new")}
 							</ThemedText>
 							<View style={styles.inputWrapper}>
 								<ThemedInput
@@ -119,7 +119,7 @@ export default function ChangePasswordScreen() {
 									textStyle={styles.inputWithIcon}
 									placeholder=""
 									autoComplete="new-password"
-									accessibilityLabel={t("settings34.password.new")}
+									accessibilityLabel={t("settings.password.new")}
 									editable={!saving}
 								/>
 								{newPasswordInvalid ? (
@@ -154,7 +154,7 @@ export default function ChangePasswordScreen() {
 									))}
 									{sameAsCurrent && (
 										<ThemedText variant="H4" colorName="false">
-											{t("settings34.password.sameAsCurrent")}
+											{t("settings.password.sameAsCurrent")}
 										</ThemedText>
 									)}
 								</ThemedView>
@@ -163,7 +163,7 @@ export default function ChangePasswordScreen() {
 
 						<View style={[styles.fieldGroup, styles.nextField]}>
 							<ThemedText variant="H1" colorName="blue2" style={styles.fieldLabel}>
-								{t("settings34.password.confirm")}
+								{t("settings.password.confirm")}
 							</ThemedText>
 							<View style={styles.inputWrapper}>
 								<ThemedInput
@@ -177,14 +177,14 @@ export default function ChangePasswordScreen() {
 									textStyle={styles.inputWithIcon}
 									placeholder=""
 									autoComplete="new-password"
-									accessibilityLabel={t("settings34.password.confirm")}
+									accessibilityLabel={t("settings.password.confirm")}
 									editable={!saving}
 								/>
 								{confirmInvalid ? (
 									<Pressable
 										onPress={() => setShowConfirmError((opened) => !opened)}
 										accessibilityRole="button"
-										accessibilityLabel={t("settings34.password.mismatch")}
+										accessibilityLabel={t("settings.password.mismatch")}
 										accessibilityState={{ expanded: showConfirmError }}
 										style={styles.feedbackIcon}
 									>
@@ -202,7 +202,7 @@ export default function ChangePasswordScreen() {
 									style={[styles.requirementsBox, { borderColor: colors.false }]}
 								>
 									<ThemedText variant="H4" colorName="graphite0">
-										{t("settings34.password.mismatch")}
+										{t("settings.password.mismatch")}
 									</ThemedText>
 								</ThemedView>
 							)}
@@ -215,7 +215,7 @@ export default function ChangePasswordScreen() {
 								void submit()
 							}}
 							disabled={saving}
-							accessibilityLabel={t("settings34.password.save")}
+							accessibilityLabel={t("settings.password.save")}
 							accessibilityState={{ disabled: saving, busy: saving }}
 							style={[
 								styles.button,
@@ -223,7 +223,7 @@ export default function ChangePasswordScreen() {
 							]}
 						>
 							<ThemedText variant="H3" colorName="bg_0" style={styles.buttonText}>
-								{saving ? t("settings34.password.saving") : t("settings34.password.save")}
+								{saving ? t("settings.password.saving") : t("settings.password.save")}
 							</ThemedText>
 						</ThemedView>
 					</View>

@@ -54,7 +54,7 @@ export default function AccountScreen() {
 	async function performDelete() {
 		if (deleteInFlight.current) return
 		if (!deletePassword) {
-			Alert.alert(t("settings34.common.error"), t("settings34.account.passwordRequired"))
+			Alert.alert(t("settings.common.error"), t("settings.account.passwordRequired"))
 			return
 		}
 		deleteInFlight.current = true
@@ -66,12 +66,12 @@ export default function AccountScreen() {
 		} catch (error: unknown) {
 			const key = error instanceof AccountApiError ? error.kind : "server"
 			Alert.alert(
-				t("settings34.common.error"),
+				t("settings.common.error"),
 				key === "wrongPassword"
-					? t("settings34.api.wrongPassword")
+					? t("settings.api.wrongPassword")
 					: key === "server" || key === "validation"
-						? t("settings34.account.deleteError")
-						: t(`settings34.api.${key}`)
+						? t("settings.account.deleteError")
+						: t(`settings.api.${key}`)
 			)
 			setDeleting(false)
 			deleteInFlight.current = false
@@ -83,7 +83,7 @@ export default function AccountScreen() {
 			await closeDeletedAccountSession()
 		} catch (error) {
 			console.error("Failed to fully clear local data after deleting account", error)
-			Alert.alert(t("settings34.common.error"), t("settings34.account.localCleanupError"))
+			Alert.alert(t("settings.common.error"), t("settings.account.localCleanupError"))
 		}
 		router.replace("/")
 	}
@@ -100,13 +100,13 @@ export default function AccountScreen() {
 	}
 
 	function manualSync() {
-		Alert.alert(t("settings34.common.unavailable"), t("settings34.account.syncNotReady"))
+		Alert.alert(t("settings.common.unavailable"), t("settings.account.syncNotReady"))
 	}
 
-	const profileName = profile?.name || t("settings34.account.profileUnavailable")
+	const profileName = profile?.name || t("settings.account.profileUnavailable")
 	const profileEmail =
 		profile?.email ||
-		(profileError ? t("settings34.account.profileError") : t("settings34.account.noEmail"))
+		(profileError ? t("settings.account.profileError") : t("settings.account.noEmail"))
 	const showConnected = !!profile
 
 	if (status === "GUEST" || status === "UNAUTHENTICATED") {
@@ -128,13 +128,13 @@ export default function AccountScreen() {
 					/>
 					<ThemedView colorName="bg_0" style={styles.dialog}>
 						<ThemedText variant="H2" colorName="blue2">
-							{t("settings34.account.deleteAccount")}
+							{t("settings.account.deleteAccount")}
 						</ThemedText>
 						<ThemedText variant="H4" colorName="blue2">
-							{t("settings34.account.deleteConfirm")}
+							{t("settings.account.deleteConfirm")}
 						</ThemedText>
 						<ThemedText variant="H4" colorName="blue2">
-							{t("settings34.account.passwordPrompt")}
+							{t("settings.account.passwordPrompt")}
 						</ThemedText>
 						<ThemedInput
 							variant="password"
@@ -142,7 +142,7 @@ export default function AccountScreen() {
 							onChangeText={setDeletePassword}
 							placeholder=""
 							autoComplete="current-password"
-							accessibilityLabel={t("settings34.account.passwordPrompt")}
+							accessibilityLabel={t("settings.account.passwordPrompt")}
 							editable={!deleting}
 						/>
 						<View style={styles.dialogActions}>
@@ -153,7 +153,7 @@ export default function AccountScreen() {
 								style={styles.dialogButton}
 							>
 								<ThemedText variant="H4" colorName="blue2">
-									{t("settings34.common.cancel")}
+									{t("settings.common.cancel")}
 								</ThemedText>
 							</Pressable>
 							<Pressable
@@ -163,7 +163,7 @@ export default function AccountScreen() {
 								style={styles.dialogButton}
 							>
 								<ThemedText variant="H4" colorName="false">
-									{t("settings34.account.deleteAccount")}
+									{t("settings.account.deleteAccount")}
 								</ThemedText>
 							</Pressable>
 						</View>
@@ -171,7 +171,7 @@ export default function AccountScreen() {
 				</View>
 			</Modal>
 			<View style={styles.headerContainer}>
-				<ThemedHeader tx="settings34.account.title" />
+				<ThemedHeader tx="settings.account.title" />
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 				<ThemedView colorName="bg_0" shadow style={styles.profileCard}>
@@ -193,9 +193,9 @@ export default function AccountScreen() {
 					</View>
 					<Pressable
 						accessibilityRole="button"
-						accessibilityLabel={t("settings34.account.editProfile")}
+						accessibilityLabel={t("settings.account.editProfile")}
 						onPress={() =>
-							Alert.alert(t("settings34.common.unavailable"), t("settings34.account.editNotReady"))
+							Alert.alert(t("settings.common.unavailable"), t("settings.account.editNotReady"))
 						}
 						style={styles.editButton}
 					>
@@ -204,8 +204,8 @@ export default function AccountScreen() {
 					<View style={styles.cloudStatus}>
 						<ThemedText variant="H4" colorName="blue2" style={styles.statusText}>
 							{showConnected
-								? t("settings34.account.connected")
-								: t("settings34.account.notConnected")}
+								? t("settings.account.connected")
+								: t("settings.account.notConnected")}
 						</ThemedText>
 						{showConnected ? (
 							<CloudCheckIcon color={colors.blue2} width={22} height={22} />
@@ -217,14 +217,14 @@ export default function AccountScreen() {
 
 				<View style={styles.sections}>
 					<ThemedText variant="H3" colorName="blue2" style={styles.sectionTitle}>
-						{t("settings34.account.syncSettings")}
+						{t("settings.account.syncSettings")}
 					</ThemedText>
 					<SettingsRow
-						title={t("settings34.account.backgroundSync")}
-						description={t("settings34.account.backgroundSyncDescription")}
+						title={t("settings.account.backgroundSync")}
+						description={t("settings.account.backgroundSyncDescription")}
 						right={
 							<SettingsToggle
-								label={t("settings34.account.backgroundSync")}
+								label={t("settings.account.backgroundSync")}
 								value={preferences.backgroundSync}
 								disabled={!ready}
 								onValueChange={(value) => updatePreference("backgroundSync", value)}
@@ -232,11 +232,11 @@ export default function AccountScreen() {
 						}
 					/>
 					<SettingsRow
-						title={t("settings34.account.wifiOnly")}
-						description={t("settings34.account.wifiOnlyDescription")}
+						title={t("settings.account.wifiOnly")}
+						description={t("settings.account.wifiOnlyDescription")}
 						right={
 							<SettingsToggle
-								label={t("settings34.account.wifiOnly")}
+								label={t("settings.account.wifiOnly")}
 								value={preferences.wifiOnly}
 								disabled={!ready}
 								onValueChange={(value) => updatePreference("wifiOnly", value)}
@@ -244,11 +244,11 @@ export default function AccountScreen() {
 						}
 					/>
 					<SettingsRow
-						title={t("settings34.account.mediaBackup")}
-						description={t("settings34.account.mediaBackupDescription")}
+						title={t("settings.account.mediaBackup")}
+						description={t("settings.account.mediaBackupDescription")}
 						right={
 							<SettingsToggle
-								label={t("settings34.account.mediaBackup")}
+								label={t("settings.account.mediaBackup")}
 								value={preferences.mediaBackup}
 								disabled={!ready}
 								onValueChange={(value) => updatePreference("mediaBackup", value)}
@@ -257,20 +257,20 @@ export default function AccountScreen() {
 					/>
 					<View style={styles.manualSync}>
 						<ThemedText variant="H4" colorName="blue2" style={styles.lastSyncText}>
-							{t("settings34.account.lastSync")}:{" "}
+							{t("settings.account.lastSync")}:{" "}
 							<ThemedText variant="H5" colorName="blue2">
-								{t("settings34.account.neverSynced")}
+								{t("settings.account.neverSynced")}
 							</ThemedText>
 						</ThemedText>
 						<Pressable
 							accessibilityRole="button"
-							accessibilityLabel={t("settings34.account.syncNow")}
+							accessibilityLabel={t("settings.account.syncNow")}
 							onPress={manualSync}
 							style={styles.syncButton}
 						>
 							<View style={[styles.syncButtonVisual, { backgroundColor: colors.magenta0 }]}>
 								<ThemedText variant="H5" style={{ color: colors.bg_0 }}>
-									{t("settings34.account.syncNow")}
+									{t("settings.account.syncNow")}
 								</ThemedText>
 							</View>
 						</Pressable>
@@ -281,28 +281,28 @@ export default function AccountScreen() {
 						colorName="blue2"
 						style={[styles.sectionTitle, styles.accountSection]}
 					>
-						{t("settings34.account.accountSettings")}
+						{t("settings.account.accountSettings")}
 					</ThemedText>
 					<Pressable
 						accessibilityRole="button"
-						accessibilityLabel={t("settings34.account.changePassword")}
+						accessibilityLabel={t("settings.account.changePassword")}
 						onPress={() => router.push("/settings/change-password")}
 						style={[styles.navigationRow, { borderBottomColor: colors.blue1 }]}
 					>
 						<ThemedText variant="H3" colorName="blue2">
-							{t("settings34.account.changePassword")}
+							{t("settings.account.changePassword")}
 						</ThemedText>
 						<ChevronRightIcon color={colors.blue2} width={19} height={19} />
 					</Pressable>
 					<Pressable
 						accessibilityRole="button"
-						accessibilityLabel={t("settings34.account.deleteAccount")}
+						accessibilityLabel={t("settings.account.deleteAccount")}
 						onPress={confirmDelete}
 						disabled={deleting}
 						style={[styles.navigationRow, { borderBottomColor: colors.blue1 }]}
 					>
 						<ThemedText variant="H3" colorName="false">
-							{t("settings34.account.deleteAccount")}
+							{t("settings.account.deleteAccount")}
 						</ThemedText>
 						<ChevronRightIcon color={colors.false} width={19} height={19} />
 					</Pressable>

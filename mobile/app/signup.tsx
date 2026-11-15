@@ -12,6 +12,7 @@ import { createUser } from "@/db/repositories/userRepository"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
 import { getPasswordRequirements } from "@/src/utils/passwordRequirements"
+import type { ParseKeys } from "i18next"
 
 export default function SignUpScreen() {
 	const router = useRouter()

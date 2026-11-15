@@ -19,7 +19,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
-const DELETED_ACCOUNT_CLEANUP_KEY = "myprosthetic.settings34.deletedAccountCleanupPending.v1"
+const DELETED_ACCOUNT_CLEANUP_KEY = "myprosthetic.settings.deletedAccountCleanupPending.v1"
 
 async function finishDeletedAccountCleanup(): Promise<void> {
 	let cleanupError: unknown = null

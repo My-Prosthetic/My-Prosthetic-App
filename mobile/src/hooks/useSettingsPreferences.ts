@@ -1,7 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react"
 import Storage from "expo-sqlite/kv-store"
 
-const STORAGE_KEY = "myprosthetic.settings34.preferences.v1"
+const STORAGE_KEY = "myprosthetic.settings.preferences.v1"
 
 export interface SettingsPreferences {
 	pushEnabled: boolean
