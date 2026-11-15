@@ -203,9 +203,7 @@ export default function AccountScreen() {
 					</Pressable>
 					<View style={styles.cloudStatus}>
 						<ThemedText variant="H4" colorName="blue2" style={styles.statusText}>
-							{showConnected
-								? t("settings.account.connected")
-								: t("settings.account.notConnected")}
+							{showConnected ? t("settings.account.connected") : t("settings.account.notConnected")}
 						</ThemedText>
 						{showConnected ? (
 							<CloudCheckIcon color={colors.blue2} width={22} height={22} />

@@ -99,12 +99,7 @@ export default function NotificationsScreen() {
 					value={preferences.measurementTime}
 					onChange={(value) => updatePreference("measurementTime", value)}
 				/>
-				<View
-					style={[
-						styles.note,
-						{ backgroundColor: highContrast ? colors.bg_0 : colors.blue0 },
-					]}
-				>
+				<View style={[styles.note, { backgroundColor: highContrast ? colors.bg_0 : colors.blue0 }]}>
 					<View style={[styles.infoCircle, { backgroundColor: colors.blue2 }]}>
 						<InfoIcon color={colors.bg_0} width={18} height={18} />
 					</View>
