@@ -12,6 +12,7 @@ export async function purgeDatabase(): Promise<void> {
 			await expoDb.execAsync(`DELETE FROM "conditions";`)
 			await expoDb.execAsync(`DELETE FROM "medical_profiles";`)
 			await expoDb.execAsync(`DELETE FROM "medications";`)
+			await expoDb.execAsync(`DELETE FROM "incidents";`)
 			await expoDb.execAsync(`DELETE FROM "components";`)
 			await expoDb.execAsync(`DELETE FROM "prostheses";`)
 			await expoDb.execAsync(`DELETE FROM "users";`)
