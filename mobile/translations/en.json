@@ -790,6 +790,8 @@
 			"info": "Replacement dates and warranty expiry notifications are configured individually in each prosthetic component's details."
 		},
 		"account": {
+			"userFallback": "User",
+			"synced": "Account synced with the cloud",
 			"title": "Account",
 			"profileUnavailable": "User profile",
 			"profileError": "Could not load email address",
@@ -847,10 +849,6 @@
 			"title": "You're using the app without an account",
 			"noBackup": "No backup",
 			"limitedSharing": "Limited ability to share medical history with specialists."
-		},
-		"account": {
-			"userFallback": "User",
-			"synced": "Account synced with the cloud"
 		},
 		"sections": {
 			"sharing": "SHARING",
