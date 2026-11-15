@@ -46,6 +46,7 @@
 				}
 			],
 			"expo-secure-store",
+			"expo-sharing",
 			"expo-asset",
 			[
 				"expo-build-properties",

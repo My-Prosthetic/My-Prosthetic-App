@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { Redirect, Tabs, useSegments } from "expo-router"
+import { Redirect, Tabs, useSegments, usePathname } from "expo-router"
 import { ParseKeys } from "i18next"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs"
@@ -18,8 +18,7 @@ export default function TabsLayout() {
 	const { colors } = useTheme()
 	const { status } = useAuth()
 	const insets = useSafeAreaInsets()
-	const segments = useSegments() as string[]
-	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
+	const pathname = usePathname()
 
 	const ICONS = {
 		home: IconHome,
@@ -40,16 +39,20 @@ export default function TabsLayout() {
 
 	const provideRenderButton = (variant: "home" | "journal" | "profile" | "settings") => {
 		return function renderButton(props: BottomTabBarButtonProps) {
-			let isFocused = currentTab === variant
+			const isFocused =
+				variant === "home"
+					? pathname.startsWith("/home") ||
+						pathname.startsWith("/funding") ||
+						pathname.startsWith("/prosthesis")
+					: pathname.startsWith(`/${variant}`)
 			const Icon = ICONS[variant]
 			const label = LABELS[variant]
-			if (variant === "home") {
-				isFocused = segments[2] === "home" //TODO logika obejmująca wszystkie ekrany albo wynikająca z routingu
-			}
 
-			const { ref, children, style, ...restProps } = props
+			const { style, ...restProps } = props
+			const pressableProps = { ...restProps, ref: undefined }
+
 			return (
-				<Pressable {...restProps} style={[props.style, { justifyContent: "center" }]}>
+				<Pressable {...pressableProps} style={[style, { justifyContent: "center" }]}>
 					<View
 						style={{
 							backgroundColor: isFocused ? colors.blue2 : colors.bg_0,
@@ -69,6 +72,8 @@ export default function TabsLayout() {
 		}
 	}
 
+	const isSettingsRoute = pathname.startsWith("/settings")
+
 	return (
 		<View
 			style={{
@@ -76,7 +81,7 @@ export default function TabsLayout() {
 				backgroundColor: colors.bg_1,
 			}}
 		>
-			{status === "GUEST" && <GuestBanner />}
+			{status === "GUEST" && !isSettingsRoute && <GuestBanner />}
 			<Tabs
 				backBehavior="history"
 				screenOptions={{
@@ -86,6 +91,8 @@ export default function TabsLayout() {
 						borderTopLeftRadius: 15,
 						borderTopRightRadius: 15,
 						backgroundColor: colors.bg_0,
+						paddingBottom: 0,
+						marginBottom: insets.bottom - 1,
 					},
 					tabBarItemStyle: { flex: 1 },
 				}}

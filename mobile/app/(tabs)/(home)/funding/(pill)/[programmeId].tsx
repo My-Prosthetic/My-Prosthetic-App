@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 28,
 		paddingHorizontal: 10,
+		flexDirection: "column",
 	},
 	summaryRow: {
 		minHeight: 40,
@@ -275,6 +276,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingHorizontal: 12,
+		width: "100%",
 	},
 	stepsContainer: {
 		gap: 0,
