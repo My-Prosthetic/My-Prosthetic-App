@@ -45,9 +45,8 @@ export default function InitialScreen() {
 					style={{
 						flexDirection: "column",
 						flex: 1,
-						justifyContent: "space-between",
-						paddingTop: "12%",
-						paddingBottom: "18%",
+						justifyContent: "center",
+						paddingBottom: "5%",
 						gap: 20,
 					}}
 				>

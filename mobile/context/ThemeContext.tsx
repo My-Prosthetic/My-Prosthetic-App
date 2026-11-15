@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react"
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export interface ThemeColors {
 	primary_base: string
@@ -8,6 +9,7 @@ export interface ThemeColors {
 	primary_base_4: string
 	secondary_base_0c: string
 	secondary_base: string
+	secondary_base_2: string
 	secondary_base_3: string
 	tertiary_base_1: string
 	tertiary_base_2: string
@@ -17,6 +19,10 @@ export interface ThemeColors {
 	accent_base_2: string
 	warning: string
 	false: string
+	false_1: string
+	false_2: string
+	neutral_text: string
+	neutral_gray: string
 	true: string
 	bg_0: string
 	bg_1: string
@@ -36,6 +42,7 @@ export const lightTheme: ThemeColors = {
 	primary_base_4: "#CDD5E9",
 	secondary_base_0c: "#1967C8",
 	secondary_base: "#4990E8",
+	secondary_base_2: "#92BCF1",
 	secondary_base_3: "#B6D3F6",
 	tertiary_base_1: "#C1E5FB",
 	tertiary_base_2: "#D6EEFC",
@@ -45,6 +52,10 @@ export const lightTheme: ThemeColors = {
 	accent_base_2: "#FAF9EE",
 	warning: "#ED9D1D",
 	false: "#B51932",
+	false_1: "#C0392B",
+	false_2: "#FF6B6B",
+	neutral_text: "#000000",
+	neutral_gray: "#A4A4A4",
 	true: "#15A959",
 	bg_0: "#FAFCFF",
 	bg_1: "#F1F6FB",
@@ -56,7 +67,48 @@ export const lightTheme: ThemeColors = {
 	magenta0: "#B74CC5",
 }
 
-//TODO upewnić się że wysoki kontrast dobrze spełnia swoją funkcję, szczególnie w zestawieniu z tekstem
+// TODO: verify dark theme contrast, especially text readability
+export const darkTheme: ThemeColors = {
+	primary_base: "#7A9BEA",
+	primary_base_1: "#5B7DD1",
+	primary_base_2: "#3F5DA8",
+	primary_base_3: "#2B4177",
+	primary_base_4: "#1C2A4F",
+
+	secondary_base_0c: "#2F7BE0",
+	secondary_base: "#5A9DF0",
+	secondary_base_2: "#2E5F9E",
+	secondary_base_3: "#234A7C",
+
+	tertiary_base_1: "#1B3D5C",
+	tertiary_base_2: "#16314A",
+	tertiary_base_3: "#122638",
+
+	accent_base: "#4A4626",
+	accent_base_1: "#38351E",
+	accent_base_2: "#2A2817",
+
+	warning: "#F5B041",
+	false: "#E5546B",
+	false_1: "#E8685A",
+	false_2: "#FF8A8A",
+	true: "#34C77B",
+
+	neutral_text: "#E8EDF5",
+	neutral_gray: "#8A93A3",
+
+	bg_0: "#0B1220",
+	bg_1: "#121A2B",
+	bg_2: "#1B2538",
+
+	blue0: "#12324A",
+	blue1: "#5E9BC2",
+	blue2: "#4DA6DE",
+	graphite0: "#A9B6CC",
+	magenta0: "#D177DD",
+}
+
+// TODO: verify high contrast theme, especially text readability
 export const highContrastTheme: ThemeColors = {
 	primary_base: "#001A5E",
 	primary_base_1: "#0B3C9E",
@@ -65,6 +117,7 @@ export const highContrastTheme: ThemeColors = {
 	primary_base_4: "#E6EDF8",
 	secondary_base_0c: "#0047AB",
 	secondary_base: "#0C68E9",
+	secondary_base_2: "#7AB0F3",
 	secondary_base_3: "#CCE4FF",
 	tertiary_base_1: "#A3D9FF",
 	tertiary_base_2: "#E0F2FE",
@@ -74,6 +127,10 @@ export const highContrastTheme: ThemeColors = {
 	accent_base_2: "#FFFFFF",
 	warning: "#FF8C00",
 	false: "#B51932",
+	false_1: "#C0392B",
+	false_2: "#FF6B6B",
+	neutral_text: "#000000",
+	neutral_gray: "#7A7A7A",
 	true: "#15A959",
 	bg_0: "#FAFCFF",
 	bg_1: "#F1F6FB",
@@ -85,23 +142,128 @@ export const highContrastTheme: ThemeColors = {
 	magenta0: "#F2CA19",
 }
 
-type ThemeType = "light" | "high-contrast"
+export const highContrastDarkTheme: ThemeColors = {
+	primary_base: "#8CAEFF",
+	primary_base_1: "#6F95F5",
+	primary_base_2: "#5078DC",
+	primary_base_3: "#1A3A8F",
+	primary_base_4: "#0A1A4D",
+
+	secondary_base_0c: "#3D8BFF",
+	secondary_base: "#66AEFF",
+	secondary_base_2: "#0F4C9E",
+	secondary_base_3: "#0A3570",
+
+	tertiary_base_1: "#0A3F6B",
+	tertiary_base_2: "#062C4C",
+	tertiary_base_3: "#031A2E",
+
+	accent_base: "#5C5500",
+	accent_base_1: "#3D3800",
+	accent_base_2: "#262300",
+
+	warning: "#FFB000",
+	false: "#FF5C77",
+	false_1: "#FF7A66",
+	false_2: "#FFA3A3",
+	true: "#2EDB84",
+
+	neutral_text: "#FFFFFF",
+	neutral_gray: "#BDBDBD",
+
+	bg_0: "#000000",
+	bg_1: "#080C14",
+	bg_2: "#121926",
+
+	blue0: "#00315A",
+	blue1: "#7FC3F0",
+	blue2: "#66D0FF",
+	graphite0: "#D5DEEC",
+	magenta0: "#F08CFF",
+}
+
+type ColorMode = "light" | "dark"
 
 interface ThemeContextType {
-	themeType: ThemeType
+	colorMode: ColorMode
+	highContrast: boolean
 	colors: ThemeColors
-	setTheme: (theme: ThemeType) => void
+	setColorMode: (mode: ColorMode) => void
+	setHighContrast: (enabled: boolean) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [themeType, setThemeType] = useState<ThemeType>("light")
+const COLOR_MODE_STORAGE_KEY = "colorMode"
+const HIGH_CONTRAST_STORAGE_KEY = "highContrast"
 
-	const colors = themeType === "high-contrast" ? highContrastTheme : lightTheme
+const getThemeColors = (colorMode: ColorMode, highContrast: boolean): ThemeColors => {
+	if (colorMode === "dark" && highContrast) {
+		return highContrastDarkTheme
+	}
+
+	if (highContrast) {
+		return highContrastTheme
+	}
+
+	if (colorMode === "dark") {
+		return darkTheme
+	}
+
+	return lightTheme
+}
+
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+	const [colorMode, setColorModeState] = useState<ColorMode>("light")
+
+	const [highContrast, setHighContrastState] = useState(false)
+
+	useEffect(() => {
+		const loadTheme = async () => {
+			try {
+				const savedColorMode = await AsyncStorage.getItem(COLOR_MODE_STORAGE_KEY)
+
+				const savedHighContrast = await AsyncStorage.getItem(HIGH_CONTRAST_STORAGE_KEY)
+
+				if (savedColorMode === "light" || savedColorMode === "dark") {
+					setColorModeState(savedColorMode)
+				}
+
+				if (savedHighContrast !== null) {
+					setHighContrastState(savedHighContrast === "true")
+				}
+			} catch (error) {
+				console.error("Failed to load theme settings:", error)
+			}
+		}
+
+		void loadTheme()
+	}, [])
+
+	const setColorMode = (mode: ColorMode) => {
+		setColorModeState(mode)
+
+		void AsyncStorage.setItem(COLOR_MODE_STORAGE_KEY, mode)
+	}
+
+	const setHighContrast = (enabled: boolean) => {
+		setHighContrastState(enabled)
+
+		void AsyncStorage.setItem(HIGH_CONTRAST_STORAGE_KEY, String(enabled))
+	}
+
+	const colors = getThemeColors(colorMode, highContrast)
 
 	return (
-		<ThemeContext.Provider value={{ themeType, colors, setTheme: setThemeType }}>
+		<ThemeContext.Provider
+			value={{
+				colorMode,
+				highContrast,
+				colors,
+				setColorMode,
+				setHighContrast,
+			}}
+		>
 			{children}
 		</ThemeContext.Provider>
 	)
@@ -109,8 +271,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
 export const useTheme = () => {
 	const context = useContext(ThemeContext)
+
 	if (!context) {
 		throw new Error("useTheme musi być użyty wewnątrz ThemeProvider")
 	}
+
 	return context
 }

@@ -35,11 +35,17 @@ class UserShare extends Pivot
      */
     protected $table = 'user_shares';
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function patient(): BelongsTo
     {
         return $this->belongsTo(User::class, 'patient_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function specialist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'specialist_id');

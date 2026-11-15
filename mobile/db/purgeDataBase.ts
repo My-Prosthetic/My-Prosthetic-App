@@ -15,6 +15,8 @@ export async function purgeDatabase(): Promise<void> {
 			await expoDb.execAsync(`DELETE FROM "components";`)
 			await expoDb.execAsync(`DELETE FROM "prostheses";`)
 			await expoDb.execAsync(`DELETE FROM "users";`)
+			await expoDb.execAsync(`DELETE FROM "models" WHERE "is_custom" = 1;`)
+			await expoDb.execAsync(`DELETE FROM "brands" WHERE "is_custom" = 1;`)
 		})
 	} finally {
 		await expoDb.execAsync("PRAGMA foreign_keys = ON;")

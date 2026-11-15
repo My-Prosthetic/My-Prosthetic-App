@@ -1,9 +1,9 @@
 import React from "react"
-import { Image, StyleSheet, View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import type { ParseKeys } from "i18next"
 import { ThemedText } from "../ThemedText"
 import { ThemedView } from "../ThemedView"
-import { useTheme } from "@/context/ThemeContext"
+import { LimbDiagram } from "./SelectedPartDiagram"
 
 export type LimbType = "upper" | "lower"
 
@@ -31,12 +31,12 @@ export type AmputationLevel =
 	| "wrist_disarticulation"
 	| "partial_hand"
 
-interface LevelOption {
+export interface LevelOption {
 	value: AmputationLevel
 	labelKey: ParseKeys
 }
 
-const LOWER_LEVELS: LevelOption[] = [
+export const LOWER_LEVELS: LevelOption[] = [
 	{
 		value: "hemipelvectomy",
 		labelKey: "newProsthesis.amputationLevels.lower.hemipelvectomy",
@@ -83,7 +83,7 @@ const LOWER_LEVELS: LevelOption[] = [
 	},
 ]
 
-const UPPER_LEVELS: LevelOption[] = [
+export const UPPER_LEVELS: LevelOption[] = [
 	{
 		value: "forequarter",
 		labelKey: "newProsthesis.amputationLevels.upper.forequarter",
@@ -138,47 +138,35 @@ interface Props {
 
 export function AmputationLevelSelector({ limb, value, onChange }: Props) {
 	const levels = limb === "lower" ? LOWER_LEVELS : UPPER_LEVELS
-	const { colors } = useTheme()
-
-	const limbImage =
-		limb === "lower"
-			? require("../../../assets/images/amputation-lower.png")
-			: require("../../../assets/images/amputation-upper.png")
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.imageContainer}>
-				<Image source={limbImage} resizeMode="contain" style={styles.limbImage} />
+			<View style={styles.imageColumn}>
+				<LimbDiagram type={limb} selectedLevel={value} />
 			</View>
 
-			<View style={styles.optionsContainer}>
+			<View style={styles.optionsColumn}>
 				{levels.map((level) => {
-					const selected = value === level.value
+					const isSelected = value === level.value
 
 					return (
-						<View key={level.value} style={styles.optionRow}>
-							<ThemedView
-								style={[
-									styles.option,
-									{
-										backgroundColor: selected ? colors.primary_base : colors.tertiary_base_3,
-										borderColor: selected ? colors.primary_base : colors.secondary_base,
-									},
-								]}
-								onPress={() => onChange(level.value)}
-								accessibilityRole="radio"
-								accessibilityState={{
-									checked: selected,
-								}}
-							>
-								<ThemedText
-									tx={level.labelKey}
-									variant="body1Regular"
-									colorName={selected ? "tertiary_base_3" : "primary_base"}
-									style={styles.optionText}
-								/>
-							</ThemedView>
-						</View>
+						<ThemedView
+							key={level.value}
+							colorName={isSelected ? "blue2" : "blue0"}
+							onPress={() => onChange(level.value)}
+							accessibilityRole="radio"
+							accessibilityState={{ checked: isSelected }}
+							style={styles.pillButton}
+						>
+							<ThemedText
+								tx={level.labelKey}
+								variant={isSelected ? "H5" : "H4"}
+								colorName={isSelected ? "bg_0" : "graphite0"}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								style={styles.pillText}
+							/>
+						</ThemedView>
 					)
 				})}
 			</View>
@@ -189,70 +177,28 @@ export function AmputationLevelSelector({ limb, value, onChange }: Props) {
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
-		height: 260,
-
 		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-
-		paddingVertical: 2,
-	},
-
-	imageContainer: {
-		width: 105,
-		height: 215,
-		justifyContent: "center",
-		alignItems: "center",
-		marginRight: -2,
-	},
-
-	limbImage: {
-		width: 105,
-		height: 215,
-	},
-
-	optionsContainer: {
-		width: 112,
-		height: 218,
-
 		justifyContent: "space-between",
-		alignItems: "flex-start",
-
-		marginLeft: 0,
+		paddingVertical: 12,
+		paddingHorizontal: 8,
 	},
-
-	optionRow: {
-		width: "100%",
-		flexDirection: "row",
+	imageColumn: {
+		width: "40%",
+		flexDirection: "column",
 		alignItems: "center",
 		justifyContent: "flex-start",
 	},
-
-	option: {
-		width: 105,
-		height: 14,
-		minHeight: 14,
-
-		borderWidth: 0.43,
-		borderRadius: 2,
-
-		paddingHorizontal: 2,
-		paddingVertical: 0,
-
+	optionsColumn: {
+		gap: 14,
+		width: "60%",
+	},
+	pillButton: {
+		height: 24,
+		width: "100%",
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
-	optionText: {
-		width: "100%",
-
-		fontFamily: "Inter-Regular",
-		fontWeight: "400",
-		fontSize: 4.05,
-		lineHeight: 4.8,
-		letterSpacing: 0,
-
+	pillText: {
 		textAlign: "center",
-		textAlignVertical: "center",
 	},
 })

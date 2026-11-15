@@ -7,6 +7,7 @@ import {
 	ViewStyle,
 	StyleProp,
 	Platform,
+	Insets,
 } from "react-native"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
@@ -27,7 +28,7 @@ export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	variant?: ThemedViewSize
 	shadow?: boolean
 	onPress?: () => void | Promise<unknown>
-	hitslop?: {}
+	hitslop?: Insets | number
 	style?: StyleProp<ViewStyle>
 	children?: React.ReactNode
 	leftChild?: React.ReactNode
@@ -75,7 +76,6 @@ export const ThemedView = ({
 	...props
 }: ThemedViewProps) => {
 	const { colors } = useTheme()
-	const sizes = getSizes()
 
 	const isProcessingRef = useRef(false)
 	const lastPressRef = useRef(0)
@@ -177,60 +177,63 @@ const styles = StyleSheet.create({
 	},
 })
 
-const getSizes = () =>
-	StyleSheet.create({
-		none: {},
-		old_tag: {
-			alignSelf: "flex-start",
-			borderRadius: 9999,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		old_narrow: {
-			paddingVertical: 10,
-			paddingHorizontal: 14,
-			height: 60,
-			width: "70%",
-			borderRadius: 12,
-			flexDirection: "row",
-			alignItems: "center",
-			alignSelf: "center",
-			justifyContent: "center",
-		},
-		old_wide: {
-			paddingVertical: 14,
-			paddingHorizontal: 16,
-			minHeight: 60,
-			borderRadius: 16,
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
-			width: "100%",
-		},
-		background: {
-			flex: 1,
-			width: "100%",
-			paddingHorizontal: "8%",
-			flexDirection: "column",
-			borderRadius: 0,
-			justifyContent: "flex-start",
-		},
-		divider: {
-			height: 1,
-			width: "100%",
-		},
-		wide: {
-			width: "100%",
-			minHeight: 50,
-		},
-		narrow: {
-			width: "73%",
-			minHeight: 50,
-			alignSelf: "center",
-			alignItems: "center",
-		},
-		tag: {
-			height: 22,
-		},
-	})
+/* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
+const sizes = StyleSheet.create({
+	none: {},
+	old_tag: {
+		alignSelf: "flex-start",
+		borderRadius: 9999,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	old_narrow: {
+		paddingVertical: 10,
+		paddingHorizontal: 14,
+		height: 60,
+		width: "70%",
+		borderRadius: 12,
+		flexDirection: "row",
+		alignItems: "center",
+		alignSelf: "center",
+		justifyContent: "center",
+	},
+	old_wide: {
+		paddingVertical: 14,
+		paddingHorizontal: 16,
+		minHeight: 60,
+		borderRadius: 16,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		width: "100%",
+	},
+	background: {
+		flex: 1,
+		width: "100%",
+		paddingHorizontal: "8%",
+		flexDirection: "column",
+		borderRadius: 0,
+		justifyContent: "flex-start",
+	},
+	divider: {
+		height: 1,
+		width: "100%",
+	},
+	wide: {
+		width: "100%",
+		minHeight: 50,
+	},
+	narrow: {
+		width: "73%",
+		minHeight: 50,
+		alignSelf: "center",
+		alignItems: "center",
+	},
+	tag: {
+		height: 24,
+		flexDirection: "row",
+		alignItems: "center",
+	},
+})
+/* eslint-enable react-native/no-unused-styles */
