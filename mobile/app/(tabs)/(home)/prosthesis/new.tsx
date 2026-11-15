@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { Alert, ScrollView, StyleSheet, View } from "react-native"
 
 import { useRouter } from "expo-router"
@@ -26,6 +26,10 @@ import IconLeg from "@/assets/icons/leg_logo.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconFile from "@/assets/icons/file.svg"
 import IconTrash from "@/assets/icons/trash-bin.svg"
+import {
+	PendingFileAttachments,
+	type PendingFileAttachmentsHandle,
+} from "@/src/components/files/PendingFileAttachments"
 
 type Side = "left" | "right"
 type Limb = "upper" | "lower"
@@ -56,6 +60,9 @@ export default function NewProsthesisScreen() {
 
 	const [notes, setNotes] = useState("")
 	const [isSaving, setIsSaving] = useState(false)
+	const savingRef = useRef(false)
+	const savedProsthesisId = useRef<string | null>(null)
+	const filesRef = useRef<PendingFileAttachmentsHandle>(null)
 
 	const canSave = name.trim().length > 0 && amputationLevel !== null && !isSaving
 
@@ -94,7 +101,7 @@ export default function NewProsthesisScreen() {
 	}
 
 	const handleSave = async () => {
-		if (!canSave || amputationLevel === null) {
+		if (savingRef.current || !canSave || amputationLevel === null) {
 			return
 		}
 
@@ -109,29 +116,39 @@ export default function NewProsthesisScreen() {
 		}
 
 		try {
+			savingRef.current = true
 			setIsSaving(true)
 
-			const prosthesis = await createProsthesis({
-				name: name.trim(),
-				side,
-				limbType: limb,
-				amputationLevel,
-				description: notes,
-				startedAt: startOfUsageDate ? formatDateForStorage(startOfUsageDate) : null,
-				replacementDate: replacementDate ? formatDateForStorage(replacementDate) : null,
-			})
-
+			const prosthesisId =
+				savedProsthesisId.current ??
+				(
+					await createProsthesis({
+						name: name.trim(),
+						side,
+						limbType: limb,
+						amputationLevel,
+						description: notes,
+						startedAt: startOfUsageDate ? formatDateForStorage(startOfUsageDate) : null,
+						replacementDate: replacementDate ? formatDateForStorage(replacementDate) : null,
+					})
+				).id
+			savedProsthesisId.current = prosthesisId
+			await filesRef.current?.save({ type: "prosthesis", prosthesisId, resourceId: null })
 			router.replace({
 				pathname: "/prosthesis/[prosthesisId]",
 				params: {
-					prosthesisId: prosthesis.id,
+					prosthesisId,
 				},
 			})
 		} catch (error) {
 			console.error("Failed to create prosthesis:", error)
 
-			Alert.alert(t("common.error"), t("newProsthesis.saveError"))
+			Alert.alert(
+				t("common.error"),
+				t(savedProsthesisId.current ? "files.errors.save" : "newProsthesis.saveError")
+			)
 		} finally {
+			savingRef.current = false
 			setIsSaving(false)
 		}
 	}
@@ -301,7 +318,7 @@ export default function NewProsthesisScreen() {
 						colorName="blue0"
 						variant="wide"
 						onPress={() => {
-							// TODO: obsługa dodawania plików
+							if (!savingRef.current) filesRef.current?.open()
 						}}
 						leftChild={<IconFile color={colors.graphite0} />}
 						centerChild={
@@ -309,7 +326,7 @@ export default function NewProsthesisScreen() {
 						}
 						rightChild={<IconPlus color={colors.graphite0} />}
 					/>
-					{/* TODO display listy dodanych plików */}
+					<PendingFileAttachments ref={filesRef} />
 				</View>
 
 				<View style={[styles.section, { gap: 16, marginTop: 40 }]}>
@@ -318,7 +335,7 @@ export default function NewProsthesisScreen() {
 						variant="wide"
 						colorName={canSave ? "blue2" : "blue1"}
 						style={!canSave && styles.saveButtonDisabled}
-						onPress={canSave ? handleSave : undefined}
+						onPress={canSave ? () => handleSave() : undefined}
 						accessibilityState={{
 							disabled: !canSave,
 						}}

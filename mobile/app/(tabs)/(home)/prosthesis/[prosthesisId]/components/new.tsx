@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { Alert, ScrollView, StyleSheet, TextInput, View, Switch } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -17,6 +17,10 @@ import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
 import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
 import { CustomOptionDialogModal } from "@/src/components/CustomOptionDialogModal"
+import {
+	PendingFileAttachments,
+	type PendingFileAttachmentsHandle,
+} from "@/src/components/files/PendingFileAttachments"
 
 export default function NewComponentScreen() {
 	const router = useRouter()
@@ -39,6 +43,9 @@ export default function NewComponentScreen() {
 	const [isFinal, setIsFinal] = useState(false)
 	const [isHistorical, setIsHistorical] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
+	const savingRef = useRef(false)
+	const savedComponentId = useRef<string | null>(null)
+	const filesRef = useRef<PendingFileAttachmentsHandle>(null)
 
 	const [remindExchangeEmail, setRemindExchangeEmail] = useState(true)
 	const [remindExchangeApp, setRemindExchangeApp] = useState(true)
@@ -99,11 +106,11 @@ export default function NewComponentScreen() {
 	})
 
 	const handleOnAddFiles = () => {
-		// TODO
+		if (!savingRef.current) filesRef.current?.open()
 	}
 
 	const handleSave = async () => {
-		if (typeof prosthesisId !== "string" || isSaving) {
+		if (typeof prosthesisId !== "string" || isSaving || savingRef.current) {
 			return
 		}
 
@@ -160,28 +167,39 @@ export default function NewComponentScreen() {
 		}
 
 		try {
+			savingRef.current = true
 			setIsSaving(true)
-			await createComponent({
-				prosthesisId,
-				modelId: model.trim(),
-				isFinal,
-				isHistorical,
-				assemblyDate: assemblyDate.toISOString(),
-				warrantyEndDate: warrantyEndDate?.toISOString(),
-				expectedExchangeDate: expectedExchangeDate?.toISOString(),
-				description: description.trim(),
-				remindExchangeEmail,
-				remindExchangeApp,
-				remindExchangePush,
-				remindWarrantyEmail,
-				remindWarrantyApp,
-				remindWarrantyPush,
-			})
+			const componentId =
+				savedComponentId.current ??
+				(
+					await createComponent({
+						prosthesisId,
+						modelId: model.trim(),
+						isFinal,
+						isHistorical,
+						assemblyDate: assemblyDate.toISOString(),
+						warrantyEndDate: warrantyEndDate?.toISOString(),
+						expectedExchangeDate: expectedExchangeDate?.toISOString(),
+						description: description.trim(),
+						remindExchangeEmail,
+						remindExchangeApp,
+						remindExchangePush,
+						remindWarrantyEmail,
+						remindWarrantyApp,
+						remindWarrantyPush,
+					})
+				).id
+			savedComponentId.current = componentId
+			await filesRef.current?.save({ type: "component", prosthesisId, resourceId: componentId })
 			router.back()
 		} catch (error) {
 			console.error("Failed to save component:", error)
-			Alert.alert(t("common.error"), t("newComponent.errors.saveComponent"))
+			Alert.alert(
+				t("common.error"),
+				t(savedComponentId.current ? "files.errors.save" : "newComponent.errors.saveComponent")
+			)
 		} finally {
+			savingRef.current = false
 			setIsSaving(false)
 		}
 	}
@@ -494,6 +512,7 @@ export default function NewComponentScreen() {
 				<ThemedText variant="subTitle2" colorName="primary_base" style={styles.addFilesSubtitle}>
 					{t("newComponent.filesDescription")}
 				</ThemedText>
+				<PendingFileAttachments ref={filesRef} />
 
 				{/* Zapisz komponent */}
 				<ThemedView

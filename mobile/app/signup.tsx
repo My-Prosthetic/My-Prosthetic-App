@@ -9,27 +9,10 @@ import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { AuthApiError, authService } from "@/src/services/authService"
 import { createUser } from "@/db/repositories/userRepository"
-import { ParseKeys } from "i18next"
 import { isValidEmail } from "@/src/utils/emailValidation"
 import { ThemedInput } from "@/src/components/ThemedInput"
-
-const getPasswordRequirements = (value: string, repeatedValue: string) => {
-	const hasMinLength = value.length >= 12
-	const hasUppercase = /[A-Z]/.test(value)
-	const hasLowercase = /[a-z]/.test(value)
-	const hasNumber = /\d/.test(value)
-	const hasSymbol = /[^A-Za-z0-9]/.test(value)
-	const passwordsMatch = value.length > 0 && value === repeatedValue
-
-	return [
-		{ id: "minLength", label: "signup.passwordRules.minLength", valid: hasMinLength },
-		{ id: "uppercase", label: "signup.passwordRules.uppercase", valid: hasUppercase },
-		{ id: "lowercase", label: "signup.passwordRules.lowercase", valid: hasLowercase },
-		{ id: "number", label: "signup.passwordRules.number", valid: hasNumber },
-		{ id: "symbol", label: "signup.passwordRules.symbol", valid: hasSymbol },
-		{ id: "match", label: "signup.passwordRules.match", valid: passwordsMatch },
-	]
-}
+import { getPasswordRequirements } from "@/src/utils/passwordRequirements"
+import type { ParseKeys } from "i18next"
 
 export default function SignUpScreen() {
 	const router = useRouter()
@@ -93,9 +76,7 @@ export default function SignUpScreen() {
 				password,
 				password_confirmation: repeatPassword,
 			})
-			if (!(await loginWithToken(result.token))) return
-			const apiFirstName = result.data.name.trim().split(/\s+/)[0] ?? ""
-			await createUser({ name: apiFirstName })
+			if (!(await loginWithToken(result.token, result.data))) return
 		} catch (error) {
 			setErrorMessage(
 				t(error instanceof AuthApiError ? error.translationKey : "auth.errors.unexpected")
