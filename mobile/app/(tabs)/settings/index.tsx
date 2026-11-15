@@ -140,7 +140,10 @@ export default function SettingsScreen() {
 
 						{!isGuest && <SettingsRow tx="settings.rows.specialists" />}
 
-						<SettingsRow tx="settings.rows.export" onPress={() => router.push("./export")} />
+						<SettingsRow
+							tx="settings.rows.export"
+							onPress={() => router.push("./settings/export")}
+						/>
 					</View>
 
 					<View style={styles.section}>
