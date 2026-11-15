@@ -89,10 +89,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			setStatus("INITIALIZING")
 			setSessionKey(await loginLocalAccount(token, user))
-            await resumeDeletedAccountCleanupIfNeeded()
-            await purgeDatabase()
-            await SecureStore.deleteItemAsync("is_guest")
-            await SecureStore.setItemAsync("auth_token", token)
+			await resumeDeletedAccountCleanupIfNeeded()
+			await purgeDatabase()
+			await SecureStore.deleteItemAsync("is_guest")
+			await SecureStore.setItemAsync("auth_token", token)
 			setStatus("AUTHENTICATED")
 			return true
 		} catch (error) {
@@ -108,10 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			setStatus("INITIALIZING")
 			setSessionKey(await loginLocalGuest())
-            await resumeDeletedAccountCleanupIfNeeded()
-            await purgeDatabase()
-            await SecureStore.deleteItemAsync("auth_token")
-            await SecureStore.setItemAsync("is_guest", "true")
+			await resumeDeletedAccountCleanupIfNeeded()
+			await purgeDatabase()
+			await SecureStore.deleteItemAsync("auth_token")
+			await SecureStore.setItemAsync("is_guest", "true")
 			setStatus("GUEST")
 			return true
 		} catch (error) {
@@ -173,7 +173,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	return (
 		<AuthContext.Provider
-			value={{ status, sessionKey, loginWithToken, loginAsGuest, logout, closeDeletedAccountSession }}
+			value={{
+				status,
+				sessionKey,
+				loginWithToken,
+				loginAsGuest,
+				logout,
+				closeDeletedAccountSession,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>
