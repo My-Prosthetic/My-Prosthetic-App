@@ -138,9 +138,10 @@ export default function SettingsScreen() {
 							style={styles.sectionTitle}
 						/>
 
-						{!isGuest && <SettingsRow tx="settings.rows.specialists" />}
-
-						<SettingsRow tx="settings.rows.export" onPress={() => router.push("./export")} />
+						<SettingsRow
+							tx="settings.rows.export"
+							onPress={() => router.push("/settings/export")}
+						/>
 					</View>
 
 					<View style={styles.section}>
@@ -151,10 +152,14 @@ export default function SettingsScreen() {
 							style={styles.sectionTitle}
 						/>
 
-						{!isGuest && <SettingsRow tx="settings.rows.accountSync" />}
-
-						<SettingsRow tx="settings.rows.appearanceLanguage" />
-						<SettingsRow tx="settings.rows.notifications" />
+						<SettingsRow
+							tx="settings.rows.appearanceLanguage"
+							onPress={() => router.push("/settings/display")}
+						/>
+						<SettingsRow
+							tx="settings.rows.notifications"
+							onPress={() => router.push("/settings/notifications")}
+						/>
 					</View>
 
 					<View style={styles.section}>
@@ -165,7 +170,7 @@ export default function SettingsScreen() {
 							style={styles.sectionTitle}
 						/>
 
-						<SettingsRow tx="settings.rows.about" />
+						<SettingsRow tx="settings.rows.about" onPress={() => router.push("/settings/about")} />
 					</View>
 
 					<View style={styles.actionWrapper}>
