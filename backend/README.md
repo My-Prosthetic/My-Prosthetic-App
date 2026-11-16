@@ -337,6 +337,35 @@ prosthesis, the intensity range or media limits; the API/sync layer must.
 php artisan test --filter=IncidentTest
 ```
 
+## Measurement card persistence
+
+A `Measurement` records the stump of one limb at `measured_at`; the limb is its
+`side` (`left`, `right`) and `limb_type` (`upper`, `lower`). Each
+`MeasurementLevel` holds a label (`level`, shown as L1 to L5), `distance_cm` from
+the stump tip and `circumference_cm`. Both tables use UUID keys.
+
+| Relation | Returns |
+|---|---|
+| `User::measurements()` | The patient's measurement card (`hasMany`) |
+| `Measurement::levels()` | The measurement's levels ordered by `level` (`hasMany`) |
+
+`circumference_cm` is encrypted with `APP_KEY` by the `AsEncryptedFloat` cast and
+read as a float. Losing `APP_KEY` loses this data; rotate it only through
+`APP_PREVIOUS_KEYS`. Within one measurement each `level` and each `distance_cm`
+is unique.
+
+Measurements are soft-deleted and keep their levels. Deleting the patient
+cascades to their measurements, deleted ones included, and to all levels. Foreign
+keys are not mass assignable: create measurements through `User::measurements()`
+and levels through `Measurement::levels()`.
+
+`php artisan db:seed` adds six measurements of the left lower limb, with three
+levels each, for `prosthesis.patient@example.com`.
+
+```bash
+php artisan test --filter=MeasurementTest
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
