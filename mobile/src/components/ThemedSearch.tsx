@@ -27,11 +27,16 @@ export default function ThemedSearch({
 	const [prevExternalValue, setPrevExternalValue] = useState(externalValue)
 
 	const isFirstRender = useRef(true)
+	const debounceRef = useRef(onDebouncedSearch)
 
 	if (externalValue !== undefined && externalValue !== prevExternalValue) {
 		setPrevExternalValue(externalValue)
 		setInternalValue(externalValue)
 	}
+
+	useEffect(() => {
+		debounceRef.current = onDebouncedSearch
+	})
 
 	useEffect(() => {
 		if (isFirstRender.current) {
@@ -40,11 +45,11 @@ export default function ThemedSearch({
 		}
 
 		const handler = setTimeout(() => {
-			onDebouncedSearch?.(internalValue)
+			debounceRef.current?.(internalValue)
 		}, debounceTimeMs)
 
 		return () => clearTimeout(handler)
-	}, [internalValue, debounceTimeMs, onDebouncedSearch])
+	}, [internalValue, debounceTimeMs])
 
 	const handleChangeText = (text: string) => {
 		if (externalValue === undefined) {
