@@ -300,9 +300,6 @@ const getStyles = (colors: ThemeColors) => {
 				marginBottom: 24,
 			},
 			greeting: {
-				textAlign: "left",
-				fontFamily: "Montserrat-Bold",
-				textTransform: "none",
 				fontSize: 32,
 			},
 			dateBadge: {
