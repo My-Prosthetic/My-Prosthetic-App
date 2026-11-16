@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native"
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router"
 
@@ -23,12 +23,14 @@ export default function ProsthesisDetailsScreen() {
 	const [loadError, setLoadError] = useState(false)
 	const [loadAttempt, setLoadAttempt] = useState(0)
 
+	const hasLoaded = useRef(false)
+
 	useFocusEffect(
 		useCallback(() => {
 			let mounted = true
 
 			const load = async () => {
-				setIsLoading(true)
+				if (!hasLoaded.current) setIsLoading(true)
 				setLoadError(false)
 				if (!prosthesisId || typeof prosthesisId !== "string") {
 					setIsLoading(false)
@@ -43,10 +45,11 @@ export default function ProsthesisDetailsScreen() {
 					if (mounted) {
 						setProsthesis(prosthesisResult)
 						setComponents(componentsResult)
+						hasLoaded.current = true
 					}
 				} catch (error) {
 					console.error(`Failed to load prosthesis details (attempt ${loadAttempt}):`, error)
-					if (mounted) setLoadError(true)
+					if (mounted && !hasLoaded.current) setLoadError(true)
 				} finally {
 					if (mounted) setIsLoading(false)
 				}
