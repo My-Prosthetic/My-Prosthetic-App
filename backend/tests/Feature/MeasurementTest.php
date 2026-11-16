@@ -127,6 +127,31 @@ class MeasurementTest extends TestCase
         yield 'repeated distance' => [4, 15];
     }
 
+    #[DataProvider('outOfRangeLevels')]
+    public function test_postgresql_rejects_a_level_or_distance_out_of_range(int $level, int $distance): void
+    {
+        if (DB::getDriverName() !== 'pgsql') {
+            $this->markTestSkipped('The level and distance CHECK constraints exist only on PostgreSQL.');
+        }
+
+        $measurement = Measurement::factory()->create();
+
+        $this->expectException(QueryException::class);
+
+        $measurement->levels()->create([
+            'level' => $level,
+            'distance_cm' => $distance,
+            'circumference_cm' => 40.0,
+        ]);
+    }
+
+    public static function outOfRangeLevels(): iterable
+    {
+        yield 'level 0' => [0, 10];
+        yield 'level 6' => [6, 10];
+        yield 'distance 0' => [1, 0];
+    }
+
     public function test_different_measurements_may_repeat_levels_and_distances(): void
     {
         Measurement::factory()->count(2)->withLevels()->create();
