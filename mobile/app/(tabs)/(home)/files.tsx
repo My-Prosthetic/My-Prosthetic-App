@@ -47,11 +47,11 @@ import { FileRow } from "@/src/components/files/FileRow"
 import IconFile from "@/assets/icons/file.svg"
 import IconFolder from "@/assets/icons/folder.svg"
 import IconPlus from "@/assets/icons/plus.svg"
-import IconSearch from "@/assets/icons/search.svg"
 import IconFilter from "@/assets/icons/filter.svg"
 import IconCamera from "@/assets/icons/camera.svg"
 import IconImage from "@/assets/icons/image.svg"
 import IconBack from "@/assets/icons/chevron-left.svg"
+import ThemedSearch from "@/src/components/ThemedSearch"
 
 type Sheet = "source" | "rename" | "folder" | "filter" | "target" | "delete" | null
 type Filter = { type: FileContextType; prosthesisId: string | null; resourceId: string | null }
@@ -440,19 +440,14 @@ function FilesScreen({ initial }: { initial: Filter }) {
 				ListHeaderComponent={
 					<View>
 						<View style={styles.searchRow}>
-							<ThemedView colorName="bg_0" borderColor="blue1" style={styles.search}>
-								<IconSearch color={colors.blue1} width={18} height={18} />
-								<ThemedInput
-									variant="search"
-									placeholder={t("files.search")}
-									placeholderTextColor={colors.blue1}
-									accessibilityLabel={t("files.search")}
+							<ThemedView style={styles.search}>
+								<ThemedSearch
 									value={query}
 									onChangeText={setQuery}
-									viewStyle={styles.searchInput}
-									textStyle={styles.searchText}
+									placeholder={t("common.search")}
 								/>
 							</ThemedView>
+
 							<ThemedView
 								onPress={() => {
 									prepareFilter({
@@ -815,18 +810,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		alignItems: "center",
-		paddingLeft: 13,
-		borderRadius: 15,
-		minHeight: 40,
 	},
-	searchInput: {
-		flex: 1,
-		width: "auto",
-		borderWidth: 0,
-		minHeight: 38,
-		backgroundColor: "transparent",
-	},
-	searchText: { paddingLeft: 14, paddingRight: 6 },
 	filter: { flexDirection: "row", gap: 8, alignItems: "center" },
 	location: {
 		flexDirection: "row",

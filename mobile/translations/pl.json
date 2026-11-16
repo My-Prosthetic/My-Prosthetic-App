@@ -175,7 +175,8 @@
 		"today": "Dzisiaj",
 		"mp": "My Prosthetic",
 		"info": "Informacja",
-		"yes": "Tak"
+		"yes": "Tak",
+		"search": "Szukaj..."
 	},
 	"funding": {
 		"outOf": "z",

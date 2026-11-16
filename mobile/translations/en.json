@@ -175,7 +175,8 @@
 		"today": "Today",
 		"mp": "My Prosthetic",
 		"info": "Information",
-		"yes": "Yes"
+		"yes": "Yes",
+		"search": "Search..."
 	},
 	"funding": {
 		"outOf": "out of",
