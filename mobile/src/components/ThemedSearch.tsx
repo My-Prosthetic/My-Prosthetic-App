@@ -19,7 +19,7 @@ export default function ThemedSearch({
 	onChangeText,
 	onDebouncedSearch,
 	debounceTimeMs = 300,
-	placeholder = "Szukaj...",
+	placeholder,
 	disabled = false,
 }: ThemedSearchProps) {
 	const { colors } = useTheme()
