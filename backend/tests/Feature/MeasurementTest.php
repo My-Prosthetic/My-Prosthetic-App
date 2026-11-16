@@ -7,6 +7,7 @@ use App\Enums\ProsthesisSide;
 use App\Models\Measurement;
 use App\Models\MeasurementLevel;
 use App\Models\User;
+use Database\Seeders\MeasurementSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -208,5 +209,17 @@ class MeasurementTest extends TestCase
             ['user_id', 'side', 'limb_type', 'measured_at'],
             array_column(Schema::getIndexes('measurements'), 'columns'),
         );
+    }
+
+    public function test_seeder_can_run_again_without_duplicating_or_restoring_measurements(): void
+    {
+        $this->seed(MeasurementSeeder::class);
+        Measurement::query()->delete();
+
+        $this->seed(MeasurementSeeder::class);
+
+        $this->assertDatabaseCount('measurements', 6);
+        $this->assertDatabaseCount('measurement_levels', 18);
+        $this->assertSame(0, Measurement::query()->count());
     }
 }
