@@ -37,24 +37,22 @@ export function ProsthesisComponentsList({
 }: ProsthesisComponentsListProps) {
 	const { colors } = useTheme()
 	const { t } = useTranslation()
-	const [showActive, setShowActive] = useState(true)
-	const [showHistorical, setShowHistorical] = useState(false)
 	const [searchQuery, setSearchQuery] = useState("")
 	const [filtersVisible, setFiltersVisible] = useState(false)
 	const [filters, setFilters] = useState<ComponentFilters>(DEFAULT_COMPONENT_FILTERS)
 	const [pageState, setPageState] = useState({ filterKey: "", page: 1 })
 
+	const toggleActive = () => setFilters((f) => ({ ...f, showActive: !f.showActive }))
+	const toggleHistorical = () => setFilters((f) => ({ ...f, showHistorical: !f.showHistorical }))
+
 	const visibleComponents = useMemo(() => {
 		const query = searchQuery.trim().toLocaleLowerCase()
-		const statusFiltered = components.filter(
-			(component) =>
-				(component.isHistorical ? showHistorical : showActive) &&
-				`${component.model.name} ${component.model.brand.name} ${component.model.type} ${component.description ?? ""}`
-					.toLocaleLowerCase()
-					.includes(query)
+		return filterComponents(components, filters).filter((component) =>
+			`${component.model.name} ${component.model.brand.name} ${component.model.type} ${component.description ?? ""}`
+				.toLocaleLowerCase()
+				.includes(query)
 		)
-		return filterComponents(statusFiltered, { ...filters, status: "all" })
-	}, [components, filters, searchQuery, showActive, showHistorical])
+	}, [components, filters, searchQuery])
 	const filterKey = useMemo(() => visibleComponents.map((c) => c.id).join(","), [visibleComponents])
 	const currentPage = pageState.filterKey === filterKey ? pageState.page : 1
 	const totalPages = Math.max(1, Math.ceil(visibleComponents.length / COMPONENTS_PAGE_SIZE))
@@ -85,13 +83,13 @@ export function ProsthesisComponentsList({
 			<View style={styles.filtersRow}>
 				<ThemedCheckbox
 					label={t("prosthesisDetails.activeFilter")}
-					checked={showActive}
-					onPress={() => setShowActive((visible) => !visible)}
+					checked={filters.showActive}
+					onPress={toggleActive}
 				/>
 				<ThemedCheckbox
 					label={t("prosthesisDetails.historicalFilter")}
-					checked={showHistorical}
-					onPress={() => setShowHistorical((visible) => !visible)}
+					checked={filters.showHistorical}
+					onPress={toggleHistorical}
 				/>
 				<ThemedView
 					style={styles.filtersRowElement}
@@ -178,8 +176,6 @@ export function ProsthesisComponentsList({
 					onClose={() => setFiltersVisible(false)}
 					onApply={(nextFilters) => {
 						setFilters(nextFilters)
-						setShowActive(nextFilters.status !== "historical")
-						setShowHistorical(nextFilters.status !== "active")
 						setFiltersVisible(false)
 					}}
 				/>

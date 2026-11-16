@@ -9,8 +9,7 @@ export function filterComponents(components: ComponentWithRelations[], filters: 
 	endingSoon.setHours(23, 59, 59, 999)
 
 	return components.filter((component) => {
-		if (filters.status === "active" && component.isHistorical) return false
-		if (filters.status === "historical" && !component.isHistorical) return false
+		if (!(component.isHistorical ? filters.showHistorical : filters.showActive)) return false
 		if (filters.types.length > 0 && !filters.types.includes(component.model.type)) return false
 
 		const assemblyDate = Date.parse(component.assemblyDate)

@@ -15,7 +15,8 @@ import IconX from "@/assets/icons/x.svg"
 import IconCheck from "@/assets/icons/check.svg"
 
 export type ComponentFilters = {
-	status: "all" | "active" | "historical"
+	showActive: boolean
+	showHistorical: boolean
 	types: ComponentType[]
 	assemblyFrom: Date | null
 	assemblyTo: Date | null
@@ -23,7 +24,8 @@ export type ComponentFilters = {
 }
 
 export const DEFAULT_COMPONENT_FILTERS: ComponentFilters = {
-	status: "all",
+	showActive: true,
+	showHistorical: false,
 	types: [],
 	assemblyFrom: null,
 	assemblyTo: null,
