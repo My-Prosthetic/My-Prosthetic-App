@@ -74,7 +74,7 @@ export async function createIncident(input: CreateIncidentInput) {
 			audioUri: input.audioUri ?? null,
 			createdAt: now,
 			updatedAt: now,
-			isSharingWithProsthetist: input.isSharingWithProsthetist ?? true,
+			isSharingWithProsthetist: input.isSharingWithProsthetist ?? false,
 			isDirty: true,
 		})
 		.returning()

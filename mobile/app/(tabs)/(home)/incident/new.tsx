@@ -200,7 +200,7 @@ export default function NewIncidentScreen() {
 	const [timeText, setTimeText] = useState(toTimeText(now))
 	const [timePickerOpen, setTimePickerOpen] = useState(false)
 	const [incidentType, setIncidentType] = useState("")
-	const [isSharingWithProsthetist, setIsSharingWithProsthetist] = useState(true)
+	const [isSharingWithProsthetist, setIsSharingWithProsthetist] = useState(false)
 	const [activity, setActivity] = useState("")
 	const [description, setDescription] = useState("")
 	const [intensity, setIntensity] = useState(0)
