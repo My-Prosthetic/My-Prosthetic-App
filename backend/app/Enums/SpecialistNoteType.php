@@ -2,19 +2,12 @@
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasValues;
+
 enum SpecialistNoteType: string
 {
+    use HasValues;
+
     case TECHNICAL_NOTE = 'technical_note';
     case RECOMMENDATION = 'recommendation';
-
-    /**
-     * @return list<string>
-     */
-    public static function values(): array
-    {
-        return array_map(
-            static fn (self $type): string => $type->value,
-            self::cases(),
-        );
-    }
 }

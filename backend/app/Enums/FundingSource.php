@@ -2,22 +2,15 @@
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasValues;
+
 enum FundingSource: string
 {
+    use HasValues;
+
     case FAMILY = 'family';
     case FUNDRAISER = 'fundraiser';
     case GRANT = 'grant';
     case SAVINGS = 'savings';
     case OTHER = 'other';
-
-    /**
-     * @return list<string>
-     */
-    public static function values(): array
-    {
-        return array_map(
-            static fn (self $source): string => $source->value,
-            self::cases(),
-        );
-    }
 }
