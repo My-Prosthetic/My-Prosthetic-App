@@ -7,6 +7,7 @@ import IconSearch from "@/assets/icons/search.svg"
 
 interface ThemedSearchProps {
 	value?: string
+	defaultValue?: string
 	onChangeText?: (text: string) => void
 	onDebouncedSearch?: (text: string) => void
 	debounceTimeMs?: number
@@ -15,7 +16,8 @@ interface ThemedSearchProps {
 }
 
 export default function ThemedSearch({
-	value: externalValue,
+	value,
+	defaultValue = "",
 	onChangeText,
 	onDebouncedSearch,
 	debounceTimeMs = 300,
@@ -23,16 +25,13 @@ export default function ThemedSearch({
 	disabled = false,
 }: ThemedSearchProps) {
 	const { colors } = useTheme()
-	const [internalValue, setInternalValue] = useState(externalValue || "")
-	const [prevExternalValue, setPrevExternalValue] = useState(externalValue)
+
+	const isControlled = value !== undefined
+	const [internalValue, setInternalValue] = useState(defaultValue)
+	const currentValue = isControlled ? value : internalValue
 
 	const isFirstRender = useRef(true)
 	const debounceRef = useRef(onDebouncedSearch)
-
-	if (externalValue !== undefined && externalValue !== prevExternalValue) {
-		setPrevExternalValue(externalValue)
-		setInternalValue(externalValue)
-	}
 
 	useEffect(() => {
 		debounceRef.current = onDebouncedSearch
@@ -45,20 +44,18 @@ export default function ThemedSearch({
 		}
 
 		const handler = setTimeout(() => {
-			debounceRef.current?.(internalValue)
+			debounceRef.current?.(currentValue)
 		}, debounceTimeMs)
 
 		return () => clearTimeout(handler)
-	}, [internalValue, debounceTimeMs])
+	}, [currentValue, debounceTimeMs])
 
 	const handleChangeText = (text: string) => {
-		if (externalValue === undefined) {
+		if (!isControlled) {
 			setInternalValue(text)
 		}
 		onChangeText?.(text)
 	}
-
-	const actualValue = externalValue !== undefined ? externalValue : internalValue
 
 	return (
 		<ThemedView
@@ -70,7 +67,7 @@ export default function ThemedSearch({
 			<IconSearch width={20} height={20} color={colors.blue1} />
 
 			<TextInput
-				value={actualValue}
+				value={currentValue}
 				onChangeText={handleChangeText}
 				placeholder={placeholder}
 				placeholderTextColor={colors.blue1}
