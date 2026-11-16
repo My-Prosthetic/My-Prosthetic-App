@@ -7,7 +7,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ProgrammeSummary } from "@/src/components/programmes/ProgrammeSummary"
 
-import IconChevronRigh from "@/assets/icons/chevron-right.svg"
+import IconChevronRight from "@/assets/icons/chevron-right.svg"
 
 import fundingConfig from "@/config/fundingConfig.json"
 
@@ -232,7 +232,7 @@ export default function ProgrammeDetailsScreen() {
 											{translate(foundation.descriptionKey)}
 										</ThemedText>
 									</View>
-									<IconChevronRigh color={colors.blue1} />
+									<IconChevronRight color={colors.blue1} />
 								</ThemedView>
 								<ThemedView
 									variant="divider"
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 28,
 		paddingHorizontal: 10,
+		flexDirection: "column",
 	},
 	summaryRow: {
 		minHeight: 40,
@@ -275,6 +276,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingHorizontal: 12,
+		width: "100%",
 	},
 	stepsContainer: {
 		gap: 0,

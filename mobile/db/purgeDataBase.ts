@@ -1,4 +1,5 @@
-import { expoDb } from "@/db/client"
+import { withFileSessionTransition } from "@/src/services/fileStorageService"
+import { expoDb } from "./client"
 
 const PRESERVED_TABLES = new Set(["__drizzle_migrations", "android_metadata"])
 
@@ -16,7 +17,9 @@ async function getUserTables(): Promise<string[]> {
 	return rows.map((row) => row.name).filter((name) => !PRESERVED_TABLES.has(name))
 }
 
-export async function purgeDatabase(): Promise<void> {
+export async function purgeDatabase(
+	clearCredentials: () => Promise<void> = async () => {}
+): Promise<void> {
 	const tables = await getUserTables()
 
 	await expoDb.execAsync("PRAGMA foreign_keys = OFF;")
@@ -34,4 +37,6 @@ export async function purgeDatabase(): Promise<void> {
 	} finally {
 		await expoDb.execAsync("PRAGMA foreign_keys = ON;")
 	}
+
+	return withFileSessionTransition(clearCredentials)
 }

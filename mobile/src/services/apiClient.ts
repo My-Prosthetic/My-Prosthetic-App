@@ -15,7 +15,7 @@ export const apiClient = create({
 // runs before every request
 apiClient.interceptors.request.use(async (config) => {
 	const token = await SecureStore.getItemAsync(AUTH_TOKEN_KEY)
-	if (token) {
+	if (token && !config.headers.Authorization) {
 		config.headers.Authorization = `Bearer ${token}`
 	}
 	return config

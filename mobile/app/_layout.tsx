@@ -3,16 +3,14 @@ import { Text, View } from "react-native"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { Roboto_500Medium } from "@expo-google-fonts/roboto"
 
 import "@/translations/i18n"
 import { ThemeProvider } from "@/context/ThemeContext"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
-import { seedCatalogIfNotInitialized } from "@/db/bootstrap"
-import { db } from "@/db/client"
-import migrations from "@/drizzle/migrations"
+import { initializeDatabase } from "@/db/initialize"
+import { getDatabaseSession } from "@/db/client"
 import { SelectedProsthesisProvider } from "@/context/SelectedProsthesisContext"
 import { SettingsProvider } from "@/context/SettingsContext"
 import { JournalFilterProvider } from "@/context/JournalFilterContext"
@@ -31,26 +29,20 @@ function RootNavigationLayout({
 	fontsError: Error | null
 }) {
 	const { status } = useAuth()
-	const { success: migrationsLoaded, error: migrationError } = useMigrations(db, migrations)
-	const [catalogueSeeded, setCatalogueSeeded] = useState(false)
-	const [catalogueError, setCatalogueError] = useState<Error | null>(null)
+	const [migrationsLoaded, setMigrationsLoaded] = useState(false)
+	const [migrationError, setMigrationError] = useState<Error | null>(null)
 
 	useEffect(() => {
-		if (!migrationsLoaded) {
-			return
-		}
-
 		let isMounted = true
-
-		seedCatalogIfNotInitialized()
+		initializeDatabase()
 			.then(() => {
 				if (isMounted) {
-					setCatalogueSeeded(true)
+					setMigrationsLoaded(true)
 				}
 			})
 			.catch((error: unknown) => {
 				if (isMounted) {
-					setCatalogueError(
+					setMigrationError(
 						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
 					)
 				}
@@ -59,14 +51,13 @@ function RootNavigationLayout({
 		return () => {
 			isMounted = false
 		}
-	}, [migrationsLoaded])
+	}, [])
 
 	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
 	const isReady =
 		(fontsLoaded || !!fontsError) &&
 		status !== "INITIALIZING" &&
-		(migrationsLoaded || !!migrationError) &&
-		(catalogueSeeded || !!catalogueError || !!migrationError)
+		(migrationsLoaded || !!migrationError)
 
 	useEffect(() => {
 		if (isReady) {
@@ -88,14 +79,6 @@ function RootNavigationLayout({
 		)
 	}
 
-	if (catalogueError) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>Błąd inicjalizacji katalogu producentów: {catalogueError.message}</Text>
-			</View>
-		)
-	}
-
 	return (
 		<Stack screenOptions={{ headerShown: false }}>
 			<Stack.Protected guard={hasActiveSession}>
@@ -111,17 +94,32 @@ function RootNavigationLayout({
 	)
 }
 
-export default function RootLayout() {
+function SessionNavigation(props: { fontsLoaded: boolean; fontsError: Error | null }) {
+	const { sessionKey, status } = useAuth()
 	useEffect(() => {
-		if (__DEV__) {
-			try {
-				logFullDatabase()
-			} catch (error) {
-				console.error("Failed to log database contents:", error)
-			}
+		if (
+			!__DEV__ ||
+			!sessionKey ||
+			status === "INITIALIZING" ||
+			getDatabaseSession()?.key !== sessionKey
+		)
+			return
+		try {
+			logFullDatabase()
+		} catch (error) {
+			console.error("Failed to log current account database:", error)
 		}
-	}, [])
+	}, [sessionKey, status])
+	return (
+		<SelectedProsthesisProvider key={sessionKey ?? "signed-out"}>
+			<JournalFilterProvider>
+				<RootNavigationLayout {...props} />
+			</JournalFilterProvider>
+		</SelectedProsthesisProvider>
+	)
+}
 
+export default function RootLayout() {
 	const [loaded, error] = useFonts({
 		"Afacad-Regular": require("@/assets/fonts/Afacad/Afacad-Regular.ttf"),
 		"Afacad-Medium": require("@/assets/fonts/Afacad/Afacad-Medium.ttf"),
@@ -144,11 +142,7 @@ export default function RootLayout() {
 		<ThemeProvider>
 			<SettingsProvider>
 				<AuthProvider>
-					<SelectedProsthesisProvider>
-						<JournalFilterProvider>
-							<RootNavigationLayout fontsLoaded={loaded} fontsError={error} />
-						</JournalFilterProvider>
-					</SelectedProsthesisProvider>
+					<SessionNavigation fontsLoaded={loaded} fontsError={error} />
 				</AuthProvider>
 			</SettingsProvider>
 		</ThemeProvider>

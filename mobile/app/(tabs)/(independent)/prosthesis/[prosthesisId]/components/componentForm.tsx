@@ -14,6 +14,7 @@ import ThemedSelectiveSwitch from "@/src/components/ThemedSelectiveSwitch"
 import { DateRow } from "@/src/components/prosthesis/component/DateRow"
 import { ReminderCheckRow } from "@/src/components/prosthesis/component/ReminderCheckRow"
 import { useComponentForm, type ComponentFormMode } from "@/src/hooks/useComponentForm"
+import { PendingFileAttachments } from "@/src/components/files/PendingFileAttachments"
 
 import IconFile from "@/assets/icons/file.svg"
 import IconPlus from "@/assets/icons/plus.svg"
@@ -82,6 +83,7 @@ export default function ComponentFormScreen() {
 		setAssemblyDateModalVisible,
 		setWarrantyEndDateModalVisible,
 		setExpectedExchangeDateModalVisible,
+		filesRef,
 	} = useComponentForm(formMode, params.componentId)
 
 	if (screenLoadState === "loading") {
@@ -303,7 +305,7 @@ export default function ComponentFormScreen() {
 					/>
 				</View>
 
-				{/* Dodaj pliki */}
+				{/* TODO Wyświetlanie plików dodanych do komponentu*/}
 				<ThemedView
 					variant="wide"
 					colorName="blue0"
@@ -313,7 +315,8 @@ export default function ComponentFormScreen() {
 					rightChild={<IconPlus color={colors.graphite0} />}
 					style={styles.addFiles}
 				/>
-
+				<PendingFileAttachments ref={filesRef} />
+				
 				<ThemedView
 					variant="wide"
 					colorName="blue2"

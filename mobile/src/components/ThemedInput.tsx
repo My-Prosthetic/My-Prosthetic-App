@@ -74,8 +74,10 @@ export const ThemedInput = ({
 		lineHeight: 20,
 		fontFamily: "Cabin-Medium",
 		flex: 1,
+		width: "100%",
 		paddingLeft: 16,
 		color: colors.graphite0,
+		paddingRight: 16,
 	}
 
 	return (

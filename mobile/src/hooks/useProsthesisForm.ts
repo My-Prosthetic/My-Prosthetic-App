@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Alert } from "react-native"
 import { useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -10,6 +10,7 @@ import {
 	updateProsthesis,
 } from "@/db/repositories/prosthesisRepository"
 import type { AmputationLevel } from "@/src/components/prosthesis/AmputationLevelSelector"
+import type { PendingFileAttachmentsHandle } from "@/src/components/files/PendingFileAttachments"
 
 export type FormMode = "Create" | "Edit"
 type Side = "left" | "right"
@@ -62,6 +63,8 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 	const [activeDatePicker, setActiveDatePicker] = useState<DateField | null>(null)
 	const [notes, setNotes] = useState("")
 	const [isSaving, setIsSaving] = useState(false)
+	const savingRef = useRef(false)
+	const filesRef = useRef<PendingFileAttachmentsHandle>(null)
 
 	useEffect(() => {
 		if (!isEditing || !prosthesisId) return
@@ -175,9 +178,13 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 	}
 
 	const handleCreate = async () => {
-		if (!validateForm() || amputationLevel === null) return
+		if (savingRef.current || !canSave || amputationLevel === null) {
+			return
+		}
+		if (!validateForm()) return
 
 		try {
+			savingRef.current = true
 			setIsSaving(true)
 			const prosthesis = await createProsthesis({
 				name: name.trim(),
@@ -189,6 +196,12 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 				replacementDate: replacementDate ? formatDateForStorage(replacementDate) : null,
 			})
 
+			await filesRef.current?.save({
+				type: "prosthesis",
+				prosthesisId: prosthesis.id,
+				resourceId: null,
+			})
+
 			router.replace({
 				pathname: "/prosthesis/[prosthesisId]",
 				params: { prosthesisId: prosthesis.id },
@@ -197,14 +210,20 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 			console.error("Failed to create prosthesis:", error)
 			Alert.alert(t("common.error"), t("newProsthesis.saveError"))
 		} finally {
+			savingRef.current = false
 			setIsSaving(false)
 		}
 	}
 
 	const handleEdit = async () => {
+		if (savingRef.current || !canSave || amputationLevel === null) {
+			return
+		}
+
 		if (!validateForm() || !amputationLevel || !prosthesisId) return
 
 		try {
+			savingRef.current = true
 			setIsSaving(true)
 			const prosthesis = await updateProsthesis(prosthesisId, {
 				name: name.trim(),
@@ -216,12 +235,15 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 				replacementDate: replacementDate ? formatDateForStorage(replacementDate) : null,
 			})
 
+			await filesRef.current?.save({ type: "prosthesis", prosthesisId, resourceId: null })
+
 			if (!prosthesis) throw new Error("Failed to update prosthesis")
 			router.back()
 		} catch (error) {
 			console.error("Failed to update prosthesis:", error)
 			Alert.alert(t("common.error"), t("prosthesisDetails.editSaveError"))
 		} finally {
+			savingRef.current = false
 			setIsSaving(false)
 		}
 	}
@@ -326,5 +348,7 @@ export function useProsthesisForm(formMode: FormMode, prosthesisId?: string) {
 		setReplacementDate,
 		setActiveDatePicker,
 		setNotes,
+		savingRef,
+		filesRef,
 	}
 }

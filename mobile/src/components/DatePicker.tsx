@@ -25,11 +25,16 @@ interface CalendarViewProps {
 	onApply: () => void
 }
 
-export interface DatePickerModalProps {
-	visible: boolean
-	onClose: () => void
-	onSave: (selectedDate: Date) => void
-	initialDate?: Date
+interface CalendarViewProps {
+	month: Date
+	selectedDate: Date
+	locale: string
+	minimumDate?: Date
+	maximumDate?: Date
+	onMonthChange: (month: Date) => void
+	onSelect: (date: Date) => void
+	onCancel: () => void
+	onApply: () => void
 }
 
 function startOfCalendarMonth(date: Date): Date {
@@ -76,6 +81,8 @@ function CalendarView({
 	month,
 	selectedDate,
 	locale,
+	minimumDate,
+	maximumDate,
 	onMonthChange,
 	onSelect,
 	onCancel,
@@ -200,7 +207,23 @@ function CalendarView({
 	)
 }
 
-export function DatePickerModal({ visible, onClose, onSave, initialDate }: DatePickerModalProps) {
+export interface DatePickerModalProps {
+	visible: boolean
+	onClose: () => void
+	onSave: (selectedDate: Date) => void
+	initialDate?: Date
+	minimumDate?: Date
+	maximumDate?: Date
+}
+
+export function DatePickerModal({
+	visible,
+	onClose,
+	onSave,
+	initialDate,
+	minimumDate,
+	maximumDate,
+}: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
 	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
 		() => initialDate ?? new Date()
@@ -239,6 +262,8 @@ export function DatePickerModal({ visible, onClose, onSave, initialDate }: DateP
 					month={calendarMonth}
 					selectedDate={calendarSelectedDate}
 					locale={i18n.language}
+					minimumDate={minimumDate}
+					maximumDate={maximumDate}
 					onMonthChange={setCalendarMonth}
 					onSelect={setCalendarSelectedDate}
 					onCancel={onClose}

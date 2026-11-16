@@ -20,6 +20,7 @@ import IconLeg from "@/assets/icons/leg_logo.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconFile from "@/assets/icons/file.svg"
 import IconTrash from "@/assets/icons/trash-bin.svg"
+import { PendingFileAttachments } from "@/src/components/files/PendingFileAttachments"
 
 export default function ProsthesisFormScreen() {
 	const { colors } = useTheme()
@@ -43,13 +44,14 @@ export default function ProsthesisFormScreen() {
 		handleSave,
 		handleLeave,
 		handleDelete,
-		handleAddFiles,
 		retryLoad,
 		setName,
 		setSide,
 		setAmputationLevel,
 		setActiveDatePicker,
 		setNotes,
+		savingRef,
+		filesRef,
 	} = useProsthesisForm(formMode, params.prosthesisId)
 
 	const iconsList = [IconLeg, IconLeg, IconLeg]
@@ -228,19 +230,24 @@ export default function ProsthesisFormScreen() {
 					/>
 				</View>
 
-				<View style={styles.section}>
-					<ThemedView
-						colorName="blue0"
-						variant="wide"
-						onPress={handleAddFiles}
-						leftChild={<IconFile color={colors.graphite0} />}
-						centerChild={
-							<ThemedText tx="newProsthesis.addFiles" variant="H1" colorName="graphite0" />
-						}
-						rightChild={<IconPlus color={colors.graphite0} />}
-					/>
-				</View>
-
+				{formMode === "Create" &&
+					<View style={styles.section}>
+						<ThemedView
+							colorName="blue0"
+							variant="wide"
+							onPress={() => {
+								if (!savingRef.current) filesRef.current?.open()
+							}}
+							leftChild={<IconFile color={colors.graphite0} />}
+							centerChild={
+								<ThemedText tx="newProsthesis.addFiles" variant="H1" colorName="graphite0" />
+							}
+							rightChild={<IconPlus color={colors.graphite0} />}
+						/>
+						<PendingFileAttachments ref={filesRef} />
+					</View>
+				}
+				
 				<View style={[styles.section, styles.actions]}>
 					<ThemedView
 						variant="wide"

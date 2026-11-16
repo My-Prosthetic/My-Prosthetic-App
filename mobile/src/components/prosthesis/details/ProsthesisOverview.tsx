@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
+import { useRouter } from "expo-router"
 
 import type { Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { useTheme } from "@/context/ThemeContext"
@@ -11,10 +12,9 @@ import { formatDate } from "@/src/utils/dateTimeUtils"
 
 import IconChevronUp from "@/assets/icons/chevron-up.svg"
 import IconChevronDown from "@/assets/icons/chevron-down.svg"
-import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPencil from "@/assets/icons/pencil.svg"
-import IconFile from "@/assets/icons/file.svg"
 import IconLeg from "@/assets/icons/leg_logo.svg"
+import IconPlus from "@/assets/icons/plus.svg"
 
 const toAmputationLevelKey = (level: string) =>
 	level.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase())
@@ -28,6 +28,7 @@ export function ProsthesisOverview({ prosthesis, onEdit }: ProsthesisOverviewPro
 	const { colors } = useTheme()
 	const { t } = useTranslation()
 	const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+	const router = useRouter()
 
 	const limbLabel = t(
 		prosthesis.limbType === "upper" ? "newProsthesis.upper" : "newProsthesis.lower"
@@ -38,9 +39,6 @@ export function ProsthesisOverview({ prosthesis, onEdit }: ProsthesisOverviewPro
 		defaultValue: prosthesis.amputationLevel,
 	})
 	const startedAt = prosthesis.startedAt ?? prosthesis.createdAt
-
-	//TODO
-	const onHandleImagesPress = () => {}
 
 	return (
 		<>
@@ -101,17 +99,46 @@ export function ProsthesisOverview({ prosthesis, onEdit }: ProsthesisOverviewPro
 					</View>
 				)}
 				<ThemedView variant="divider" colorName="blue1" />
-				<ThemedView
-					onPress={onHandleImagesPress}
-					variant="wide"
-					colorName="blue0"
-					leftChild={<IconFile color={colors.graphite0} width={20} height={20} />}
-					centerChild={<ThemedText tx="newIncident.addImages" variant="H1" colorName="graphite0" />}
-					rightChild={<IconChevronRight color={colors.graphite0} />}
-					style={{ marginTop: 20 }}
+				<ProsthesisFilesSection
+					onPress={() =>
+						router.push({
+							pathname: "/files",
+							params: { context: "prosthesis", prosthesisId: prosthesis.id },
+						})
+					}
 				/>
 			</View>
 		</>
+	)
+}
+
+function ProsthesisFilesSection({ onPress }: { onPress: () => void }) {
+	const { colors } = useTheme()
+
+	return (
+		<View style={styles.filesSection}>
+			<ThemedText
+				// tx="prosthesisDetails.photosAndFiles"
+				variant="H4"
+				colorName="graphite0"
+			/>
+			<ThemedView colorName="blue1" style={styles.filePlaceholder} />
+			<ThemedView colorName="blue1" style={styles.addFileRow} onPress={onPress}>
+				<ThemedView colorName="blue1" style={styles.smallAddCircle}>
+					<IconPlus height={30} color={colors.blue2} />
+				</ThemedView>
+				<ThemedText
+					// tx="prosthesisDetails.addFile"
+					variant="H5"
+					colorName="graphite0"
+				/>
+			</ThemedView>
+			<ThemedText
+				// tx="prosthesisDetails.filesHint"
+				variant="H5"
+				colorName="graphite0"
+			/>
+		</View>
 	)
 }
 
@@ -129,6 +156,29 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+	filesSection: {
+		alignItems: "center",
+		marginTop: 45,
+	},
+	filePlaceholder: {
+		width: 188,
+		height: 188,
+		borderRadius: 7,
+		marginTop: 13,
+		marginBottom: 11,
+	},
+	addFileRow: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	smallAddCircle: {
+		width: 31,
+		height: 31,
+		borderRadius: 16,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 10,
+	},
 	headerContainer: {
 		flexDirection: "column",
 		width: "119%",

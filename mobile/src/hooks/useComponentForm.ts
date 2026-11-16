@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Alert } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -13,6 +13,7 @@ import type { ComponentWithRelations } from "@/db/repositories/componentReposito
 import { getProsthesisById, type Prosthesis } from "@/db/repositories/prosthesisRepository"
 import { getComponentTypesForProsthesis, type ComponentType } from "@/src/constants/componentTypes"
 import { useBrandModelCatalog } from "@/src/hooks/useBrandModelCatalog"
+import { type PendingFileAttachmentsHandle } from "@/src/components/files/PendingFileAttachments"
 
 export type ComponentFormMode = "Create" | "Edit"
 type LoadState = "loading" | "ready" | "notFound" | "error"
@@ -93,6 +94,9 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 	const [warrantyEndDateModalVisible, setWarrantyEndDateModalVisible] = useState(false)
 	const [expectedExchangeDateModalVisible, setExpectedExchangeDateModalVisible] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
+	const savingRef = useRef(false)
+	const savedComponentId = useRef<string | null>(null)
+	const filesRef = useRef<PendingFileAttachmentsHandle>(null)
 
 	useEffect(() => {
 		if (!prosthesisId) return
@@ -217,7 +221,7 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 	const toggleRemindWarrantyPush = () => setRemindWarrantyPush((current) => !current)
 
 	const handleOnAddFiles = () => {
-		// File attachment is not implemented yet.
+		if (!savingRef.current) filesRef.current?.open()
 	}
 
 	const validateDates = () => {
@@ -254,16 +258,19 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 	}
 
 	const handleSave = async () => {
-		if (!prosthesisId || isSaving) return
+		if (typeof prosthesisId !== "string" || isSaving || savingRef.current) return
 
-		if (!brand.trim() || !model.trim() || !assemblyDate) {
-			const missingFields = [
-				!category && t("newComponent.fields.category"),
-				!brand.trim() && t("newComponent.fields.brand"),
-				!model.trim() && t("newComponent.fields.model"),
-				!assemblyDate && t("newComponent.fields.assemblyDate"),
-			].filter(Boolean)
+		const hasValidAssemblyDate =
+			assemblyDate instanceof Date && !Number.isNaN(assemblyDate.getTime())
 
+		const missingFields = [
+			!category && t("newComponent.fields.category"),
+			!brand.trim() && t("newComponent.fields.brand"),
+			!model.trim() && t("newComponent.fields.model"),
+			!hasValidAssemblyDate && t("newComponent.fields.assemblyDate"),
+		].filter(Boolean)
+
+		if (missingFields.length > 0 || !assemblyDate) {
 			Alert.alert(
 				t("common.validationError"),
 				t("newComponent.validation.requiredFields", {
@@ -275,8 +282,12 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 
 		if (!validateDates()) return
 
+		let persisted = false
+
 		try {
+			savingRef.current = true
 			setIsSaving(true)
+
 			const input = {
 				modelId: model.trim(),
 				isFinal,
@@ -293,29 +304,41 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 				remindWarrantyPush,
 			}
 
+			let resourceId: string
 			if (isEditing && componentId) {
 				const updated = await updateComponent(componentId, input)
 				if (!updated) throw new Error("Component not found or deleted")
+				resourceId = componentId
 			} else {
-				await createComponent({
-					prosthesisId,
-					...input,
-					description: description.trim(),
-					warrantyEndDate: warrantyEndDate?.toISOString(),
-					expectedExchangeDate: expectedExchangeDate?.toISOString(),
-				})
+				resourceId =
+					savedComponentId.current ??
+					(
+						await createComponent({
+							prosthesisId,
+							...input,
+							description: description.trim(),
+							warrantyEndDate: warrantyEndDate?.toISOString(),
+							expectedExchangeDate: expectedExchangeDate?.toISOString(),
+						})
+					).id
+				savedComponentId.current = resourceId
 			}
+			persisted = true
 
+			await filesRef.current?.save({ type: "component", prosthesisId, resourceId })
 			router.back()
 		} catch (error) {
 			console.error(`Failed to ${isEditing ? "update" : "create"} component:`, error)
 			Alert.alert(
 				t("common.error"),
-				isEditing
-					? t("newComponent.errors.updateComponent")
-					: t("newComponent.errors.saveComponent")
+				persisted
+					? t("files.errors.save")
+					: isEditing
+						? t("newComponent.errors.updateComponent")
+						: t("newComponent.errors.saveComponent")
 			)
 		} finally {
+			savingRef.current = false
 			setIsSaving(false)
 		}
 	}
@@ -423,5 +446,6 @@ export function useComponentForm(formMode: ComponentFormMode, componentId?: stri
 		setAssemblyDateModalVisible,
 		setWarrantyEndDateModalVisible,
 		setExpectedExchangeDateModalVisible,
+		filesRef,
 	}
 }
