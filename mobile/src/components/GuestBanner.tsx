@@ -20,7 +20,7 @@ export function GuestBanner() {
 				},
 			]}
 		>
-			<IconFile width={22} color={colors.warning} />
+			<IconFile height={22} color={colors.warning} />
 			<View style={styles.messages}>
 				<ThemedText tx="login.noCopy" variant="H2" colorName="blue2" />
 			</View>
