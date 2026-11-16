@@ -21,6 +21,7 @@ import IconPlus from "@/assets/icons/plus.svg"
 import IconSliders from "@/assets/icons/sliders.svg"
 import IconChevronLeft from "@/assets/icons/chevron-left.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
+import { ParseKeys } from "i18next"
 
 export const COMPONENTS_PAGE_SIZE = 3
 
@@ -213,7 +214,7 @@ function ComponentCard({
 				</ThemedView>
 				<View style={styles.componentMainInfo}>
 					<ThemedText variant="H3" colorName="blue2">
-						{t(`prosthesisDetails.filters.types.${component.model.type}` as any)}
+						{t(`prosthesisDetails.filters.types.${component.model.type}` as ParseKeys)}
 					</ThemedText>
 					{component.model.brand.name ? (
 						<ThemedText variant="H4" colorName="blue2">
