@@ -13,6 +13,7 @@ import m0008 from "./0008_awesome_black_tarantula.sql"
 import m0009 from "./0009_wet_mentor.sql"
 import m0010 from "./0010_outstanding_hedge_knight.sql"
 import m0011 from "./0011_file_entries.sql"
+import m0012 from "./0012_blue_obadiah_stane.sql"
 
 export default {
 	journal,
@@ -29,5 +30,6 @@ export default {
 		m0009,
 		m0010,
 		m0011,
+		m0012,
 	},
 }

@@ -15,6 +15,7 @@ export type JournalEvent = {
 	title: string
 	intensity: number | null
 	activity: string | null
+	prosthesisId: string
 	prosthesis: string
 	component: string | null
 	description: string | null
@@ -56,6 +57,7 @@ export async function getJournalEvents(
 				intensity: incidents.intensity,
 				activity: incidents.activity,
 				description: incidents.description,
+				prosthesisId: prostheses.id,
 				prosthesis: prostheses.name,
 				componentDescription: components.description,
 				modelName: models.name,
@@ -104,6 +106,7 @@ export async function getJournalEvents(
 					title: row.type,
 					intensity: row.intensity,
 					activity: row.activity,
+					prosthesisId: row.prosthesisId,
 					prosthesis: row.prosthesis,
 					component:
 						row.componentDescription?.trim() ||
@@ -121,6 +124,7 @@ export async function getJournalEvents(
 				id: components.id,
 				assemblyDate: components.assemblyDate,
 				description: components.description,
+				prosthesisId: prostheses.id,
 				prosthesis: prostheses.name,
 				modelName: models.name,
 				brandName: brands.name,
@@ -170,6 +174,7 @@ export async function getJournalEvents(
 				title: row.modelName,
 				intensity: null,
 				activity: null,
+				prosthesisId: row.prosthesisId,
 				prosthesis: row.prosthesis,
 				component: row.description?.trim() || `${row.brandName} | ${row.modelName}`,
 				description: row.description,

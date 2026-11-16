@@ -37,24 +37,6 @@ interface CalendarViewProps {
 	onApply: () => void
 }
 
-function dayValue(date: Date): number {
-	return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-}
-
-function isSelectableDate(date: Date, minimumDate?: Date, maximumDate?: Date): boolean {
-	const value = dayValue(date)
-	return (
-		(!minimumDate || value >= dayValue(minimumDate)) &&
-		(!maximumDate || value <= dayValue(maximumDate))
-	)
-}
-
-function clampDate(date: Date, minimumDate?: Date, maximumDate?: Date): Date {
-	if (minimumDate && dayValue(date) < dayValue(minimumDate)) return minimumDate
-	if (maximumDate && dayValue(date) > dayValue(maximumDate)) return maximumDate
-	return date
-}
-
 function startOfCalendarMonth(date: Date): Date {
 	return new Date(date.getFullYear(), date.getMonth(), 1)
 }

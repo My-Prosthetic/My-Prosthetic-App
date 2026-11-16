@@ -3,7 +3,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { StyleSheet, ScrollView } from "react-native"
-import { ThemedToggleSwitch } from "@/src/components/settings/ThemedToggleSwitch"
+import { ThemedToggleSwitch } from "@/src/components/ThemedToggleSwitch"
 import { useState } from "react"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import { SettingsOptionModal } from "@/src/components/settings/SettingsOptionModal"
@@ -76,8 +76,8 @@ export default function DisplayScreen() {
 					}
 				>
 					PRESS ME TO TEST TTS !!!!!!
-				</ThemedText> */}
-				<ThemedView variant="divider" colorName="blue1" />
+				</ThemedText> 
+				<ThemedView variant="divider" colorName="blue1" />*/}
 				{/* LANGUAGE & REGION SETTINGS */}
 				<ThemedText
 					variant="H1"
@@ -153,10 +153,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 15,
-	},
-	fontSizeSlider: {
-		width: "100%",
-		height: 44,
 	},
 	scrollView: {
 		flex: 1,

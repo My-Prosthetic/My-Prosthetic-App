@@ -103,12 +103,7 @@ export const PendingFileAttachments = forwardRef<PendingFileAttachmentsHandle, o
 			<>
 				{files.map((item) => (
 					<View key={item.id} style={styles.row}>
-						<ThemedText
-							variant="subTitle2"
-							colorName="primary_base"
-							numberOfLines={1}
-							style={styles.filename}
-						>
+						<ThemedText variant="H4" colorName="blue2" numberOfLines={1} style={styles.filename}>
 							{item.name}
 							{item.file.extension}
 						</ThemedText>

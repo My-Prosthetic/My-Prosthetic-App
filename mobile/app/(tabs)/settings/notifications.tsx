@@ -93,7 +93,6 @@ export default function NotificationsScreen() {
 					{t("settings.notifications.measurementTime")}
 				</ThemedText>
 				<DropdownSelect
-					label={t("settings.notifications.measurementTime")}
 					placeholder={t("settings.notifications.chooseTime")}
 					options={timeOptions}
 					value={preferences.measurementTime}

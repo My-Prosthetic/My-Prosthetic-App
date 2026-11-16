@@ -15,13 +15,16 @@ export const INITIAL_MEASUREMENTS: MeasurementLevel[] = [
 
 export const MAX_MEASUREMENT_LEVELS = 5
 
+export function formatMeasurement(value?: number): string {
+	return value === undefined ? "–" : value.toFixed(2).replace(".", ",")
+}
+
 export function sortAndRenumberLevels(levels: MeasurementLevel[]): MeasurementLevel[] {
 	return [...levels]
-		.sort((left, right) => left.distance - right.distance)
+		.sort((left, right) => right.distance - left.distance)
 		.map((item, index) => ({ ...item, level: index + 1 }))
 }
 
-//TODO dodać dozwolone zakresy liczbowe
 export function isValidMeasurementValue(value: string): boolean {
 	const normalizedValue = value.trim().replace(",", ".")
 	return /^\d+(?:\.\d+)?$/.test(normalizedValue) && Number.isFinite(Number(normalizedValue))
@@ -45,6 +48,6 @@ export function getMeasurementLevelsFromHistory(
 	return measure.levels.map(({ level, distance, value }) => ({
 		level,
 		distance,
-		value: options?.keepValues ? String(value).replace(".", ",") : "",
+		value: options?.keepValues ? formatMeasurement(value) : "",
 	}))
 }

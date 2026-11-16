@@ -117,7 +117,7 @@ function TimePickerContent({
 
 			<View style={styles.pickerSection}>
 				{/* Podświetlona centralna belka wyboru */}
-				<ThemedView colorName="tertiary_base_2" style={styles.activeSelectionBackground} />
+				<ThemedView colorName="blue0" style={styles.activeSelectionBackground} />
 
 				<View style={styles.column}>
 					<TimeWheel

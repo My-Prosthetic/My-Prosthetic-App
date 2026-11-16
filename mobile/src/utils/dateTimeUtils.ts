@@ -41,11 +41,12 @@ export const formatHour = (value: DateInput | FormatHourOptions = new Date()): s
 }
 
 export const formatDate = (
-	value: DateInput,
+	value: DateInput | null | undefined,
 	mode: DateFormatMode = "numeric",
 	referenceDate: Date = new Date(),
 	dateFormat?: DateFormat
 ): string => {
+	if (value === null || value === undefined) return ""
 	const date = toDate(value)
 	const year = date.getFullYear()
 	const month = pad2(date.getMonth() + 1)

@@ -131,7 +131,7 @@ export function KLevelSelector({
 										styles.dropdownOption,
 										index !== K_LEVELS.length - 1 && {
 											borderBottomWidth: StyleSheet.hairlineWidth,
-											borderBottomColor: colors.primary_base_3,
+											borderBottomColor: colors.blue2,
 										},
 										isSelected && { backgroundColor: colors.blue0 },
 									]}

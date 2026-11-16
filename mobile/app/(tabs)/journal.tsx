@@ -193,7 +193,6 @@ export default function JournalScreen() {
 			<ThemedHeader
 				tx="journal.title"
 				style={styles.header}
-				backButtonStyle={styles.headerBackButton}
 				onBack={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/(home)/home"))}
 			/>
 			<ScrollView
@@ -438,8 +437,12 @@ export default function JournalScreen() {
 													params: { incidentId: event.id },
 												})
 											: router.push({
-													pathname: "/(tabs)/(home)/component/[componentId]",
-													params: { componentId: event.id },
+													pathname: "/prosthesis/[prosthesisId]/components/componentForm",
+													params: {
+														prosthesisId: event.prosthesisId,
+														componentId: event.id,
+														mode: "Edit",
+													},
 												})
 									}
 								>
@@ -500,7 +503,6 @@ export default function JournalScreen() {
 const styles = StyleSheet.create({
 	screen: { flex: 1, borderRadius: 0 },
 	header: { width: "100%", alignSelf: "stretch" },
-	headerBackButton: { minWidth: 44, minHeight: 44 },
 	scroll: { paddingBottom: 24 },
 	filters: {
 		borderTopLeftRadius: 0,

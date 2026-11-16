@@ -31,7 +31,6 @@ export function useBrandModelCatalog({
 	const [modelsList, setModelsList] = useState<DropdownOption<string>[]>([])
 	const [isLoadingModels, setIsLoadingModels] = useState(false)
 	const [customOptionType, setCustomOptionType] = useState<"brand" | "model" | null>(null)
-	const [customOptionName, setCustomOptionName] = useState("")
 	const [isCreatingCustomOption, setIsCreatingCustomOption] = useState(false)
 
 	useEffect(() => {
@@ -110,7 +109,6 @@ export function useBrandModelCatalog({
 	}, [selectedBrandId, category, t])
 
 	const openCustomOptionDialog = (type: "brand" | "model") => {
-		setCustomOptionName("")
 		setCustomOptionType(type)
 	}
 
@@ -119,7 +117,6 @@ export function useBrandModelCatalog({
 			return
 		}
 		setCustomOptionType(null)
-		setCustomOptionName("")
 	}
 
 	const confirmCreateModel = (existingBrandNames: string, selectedBrandName: string) =>
@@ -145,8 +142,8 @@ export function useBrandModelCatalog({
 			)
 		})
 
-	const saveCustomOption = async () => {
-		const name = customOptionName.trim()
+	const saveCustomOption = async (optionName: string) => {
+		const name = optionName.trim()
 
 		if (!name || !customOptionType || isCreatingCustomOption) {
 			return
@@ -163,7 +160,6 @@ export function useBrandModelCatalog({
 						: [...currentBrands, { label: newBrand.name, value: newBrand.id }]
 				)
 				setCustomOptionType(null)
-				setCustomOptionName("")
 				onBrandCreatedAndSelected(newBrand.id)
 				Alert.alert(
 					t("newComponent.customOption.successTitle"),
@@ -210,7 +206,6 @@ export function useBrandModelCatalog({
 					: [...currentModels, { label: newModel.name, value: newModel.id }]
 			)
 			setCustomOptionType(null)
-			setCustomOptionName("")
 			onModelCreatedAndSelected(newModel.id)
 			Alert.alert(
 				t("newComponent.customOption.successTitle"),
@@ -241,8 +236,6 @@ export function useBrandModelCatalog({
 		modelsList,
 		isLoadingModels,
 		customOptionType,
-		customOptionName,
-		setCustomOptionName,
 		isCreatingCustomOption,
 		openCustomOptionDialog,
 		closeCustomOptionDialog,

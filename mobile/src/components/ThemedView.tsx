@@ -11,16 +11,7 @@ import {
 } from "react-native"
 import { useTheme, ThemeColors } from "@/context/ThemeContext"
 
-export type ThemedViewSize =
-	| "none"
-	| "background"
-	| "divider"
-	| "old_wide"
-	| "old_narrow"
-	| "old_tag"
-	| "wide"
-	| "narrow"
-	| "tag"
+export type ThemedViewSize = "none" | "background" | "divider" | "wide" | "narrow" | "tag"
 
 export interface ThemedViewProps extends Omit<PressableProps, "style"> {
 	colorName?: keyof ThemeColors
@@ -180,34 +171,6 @@ const styles = StyleSheet.create({
 /* eslint-disable react-native/no-unused-styles -- keys are picked at runtime via sizes[size] */
 const sizes = StyleSheet.create({
 	none: {},
-	old_tag: {
-		alignSelf: "flex-start",
-		borderRadius: 9999,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	old_narrow: {
-		paddingVertical: 10,
-		paddingHorizontal: 14,
-		height: 60,
-		width: "70%",
-		borderRadius: 12,
-		flexDirection: "row",
-		alignItems: "center",
-		alignSelf: "center",
-		justifyContent: "center",
-	},
-	old_wide: {
-		paddingVertical: 14,
-		paddingHorizontal: 16,
-		minHeight: 60,
-		borderRadius: 16,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		width: "100%",
-	},
 	background: {
 		flex: 1,
 		width: "100%",

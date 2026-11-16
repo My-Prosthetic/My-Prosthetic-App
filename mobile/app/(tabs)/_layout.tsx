@@ -21,7 +21,6 @@ export default function TabsLayout() {
 	const pathname = usePathname()
 	const segments = useSegments() as string[]
 	const isPasswordScreen = segments.some((segment) => segment === "change-password")
-	const currentTab = segments[1]?.replace(/^\(|\)$/g, "")
 
 	const ICONS = {
 		home: IconHome,
@@ -94,8 +93,6 @@ export default function TabsLayout() {
 						borderTopLeftRadius: 15,
 						borderTopRightRadius: 15,
 						backgroundColor: colors.bg_0,
-						paddingBottom: 0,
-						marginBottom: insets.bottom - 1,
 						display: isPasswordScreen ? "none" : "flex",
 					},
 					tabBarItemStyle: { flex: 1 },

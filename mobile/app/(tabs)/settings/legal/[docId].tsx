@@ -28,7 +28,7 @@ export default function LegalDocScreen() {
 									{section.subtitle}
 								</ThemedText>
 
-								<ThemedText variant="basic1" colorName="blue2" style={styles.centerText}>
+								<ThemedText variant="H4" colorName="blue2" style={styles.centerText}>
 									{section.content}
 								</ThemedText>
 							</ThemedView>
@@ -36,7 +36,7 @@ export default function LegalDocScreen() {
 					</ThemedView>
 				) : (
 					<ThemedView style={styles.notFound}>
-						<ThemedText variant="basic1" tx="about.documentNotFound" colorName="false_1" />
+						<ThemedText variant="H5" tx="about.documentNotFound" colorName="false" />
 					</ThemedView>
 				)}
 			</ThemedView>

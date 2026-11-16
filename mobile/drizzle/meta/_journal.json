@@ -85,6 +85,13 @@
 			"when": 1793883990941,
 			"tag": "0011_file_entries",
 			"breakpoints": true
+		},
+		{
+			"idx": 12,
+			"version": "6",
+			"when": 1794835968578,
+			"tag": "0012_blue_obadiah_stane",
+			"breakpoints": true
 		}
 	]
 }
