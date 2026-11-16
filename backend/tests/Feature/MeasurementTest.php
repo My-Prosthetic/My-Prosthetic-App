@@ -72,19 +72,24 @@ class MeasurementTest extends TestCase
         yield 'unknown limb type' => ['limb_type', 'torso'];
     }
 
-    public function test_id_and_owner_are_not_mass_assignable(): void
+    #[DataProvider('guardedKeys')]
+    public function test_id_and_foreign_key_are_not_mass_assignable(string $model, string $foreignKey, string $attribute, mixed $value): void
     {
-        $patient = User::factory()->create();
-
-        $measurement = new Measurement([
+        $record = new $model([
             'id' => 'forged',
-            'user_id' => $patient->id,
-            'side' => ProsthesisSide::LEFT,
+            $foreignKey => 'forged',
+            $attribute => $value,
         ]);
 
-        $this->assertNull($measurement->id);
-        $this->assertNull($measurement->user_id);
-        $this->assertSame(ProsthesisSide::LEFT, $measurement->side);
+        $this->assertNull($record->id);
+        $this->assertNull($record->{$foreignKey});
+        $this->assertSame($value, $record->{$attribute});
+    }
+
+    public static function guardedKeys(): iterable
+    {
+        yield 'measurement' => [Measurement::class, 'user_id', 'side', ProsthesisSide::LEFT];
+        yield 'measurement level' => [MeasurementLevel::class, 'measurement_id', 'level', 2];
     }
 
     public function test_levels_belong_to_their_measurement_in_label_order(): void
@@ -127,21 +132,6 @@ class MeasurementTest extends TestCase
         Measurement::factory()->count(2)->withLevels()->create();
 
         $this->assertDatabaseCount('measurement_levels', 6);
-    }
-
-    public function test_level_id_and_measurement_are_not_mass_assignable(): void
-    {
-        $measurement = Measurement::factory()->create();
-
-        $level = new MeasurementLevel([
-            'id' => 'forged',
-            'measurement_id' => $measurement->id,
-            'level' => 2,
-        ]);
-
-        $this->assertNull($level->id);
-        $this->assertNull($level->measurement_id);
-        $this->assertSame(2, $level->level);
     }
 
     #[DataProvider('circumferences')]
