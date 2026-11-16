@@ -316,7 +316,7 @@ export default function ComponentFormScreen() {
 					style={styles.addFiles}
 				/>
 				<PendingFileAttachments ref={filesRef} />
-				
+
 				<ThemedView
 					variant="wide"
 					colorName="blue2"

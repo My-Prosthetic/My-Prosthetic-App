@@ -230,7 +230,7 @@ export default function ProsthesisFormScreen() {
 					/>
 				</View>
 
-				{formMode === "Create" &&
+				{formMode === "Create" && (
 					<View style={styles.section}>
 						<ThemedView
 							colorName="blue0"
@@ -246,8 +246,8 @@ export default function ProsthesisFormScreen() {
 						/>
 						<PendingFileAttachments ref={filesRef} />
 					</View>
-				}
-				
+				)}
+
 				<View style={[styles.section, styles.actions]}>
 					<ThemedView
 						variant="wide"
