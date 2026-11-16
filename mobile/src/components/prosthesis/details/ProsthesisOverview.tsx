@@ -9,7 +9,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
 import { formatDate } from "@/src/utils/dateTimeUtils"
 
-import IconChevronUp from "@/assets/icons/chevron-up.svg.svg"
+import IconChevronUp from "@/assets/icons/chevron-up.svg"
 import IconChevronDown from "@/assets/icons/chevron-down.svg"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPencil from "@/assets/icons/pencil.svg"
