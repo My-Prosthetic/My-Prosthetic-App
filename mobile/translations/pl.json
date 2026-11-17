@@ -986,5 +986,8 @@
 			"shareErrorTitle": "Nie udało się udostępnić pliku",
 			"shareErrorMessage": "Spróbuj ponownie."
 		}
+	},
+	"specialists": {
+		"header-title": "Moi protetycy"
 	}
 }

@@ -987,5 +987,8 @@
 			"shareErrorTitle": "Could not share the file",
 			"shareErrorMessage": "Try again."
 		}
+	},
+	"specialists": {
+		"header-title": "My specialists"
 	}
 }
