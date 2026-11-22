@@ -14,6 +14,7 @@ import m0009 from "./0009_wet_mentor.sql"
 import m0010 from "./0010_outstanding_hedge_knight.sql"
 import m0011 from "./0011_file_entries.sql"
 import m0012 from "./0012_blue_obadiah_stane.sql"
+import m0013 from "./0013_specialist_inbox.sql"
 
 export default {
 	journal,
@@ -31,5 +32,6 @@ export default {
 		m0010,
 		m0011,
 		m0012,
+		m0013,
 	},
 }
