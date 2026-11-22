@@ -127,7 +127,9 @@ export default function ProfileScreen() {
 
 	//TODO
 	const onHandleMyFiles = () => {}
-	const onHandleRecommendations = () => {}
+	const onHandleRecommendations = () => {
+		router.push("/recommendations/specialistsList")
+	}
 
 	//TODO MOCK
 	const numberOfNewEntries = 1

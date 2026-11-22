@@ -178,6 +178,17 @@
 		"yes": "Tak",
 		"search": "Szukaj..."
 	},
+	"time": {
+		"yesterday": "Wczoraj"
+	},
+	"recommendations": {
+		"title": "Zalecenia",
+		"editSpecialists": "Edytuj moich specjalistów",
+		"loading": "Wczytywanie specjalistów...",
+		"loadError": "Nie udało się wczytać specjalistów.",
+		"empty": "Nie ma jeszcze żadnych specjalistów.",
+		"noResults": "Brak specjalistów pasujących do wyszukiwania."
+	},
 	"funding": {
 		"outOf": "z",
 		"title": "Dofinansowania",

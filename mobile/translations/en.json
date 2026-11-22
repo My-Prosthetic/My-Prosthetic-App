@@ -178,6 +178,17 @@
 		"yes": "Yes",
 		"search": "Search..."
 	},
+	"time": {
+		"yesterday": "Yesterday"
+	},
+	"recommendations": {
+		"title": "Recommendations",
+		"editSpecialists": "Edit my specialists",
+		"loading": "Loading specialists...",
+		"loadError": "Could not load specialists.",
+		"empty": "No specialists yet.",
+		"noResults": "No specialists match your search."
+	},
 	"funding": {
 		"outOf": "out of",
 		"title": "Funding",
