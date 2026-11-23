@@ -187,7 +187,11 @@
 		"loading": "Wczytywanie specjalistów...",
 		"loadError": "Nie udało się wczytać specjalistów.",
 		"empty": "Nie ma jeszcze żadnych specjalistów.",
-		"noResults": "Brak specjalistów pasujących do wyszukiwania."
+		"noResults": "Brak specjalistów pasujących do wyszukiwania.",
+		"specialistRole": "Specjalista protetyk",
+		"specialistNotFound": "Nie znaleziono specjalisty.",
+		"noMessages": "Nie ma jeszcze żadnych wiadomości.",
+		"newMessages": "Nowe wiadomości"
 	},
 	"funding": {
 		"outOf": "z",

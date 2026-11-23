@@ -187,7 +187,11 @@
 		"loading": "Loading specialists...",
 		"loadError": "Could not load specialists.",
 		"empty": "No specialists yet.",
-		"noResults": "No specialists match your search."
+		"noResults": "No specialists match your search.",
+		"specialistRole": "Prosthetist",
+		"specialistNotFound": "Specialist not found.",
+		"noMessages": "There are no messages yet.",
+		"newMessages": "New messages"
 	},
 	"funding": {
 		"outOf": "out of",

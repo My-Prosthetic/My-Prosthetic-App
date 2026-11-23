@@ -8,7 +8,12 @@ import {
 	getSpecialistsWithSummary,
 	type SpecialistListItem,
 } from "@/db/repositories/specialistRepository"
-import { formatDate, formatHour } from "@/src/utils/dateTimeUtils"
+import { Initials } from "@/src/components/SpecialistAvatar"
+import {
+	formatLastMessageTime,
+	getSpecialistDisplayName,
+	getSpecialistInitials,
+} from "@/src/utils/recommendationsUtils"
 
 import { ThemedView } from "@/src/components/ThemedView"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -17,35 +22,7 @@ import { ThemedText } from "@/src/components/ThemedText"
 
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPersonGear from "@/assets/icons/person-gear.svg"
-
-const formatLastMessageTime = (createdAt: string, yesterdayLabel: string): string => {
-	const date = new Date(createdAt)
-	if (Number.isNaN(date.getTime())) {
-		return ""
-	}
-
-	const today = new Date()
-	if (date.toDateString() === today.toDateString()) {
-		return formatHour(date)
-	}
-
-	const yesterday = new Date(today)
-	yesterday.setDate(yesterday.getDate() - 1)
-	return date.toDateString() === yesterday.toDateString() ? yesterdayLabel : formatDate(date)
-}
-
-const getDisplayName = (specialist: SpecialistListItem) =>
-	[specialist.name, specialist.surname]
-		.filter((part): part is string => Boolean(part?.trim()))
-		.join(" ")
-		.trim()
-
-const getInitials = (displayName: string) => {
-	const parts = displayName.split(/\s+/).filter(Boolean)
-	const first = parts[0]?.charAt(0) ?? ""
-	const last = parts.length > 1 ? (parts[parts.length - 1]?.charAt(0) ?? "") : ""
-	return (first + last).toUpperCase()
-}
+import { ParseKeys } from "i18next"
 
 //TODO
 const handleEditSpecialists = () => {}
@@ -65,14 +42,15 @@ export default function SpecialistsListScreen() {
 			let isCancelled = false
 
 			const loadSpecialists = async () => {
+				setIsLoading(true)
+				setLoadError(null)
 				try {
 					const rows = await getSpecialistsWithSummary()
 					if (isCancelled) return
 					setSpecialistsList(rows)
-					setLoadError(null)
 				} catch (error) {
 					console.error("Failed to load specialists:", error)
-					if (!isCancelled) setLoadError(t("recommendations.loadError"))
+					if (!isCancelled) setLoadError("recommendations.loadError")
 				} finally {
 					if (!isCancelled) setIsLoading(false)
 				}
@@ -104,9 +82,12 @@ export default function SpecialistsListScreen() {
 		[specialistsList, normalizedQuery]
 	)
 
-	const handleOnSpecialistPress = useCallback((_specialistId: string) => {
-		router.push({ pathname: "/recommendations/[specialistId]", params: { specialistId: _specialistId } })
-	}, [])
+	const handleOnSpecialistPress = (_specialistId: string) => {
+		router.push({
+			pathname: "/recommendations/[specialistId]",
+			params: { specialistId: _specialistId },
+		})
+	}
 
 	return (
 		<ThemedView colorName="bg_1" variant="background">
@@ -124,7 +105,7 @@ export default function SpecialistsListScreen() {
 					</ThemedText>
 				) : loadError ? (
 					<ThemedText variant="H4" colorName="blue2">
-						{loadError}
+						{t(loadError as ParseKeys)}
 					</ThemedText>
 				) : filteredSpecialists.length === 0 ? (
 					<ThemedText variant="H4" colorName="blue2">
@@ -166,8 +147,8 @@ const SpecialistRow = ({ specialist, onPress, yesterdayLabel }: SpecialistRowPro
 	const { colors } = useTheme()
 	const styles = useMemo(() => getStyles(colors), [colors])
 
-	const displayName = getDisplayName(specialist)
-	const initials = getInitials(displayName)
+	const displayName = getSpecialistDisplayName(specialist)
+	const initials = getSpecialistInitials(displayName)
 	const { lastMessage, unreadCount } = specialist
 
 	return (
@@ -177,13 +158,7 @@ const SpecialistRow = ({ specialist, onPress, yesterdayLabel }: SpecialistRowPro
 				onPress={() => onPress(specialist.id)}
 				style={styles.rowContainer}
 				childrenContainerStyle={styles.rowChildrenContainer}
-				leftChild={
-					<View style={styles.specialistCircle}>
-						<ThemedText variant="H3" colorName="bg_0">
-							{initials}
-						</ThemedText>
-					</View>
-				}
+				leftChild={<Initials initials={initials} />}
 				centerChild={
 					<View style={styles.centerContent}>
 						<ThemedText variant="H3" colorName="blue2" numberOfLines={1}>
@@ -241,14 +216,6 @@ const getStyles = (colors: ThemeColors) => {
 		},
 		rowChildrenContainer: {
 			paddingHorizontal: 0,
-		},
-		specialistCircle: {
-			width: 54,
-			height: 54,
-			borderRadius: 30,
-			backgroundColor: colors.blue1,
-			alignItems: "center",
-			justifyContent: "center",
 		},
 		centerContent: {
 			flex: 1,
