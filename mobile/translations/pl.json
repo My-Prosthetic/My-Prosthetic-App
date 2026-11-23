@@ -991,7 +991,12 @@
 		"headerTitle": "Moi protetycy",
 		"summary": "Twoje dane są obecnie udostępniane",
 		"recommendationsButtonLabel": "Zalecenia od specjalisty",
-		"addButtonLabel": "Udostępnij nowemu specjaliście"
+		"addButtonLabel": "Udostępnij nowemu specjaliście",
+		"loadError": "Nie udało się pobrać listy protetyków.",
+		"countLabel_one": "{{count}} specjaliście",
+		"countLabel_few": "{{count}} specjalistom",
+		"countLabel_many": "{{count}} specjalistom",
+		"countLabel_other": "{{count}} specjalistom"
 	},
 	"specialistsSearch": {
 		"headerTitle": "Znajdź protetyka",

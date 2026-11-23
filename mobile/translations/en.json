@@ -992,7 +992,10 @@
 		"headerTitle": "My specialists",
 		"summary": "Your data is shared across",
 		"recommendationsButtonLabel": "Specialist's recommendations",
-		"addButtonLabel": "Share with a new specialist"
+		"addButtonLabel": "Share with a new specialist",
+		"loadError": "Could not load list of prosthetists.",
+		"countLabel_one": "{{count}} specialist",
+		"countLabel_more": "{{count}} specialists"
 	},
 	"specialistsSearch": {
 		"headerTitle": "Find prosthethist",

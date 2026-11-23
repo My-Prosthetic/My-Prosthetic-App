@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ScrollView, StyleSheet } from "react-native"
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native"
 import { useTranslation } from "react-i18next"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
 import { ThemedView } from "@/src/components/ThemedView"
@@ -9,8 +9,11 @@ import { router } from "expo-router"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPlus from "@/assets/icons/plus.svg"
 import IconChatMessage from "@/assets/icons/chat-message.svg"
+import { useShares } from "@/src/hooks/useShares"
 
 export default function SpecialistsScreen() {
+	const { t } = useTranslation()
+	const { shares, isLoading, error } = useShares()
 	const { colors } = useTheme()
 
 	return (
@@ -21,17 +24,30 @@ export default function SpecialistsScreen() {
 				<ThemedView style={styles.rowTop}>
 					<ThemedView style={[styles.numberCircle, { borderColor: colors.blue2 }]}>
 						<ThemedText style={styles.numberText} colorName="blue2" variant="H0">
-							1
+							{isLoading || error ? "-" : shares.length}
 						</ThemedText>
 					</ThemedView>
 
-					<ThemedText
-						tx="specialists.summary"
-						style={styles.topRowText}
-						colorName="blue2"
-						variant="H4"
-					/>
+					<ThemedText style={styles.topRowText} colorName="blue2" variant="H4">
+						{t("specialists.summary")}{" "}
+						<ThemedText colorName="blue2" variant="H5">
+							{isLoading || error ? "—" : t("specialists.countLabel", { count: shares.length })}.
+						</ThemedText>
+					</ThemedText>
 				</ThemedView>
+				{isLoading && <ActivityIndicator />}
+
+				{error && <ThemedText accessibilityRole="alert">{t(error)}</ThemedText>}
+
+				{!isLoading &&
+					!error &&
+					shares.map((share) => (
+						<ThemedView key={share.specialist.id} style={styles.specialistRow}>
+							<ThemedText variant="H2" colorName="blue2">
+								{share.specialist.name}
+							</ThemedText>
+						</ThemedView>
+					))}
 			</ScrollView>
 
 			{/* Buttons */}
@@ -119,5 +135,9 @@ const styles = StyleSheet.create({
 	actionLabel: {
 		textTransform: "uppercase",
 		textAlign: "center",
+	},
+	specialistRow: {
+		minHeight: 44,
+		paddingVertical: 12,
 	},
 })

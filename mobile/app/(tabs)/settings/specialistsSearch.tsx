@@ -25,8 +25,6 @@ export default function SpecialistsSearchScreen() {
 					style={styles.searchInput}
 				/>
 
-				{!canSearch && <ThemedText>{t("specialistsSearch.searchHint")}</ThemedText>}
-
 				{isLoading && <ActivityIndicator />}
 
 				{error && <ThemedText accessibilityRole="alert">{t(error)}</ThemedText>}
