@@ -1,8 +1,12 @@
 import { and, eq, sql } from "drizzle-orm"
 
 import { db } from "../client"
-import { specialistMessages, type SpecialistMessage } from "../schema/specialistMessages"
-import { specialists, type Specialist } from "../schema/specialists"
+import {
+	specialists,
+	type Specialist,
+	specialistMessages,
+	type SpecialistMessage,
+} from "../schema/specialists"
 
 export type SpecialistWithRelations = NonNullable<Awaited<ReturnType<typeof getSpecialistById>>>
 export type SpecialistListItem = Awaited<ReturnType<typeof getSpecialistsWithSummary>>[number]
