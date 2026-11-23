@@ -71,7 +71,9 @@
 			"save": "Could not save the file or folder. Check available device storage and try again.",
 			"delete": "Could not finish deleting. The operation will be retried when the list reloads.",
 			"pick": "Could not open the source or read the selected file.",
-			"open": "Could not open the file in a system application."
+			"open": "Could not open the file in a system application.",
+            "searchSpecialists": "Could not search for prosthethists. Please try again.",
+            "noSpecialistsFound": "No prosthethists found."
 		}
 	},
 	"tabs": {

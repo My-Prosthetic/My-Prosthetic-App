@@ -71,7 +71,9 @@
 			"save": "Nie udało się zapisać pliku lub folderu. Sprawdź wolne miejsce na urządzeniu i spróbuj ponownie.",
 			"delete": "Nie udało się zakończyć usuwania. Operacja zostanie ponowiona przy odświeżeniu listy.",
 			"pick": "Nie udało się otworzyć źródła lub odczytać wybranego pliku.",
-			"open": "Nie udało się otworzyć pliku w aplikacji systemowej."
+			"open": "Nie udało się otworzyć pliku w aplikacji systemowej.",
+            "searchSpecialists": "Nie udało się wyszukać protetyków. Spróbuj ponownie.",
+            "noSpecialistsFound": "Nie znaleziono protetyków."
 		}
 	},
 	"tabs": {
