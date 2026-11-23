@@ -1000,10 +1000,11 @@
 	},
 	"specialistsSearch": {
 		"headerTitle": "Znajdź protetyka",
-		"searchPlaceholder": "Imię, nazwisko lub kod protetyka",
+		"searchPlaceholder": "szukaj po nazwisku lub kodzie...",
 		"searchHint": "Wpisz od 3 do 100 znaków, maksymalnie 5 słów.",
 		"noResults": "Nie znaleziono protetyków.",
 		"errorSearchSpecialists": "Nie udało się wyszukać protetyków. Spróbuj ponownie.",
-		"errorNoSpecialistsFound": "Nie znaleziono protetyków."
+		"errorNoSpecialistsFound": "Nie znaleziono protetyków.",
+        "select": "wybierz"
 	}
 }

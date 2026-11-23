@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native"
 import { useTranslation } from "react-i18next"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -125,7 +124,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 12,
 		paddingVertical: 16,
-		marginBottom: 30,
+		marginBottom: 20,
 	},
 	actionButton: {
 		width: "100%",

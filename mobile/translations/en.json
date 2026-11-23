@@ -999,10 +999,11 @@
 	},
 	"specialistsSearch": {
 		"headerTitle": "Find prosthethist",
-		"searchPlaceholder": "Name, surname or prosthetist's code",
+		"searchPlaceholder": "search with surname or prosthetist's code",
 		"searchHint": "Insert 3 to 100 signs, max 5 words.",
 		"noResults": "Prosthetists not found.",
 		"errorSearchSpecialists": "Could not search for prosthethists. Please try again.",
-		"errorNoSpecialistsFound": "No prosthethists found."
+		"errorNoSpecialistsFound": "No prosthethists found.",
+        "select": "select"
 	}
 }
