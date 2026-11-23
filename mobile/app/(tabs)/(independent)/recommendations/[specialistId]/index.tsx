@@ -20,7 +20,7 @@ import { ThemedView } from "@/src/components/ThemedView"
 
 interface RecommendationItem {
 	id: string
-	type: "message" | "divider"
+	type: "read_message" | "unread_message" | "divider"
 	text: string
 	time?: string
 }
@@ -67,7 +67,7 @@ function buildRecommendationItems(
 
 		items.push({
 			id: message.id,
-			type: "message",
+			type: message.isUnread ? "unread_message" : "read_message",
 			text: message.content,
 			...(dayKey ? { time: formatHour(date) } : {}),
 		})
@@ -127,7 +127,11 @@ function RecommendationEntry({ item }: { item: RecommendationItem }) {
 
 	return (
 		<View style={styles.messageWrapper}>
-			<ThemedView colorName="bg_0" borderColor="blue1" style={styles.bubble}>
+			<ThemedView
+				colorName="bg_0"
+				borderColor={item.type === "read_message" ? "blue1" : "blue2"}
+				style={styles.bubble}
+			>
 				<ThemedText variant="H2" colorName="blue2">
 					{item.text}
 				</ThemedText>
