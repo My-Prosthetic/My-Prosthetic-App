@@ -49,6 +49,19 @@ export async function getSpecialistsWithSummary() {
 	}))
 }
 
+export async function getUnreadSpecialistMessageCount(): Promise<number> {
+	const [result] = await db
+		.select({ count: sql<number>`count(*)`.mapWith(Number) })
+		.from(specialistMessages)
+		.where(eq(specialistMessages.isUnread, true))
+
+	if (!result) {
+		throw new Error("Failed to count unread specialist messages")
+	}
+
+	return result.count
+}
+
 export async function getSpecialistById(id: string) {
 	const specialist = await db.query.specialists.findFirst({
 		where: (fields, { eq }) => eq(fields.id, id),
