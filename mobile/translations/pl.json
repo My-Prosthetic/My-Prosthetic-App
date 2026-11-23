@@ -71,9 +71,7 @@
 			"save": "Nie udało się zapisać pliku lub folderu. Sprawdź wolne miejsce na urządzeniu i spróbuj ponownie.",
 			"delete": "Nie udało się zakończyć usuwania. Operacja zostanie ponowiona przy odświeżeniu listy.",
 			"pick": "Nie udało się otworzyć źródła lub odczytać wybranego pliku.",
-			"open": "Nie udało się otworzyć pliku w aplikacji systemowej.",
-            "searchSpecialists": "Nie udało się wyszukać protetyków. Spróbuj ponownie.",
-            "noSpecialistsFound": "Nie znaleziono protetyków."
+			"open": "Nie udało się otworzyć pliku w aplikacji systemowej."
 		}
 	},
 	"tabs": {
@@ -990,6 +988,17 @@
 		}
 	},
 	"specialists": {
-		"header-title": "Moi protetycy"
+		"headerTitle": "Moi protetycy",
+		"summary": "Twoje dane są obecnie udostępniane",
+		"recommendationsButtonLabel": "Zalecenia od specjalisty",
+		"addButtonLabel": "Udostępnij nowemu specjaliście"
+	},
+	"specialistsSearch": {
+		"headerTitle": "Znajdź protetyka",
+		"searchPlaceholder": "Imię, nazwisko lub kod protetyka",
+		"searchHint": "Wpisz od 3 do 100 znaków, maksymalnie 5 słów.",
+		"noResults": "Nie znaleziono protetyków.",
+		"errorSearchSpecialists": "Nie udało się wyszukać protetyków. Spróbuj ponownie.",
+		"errorNoSpecialistsFound": "Nie znaleziono protetyków."
 	}
 }

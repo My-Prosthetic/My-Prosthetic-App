@@ -1,76 +1,80 @@
-import { useEffect, useState } from "react";
-import { isAxiosError } from "axios";
-import {
-  searchSpecialists,
-  type Specialist,
-} from "../services/specialistsApi";
+import { useEffect, useState } from "react"
+import { searchSpecialists, type Specialist } from "../services/specialistsApi"
+
+type SearchState = {
+	query: string
+	specialists: Specialist[]
+	isLoading: boolean
+	error: "specialistsSearch.errorSearchSpecialists" | null
+	hasSearched: boolean
+}
 
 export function useSpecialistSearch(query: string) {
-  const [specialists, setSpecialists] = useState<Specialist[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+	const [state, setState] = useState<SearchState>({
+		query: "",
+		specialists: [],
+		isLoading: false,
+		error: null,
+		hasSearched: false,
+	})
 
-  const trimmedQuery = query.trim();
-  const wordCount = trimmedQuery.split(/\s+/).filter(Boolean).length;
-  const [hasSearched, setHasSearched] = useState(false);
+	const trimmedQuery = query.trim()
+	const wordCount = trimmedQuery.split(/\s+/).filter(Boolean).length
 
+	const canSearch = trimmedQuery.length >= 3 && trimmedQuery.length <= 100 && wordCount <= 5
 
-  const canSearch =
-    trimmedQuery.length >= 3 &&
-    trimmedQuery.length <= 100 &&
-    wordCount <= 5;
+	useEffect(() => {
+		if (!canSearch) return
 
-  useEffect(() => {
-    let active = true;
-    setSpecialists([]);
-    setError(null);
-    setIsLoading(false);
+		let active = true
 
-    if (!canSearch) {
-      return;
-    }
+		const timer = setTimeout(async () => {
+			setState({
+				query: trimmedQuery,
+				specialists: [],
+				isLoading: true,
+				error: null,
+				hasSearched: false,
+			})
 
-    // Wait until the user stops typing for 400 ms.
-    const timer = setTimeout(async () => {
-      setIsLoading(true);
+			try {
+				const response = await searchSpecialists(trimmedQuery)
 
-      try {
+				if (active) {
+					setState({
+						query: trimmedQuery,
+						specialists: response.data,
+						isLoading: false,
+						error: null,
+						hasSearched: true,
+					})
+				}
+			} catch {
+				if (active) {
+					setState({
+						query: trimmedQuery,
+						specialists: [],
+						isLoading: false,
+						error: "specialistsSearch.errorSearchSpecialists",
+						hasSearched: false,
+					})
+				}
+			}
+		}, 400)
 
-        setSpecialists([]);
-        setError(null);
-        setIsLoading(false);
-        setHasSearched(false);
-        const response = await searchSpecialists(trimmedQuery);
+		return () => {
+			active = false
+			clearTimeout(timer)
+		}
+	}, [trimmedQuery, canSearch])
 
-        if (active) {
-          setSpecialists(response.data);
-          setHasSearched(true);
-        }
-      } catch (err: unknown) {
-        if (!active) return;
-        if (isAxiosError(err) && err.response?.status === 429) {
-            setError("errors.specialistSearchRateLimit");
-            } else {
-            setError("errors.searchSpecialists");
-        }
-      } finally {
-        if (active) {
-          setIsLoading(false);
-        }
-      }
-    }, 400);
+	const isCurrentQuery = canSearch && state.query === trimmedQuery
 
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [trimmedQuery, canSearch]);
-
-  return {
-    specialists,
-    isLoading,
-    error,
-    canSearch,
-    hasSearched
-  };
+	return {
+		specialists: isCurrentQuery ? state.specialists : [],
+		isLoading: isCurrentQuery ? state.isLoading : false,
+		error: isCurrentQuery ? state.error : null,
+		hasSearched: isCurrentQuery ? state.hasSearched : false,
+		canSearch,
+	}
 }

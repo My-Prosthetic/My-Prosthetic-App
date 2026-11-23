@@ -143,7 +143,7 @@ export default function SettingsScreen() {
 							onPress={() => router.push("/settings/export")}
 						/>
 
-                        <SettingsRow
+						<SettingsRow
 							tx="settings.rows.specialists"
 							onPress={() => router.push("/settings/specialists")}
 						/>

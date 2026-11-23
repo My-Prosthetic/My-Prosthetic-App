@@ -71,9 +71,7 @@
 			"save": "Could not save the file or folder. Check available device storage and try again.",
 			"delete": "Could not finish deleting. The operation will be retried when the list reloads.",
 			"pick": "Could not open the source or read the selected file.",
-			"open": "Could not open the file in a system application.",
-            "searchSpecialists": "Could not search for prosthethists. Please try again.",
-            "noSpecialistsFound": "No prosthethists found."
+			"open": "Could not open the file in a system application."
 		}
 	},
 	"tabs": {
@@ -991,6 +989,17 @@
 		}
 	},
 	"specialists": {
-		"header-title": "My specialists"
+		"headerTitle": "My specialists",
+		"summary": "Your data is shared across",
+		"recommendationsButtonLabel": "Specialist's recommendations",
+		"addButtonLabel": "Share with a new specialist"
+	},
+	"specialistsSearch": {
+		"headerTitle": "Find prosthethist",
+		"searchPlaceholder": "Name, surname or prosthetist's code",
+		"searchHint": "Insert 3 to 100 signs, max 5 words.",
+		"noResults": "Prosthetists not found.",
+		"errorSearchSpecialists": "Could not search for prosthethists. Please try again.",
+		"errorNoSpecialistsFound": "No prosthethists found."
 	}
 }
