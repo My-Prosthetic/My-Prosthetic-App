@@ -19,6 +19,9 @@ interface CalendarViewProps {
 	month: Date
 	selectedDate: Date
 	locale: string
+	minimumDate?: Date
+	maximumDate?: Date
+	rangeStartDate?: Date
 	onMonthChange: (month: Date) => void
 	onSelect: (date: Date) => void
 	onCancel: () => void
@@ -78,6 +81,7 @@ function isSameCalendarDay(left: Date, right: Date): boolean {
 }
 
 function CalendarView({
+	rangeStartDate,
 	month,
 	selectedDate,
 	locale,
@@ -153,6 +157,8 @@ function CalendarView({
 				<View key={week.days[0].toISOString()} style={styles.weekRow}>
 					{week.days.map((day) => {
 						const isSelected = isSameCalendarDay(day, selectedDate)
+						const isRangeStart =
+							rangeStartDate !== undefined && isSameCalendarDay(day, rangeStartDate)
 						const isCurrentMonth = day.getMonth() === month.getMonth()
 
 						return (
@@ -166,6 +172,10 @@ function CalendarView({
 								<View
 									style={[
 										styles.dayButton,
+										isRangeStart && {
+											borderWidth: 2,
+											borderColor: colors.blue2,
+										},
 										isSelected && {
 											backgroundColor: colors.blue2,
 										},
@@ -214,15 +224,19 @@ export interface DatePickerModalProps {
 	initialDate?: Date
 	minimumDate?: Date
 	maximumDate?: Date
+	closeOnSave?: boolean
+	rangeStartDate?: Date
 }
 
 export function DatePickerModal({
+	rangeStartDate,
 	visible,
 	onClose,
 	onSave,
 	initialDate,
 	minimumDate,
 	maximumDate,
+	closeOnSave = true,
 }: DatePickerModalProps) {
 	const insets = useSafeAreaInsets()
 	const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>(
@@ -259,6 +273,7 @@ export function DatePickerModal({
 			>
 				<Pressable style={styles.backdrop} onPress={onClose} />
 				<CalendarView
+					rangeStartDate={rangeStartDate}
 					month={calendarMonth}
 					selectedDate={calendarSelectedDate}
 					locale={i18n.language}
@@ -269,7 +284,9 @@ export function DatePickerModal({
 					onCancel={onClose}
 					onApply={() => {
 						onSave(calendarSelectedDate)
-						onClose()
+						if (closeOnSave) {
+							onClose()
+						}
 					}}
 				/>
 			</View>

@@ -1007,5 +1007,17 @@
 		"errorNoSpecialistsFound": "Nie znaleziono protetyków.",
 		"select": "wybierz",
 		"code": "KOD: #"
+	},
+	"sharePermissions": {
+		"title": "Zakres danych do udostępnienia",
+		"prosthethistData": "Dane protetyka:",
+		"timetable": "Zakres czasu:",
+		"medicalHistory": "Mój profil medyczny:",
+		"prostheses": "Protezy i ich komponenty",
+		"noProstheses": "Brak protez do udostępnienia.",
+		"cancel": "Anuluj",
+		"save": "Zapisz",
+		"saving": "Zapisywanie…",
+		"saveError": "Nie udało się zapisać uprawnień. Spróbuj ponownie."
 	}
 }

@@ -1006,5 +1006,17 @@
 		"errorNoSpecialistsFound": "No prosthethists found.",
 		"select": "select",
 		"code": "CODE: #"
+	},
+	"sharePermissions": {
+		"title": "Data access permissions",
+		"prosthethistData": "Prosthethist's data:",
+		"timetable": "Date range:",
+		"medicalHistory": "My medical profile:",
+		"prostheses": "Prostheses and their components",
+		"noProstheses": "No prostheses available to share.",
+		"cancel": "Cancel",
+		"save": "Save",
+		"saving": "Saving…",
+		"saveError": "Could not save permissions. Please try again."
 	}
 }

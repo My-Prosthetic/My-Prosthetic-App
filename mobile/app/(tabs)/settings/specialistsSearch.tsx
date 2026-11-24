@@ -9,6 +9,8 @@ import { useSpecialistSearch } from "@/src/hooks/useSpecialistSearch"
 import type { Specialist } from "@/src/services/specialistsApi"
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconSearch from "@/assets/icons/search.svg"
+import { createShare } from "@/src/services/sharesApi"
+import { SharePermissionsModal } from "@/src/components/settings/SharePermissionsModal"
 
 export default function SpecialistsSearchScreen() {
 	const { t } = useTranslation()
@@ -112,6 +114,22 @@ export default function SpecialistsSearchScreen() {
 					)
 				})}
 			</ScrollView>
+			{selectedSpecialist && (
+				<SharePermissionsModal
+					key={selectedSpecialist.id}
+					specialist={selectedSpecialist}
+					prostheses={[]}
+					initialPermissions={{
+						medical_history: false,
+						prostheses: [],
+						incidents: [],
+					}}
+					onClose={() => setSelectedSpecialist(null)}
+					onSave={async (permissions) => {
+						console.log(permissions)
+					}}
+				/>
+			)}
 		</ThemedView>
 	)
 }

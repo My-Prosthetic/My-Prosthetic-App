@@ -7,6 +7,7 @@ export type DateFormatMode =
 	| "numeric" // DD-MM-YYYY (+ "(today)")
 	| "label" // weekday, day, month, year (+ "(today)")
 	| "dotted" // DD.MM.YYYY
+	| "dotted-without-year" // DD.MM
 
 export interface FormattedDateBadge {
 	day: string
@@ -55,6 +56,9 @@ export const formatDate = (
 	switch (mode) {
 		case "dotted":
 			return `${day}.${month}.${year}`
+
+		case "dotted-without-year":
+			return `${day}.${month}`
 
 		case "numeric":
 			return markIfToday(
