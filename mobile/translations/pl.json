@@ -1005,6 +1005,7 @@
 		"noResults": "Nie znaleziono protetyków.",
 		"errorSearchSpecialists": "Nie udało się wyszukać protetyków. Spróbuj ponownie.",
 		"errorNoSpecialistsFound": "Nie znaleziono protetyków.",
-        "select": "wybierz"
+		"select": "wybierz",
+		"code": "KOD: #"
 	}
 }
