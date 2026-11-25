@@ -92,6 +92,13 @@
 			"when": 1794835968578,
 			"tag": "0012_blue_obadiah_stane",
 			"breakpoints": true
+		},
+		{
+			"idx": 13,
+			"version": "6",
+			"when": 1795557947972,
+			"tag": "0013_bizarre_blazing_skull",
+			"breakpoints": true
 		}
 	]
 }

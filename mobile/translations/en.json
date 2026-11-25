@@ -987,5 +987,54 @@
 			"shareErrorTitle": "Could not share the file",
 			"shareErrorMessage": "Try again."
 		}
+	},
+	"specialists": {
+		"headerTitle": "My prosthetists",
+		"summary": "Your data is currently shared with",
+		"recommendationsButtonLabel": "Specialist recommendations",
+		"addButtonLabel": "Share with a new specialist",
+		"loadError": "Could not load your prosthetists.",
+		"countLabel_one": "{{count}} specialist",
+		"countLabel_other": "{{count}} specialists",
+		"medicalHistoryShared": "Medical profile: selected",
+		"medicalHistoryNotShared": "Medical profile: not selected",
+		"prosthesesSelected": "Selected prostheses: {{count}}",
+		"incidentsSelected": "Selected incidents: {{count}}",
+		"profession": "Prosthetist",
+		"addedOn": "Added: {{date}}",
+		"components": "components",
+		"editPermissions": "edit access"
+	},
+	"specialistsSearch": {
+		"headerTitle": "Find a prosthetist",
+		"searchPlaceholder": "search by name or code...",
+		"searchHint": "Enter 3–100 characters, up to 5 words.",
+		"noResults": "No prosthetists found.",
+		"errorSearchSpecialists": "Could not search for prosthetists. Please try again.",
+		"errorNoSpecialistsFound": "No prosthetists found.",
+		"select": "select",
+		"code": "CODE: #"
+	},
+	"sharePermissions": {
+		"title": "Data access permissions",
+		"prosthethistData": "Prosthetist details:",
+		"timetable": "Date range:",
+		"medicalHistory": "My medical profile:",
+		"prostheses": "Prostheses and their components",
+		"noProstheses": "No prostheses available to share.",
+		"cancel": "Cancel",
+		"save": "Save",
+		"saving": "Saving…",
+		"saveError": "Could not save permissions. Please try again.",
+		"prosthesesLoadError": "Could not load prostheses from this device.",
+		"prosthesisAndComponents": "Prosthesis components",
+		"incidentsUnavailable": "Incidents — sharing is not available yet",
+		"alreadyExists": "This prosthetist is already added. Edit their permissions in My prosthetists.",
+		"sessionChanged": "Your account session has changed. Close this window and try again.",
+		"incidents": "Incidents",
+		"notFound": "This consent no longer exists. Close the window and refresh the list.",
+		"revoke": "Delete",
+		"revokeConfirmation": "Revoke access for {{name}}? The server change will take effect after synchronization.",
+		"revokeError": "Could not save the access revocation. Please try again."
 	}
 }
