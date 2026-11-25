@@ -1,13 +1,16 @@
 import { useState } from "react"
-import { Modal, ScrollView, StyleSheet, View } from "react-native"
+import { Alert, Modal, ScrollView, StyleSheet, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { ThemedView } from "@/src/components/ThemedView"
-import { ThemedToggleSwitch } from "@/src/components/ThemedToggleSwitch"
 import { DatePickerModal } from "@/src/components/DatePicker"
 import ThemedCheckbox from "@/src/components/ThemedCheckbox"
 import { formatDate } from "@/src/utils/dateTimeUtils"
+import { ShareError } from "@/db/repositories/shares"
+import IconCross from "@/assets/icons/x.svg"
+import IconPencil from "@/assets/icons/pencil.svg"
+import IconTrashcan from "@/assets/icons/trash-bin.svg"
 
 type Permissions = {
 	medical_history: boolean
@@ -24,17 +27,24 @@ type Props = {
 		id: string
 		name: string
 	}[]
+	incidents: {
+		id: string
+		prosthesisId: string
+	}[]
 	initialPermissions: Permissions
 	onClose: () => void
 	onSave: (permissions: Permissions) => Promise<void>
+	onRevoke?: () => Promise<void>
 }
 
 export function SharePermissionsModal({
 	specialist,
 	prostheses,
+	incidents,
 	initialPermissions,
 	onClose,
 	onSave,
+	onRevoke,
 }: Props) {
 	const { t } = useTranslation()
 	const { colors } = useTheme()
@@ -42,37 +52,102 @@ export function SharePermissionsModal({
 	const [medicalHistory, setMedicalHistory] = useState(initialPermissions.medical_history)
 	const [selectedIds, setSelectedIds] = useState<string[]>([...initialPermissions.prostheses])
 	const [isSaving, setIsSaving] = useState(false)
-	const [saveFailed, setSaveFailed] = useState(false)
+	const [saveError, setSaveError] = useState<
+		| "sharePermissions.saveError"
+		| "sharePermissions.alreadyExists"
+		| "sharePermissions.sessionChanged"
+		| "sharePermissions.notFound"
+		| "sharePermissions.revokeError"
+		| null
+	>(null)
 	const [dateStep, setDateStep] = useState<"start" | "end" | null>(null)
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
-
-	function toggleProsthesis(id: string, enabled: boolean) {
-		setSelectedIds((current) =>
-			enabled ? [...new Set([...current, id])] : current.filter((selectedId) => selectedId !== id)
-		)
-	}
+	const [selectedIncidentIds, setSelectedIncidentIds] = useState<string[]>([
+		...initialPermissions.incidents,
+	])
 
 	async function handleSave() {
 		if (isSaving) return
 
 		setIsSaving(true)
-		setSaveFailed(false)
+		setSaveError(null)
 
 		try {
 			await onSave({
 				medical_history: medicalHistory,
 				prostheses: selectedIds,
-				incidents: [],
+				incidents: selectedIncidentIds,
 			})
-		} catch {
-			setSaveFailed(true)
+		} catch (error) {
+			if (error instanceof ShareError) {
+				switch (error.code) {
+					case "ALREADY_EXISTS":
+						setSaveError("sharePermissions.alreadyExists")
+						break
+					case "NOT_FOUND":
+						setSaveError("sharePermissions.notFound")
+						break
+					case "SESSION_CHANGED":
+						setSaveError("sharePermissions.sessionChanged")
+						break
+				}
+			} else {
+				setSaveError("sharePermissions.saveError")
+			}
+
+			setIsSaving(false)
+			return
+		}
+		setIsSaving(false)
+		onClose()
+	}
+
+	async function handleRevoke() {
+		if (isSaving || !onRevoke) return
+
+		setIsSaving(true)
+		setSaveError(null)
+
+		try {
+			await onRevoke()
+		} catch (error) {
+			if (error instanceof ShareError && error.code === "SESSION_CHANGED") {
+				setSaveError("sharePermissions.sessionChanged")
+			} else {
+				setSaveError("sharePermissions.revokeError")
+			}
+
 			setIsSaving(false)
 			return
 		}
 
 		setIsSaving(false)
 		onClose()
+	}
+
+	function confirmRevoke() {
+		if (isSaving || !onRevoke) return
+
+		Alert.alert(
+			t("sharePermissions.revoke"),
+			t("sharePermissions.revokeConfirmation", {
+				name: specialist.name,
+			}),
+			[
+				{
+					text: t("sharePermissions.cancel"),
+					style: "cancel",
+				},
+				{
+					text: t("sharePermissions.revoke"),
+					style: "destructive",
+					onPress: () => {
+						void handleRevoke()
+					},
+				},
+			]
+		)
 	}
 
 	return (
@@ -140,53 +215,113 @@ export function SharePermissionsModal({
 							</View>
 						</View>
 
-						<ThemedText variant="H5" colorName="blue2">
-							{t("sharePermissions.prostheses")}
-						</ThemedText>
-
 						{prostheses.length === 0 && (
-							<ThemedText colorName="blue2">{t("sharePermissions.noProstheses")}</ThemedText>
+							<ThemedText colorName="false">{t("sharePermissions.noProstheses")}</ThemedText>
 						)}
 
-						{prostheses.map((prosthesis) => (
-							<ThemedView key={prosthesis.id} style={styles.optionRow}>
-								<ThemedText colorName="blue2" style={styles.optionLabel}>
-									{prosthesis.name}
-								</ThemedText>
+						{prostheses.map((prosthesis) => {
+							const incidentIds = incidents
+								.filter((incident) => incident.prosthesisId === prosthesis.id)
+								.map((incident) => incident.id)
 
-								<View style={styles.toggleArea}>
-									<ThemedToggleSwitch
-										value={selectedIds.includes(prosthesis.id)}
-										onValueChange={(enabled) => {
-											if (!isSaving) {
-												toggleProsthesis(prosthesis.id, enabled)
-											}
-										}}
-									/>
+							const allSelected =
+								incidentIds.length > 0 &&
+								incidentIds.every((id) => selectedIncidentIds.includes(id))
+
+							return (
+								<View key={prosthesis.id} style={styles.prosthesisGroup}>
+									<ThemedView variant="divider" colorName="blue0" />
+									<ThemedText variant="H5" colorName="blue2">
+										{prosthesis.name}
+									</ThemedText>
+
+									<View style={styles.optionRow}>
+										<ThemedText variant="H5" colorName="blue2" style={styles.optionLabel}>
+											{t("sharePermissions.incidents")}
+										</ThemedText>
+
+										<View style={styles.checkboxWrapper}>
+											<ThemedCheckbox
+												checked={allSelected}
+												onPress={() => {
+													if (isSaving || incidentIds.length === 0) return
+
+													setSelectedIncidentIds((current) =>
+														allSelected
+															? current.filter((id) => !incidentIds.includes(id))
+															: [...new Set([...current, ...incidentIds])]
+													)
+												}}
+											/>
+										</View>
+									</View>
+
+									<View style={styles.optionRow}>
+										<ThemedText variant="H5" colorName="blue2" style={styles.optionLabel}>
+											{t("sharePermissions.prosthesisAndComponents")}
+										</ThemedText>
+
+										<View style={styles.checkboxWrapper}>
+											<ThemedCheckbox
+												checked={selectedIds.includes(prosthesis.id)}
+												onPress={() => {
+													if (isSaving) return
+
+													setSelectedIds((current) =>
+														current.includes(prosthesis.id)
+															? current.filter((id) => id !== prosthesis.id)
+															: [...current, prosthesis.id]
+													)
+												}}
+											/>
+										</View>
+									</View>
 								</View>
-							</ThemedView>
-						))}
+							)
+						})}
 					</ScrollView>
 
-					{saveFailed && (
-						<ThemedText accessibilityRole="alert">{t("sharePermissions.saveError")}</ThemedText>
-					)}
+					{saveError && <ThemedText accessibilityRole="alert">{t(saveError)}</ThemedText>}
 
 					<View style={styles.actions}>
+						{/* Create: Cancel. Edit: Revoke access. */}
 						<ThemedView
-							style={[styles.button, { borderColor: colors.blue2 }]}
+							style={[
+								styles.button,
+								styles.buttonContent,
+								{
+									borderColor: onRevoke ? colors.false : colors.blue2,
+									backgroundColor: onRevoke ? colors.false : colors.bg_0,
+								},
+							]}
 							onPress={() => {
-								if (!isSaving) onClose()
+								if (isSaving) return
+
+								if (onRevoke) {
+									confirmRevoke()
+								} else {
+									onClose()
+								}
 							}}
 							accessibilityRole="button"
 							accessibilityState={{ disabled: isSaving }}
 						>
-							<ThemedText colorName="blue2">{t("sharePermissions.cancel")}</ThemedText>
+							{onRevoke ? (
+								<IconTrashcan width={22} height={22} color={colors.bg_0} />
+							) : (
+								<IconCross width={14} height={14} color={colors.blue1} />
+							)}
+
+							<ThemedText variant="H5" colorName={onRevoke ? "bg_0" : "graphite0"}>
+								{t(onRevoke ? "sharePermissions.revoke" : "sharePermissions.cancel")}
+							</ThemedText>
 						</ThemedView>
 
+						{/* Save in both modes. */}
 						<ThemedView
 							style={[
 								styles.button,
+								styles.buttonContent,
 								{
 									borderColor: colors.blue2,
 									backgroundColor: colors.blue2,
@@ -194,12 +329,11 @@ export function SharePermissionsModal({
 							]}
 							onPress={handleSave}
 							accessibilityRole="button"
-							accessibilityState={{
-								disabled: isSaving,
-								busy: isSaving,
-							}}
+							accessibilityState={{ disabled: isSaving, busy: isSaving }}
 						>
-							<ThemedText colorName="bg_0">
+							<IconPencil width={14} height={14} color={colors.bg_0} />
+
+							<ThemedText variant="H5" colorName="bg_0">
 								{isSaving ? t("sharePermissions.saving") : t("sharePermissions.save")}
 							</ThemedText>
 						</ThemedView>
@@ -276,6 +410,7 @@ const styles = StyleSheet.create({
 	},
 	optionLabel: {
 		flex: 1,
+		marginLeft: 20,
 	},
 	checkboxWrapper: {
 		width: 44,
@@ -309,5 +444,26 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		paddingHorizontal: 12,
+	},
+	prosthesisGroup: {
+		gap: 8,
+		marginBottom: 12,
+	},
+	buttonContent: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		gap: 8,
+	},
+	revokeButton: {
+		minHeight: 44,
+		width: "100%",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		gap: 8,
+		borderWidth: 1,
+		borderRadius: 12,
+		padding: 10,
 	},
 })

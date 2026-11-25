@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ActivityIndicator, ScrollView, StyleSheet, TextInput } from "react-native"
 import { useTranslation } from "react-i18next"
 import { ThemedHeader } from "@/src/components/ThemedHeader"
@@ -7,10 +7,13 @@ import { useTheme } from "@/context/ThemeContext"
 import { ThemedText } from "@/src/components/ThemedText"
 import { useSpecialistSearch } from "@/src/hooks/useSpecialistSearch"
 import type { Specialist } from "@/src/services/specialistsApi"
-import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconSearch from "@/assets/icons/search.svg"
 import { createShare } from "@/src/services/sharesApi"
 import { SharePermissionsModal } from "@/src/components/settings/SharePermissionsModal"
+import { getAllProstheses } from "@/db/repositories/prosthesisRepository"
+import { useAuth } from "@/context/AuthContext"
+import { createLocalShare } from "@/db/repositories/shares"
+import { getShareableIncidents } from "@/db/repositories/shareIncidentRepository"
 
 export default function SpecialistsSearchScreen() {
 	const { t } = useTranslation()
@@ -18,6 +21,42 @@ export default function SpecialistsSearchScreen() {
 	const { colors } = useTheme()
 	const { specialists, isLoading, error, canSearch, hasSearched } = useSpecialistSearch(query)
 	const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(null)
+
+	const [prostheses, setProstheses] = useState<{ id: string; name: string }[]>([])
+	const [prosthesesLoading, setProsthesesLoading] = useState(true)
+	const [prosthesesError, setProsthesesError] = useState(false)
+	const { status, sessionKey } = useAuth()
+	const [incidents, setIncidents] = useState<{ id: string; prosthesisId: string }[]>([])
+
+	useEffect(() => {
+		let active = true
+
+		async function loadProstheses() {
+			try {
+				const result = await getAllProstheses()
+				const incidentResult = getShareableIncidents()
+
+				if (active) {
+					setProstheses(result.map(({ id, name }) => ({ id, name })))
+					setIncidents(incidentResult)
+				}
+			} catch {
+				if (active) {
+					setProsthesesError(true)
+				}
+			} finally {
+				if (active) {
+					setProsthesesLoading(false)
+				}
+			}
+		}
+
+		void loadProstheses()
+
+		return () => {
+			active = false
+		}
+	}, [])
 
 	return (
 		<ThemedView variant="background" colorName="bg_1" style={styles.screen}>
@@ -114,11 +153,20 @@ export default function SpecialistsSearchScreen() {
 					)
 				})}
 			</ScrollView>
-			{selectedSpecialist && (
+			{selectedSpecialist && prosthesesLoading && <ActivityIndicator color={colors.blue2} />}
+
+			{selectedSpecialist && prosthesesError && (
+				<ThemedText accessibilityRole="alert">
+					{t("sharePermissions.prosthesesLoadError")}
+				</ThemedText>
+			)}
+
+			{selectedSpecialist && !prosthesesLoading && !prosthesesError && (
 				<SharePermissionsModal
 					key={selectedSpecialist.id}
 					specialist={selectedSpecialist}
-					prostheses={[]}
+					prostheses={prostheses}
+					incidents={incidents}
 					initialPermissions={{
 						medical_history: false,
 						prostheses: [],
@@ -126,7 +174,14 @@ export default function SpecialistsSearchScreen() {
 					}}
 					onClose={() => setSelectedSpecialist(null)}
 					onSave={async (permissions) => {
-						console.log(permissions)
+						if (status !== "AUTHENTICATED" || !sessionKey) {
+							throw new Error("An authenticated account is required.")
+						}
+
+						createLocalShare(sessionKey, {
+							specialist: selectedSpecialist,
+							permissions,
+						})
 					}}
 				/>
 			)}

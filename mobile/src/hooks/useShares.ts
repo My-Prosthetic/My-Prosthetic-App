@@ -1,45 +1,86 @@
 import { useCallback, useState } from "react"
 import { useFocusEffect } from "expo-router"
-import { getShares, type Share } from "../services/sharesApi"
+import { useAuth } from "@/context/AuthContext"
+import { getLocalShares } from "@/db/repositories/shares"
+import type { Share } from "../services/sharesApi"
 
-// reload the list whenever returns to the specialist screen
+type SharesState = {
+	sessionKey: string | null
+	shares: Share[]
+	isLoading: boolean
+	error: "specialists.loadError" | null
+}
+
 export function useShares() {
-	const [shares, setShares] = useState<Share[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [error, setError] = useState<"specialists.loadError" | null>(null)
+	const { status, sessionKey } = useAuth()
+
+	const [state, setState] = useState<SharesState>({
+		sessionKey: null,
+		shares: [],
+		isLoading: true,
+		error: null,
+	})
+
+	const [refreshVersion, setRefreshVersion] = useState(0)
+
+	const refresh = useCallback(() => {
+		setRefreshVersion((version) => version + 1)
+	}, [])
 
 	useFocusEffect(
 		useCallback(() => {
+			if (status !== "AUTHENTICATED" || !sessionKey) return
+
 			let active = true
 
-			async function load() {
-				setIsLoading(true)
-				setError(null)
+			// Run after focus; cancel if the screen loses focus.
+			const timer = setTimeout(() => {
+				if (!active) return
 
 				try {
-					const result = await getShares()
+					const rows = getLocalShares(sessionKey)
 
-					if (active) {
-						setShares(result)
-					}
+					const shares: Share[] = rows.map((row) => ({
+						specialist: {
+							id: row.specialistId,
+							name: row.specialistName,
+						},
+						permissions: row.permissions,
+						created_at: row.createdAt,
+						updated_at: row.updatedAt,
+					}))
+
+					setState({
+						sessionKey,
+						shares,
+						isLoading: false,
+						error: null,
+					})
 				} catch {
-					if (active) {
-						setError("specialists.loadError")
-					}
-				} finally {
-					if (active) {
-						setIsLoading(false)
-					}
+					setState({
+						sessionKey,
+						shares: [],
+						isLoading: false,
+						error: "specialists.loadError",
+					})
 				}
-			}
-
-			void load()
+			}, 0)
 
 			return () => {
 				active = false
+				clearTimeout(timer)
 			}
-		}, [])
+		}, [status, sessionKey, refreshVersion])
 	)
 
-	return { shares, isLoading, error }
+	const isAuthenticated = status === "AUTHENTICATED" && sessionKey !== null
+	const isCurrentAccount = isAuthenticated && state.sessionKey === sessionKey
+
+	return {
+		shares: isCurrentAccount ? state.shares : [],
+		isLoading:
+			status === "INITIALIZING" || (isAuthenticated && (!isCurrentAccount || state.isLoading)),
+		error: isCurrentAccount ? state.error : null,
+		refresh,
+	}
 }

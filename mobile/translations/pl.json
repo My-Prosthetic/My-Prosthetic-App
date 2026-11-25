@@ -996,7 +996,15 @@
 		"countLabel_one": "{{count}} specjaliście",
 		"countLabel_few": "{{count}} specjalistom",
 		"countLabel_many": "{{count}} specjalistom",
-		"countLabel_other": "{{count}} specjalistom"
+		"countLabel_other": "{{count}} specjalistom",
+		"medicalHistoryShared": "Profil medyczny: zaznaczony",
+		"medicalHistoryNotShared": "Profil medyczny: niezaznaczony",
+		"prosthesesSelected": "Wybrane protezy: {{count}}",
+		"incidentsSelected": "Wybrane incydenty: {{count}}",
+		"profession": "Specjalista protetyk",
+		"addedOn": "Dodano: {{date}}",
+		"components": "komponenty",
+		"editPermissions": "edytuj dostęp"
 	},
 	"specialistsSearch": {
 		"headerTitle": "Znajdź protetyka",
@@ -1018,6 +1026,16 @@
 		"cancel": "Anuluj",
 		"save": "Zapisz",
 		"saving": "Zapisywanie…",
-		"saveError": "Nie udało się zapisać uprawnień. Spróbuj ponownie."
+		"saveError": "Nie udało się zapisać uprawnień. Spróbuj ponownie.",
+		"prosthesesLoadError": "Nie udało się odczytać protez z urządzenia.",
+		"prosthesisAndComponents": "Komponenty Protezy",
+		"incidentsUnavailable": "Incydenty — udostępnianie jeszcze niedostępne",
+		"alreadyExists": "Ten protetyk jest już dodany. Zmień jego uprawnienia na liście „Moi protetycy”.",
+		"sessionChanged": "Sesja konta zmieniła się. Zamknij okno i spróbuj ponownie.",
+		"incidents": "Incydenty",
+		"notFound": "Ta zgoda już nie istnieje. Zamknij okno i odśwież listę.",
+		"revoke": "Usuń",
+		"revokeConfirmation": "Odebrać dostęp dla {{name}}? Zmiana na serwerze zacznie obowiązywać po synchronizacji.",
+		"revokeError": "Nie udało się zapisać odebrania dostępu. Spróbuj ponownie."
 	}
 }
