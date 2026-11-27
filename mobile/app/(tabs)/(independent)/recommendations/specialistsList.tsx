@@ -22,7 +22,6 @@ import { ThemedText } from "@/src/components/ThemedText"
 
 import IconChevronRight from "@/assets/icons/chevron-right.svg"
 import IconPersonGear from "@/assets/icons/person-gear.svg"
-import { ParseKeys } from "i18next"
 
 //TODO
 const handleEditSpecialists = () => {}
@@ -35,7 +34,7 @@ export default function SpecialistsListScreen() {
 	const [specialistsList, setSpecialistsList] = useState<SpecialistListItem[]>([])
 	const [searchQuery, setSearchQuery] = useState("")
 	const [isLoading, setIsLoading] = useState(true)
-	const [loadError, setLoadError] = useState<string | null>(null)
+	const [loadError, setLoadError] = useState(false)
 
 	useFocusEffect(
 		useCallback(() => {
@@ -43,14 +42,14 @@ export default function SpecialistsListScreen() {
 
 			const loadSpecialists = async () => {
 				setIsLoading(true)
-				setLoadError(null)
+				setLoadError(false)
 				try {
 					const rows = await getSpecialistsWithSummary()
 					if (isCancelled) return
 					setSpecialistsList(rows)
 				} catch (error) {
 					console.error("Failed to load specialists:", error)
-					if (!isCancelled) setLoadError("recommendations.loadError")
+					if (!isCancelled) setLoadError(true)
 				} finally {
 					if (!isCancelled) setIsLoading(false)
 				}
@@ -105,7 +104,7 @@ export default function SpecialistsListScreen() {
 					</ThemedText>
 				) : loadError ? (
 					<ThemedText variant="H4" colorName="blue2">
-						{t(loadError as ParseKeys)}
+						{t("recommendations.loadError")}
 					</ThemedText>
 				) : filteredSpecialists.length === 0 ? (
 					<ThemedText variant="H4" colorName="blue2">
