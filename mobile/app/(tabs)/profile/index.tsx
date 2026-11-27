@@ -278,8 +278,7 @@ export default function ProfileScreen() {
 							<View style={styles.newEntry}>
 								<View style={[styles.newEntryDot, { backgroundColor: colors.true }]} />
 								<ThemedText variant="H4" colorName="blue2">
-									{t(numberOfNewEntries === 1 ? "profile.newSingular" : "profile.newPlural")}{" "}
-									{numberOfNewEntries}
+									{t("profile.newEntries", { count: numberOfNewEntries })}
 								</ThemedText>
 							</View>
 						)}

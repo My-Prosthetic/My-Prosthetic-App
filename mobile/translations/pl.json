@@ -323,8 +323,6 @@
 		"newFile": "Dodaj plik",
 		"fileDescription": "tutaj możesz dodać zdjęcia, dokumentację i inne pliki dotyczące historii medycznej",
 		"historyEntries": "24 wpisy",
-		"newSingular": "nowy",
-		"newPlural": "nowe",
 		"notesEntries": "Brak nowych wpisów",
 		"addConditionTitle": "Dodaj schorzenie lub alergię",
 		"addMedicationTitle": "Dodaj lek",
@@ -369,7 +367,11 @@
 			}
 		},
 		"duplicateCondition": "Takie schorzenie lub alergia już istnieje",
-		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje"
+		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje",
+		"newEntries_one": "{{count}} nowy wpis",
+		"newEntries_few": "{{count}} nowe wpisy",
+		"newEntries_many": "{{count}} nowych wpisów",
+		"newEntries_other": "{{count}} nowych wpisów"
 	},
 	"newProsthesis": {
 		"title": "Nowa proteza",

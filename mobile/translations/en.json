@@ -324,8 +324,6 @@
 		"newFile": "Add file",
 		"fileDescription": "here you can add photos, documentation and other files related to your medical history",
 		"historyEntries": "24 entries",
-		"newSingular": "new",
-		"newPlural": "new",
 		"notesEntries": "No new entries",
 		"addConditionTitle": "Add condition or allergy",
 		"addMedicationTitle": "Add medication",
@@ -370,7 +368,9 @@
 			}
 		},
 		"duplicateCondition": "This condition or allergy already exists",
-		"duplicateMedication": "This medication with the same usage already exists"
+		"duplicateMedication": "This medication with the same usage already exists",
+		"newEntries_one": "{{count}} new entry",
+		"newEntries_other": "{{count}} new entries"
 	},
 	"newProsthesis": {
 		"title": "New prosthesis",
