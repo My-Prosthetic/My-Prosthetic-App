@@ -1,5 +1,18 @@
 import { formatDate, formatHour, type DateInput } from "@/src/utils/dateTimeUtils"
 
+function toValidDate(value: DateInput, context: string): Date | null {
+	const date = toDate(value)
+
+	if (Number.isNaN(date.getTime())) {
+		if (__DEV__) {
+			console.warn(`[recommendationsUtils] ${context}: nieprawidłowa wartość daty`, value)
+		}
+		return null
+	}
+
+	return date
+}
+
 export function getSpecialistDisplayName(specialist: {
 	name: string
 	surname?: string | null
@@ -38,8 +51,8 @@ export function formatMessageDay(
 	yesterdayLabel: string,
 	referenceDate: Date = new Date()
 ): string {
-	const date = toDate(value)
-	if (Number.isNaN(date.getTime())) return ""
+	const date = toValidDate(value, "formatMessageDay")
+	if (!date) return ""
 	if (isSameLocalDay(date, referenceDate)) return todayLabel
 
 	const yesterday = new Date(referenceDate)
@@ -52,8 +65,8 @@ export function formatLastMessageTime(
 	yesterdayLabel: string,
 	referenceDate: Date = new Date()
 ): string {
-	const date = toDate(value)
-	if (Number.isNaN(date.getTime())) return ""
+	const date = toValidDate(value, "formatLastMessageTime")
+	if (!date) return ""
 	if (isSameLocalDay(date, referenceDate)) return formatHour(date)
 	return formatMessageDay(date, "", yesterdayLabel, referenceDate)
 }

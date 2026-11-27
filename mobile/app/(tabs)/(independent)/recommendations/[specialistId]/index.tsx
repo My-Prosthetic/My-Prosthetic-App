@@ -49,6 +49,12 @@ function buildRecommendationItems(
 		const date = new Date(message.createdAt)
 		const dayKey = Number.isNaN(date.getTime()) ? null : date.toDateString()
 
+		if (__DEV__ && dayKey === null) {
+			console.warn(
+				`[recommendations] Nieprawidłowa wartość createdAt dla wiadomości ${message.id}: "${message.createdAt}"`
+			)
+		}
+
 		if (dayKey && dayKey !== previousDay) {
 			items.push({
 				id: `day-${dayKey}`,
