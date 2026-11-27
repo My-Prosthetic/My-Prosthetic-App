@@ -44,7 +44,6 @@ export default function ProfileScreen() {
 	useFocusEffect(
 		useCallback(() => {
 			let mounted = true
-			setNumberOfNewEntries(null)
 
 			const loadNewEntriesCount = async () => {
 				try {

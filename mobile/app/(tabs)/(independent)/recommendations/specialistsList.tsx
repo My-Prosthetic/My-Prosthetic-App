@@ -41,12 +41,11 @@ export default function SpecialistsListScreen() {
 			let isCancelled = false
 
 			const loadSpecialists = async () => {
-				setIsLoading(true)
-				setLoadError(false)
 				try {
 					const rows = await getSpecialistsWithSummary()
 					if (isCancelled) return
 					setSpecialistsList(rows)
+					setLoadError(false)
 				} catch (error) {
 					console.error("Failed to load specialists:", error)
 					if (!isCancelled) setLoadError(true)
@@ -61,6 +60,8 @@ export default function SpecialistsListScreen() {
 			}
 		}, [])
 	)
+
+	const hasSpecialists = specialistsList.length > 0
 
 	const normalizedQuery = searchQuery.trim().toLocaleLowerCase()
 	const filteredSpecialists = useMemo(
@@ -98,11 +99,11 @@ export default function SpecialistsListScreen() {
 				onChangeText={setSearchQuery}
 			/>
 			<ScrollView contentContainerStyle={listStyles.listContainer}>
-				{isLoading ? (
+				{isLoading && !hasSpecialists ? (
 					<ThemedText variant="H4" colorName="blue2">
 						{t("recommendations.loading")}
 					</ThemedText>
-				) : loadError ? (
+				) : loadError && !hasSpecialists ? (
 					<ThemedText variant="H4" colorName="blue2">
 						{t("recommendations.loadError")}
 					</ThemedText>
