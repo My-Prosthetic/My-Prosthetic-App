@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "35191f56-133d-4559-accb-b8bb2bd6ef4f",
+	"id": "7ad7a5a8-30d2-442f-9500-ad319f22c35a",
 	"prevId": "cf786130-1168-4cfa-b853-d839c9956296",
 	"tables": {
 		"prostheses": {
@@ -730,51 +730,6 @@
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
-		"specialists": {
-			"name": "specialists",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"name": {
-					"name": "name",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"surname": {
-					"name": "surname",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"email": {
-					"name": "email",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"phone": {
-					"name": "phone",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
 		"specialist_messages": {
 			"name": "specialist_messages",
 			"columns": {
@@ -820,6 +775,11 @@
 					"name": "specialist_messages_specialist_id_created_at_idx",
 					"columns": ["specialist_id", "created_at"],
 					"isUnique": false
+				},
+				"specialist_messages_is_unread_idx": {
+					"name": "specialist_messages_is_unread_idx",
+					"columns": ["is_unread"],
+					"isUnique": false
 				}
 			},
 			"foreignKeys": {
@@ -833,6 +793,56 @@
 					"onUpdate": "no action"
 				}
 			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {
+				"specialist_messages_created_at_check": {
+					"name": "specialist_messages_created_at_check",
+					"value": "\"specialist_messages\".\"created_at\" GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]Z'"
+				}
+			}
+		},
+		"specialists": {
+			"name": "specialists",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"surname": {
+					"name": "surname",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"email": {
+					"name": "email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"phone": {
+					"name": "phone",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}

@@ -112,16 +112,28 @@ export async function upsertSpecialist(input: UpsertSpecialistInput) {
 	return specialist
 }
 
+function normalizeCreatedAt(createdAt: string): string {
+	const timestamp = Date.parse(createdAt)
+
+	if (Number.isNaN(timestamp)) {
+		throw new Error(`Invalid createdAt: ${createdAt}`)
+	}
+
+	return new Date(timestamp).toISOString()
+}
+
 export async function upsertSpecialistMessage(input: UpsertSpecialistMessageInput) {
+	const createdAt = normalizeCreatedAt(input.createdAt)
+
 	const [message] = await db
 		.insert(specialistMessages)
-		.values(input)
+		.values({ ...input, createdAt })
 		.onConflictDoUpdate({
 			target: specialistMessages.id,
 			set: {
 				specialistId: input.specialistId,
 				content: input.content,
-				createdAt: input.createdAt,
+				createdAt,
 			},
 		})
 		.returning()

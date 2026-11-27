@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm"
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core"
+import { relations, sql } from "drizzle-orm"
+import { sqliteTable, text, integer, index, check } from "drizzle-orm/sqlite-core"
 
 export const specialists = sqliteTable("specialists", {
 	id: text("id").primaryKey(),
@@ -30,6 +30,11 @@ export const specialistMessages = sqliteTable(
 		index("specialist_messages_specialist_id_created_at_idx").on(
 			table.specialistId,
 			table.createdAt
+		),
+		index("specialist_messages_is_unread_idx").on(table.isUnread),
+		check(
+			"specialist_messages_created_at_check",
+			sql`${table.createdAt} GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]Z'`
 		),
 	]
 )
