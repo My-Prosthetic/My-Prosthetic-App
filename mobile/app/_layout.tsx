@@ -87,6 +87,7 @@ function RootNavigationLayout({
 			<Stack.Protected guard={!hasActiveSession}>
 				<Stack.Screen name="index" />
 				<Stack.Screen name="login" />
+				<Stack.Screen name="reset-password" />
 				<Stack.Screen name="signup" />
 				<Stack.Screen name="noAccount" />
 			</Stack.Protected>

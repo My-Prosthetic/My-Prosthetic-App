@@ -23,9 +23,8 @@ export default function LoginScreen() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [errorMessage, setErrorMessage] = useState("")
 
-	//TODO
 	const handleResetPassword = () => {
-		router.back()
+		router.push("/reset-password")
 	}
 
 	const handleLogin = async () => {
