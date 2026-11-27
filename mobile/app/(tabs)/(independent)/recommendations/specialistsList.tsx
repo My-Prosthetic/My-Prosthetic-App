@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native"
 import { useCallback, useMemo, useState } from "react"
 import { useFocusEffect, useRouter } from "expo-router"
-import { ThemeColors, useTheme } from "@/context/ThemeContext"
+import { useTheme } from "@/context/ThemeContext"
 import { useTranslation } from "react-i18next"
 
 import {
@@ -125,7 +125,7 @@ export default function SpecialistsListScreen() {
 			<ThemedView
 				variant="wide"
 				colorName="blue2"
-				style={{ marginVertical: 10 }}
+				style={listStyles.editButton}
 				onPress={handleEditSpecialists}
 				leftChild={<IconPersonGear color={colors.bg_0} />}
 				centerChild={
@@ -144,8 +144,7 @@ interface SpecialistRowProps {
 }
 
 const SpecialistRow = ({ specialist, onPress, yesterdayLabel }: SpecialistRowProps) => {
-	const { colors } = useTheme()
-	const styles = useMemo(() => getStyles(colors), [colors])
+	const styles = useMemo(() => getStyles(), [])
 
 	const displayName = getSpecialistDisplayName(specialist)
 	const initials = getSpecialistInitials(displayName)
@@ -207,9 +206,12 @@ const listStyles = StyleSheet.create({
 	searchbar: {
 		marginVertical: 10,
 	},
+	editButton: {
+		marginVertical: 10,
+	},
 })
 
-const getStyles = (colors: ThemeColors) => {
+const getStyles = () => {
 	const styles = StyleSheet.create({
 		rowContainer: {
 			paddingVertical: 4,
