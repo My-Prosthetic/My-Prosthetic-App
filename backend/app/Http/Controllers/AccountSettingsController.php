@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Rules\PasswordRules;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AccountSettingsController extends Controller
@@ -20,12 +20,8 @@ class AccountSettingsController extends Controller
         $validated = $request->validate([
             'current_password' => ['required', 'string'],
             'password' => [
-                'required',
-                'string',
-                'confirmed',
+                ...PasswordRules::new(),
                 'different:current_password',
-                Password::min(12)->mixedCase()->numbers(),
-                'regex:/[\p{P}\p{S}]/u',
             ],
         ]);
 

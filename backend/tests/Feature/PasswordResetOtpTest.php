@@ -10,10 +10,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 use Tests\TestCase;
@@ -144,7 +146,19 @@ class PasswordResetOtpTest extends TestCase
             ->assertUnprocessable()->assertJsonValidationErrors('code');
     }
 
-    public function test_password_policy_is_reused_for_reset(): void
+    public static function invalidPasswords(): iterable
+    {
+        yield 'weak' => ['weak'];
+        yield 'too short' => ['Short123!'];
+        yield 'no uppercase' => ['newpassword123!'];
+        yield 'no lowercase' => ['NEWPASSWORD123!'];
+        yield 'no number' => ['NewPasswordOnly!'];
+        yield 'no symbol' => ['NewPassword1234'];
+        yield 'whitespace is not a symbol' => ['New Password123'];
+    }
+
+    #[DataProvider('invalidPasswords')]
+    public function test_password_policy_is_reused_for_reset(string $password): void
     {
         Mail::fake();
         $user = User::factory()->create();
@@ -152,8 +166,8 @@ class PasswordResetOtpTest extends TestCase
         $this->postJson('/api/password-reset/confirm', [
             'email' => $user->email,
             'code' => $code,
-            'password' => 'weak',
-            'password_confirmation' => 'weak',
+            'password' => $password,
+            'password_confirmation' => $password,
         ])->assertUnprocessable()->assertJsonValidationErrors('password');
         $this->assertTrue(Hash::check('password', $user->fresh()->getAuthPassword()));
     }
@@ -180,6 +194,55 @@ class PasswordResetOtpTest extends TestCase
             $this->postJson('/api/password-reset/verify', ['email' => $email, 'code' => '123456'])
                 ->assertUnprocessable()->assertJsonValidationErrors('code');
         }
+    }
+
+    public function test_cooldown_retry_after_is_identical_for_existing_and_missing_accounts(): void
+    {
+        config(['app.debug' => false]);
+        $this->freezeSecond();
+        Mail::fake();
+        $user = User::factory()->create();
+        foreach ([$user->email, 'missing@example.test'] as $email) {
+            $this->postJson('/api/password-reset/request', ['email' => $email])->assertAccepted();
+        }
+        $this->travel(17)->seconds();
+        $existing = $this->postJson('/api/password-reset/request', ['email' => strtoupper($user->email)])
+            ->assertStatus(429)->assertHeader('Retry-After', '43');
+        $missing = $this->postJson('/api/password-reset/request', ['email' => ' MISSING@EXAMPLE.TEST '])
+            ->assertStatus(429)->assertHeader('Retry-After', '43');
+        $this->assertSame($existing->json(), $missing->json());
+        Mail::assertSentCount(1);
+    }
+
+    public function test_database_cooldown_returns_retry_after_after_a_cache_reset(): void
+    {
+        $this->freezeSecond();
+        Mail::fake();
+        $user = User::factory()->create();
+        $code = $this->issueCode($user);
+        $this->travel(17)->seconds();
+        Cache::flush();
+        $existing = $this->postJson('/api/password-reset/request', ['email' => $user->email])
+            ->assertStatus(429)->assertHeader('Retry-After', '43');
+        $missing = $this->postJson('/api/password-reset/request', ['email' => 'missing@example.test'])->assertAccepted();
+        $missing->assertHeaderMissing('Retry-After');
+        Mail::assertSentCount(1);
+        $this->postJson('/api/password-reset/verify', ['email' => $user->email, 'code' => $code])->assertNoContent();
+    }
+
+    public function test_reset_requires_matching_password_confirmation_without_consuming_the_code(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create();
+        $code = $this->issueCode($user);
+        $payload = $this->resetPayload($user, $code);
+        unset($payload['password_confirmation']);
+        $this->postJson('/api/password-reset/confirm', $payload)
+            ->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->postJson('/api/password-reset/confirm', [...$payload, 'password_confirmation' => 'mismatch'])
+            ->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->assertNull(PasswordResetOtp::query()->firstOrFail()->consumed_at);
+        $this->postJson('/api/password-reset/confirm', $this->resetPayload($user, $code))->assertNoContent();
     }
 
     public static function roles(): iterable
@@ -356,11 +419,14 @@ class PasswordResetOtpTest extends TestCase
         Mail::fake();
         $user = User::factory()->create();
         $code = $this->issueCode($user);
-        $this->postJson('/api/password-reset/request', ['email' => $user->email])->assertAccepted();
+        $this->postJson('/api/password-reset/request', ['email' => $user->email])
+            ->assertStatus(429)
+            ->assertHeader('Retry-After');
         Mail::assertSentCount(1);
         $this->postJson('/api/password-reset/verify', ['email' => $user->email, 'code' => $code])->assertNoContent();
     }
 
+    #[Group('concurrency')]
     public function test_only_one_of_two_concurrent_postgres_resets_succeeds(): void
     {
         if (DB::getDriverName() !== 'pgsql') {
@@ -388,6 +454,13 @@ class PasswordResetOtpTest extends TestCase
 require 'vendor/autoload.php';
 $app = require 'bootstrap/app.php';
 $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+$kernel->bootstrap();
+\Illuminate\Support\Facades\DB::connection()->beforeExecuting(function (string $sql): void {
+    if (str_starts_with($sql, 'select * from "users"') && str_ends_with($sql, 'for update')) {
+        fwrite(STDOUT, "ready\n");
+        fflush(STDOUT);
+    }
+});
 $request = \Illuminate\Http\Request::create('/api/password-reset/confirm', 'POST', [], [], [],
     ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'], $argv[1]);
 $response = $kernel->handle($request);
@@ -407,16 +480,15 @@ PHP;
                 $process->start();
                 $processes[] = $process;
             }
-            $deadline = microtime(true) + 30;
-            do {
-                $connection->select('SELECT pg_stat_clear_snapshot()');
-                $waiting = (int) $connection->selectOne("SELECT count(*) AS waiting FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock' AND pid <> pg_backend_pid()")->waiting;
-                if ($waiting >= 2) {
-                    break;
+            // Wait for both workers to reach the locking query before the brief delay.
+            foreach ($processes as $process) {
+                while ($process->isRunning() && ! str_contains($process->getOutput(), "ready\n")) {
+                    $process->checkTimeout();
+                    usleep(1000);
                 }
-                usleep(10000);
-            } while (microtime(true) < $deadline);
-            $this->assertSame(2, $waiting, 'Both reset requests must contend for the account lock. '.implode(' ', array_map(fn (Process $process): string => $process->getOutput().$process->getErrorOutput(), $processes)));
+                $this->assertStringContainsString("ready\n", $process->getOutput(), $process->getErrorOutput());
+            }
+            usleep(5000);
             $connection->commit();
             $statuses = [];
             foreach ($processes as $process) {

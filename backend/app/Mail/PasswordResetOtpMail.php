@@ -16,7 +16,7 @@ class PasswordResetOtpMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'My Prosthetic – kod resetowania hasła');
+        return new Envelope(subject: 'My Prosthetic - Password Reset Code');
     }
 
     public function content(): Content

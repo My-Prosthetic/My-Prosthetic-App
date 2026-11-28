@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\PasswordResetOtpMail;
 use App\Models\PasswordResetOtp;
 use App\Models\User;
+use App\Rules\PasswordRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,8 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 use function Illuminate\Support\defer;
@@ -29,10 +30,11 @@ class PasswordResetOtpController extends Controller
         $data = $request->validate(['email' => ['required', 'string', 'email', 'max:255']]);
         $email = strtolower(trim($data['email']));
         $now = now();
+        $retryAfter = null;
 
         $delivery = null;
         try {
-            $delivery = DB::transaction(function () use ($email, $now): ?array {
+            $delivery = DB::transaction(function () use ($email, $now, &$retryAfter): ?array {
                 $user = User::query()
                     ->where('email', $email)
                     ->lockForUpdate()
@@ -44,12 +46,16 @@ class PasswordResetOtpController extends Controller
 
                 $record = PasswordResetOtp::query()->firstOrNew(['user_id' => $user->getKey()]);
                 if ($record->exists && $record->sent_at->copy()->addMinute()->isFuture()) {
+                    $retryAfter = max(1, $record->sent_at->copy()->addMinute()->timestamp - $now->timestamp);
+
                     return null;
                 }
-                do {
-                    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $codeHash = $this->hashCode($email, $code);
+                if ($record->exists && hash_equals($record->code_hash, $codeHash)) {
+                    $code = str_pad((string) (((int) $code + random_int(1, 999999)) % 1000000), 6, '0', STR_PAD_LEFT);
                     $codeHash = $this->hashCode($email, $code);
-                } while ($record->exists && hash_equals($record->code_hash, $codeHash));
+                }
                 $record->fill([
                     'code_hash' => $codeHash,
                     'attempts' => 0,
@@ -82,6 +88,10 @@ class PasswordResetOtpController extends Controller
             report($error);
         }
 
+        if ($retryAfter !== null) {
+            throw new TooManyRequestsHttpException($retryAfter, 'Too Many Attempts.');
+        }
+
         return response()->json([
             'message' => 'If the account exists, a verification code has been sent.',
             'expires_at' => $now->copy()->addMinutes(self::EXPIRATION_MINUTES)->toIso8601String(),
@@ -93,7 +103,7 @@ class PasswordResetOtpController extends Controller
     {
         $data = $this->validateCode($request);
 
-        $isValid = DB::transaction(fn (): bool => $this->checkCode($data['email'], $data['code']) !== null);
+        $isValid = DB::transaction(fn (): bool => $this->checkCode($data['email'], $data['code'], lockUser: false) !== null);
         if (! $isValid) {
             $this->invalidCode();
         }
@@ -106,16 +116,12 @@ class PasswordResetOtpController extends Controller
         $data = $request->validate([
             'email' => ['required', 'string', 'email', 'max:255'],
             'code' => ['required', 'string', 'regex:/^[0-9]{6}$/'],
-            'password' => [
-                'required', 'string', 'confirmed',
-                Password::defaults()->min(12)->mixedCase()->numbers(),
-                'regex:/[\p{P}\p{S}]/u',
-            ],
+            'password' => PasswordRules::new(),
         ]);
         $email = strtolower(trim($data['email']));
 
         $outcome = DB::transaction(function () use ($email, $data): string {
-            $record = $this->checkCode($email, $data['code']);
+            $record = $this->checkCode($email, $data['code'], lockUser: true);
             if ($record === null) {
                 return 'invalid';
             }
@@ -161,11 +167,11 @@ class PasswordResetOtpController extends Controller
         return $data;
     }
 
-    private function checkCode(string $email, string $code): ?PasswordResetOtp
+    private function checkCode(string $email, string $code, bool $lockUser = false): ?PasswordResetOtp
     {
         $user = User::query()
             ->where('email', $email)
-            ->lockForUpdate()
+            ->when($lockUser, fn ($query) => $query->lockForUpdate())
             ->first();
         $record = $user
             ? PasswordResetOtp::query()->where('user_id', $user->getKey())->lockForUpdate()->first()
