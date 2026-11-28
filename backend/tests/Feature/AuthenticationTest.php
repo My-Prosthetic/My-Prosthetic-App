@@ -73,6 +73,17 @@ class AuthenticationTest extends TestCase
         ]);
     }
 
+    public function test_registration_retains_the_default_password_policy_and_requires_confirmation(): void
+    {
+        $payload = ['name' => 'Jane Patient', 'email' => 'jane@example.test', 'password' => 'abcdefgh'];
+        $this->postJson('/api/register', $payload)->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->postJson('/api/register', [...$payload, 'password_confirmation' => 'mismatch'])
+            ->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->postJson('/api/register', [...$payload, 'password' => 'abcdefg', 'password_confirmation' => 'abcdefg'])
+            ->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->postJson('/api/register', [...$payload, 'password_confirmation' => 'abcdefgh'])->assertCreated();
+    }
+
     public function test_registration_rejects_duplicate_email_with_a_standard_validation_error(): void
     {
         User::factory()->create(['email' => 'existing@example.com']);

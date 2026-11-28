@@ -1,4 +1,30 @@
 {
+	"passwordReset": {
+		"title": "Resetuj hasło",
+		"emailLabel": "Podaj email",
+		"emailIntro": "Na wskazany adres email zostanie wysłany jednorazowy kod do zmiany hasła.",
+		"sendCode": "Wyślij kod",
+		"loading": "Przetwarzanie…",
+		"codeIntro": "Podaj kod wysłany na adres email:",
+		"codeLabel": "Kod weryfikacyjny",
+		"codeVerified": "Kod został zweryfikowany",
+		"timeLeft": "Kod ważny jeszcze: {{time}}",
+		"expired": "Kod wygasł. Poproś o nowy.",
+		"resend": "Wyślij kod ponownie",
+		"resendIn": "Wyślij ponownie za: {{time}}",
+		"newPassword": "Nowe hasło",
+		"repeatPassword": "Powtórz nowe hasło",
+		"savePassword": "Zmień hasło",
+		"success": "Hasło zostało zmienione. Zaloguj się nowym hasłem.",
+		"login": "Przejdź do logowania",
+		"errors": {
+			"invalidEmail": "Wpisz poprawny adres e-mail.",
+			"invalidCode": "Kod jest niepoprawny, wygasł lub został wykorzystany. Sprawdź go lub wyślij nowy.",
+			"invalidPassword": "Hasło nie spełnia wymagań lub jest takie samo jak poprzednie.",
+			"rateLimited": "Zbyt wiele prób. Spróbuj ponownie później.",
+			"network": "Nie udało się połączyć z serwerem. Spróbuj ponownie."
+		}
+	},
 	"files": {
 		"checkImages": "Zobacz zdjęcia i pliki",
 		"title": "PLIKI I ZDJĘCIA",

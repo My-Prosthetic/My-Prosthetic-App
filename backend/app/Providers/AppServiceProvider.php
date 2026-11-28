@@ -30,6 +30,23 @@ class AppServiceProvider extends ServiceProvider
                 ->by($email.'|'.$request->ip());
         });
 
+        RateLimiter::for('password-reset-request', function (Request $request): array {
+            $email = hash('sha256', Str::lower(trim((string) $request->input('email'))));
+
+            return [
+                Limit::perMinute(1)->by('reset-request-minute:'.$email),
+                Limit::perHour(5)->by('reset-request-hour:'.$email),
+                Limit::perMinute(12)->by('reset-request-ip:'.$request->ip()),
+            ];
+        });
+        RateLimiter::for('password-reset-verify', function (Request $request): array {
+            $email = hash('sha256', Str::lower(trim((string) $request->input('email'))));
+
+            return [
+                Limit::perMinute(10)->by('reset-verify-email:'.$email),
+                Limit::perMinute(30)->by('reset-verify-ip:'.$request->ip()),
+            ];
+        });
         RateLimiter::for('specialist-search', function (Request $request): Limit {
             return Limit::perMinute((int) config('sharing.specialist_search_rate_limit', 30))
                 ->by($request->user()?->getAuthIdentifier() ?? $request->ip());

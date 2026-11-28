@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\PasswordResetOtpController;
 use App\Http\Controllers\PatientProsthesisController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SpecialistNoteController;
@@ -26,6 +27,16 @@ Route::post('/login', [AuthController::class, 'mobileLogin'])
 Route::post('/web/login', [AuthController::class, 'webLogin'])
     ->middleware('throttle:auth')
     ->name('auth.web-login');
+
+Route::post('/password-reset/request', [PasswordResetOtpController::class, 'requestCode'])
+    ->middleware('throttle:password-reset-request')
+    ->name('password-reset.request');
+Route::post('/password-reset/verify', [PasswordResetOtpController::class, 'verifyCode'])
+    ->middleware('throttle:password-reset-verify')
+    ->name('password-reset.verify');
+Route::post('/password-reset/confirm', [PasswordResetOtpController::class, 'resetPassword'])
+    ->middleware('throttle:password-reset-verify')
+    ->name('password-reset.confirm');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
