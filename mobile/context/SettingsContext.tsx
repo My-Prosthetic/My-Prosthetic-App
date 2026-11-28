@@ -6,6 +6,7 @@ export type DateFormat = "YYYY-MM-DD" | "DD-MM-YYYY" | "MM-DD-YYYY"
 export type Language = "pl" | "en"
 
 interface SettingsContextType {
+	isLoaded: boolean
 	language: Language
 	setLanguage: (language: Language) => void
 
@@ -23,6 +24,7 @@ const LANGUAGE_STORAGE_KEY = "language"
 const TTS_ENABLED_STORAGE_KEY = "ttsEnabled"
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
+	const [isLoaded, setIsLoaded] = useState(false)
 	const [language, setLanguageState] = useState<Language>("pl")
 	const [dateFormat, setDateFormatState] = useState<DateFormat>("YYYY-MM-DD")
 	const [ttsEnabled, setTtsEnabledState] = useState(false)
@@ -52,6 +54,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 				}
 			} catch (error) {
 				console.error("Failed to load settings:", error)
+			} finally {
+				setIsLoaded(true)
 			}
 		}
 
@@ -79,6 +83,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 	return (
 		<SettingsContext.Provider
 			value={{
+				isLoaded,
 				dateFormat,
 				setDateFormat,
 				language,

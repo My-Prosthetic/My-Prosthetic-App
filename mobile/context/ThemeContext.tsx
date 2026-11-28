@@ -1,7 +1,11 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import branding from "@/config/branding.json"
 
 export interface ThemeColors {
+	brandBackground: string
+	brandForeground: string
+	brandIndicator: string
 	warning: string
 	false: string
 	true: string
@@ -15,22 +19,30 @@ export interface ThemeColors {
 	magenta0: string
 }
 
+const brandColors = {
+	brandBackground: branding.background,
+	brandForeground: branding.foreground,
+	brandIndicator: branding.indicator,
+}
+
 export const lightTheme: ThemeColors = {
+	...brandColors,
 	warning: "#ED9D1D",
 	false: "#B51932",
 	true: "#15A959",
-	bg_0: "#FAFCFF",
+	bg_0: branding.indicator,
 	bg_1: "#F1F6FB",
 	bg_2: "#E0E6EE",
-	blue0: "#D3EEFF",
+	blue0: branding.foreground,
 	blue1: "#72AACC",
-	blue2: "#065A8E",
+	blue2: branding.background,
 	graphite0: "#2B3A51",
 	magenta0: "#B74CC5",
 }
 
 // TODO: verify dark theme contrast, especially text readability
 export const darkTheme: ThemeColors = {
+	...brandColors,
 	warning: "#F5B041",
 	false: "#E5546B",
 	true: "#34C77B",
@@ -46,6 +58,7 @@ export const darkTheme: ThemeColors = {
 
 // TODO: verify high contrast theme, especially text readability
 export const highContrastTheme: ThemeColors = {
+	...brandColors,
 	warning: "#FF8C00",
 	false: "#B51932",
 	true: "#15A959",
@@ -61,6 +74,7 @@ export const highContrastTheme: ThemeColors = {
 
 // TODO: verify high contrast theme, especially text readability
 export const highContrastDarkTheme: ThemeColors = {
+	...brandColors,
 	warning: "#FFB000",
 	false: "#FF5C77",
 	true: "#2EDB84",
@@ -77,6 +91,7 @@ export const highContrastDarkTheme: ThemeColors = {
 type ColorMode = "light" | "dark"
 
 interface ThemeContextType {
+	isLoaded: boolean
 	colorMode: ColorMode
 	highContrast: boolean
 	colors: ThemeColors
@@ -106,6 +121,7 @@ const getThemeColors = (colorMode: ColorMode, highContrast: boolean): ThemeColor
 }
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+	const [isLoaded, setIsLoaded] = useState(false)
 	const [colorMode, setColorModeState] = useState<ColorMode>("light")
 
 	const [highContrast, setHighContrastState] = useState(false)
@@ -126,6 +142,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 				}
 			} catch (error) {
 				console.error("Failed to load theme settings:", error)
+			} finally {
+				setIsLoaded(true)
 			}
 		}
 
@@ -149,6 +167,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	return (
 		<ThemeContext.Provider
 			value={{
+				isLoaded,
 				colorMode,
 				highContrast,
 				colors,

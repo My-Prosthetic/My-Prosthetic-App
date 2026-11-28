@@ -4,24 +4,24 @@
 		"slug": "MyProsthetics_local",
 		"version": "1.0.0",
 		"orientation": "portrait",
-		"icon": "./assets/mp_logo_accent.png",
+		"icon": "./assets/branding/icon-ios.png",
 		"userInterfaceStyle": "light",
 		"scheme": "your-app-scheme",
 		"ios": {
+			"icon": "./assets/branding/icon-ios.png",
 			"supportsTablet": true
 		},
 		"android": {
 			"adaptiveIcon": {
-				"backgroundColor": "#E6F4FE",
-				"foregroundImage": "./assets/mp_logo_accent.png",
-				"backgroundImage": "./assets/mp_logo_accent.png",
-				"monochromeImage": "./assets/mp_logo_accent.png"
+				"backgroundColor": "#065A8E",
+				"foregroundImage": "./assets/branding/icon-foreground.png",
+				"monochromeImage": "./assets/branding/icon-monochrome.png"
 			},
 			"predictiveBackGestureEnabled": false,
 			"package": "com.myprosthethicapp.MyProsthetics_local"
 		},
 		"web": {
-			"favicon": "./assets/mp_logo_accent.png"
+			"favicon": "./assets/branding/icon-ios.png"
 		},
 		"experiments": {
 			"typedRoutes": true
@@ -31,7 +31,20 @@
 			"expo-status-bar",
 			"expo-sqlite",
 			"expo-font",
-			"expo-splash-screen",
+			[
+				"expo-splash-screen",
+				{
+					"backgroundColor": "#065A8E",
+					"image": "./assets/branding/splash-ios.png",
+					"imageWidth": 560,
+					"resizeMode": "contain",
+					"android": {
+						"image": "./assets/branding/splash-mark.png",
+						"imageWidth": 168
+					},
+					"dark": { "backgroundColor": "#065A8E" }
+				}
+			],
 			[
 				"expo-audio",
 				{

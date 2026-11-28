@@ -1,4 +1,9 @@
 {
+	"startup": {
+		"loading": "Uruchamianie My Prosthetic",
+		"databaseErrorTitle": "Nie udało się uruchomić aplikacji",
+		"databaseErrorMessage": "Nie można przygotować lokalnej bazy danych. Zamknij aplikację i uruchom ją ponownie."
+	},
 	"files": {
 		"checkImages": "Zobacz zdjęcia i pliki",
 		"title": "PLIKI I ZDJĘCIA",
