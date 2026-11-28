@@ -122,6 +122,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<Measurement, $this>
+     */
+    public function measurements(): HasMany
+    {
+        return $this->hasMany(Measurement::class);
+    }
+
+    /**
      * @return HasOne<MedicalProfile, $this>
      */
     public function medicalProfile(): HasOne

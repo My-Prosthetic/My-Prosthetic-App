@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\IncidentSeeder;
+use Database\Seeders\MeasurementSeeder;
 use Database\Seeders\MedicalProfileSeeder;
 use Database\Seeders\ProsthesisSeeder;
 use Database\Seeders\SpecialistNoteSeeder;
@@ -26,6 +27,7 @@ class DatabaseSeederTest extends TestCase
         $this->assertDatabaseCount('users', 0);
         $this->assertDatabaseCount('medical_profiles', 0);
         $this->assertDatabaseCount('prostheses', 0);
+        $this->assertDatabaseCount('measurements', 0);
         $this->assertDatabaseCount('incidents', 0);
         $this->assertDatabaseCount('wallet_entries', 0);
         $this->assertDatabaseCount('user_shares', 0);
@@ -36,6 +38,7 @@ class DatabaseSeederTest extends TestCase
     {
         yield 'database seeder' => [DatabaseSeeder::class];
         yield 'prosthesis seeder' => [ProsthesisSeeder::class];
+        yield 'measurement seeder' => [MeasurementSeeder::class];
         yield 'incident seeder' => [IncidentSeeder::class];
         yield 'wallet entry seeder' => [WalletEntrySeeder::class];
         yield 'medical profile seeder' => [MedicalProfileSeeder::class];
