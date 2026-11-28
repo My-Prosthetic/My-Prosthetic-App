@@ -1,4 +1,9 @@
 {
+	"startup": {
+		"loading": "Starting My Prosthetic",
+		"databaseErrorTitle": "Unable to start the app",
+		"databaseErrorMessage": "The local database could not be prepared. Close the app and open it again."
+	},
 	"files": {
 		"checkImages": "See files and photos",
 		"title": "FILES AND PHOTOS",

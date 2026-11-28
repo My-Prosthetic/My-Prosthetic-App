@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react"
-import { Text, View } from "react-native"
+import { StyleSheet } from "react-native"
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import * as SplashScreen from "expo-splash-screen"
 import { Roboto_500Medium } from "@expo-google-fonts/roboto"
 
 import "@/translations/i18n"
-import { ThemeProvider } from "@/context/ThemeContext"
+import { ThemeProvider, useTheme } from "@/context/ThemeContext"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { logFullDatabase } from "@/db/debug"
 import { initializeDatabase } from "@/db/initialize"
 import { getDatabaseSession } from "@/db/client"
 import { SelectedProsthesisProvider } from "@/context/SelectedProsthesisContext"
-import { SettingsProvider } from "@/context/SettingsContext"
+import { SettingsProvider, useSettings } from "@/context/SettingsContext"
 import { JournalFilterProvider } from "@/context/JournalFilterContext"
-
-//TODO tx
+import { StartupScreen } from "@/src/components/startup/StartupScreen"
+import { ThemedText } from "@/src/components/ThemedText"
+import { ThemedView } from "@/src/components/ThemedView"
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
 	console.warn("SplashScreen error:", error)
@@ -29,6 +30,8 @@ function RootNavigationLayout({
 	fontsError: Error | null
 }) {
 	const { status } = useAuth()
+	const { colors, isLoaded: themeLoaded } = useTheme()
+	const { isLoaded: settingsLoaded } = useSettings()
 	const [migrationsLoaded, setMigrationsLoaded] = useState(false)
 	const [migrationError, setMigrationError] = useState<Error | null>(null)
 
@@ -41,9 +44,10 @@ function RootNavigationLayout({
 				}
 			})
 			.catch((error: unknown) => {
+				console.error("Failed to initialize application database:", error)
 				if (isMounted) {
 					setMigrationError(
-						error instanceof Error ? error : new Error("Nieznany błąd seedowania katalogu")
+						error instanceof Error ? error : new Error("Database initialization failed")
 					)
 				}
 			})
@@ -56,43 +60,39 @@ function RootNavigationLayout({
 	const hasActiveSession = status === "AUTHENTICATED" || status === "GUEST"
 	const isReady =
 		(fontsLoaded || !!fontsError) &&
-		status !== "INITIALIZING" &&
-		(migrationsLoaded || !!migrationError)
-
-	useEffect(() => {
-		if (isReady) {
-			SplashScreen.hideAsync().catch((error) => {
-				console.error("Failed to hide splash screen:", error)
-			})
-		}
-	}, [isReady])
-
-	if (!isReady) {
-		return null
-	}
-
-	if (migrationError) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", padding: 24 }}>
-				<Text>Błąd migracji bazy danych: {migrationError.message}</Text>
-			</View>
-		)
-	}
+		themeLoaded &&
+		settingsLoaded &&
+		(!!migrationError || (migrationsLoaded && status !== "INITIALIZING"))
 
 	return (
-		<Stack screenOptions={{ headerShown: false }}>
-			<Stack.Protected guard={hasActiveSession}>
-				<Stack.Screen name="(tabs)" />
-			</Stack.Protected>
-			<Stack.Protected guard={!hasActiveSession}>
-				<Stack.Screen name="index" />
-				<Stack.Screen name="login" />
-				<Stack.Screen name="signup" />
-				<Stack.Screen name="noAccount" />
-			</Stack.Protected>
-		</Stack>
+		<StartupScreen ready={isReady}>
+			{migrationError ? (
+				<ThemedView colorName="bg_0" style={styles.error}>
+					<ThemedText tx="startup.databaseErrorTitle" variant="H0" accessibilityRole="header" />
+					<ThemedText tx="startup.databaseErrorMessage" variant="H3" />
+				</ThemedView>
+			) : (
+				<Stack
+					screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg_0 } }}
+				>
+					<Stack.Protected guard={hasActiveSession}>
+						<Stack.Screen name="(tabs)" />
+					</Stack.Protected>
+					<Stack.Protected guard={!hasActiveSession}>
+						<Stack.Screen name="index" />
+						<Stack.Screen name="login" />
+						<Stack.Screen name="signup" />
+						<Stack.Screen name="noAccount" />
+					</Stack.Protected>
+				</Stack>
+			)}
+		</StartupScreen>
 	)
 }
+
+const styles = StyleSheet.create({
+	error: { flex: 1, borderRadius: 0, justifyContent: "center", padding: 24, gap: 16 },
+})
 
 function SessionNavigation(props: { fontsLoaded: boolean; fontsError: Error | null }) {
 	const { sessionKey, status } = useAuth()
