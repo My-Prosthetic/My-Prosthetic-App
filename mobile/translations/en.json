@@ -178,6 +178,21 @@
 		"yes": "Yes",
 		"search": "Search..."
 	},
+	"time": {
+		"yesterday": "Yesterday"
+	},
+	"recommendations": {
+		"title": "Recommendations",
+		"editSpecialists": "Edit my specialists",
+		"loading": "Loading specialists...",
+		"loadError": "Could not load specialists.",
+		"empty": "No specialists yet.",
+		"noResults": "No specialists match your search.",
+		"specialistRole": "Prosthetist",
+		"specialistNotFound": "Specialist not found.",
+		"noMessages": "There are no messages yet.",
+		"newMessages": "New messages"
+	},
 	"funding": {
 		"outOf": "out of",
 		"title": "Funding",
@@ -309,7 +324,6 @@
 		"newFile": "Add file",
 		"fileDescription": "here you can add photos, documentation and other files related to your medical history",
 		"historyEntries": "24 entries",
-		"recommendationsEntries": "1 new entry",
 		"notesEntries": "No new entries",
 		"addConditionTitle": "Add condition or allergy",
 		"addMedicationTitle": "Add medication",
@@ -354,7 +368,9 @@
 			}
 		},
 		"duplicateCondition": "This condition or allergy already exists",
-		"duplicateMedication": "This medication with the same usage already exists"
+		"duplicateMedication": "This medication with the same usage already exists",
+		"newEntries_one": "{{count}} new entry",
+		"newEntries_other": "{{count}} new entries"
 	},
 	"newProsthesis": {
 		"title": "New prosthesis",

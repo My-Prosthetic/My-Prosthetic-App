@@ -178,6 +178,21 @@
 		"yes": "Tak",
 		"search": "Szukaj..."
 	},
+	"time": {
+		"yesterday": "Wczoraj"
+	},
+	"recommendations": {
+		"title": "Zalecenia",
+		"editSpecialists": "Edytuj moich specjalistów",
+		"loading": "Wczytywanie specjalistów...",
+		"loadError": "Nie udało się wczytać specjalistów.",
+		"empty": "Nie ma jeszcze żadnych specjalistów.",
+		"noResults": "Brak specjalistów pasujących do wyszukiwania.",
+		"specialistRole": "Specjalista protetyk",
+		"specialistNotFound": "Nie znaleziono specjalisty.",
+		"noMessages": "Nie ma jeszcze żadnych wiadomości.",
+		"newMessages": "Nowe wiadomości"
+	},
 	"funding": {
 		"outOf": "z",
 		"title": "Dofinansowania",
@@ -308,7 +323,6 @@
 		"newFile": "Dodaj plik",
 		"fileDescription": "tutaj możesz dodać zdjęcia, dokumentację i inne pliki dotyczące historii medycznej",
 		"historyEntries": "24 wpisy",
-		"recommendationsEntries": "1 nowy wpis",
 		"notesEntries": "Brak nowych wpisów",
 		"addConditionTitle": "Dodaj schorzenie lub alergię",
 		"addMedicationTitle": "Dodaj lek",
@@ -353,7 +367,11 @@
 			}
 		},
 		"duplicateCondition": "Takie schorzenie lub alergia już istnieje",
-		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje"
+		"duplicateMedication": "Taki lek z tym zastosowaniem już istnieje",
+		"newEntries_one": "{{count}} nowy wpis",
+		"newEntries_few": "{{count}} nowe wpisy",
+		"newEntries_many": "{{count}} nowych wpisów",
+		"newEntries_other": "{{count}} nowych wpisów"
 	},
 	"newProsthesis": {
 		"title": "Nowa proteza",

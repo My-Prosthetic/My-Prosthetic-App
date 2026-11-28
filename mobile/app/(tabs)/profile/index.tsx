@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ScrollView, StyleSheet, View } from "react-native"
+import { useFocusEffect, useRouter } from "expo-router"
+import { useTranslation } from "react-i18next"
 
 import { useTheme } from "@/context/ThemeContext"
-import { useRouter } from "expo-router"
 import {
 	addMedicalCondition,
 	addMedicalMedication,
@@ -11,6 +12,7 @@ import {
 	getMedicalProfileData,
 	updateMedicalKLevel,
 } from "@/db/repositories/medicalProfileRepository"
+import { getUnreadSpecialistMessageCount } from "@/db/repositories/specialistRepository"
 import { ConditionsSection } from "@/src/components/profile/ConditionsSection"
 import { KLevelSelector } from "@/src/components/profile/KLevelSelector"
 import { MedicalProfileModal } from "@/src/components/profile/MedicalProfileModal"
@@ -28,6 +30,7 @@ import IconMedicalReport from "@/assets/icons/medical-report-clipboard.svg"
 export default function ProfileScreen() {
 	const { colors } = useTheme()
 	const router = useRouter()
+	const { t } = useTranslation()
 
 	const [selectedKLevel, setSelectedKLevel] = useState<KLevelId | null>(null)
 	const [isKLevelOpen, setIsKLevelOpen] = useState(false)
@@ -36,6 +39,27 @@ export default function ProfileScreen() {
 	const [areConditionsExpanded, setAreConditionsExpanded] = useState(false)
 	const [medications, setMedications] = useState<Medication[]>([])
 	const [addMode, setAddMode] = useState<AddMode>(null)
+	const [numberOfNewEntries, setNumberOfNewEntries] = useState<number | null>(null)
+
+	useFocusEffect(
+		useCallback(() => {
+			let mounted = true
+
+			const loadNewEntriesCount = async () => {
+				try {
+					const count = await getUnreadSpecialistMessageCount()
+					if (mounted) setNumberOfNewEntries(count)
+				} catch (error) {
+					console.error("Failed to load unread specialist message count:", error)
+				}
+			}
+
+			void loadNewEntriesCount()
+			return () => {
+				mounted = false
+			}
+		}, [])
+	)
 
 	useEffect(() => {
 		let mounted = true
@@ -127,10 +151,9 @@ export default function ProfileScreen() {
 
 	//TODO
 	const onHandleMyFiles = () => {}
-	const onHandleRecommendations = () => {}
-
-	//TODO MOCK
-	const numberOfNewEntries = 1
+	const onHandleRecommendations = () => {
+		router.push("/recommendations/specialistsList")
+	}
 
 	return (
 		<ScrollView
@@ -250,10 +273,12 @@ export default function ProfileScreen() {
 							}
 							rightChild={<IconChevronRight color={colors.graphite0} />}
 						/>
-						{numberOfNewEntries > 0 && (
+						{numberOfNewEntries !== null && numberOfNewEntries > 0 && (
 							<View style={styles.newEntry}>
 								<View style={[styles.newEntryDot, { backgroundColor: colors.true }]} />
-								<ThemedText tx="profile.recommendationsEntries" variant="H4" colorName="blue2" />
+								<ThemedText variant="H4" colorName="blue2">
+									{t("profile.newEntries", { count: numberOfNewEntries })}
+								</ThemedText>
 							</View>
 						)}
 					</View>

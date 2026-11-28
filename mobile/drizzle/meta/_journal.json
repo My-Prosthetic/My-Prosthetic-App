@@ -92,6 +92,13 @@
 			"when": 1794835968578,
 			"tag": "0012_blue_obadiah_stane",
 			"breakpoints": true
+		},
+		{
+			"idx": 13,
+			"version": "6",
+			"when": 1795801775764,
+			"tag": "0013_free_blacklash",
+			"breakpoints": true
 		}
 	]
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-import { TextInput, StyleSheet } from "react-native"
+import { TextInput, StyleSheet, StyleProp, ViewStyle } from "react-native"
 import { useTheme } from "@/context/ThemeContext"
 import { ThemedView } from "./ThemedView"
 
@@ -13,6 +13,7 @@ interface ThemedSearchProps {
 	debounceTimeMs?: number
 	placeholder?: string
 	disabled?: boolean
+	style?: StyleProp<ViewStyle>
 }
 
 export default function ThemedSearch({
@@ -23,6 +24,7 @@ export default function ThemedSearch({
 	debounceTimeMs = 300,
 	placeholder,
 	disabled = false,
+	style,
 }: ThemedSearchProps) {
 	const { colors } = useTheme()
 
@@ -62,7 +64,7 @@ export default function ThemedSearch({
 			variant="wide"
 			colorName="bg_0"
 			borderColor="blue1"
-			style={[styles.container, disabled && styles.disabled]}
+			style={[styles.container, disabled && styles.disabled, style]}
 		>
 			<IconSearch width={20} height={20} color={colors.blue1} />
 
